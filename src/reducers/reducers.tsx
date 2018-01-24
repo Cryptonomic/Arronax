@@ -1,17 +1,42 @@
 import { ArronaxAction } from '../actions/actions';
-import { ArronaxState, Mode } from '../types/types';
-import {SET_FILTER, RESET_ALL, SWITCH_MODE, SWITCH_TAB} from "../constants/constants";
+import { ArronaxState, Mode, DataView, Filter } from '../types/types';
+import { SWITCH_MODE, SWITCH_TAB, SET_FILTER, RESET_ALL,
+          BLOCKS, ACCOUNTS, OPERATIONS,
+          BLOCK_ID, ACCOUNT_ID, OPERATION_ID } from "../constants/constants";
+import { combineReducers } from 'redux'
 
-export function enthusiasm(state: ArronaxState, action: ArronaxAction): ArronaxState {
+export function mode(state: ArronaxState, action: ArronaxAction): ArronaxState {
+  return { ...state, mode: Mode.Basic ? Mode.Advanced : Mode.Basic };
+}
+
+export function view(state: ArronaxState, action: ArronaxAction): ArronaxState {
     switch (action.type) {
-        case SWITCH_MODE:
-            return { ...state, mode: Mode.Basic };
-        case SWITCH_TAB:
-            return { ...state, mode: Mode.Basic };
-        case SET_FILTER:
-            return { ...state, mode: Mode.Basic };
-        case RESET_ALL:
-            return { ...state, mode: Mode.Basic };
+        case BLOCKS:
+            return { ...state, view: Mode.Basic };
+        case ACCOUNTS:
+            return { ...state, view: Mode.Basic };
+        case OPERATIONS:
+            return { ...state, view: Mode.Basic };
     }
     return state;
 }
+
+export function filter(state: ArronaxState, action: ArronaxAction): ArronaxState {
+    switch (action.type) {
+        case BLOCK_ID:
+            return { ...state, filter: Mode.Basic };
+        case ACCOUNT_ID:
+            return { ...state, filter: Mode.Basic };
+        case OPERATION_ID:
+            return { ...state, filter: Mode.Basic };
+    }
+    return state;
+}
+
+const reducerCombo = combineReducers({
+  mode,
+  view,
+  filter
+})
+
+export default reducerCombo
