@@ -1,4 +1,5 @@
 import * as constants from '../constants/constants';
+import { FilterGroup } from '../types/types';
 
 export interface SwitchMode {
     type: constants.SWITCH_MODE;
@@ -10,6 +11,7 @@ export interface SwitchTab {
 
 export interface SetFilter {
     type: constants.SET_FILTER;
+    filters: FilterGroup;
 }
 
 export interface ResetAll {
@@ -30,9 +32,10 @@ export function switchTab(): SwitchTab {
     };
 }
 
-export function setFilter(): SetFilter {
+export function setFilter(filters: FilterGroup): SetFilter {
     return {
-        type: constants.SET_FILTER
+        type: constants.SET_FILTER,
+        filters: filters
     };
 }
 

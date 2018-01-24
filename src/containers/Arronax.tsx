@@ -1,6 +1,6 @@
 import { Arronax } from '../components/Arronax';
 import { connect, Dispatch } from 'react-redux';
-import { ArronaxState } from '../types/types';
+import { ArronaxState, FilterGroup } from '../types/types';
 import * as actions from '../actions/actions';
 
 export function mapStateToProps(state: ArronaxState) {
@@ -11,7 +11,7 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.ArronaxAction>) {
     return {
         switchMode: () => dispatch(actions.switchMode()),
         switchTab:  () => dispatch(actions.switchTab()),
-        setFilter:  () => dispatch(actions.setFilter()),
+        setFilter:  (filters: FilterGroup) => dispatch(actions.setFilter(filters)),
         resetAll:   () => dispatch(actions.resetAll())
     };
 }
