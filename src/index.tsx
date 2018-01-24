@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import mode from './reducers/reducers';
+import applyArronaxAction from './reducers/reducers';
 import { createStore } from 'redux';
 import { ArronaxState, DataView, Mode } from './types/types';
 import { Provider } from 'react-redux';
 import Arronax from './containers/Arronax';
 
-const store = createStore<ArronaxState>(mode, {
+const store = createStore<ArronaxState>(applyArronaxAction, {
     filters: {blockID: 'None', accountID: 'None', operationID: 'None'},
     mode: Mode.Basic,
     dataView: DataView.Blocks,
