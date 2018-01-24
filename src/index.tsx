@@ -1,20 +1,20 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import reducerCombo from './reducers/reducers'
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import mode from './reducers/reducers';
 import { createStore } from 'redux';
-import { mode, view, filter } from './reducers/reducers';
-import { ArronaxState } from './types/types';
+import { ArronaxState, DataView, Mode } from './types/types';
 import { Provider } from 'react-redux';
-import { Hello } from "./components/Hello";
+import Arronax from './containers/Arronax';
 
-const store = createStore<ArronaxState>(reducerCombo, {
-  enthusiasmLevel: 1,
-  languageName: 'TypeScript',
+const store = createStore<ArronaxState>(mode, {
+    filters: {blockID: 'None', accountID: 'None', operationID: 'None'},
+    mode: Mode.Basic,
+    dataView: DataView.Blocks,
 });
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Hello compiler="TypeScript" framework="React" />,
-    document.getElementById("example")
-  </Provider>
+    <Provider store={store}>
+        <Arronax />
+    </Provider>,
+    document.getElementById('root')
 );
