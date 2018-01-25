@@ -28,9 +28,9 @@ const FilterGroup = (props: FilterPanelProps) => {
             Blocks: <br/>
             <input type="text" id="filter.blocks" placeholder={props.filters.blockID.toString()} /> <br/>
             Operations: <br/>
-            <input type="text" id="filter.operations" value={props.filters.operationID.toString()} /> <br/>
+            <input type="text" id="filter.operations" placeholder={props.filters.operationID.toString()} /> <br/>
             Accounts: <br/>
-            <input type="text" id="filter.accounts" value={props.filters.accountID.toString()} /> <br/>
+            <input type="text" id="filter.accounts" placeholder={props.filters.accountID.toString()} /> <br/>
             <button onClick={() => gatherFilters(props.setFilter)}>Click me!</button>
         </div>
     );
