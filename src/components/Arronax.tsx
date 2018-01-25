@@ -16,25 +16,22 @@ export interface FilterPanelProps {
 
 function gatherFilters(setFilter:  (filters: FilterGroup) => void) {
     setFilter( {
-        blockID:        (document.getElementsByName('blocks').item(0) as HTMLInputElement).value,
-        accountID:      document.getElementsByName('accounts').item(0).getAttribute('value'),
-        operationID:    document.getElementsByName('operations').item(0).getAttribute('value'),
+        blockID:        (document.getElementById('filter.blocks')       as HTMLInputElement).value,
+        accountID:      (document.getElementById('filter.accounts')     as HTMLInputElement).value,
+        operationID:    (document.getElementById('filter.operations')   as HTMLInputElement).value,
     });
 }
 
 const FilterGroup = (props: FilterPanelProps) => {
     return (
         <div id="filtergroup">
-            <form onSubmit={() => gatherFilters(props.setFilter)}>
-                Blocks: <br/>
-                <input type="text" name="blocks" placeholder={props.filters.blockID.toString()} /> <br/>
-                Operations: <br/>
-                <input type="text" name="operations" value={props.filters.operationID.toString()} /> <br/>
-                Accounts: <br/>
-                <input type="text" name="accounts" value={props.filters.accountID.toString()} /> <br/>
-                <input type="text" name="poopmeister" />
-                <input type="submit" value="Submit" />
-            </form>
+            Blocks: <br/>
+            <input type="text" id="filter.blocks" placeholder={props.filters.blockID.toString()} /> <br/>
+            Operations: <br/>
+            <input type="text" id="filter.operations" value={props.filters.operationID.toString()} /> <br/>
+            Accounts: <br/>
+            <input type="text" id="filter.accounts" value={props.filters.accountID.toString()} /> <br/>
+            <button onClick={() => gatherFilters(props.setFilter)}>Click me!</button>
         </div>
     );
 };
