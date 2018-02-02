@@ -1,6 +1,6 @@
 import { Arronax } from '../components/Arronax';
 import { connect, Dispatch } from 'react-redux';
-import { ArronaxState, FilterGroup } from '../types/types';
+import { ArronaxState, DataView, FilterGroup } from '../types/types';
 import * as actions from '../actions/actions';
 
 export function mapStateToProps(state: ArronaxState) {
@@ -10,7 +10,7 @@ export function mapStateToProps(state: ArronaxState) {
 export function mapDispatchToProps(dispatch: Dispatch<actions.ArronaxAction>) {
     return {
         switchMode: () => dispatch(actions.switchMode()),
-        switchTab:  () => dispatch(actions.switchTab()),
+        switchTab:  (dataView: DataView) => dispatch(actions.switchTab(dataView)),
         setFilter:  (filters: FilterGroup) => dispatch(actions.setFilter(filters)),
         resetAll:   () => dispatch(actions.resetAll())
     };

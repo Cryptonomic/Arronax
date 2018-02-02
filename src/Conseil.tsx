@@ -1,4 +1,4 @@
-
+/*
 
 function queryNautilus(network: string, command: string, payload: string, callback: (s: any) => any) {
     let url: string = 'http://localhost:1337/tezos/{$network}/${command}'
@@ -17,4 +17,4 @@ export function getBlockHead(network: string, callback: (s: any) => any) {
 
 export function getBlock(network: string, hash: string, callback: (s: any) => any) {
     queryNautilus(network, 'blocks/${hash}', "", callback)
-}
+}*/

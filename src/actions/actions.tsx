@@ -1,5 +1,5 @@
 import * as constants from '../constants/constants';
-import { FilterGroup } from '../types/types';
+import { DataView, FilterGroup } from '../types/types';
 
 export interface SwitchMode {
     type: constants.SWITCH_MODE;
@@ -7,6 +7,7 @@ export interface SwitchMode {
 
 export interface SwitchTab {
     type: constants.SWITCH_TAB;
+    dataView: DataView;
 }
 
 export interface SetFilter {
@@ -26,9 +27,10 @@ export function switchMode(): SwitchMode {
     };
 }
 
-export function switchTab(): SwitchTab {
+export function switchTab(dataView: DataView): SwitchTab {
     return {
-        type: constants.SWITCH_TAB
+        type: constants.SWITCH_TAB,
+        dataView: dataView
     };
 }
 
