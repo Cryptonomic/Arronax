@@ -29,7 +29,7 @@ const FilterPanel = (props: FilterPanelProps) => {
 };
 
 export interface TabPops {
-    name: string;
+    dataView: DataView;
     hidden: boolean;
     filters: FilterGroup;
 }
@@ -37,7 +37,7 @@ export interface TabPops {
 const Tab = (props: TabPops) => {
     return(
         <div id="blocksPanel" hidden={props.hidden}>
-            <p>{props.name}</p>
+            <p>{props.dataView}</p>
         </div>
     );
 };
@@ -57,9 +57,21 @@ const DataPanel = (props: DataPanelProps) => {
                 <button onClick={() => props.switchTab(DataView.Accounts)}>Accounts</button>
             </div>
             <div id="data_content">
-                <Tab name="Blocks" hidden={props.dataView !== DataView.Blocks} filters={props.filters} />
-                <Tab name="Operations" hidden={props.dataView !== DataView.Operations} filters={props.filters} />
-                <Tab name="Accounts" hidden={props.dataView !== DataView.Accounts} filters={props.filters} />
+                <Tab
+                    dataView={DataView.Blocks}
+                    hidden={props.dataView !== DataView.Blocks}
+                    filters={props.filters}
+                />
+                <Tab
+                    dataView={DataView.Operations}
+                    hidden={props.dataView !== DataView.Operations}
+                    filters={props.filters}
+                />
+                <Tab
+                    dataView={DataView.Accounts}
+                    hidden={props.dataView !== DataView.Accounts}
+                    filters={props.filters}
+                />
             </div>
         </div>
     );
