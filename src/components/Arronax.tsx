@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ArronaxState, FilterGroup, DataView } from '../types/types';
+import * as Conseil from '../Conseil';
 
 export interface FilterPanelProps {
     filters: FilterGroup;
@@ -35,6 +36,7 @@ export interface TabPops {
 }
 
 const Tab = (props: TabPops) => {
+    Conseil.getBlockHead('alphanet').then((val) => document.getElementById('blocksPanel').innerText = val);
     return(
         <div id="blocksPanel" hidden={props.hidden}>
             <p>{props.dataView}</p>
