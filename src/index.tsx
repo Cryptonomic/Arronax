@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import Arronax from './containers/Arronax';
 
 const store = createStore<ArronaxState>(applyArronaxAction, {
-    filters: {blockID: 'None', accountID: 'None', operationID: 'None'},
+    filters: {blockID: 'None', accountID: 'None', operationID: 'None', },
     mode: Mode.Basic,
     dataView: DataView.Blocks,
 });

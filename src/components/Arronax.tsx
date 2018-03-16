@@ -1,30 +1,53 @@
 import * as React from 'react';
-import { ArronaxState, FilterGroup, DataView } from '../types/types';
 import * as Conseil from '../Conseil';
+import { ConseilFilter } from '../Conseil';
+import { ArronaxState, DataView } from '../types/types';
 
 export interface FilterPanelProps {
-    filters: FilterGroup;
-    setFilter:  (filters: FilterGroup) => void;
+    filters: ConseilFilter;
+    setFilter:  (filters: ConseilFilter) => void;
 }
 
-function gatherFilters(setFilter:  (filters: FilterGroup) => void) {
+function gatherFilters(setFilter:  (filters: ConseilFilter) => void) {
     setFilter( {
-        blockID:        (document.getElementById('filter.blocks')       as HTMLInputElement).value,
-        accountID:      (document.getElementById('filter.accounts')     as HTMLInputElement).value,
-        operationID:    (document.getElementById('filter.operations')   as HTMLInputElement).value,
+        blockIDs: (document.getElementById('filter.blockIDs') as HTMLInputElement).value.split(','),
+        levels: (document.getElementById('filter.levels') as HTMLInputElement).value.split(',').map(Number),
+        netIDs: (document.getElementById('filter.netIDs') as HTMLInputElement).value.split(','),
+        protocols: (document.getElementById('filter.protocols') as HTMLInputElement).value.split(','),
+        operationIDs: (document.getElementById('filter.operationIDs') as HTMLInputElement).value.split(','),
+        operationSources: (document.getElementById('filter.operationSources') as HTMLInputElement).value.split(','),
+        accountIDs: (document.getElementById('filter.accountIDs') as HTMLInputElement).value.split(','),
+        accountManagers: (document.getElementById('filter.accountManagers') as HTMLInputElement).value.split(','),
+        accountDelegates: (document.getElementById('filter.accountDelegates') as HTMLInputElement).value.split(','),
+        limit: Number((document.getElementById('filter.limit') as HTMLInputElement).value),
     });
 }
 
 const FilterPanel = (props: FilterPanelProps) => {
     return (
         <div id="filtergroup">
-            Blocks: <br/>
-            <input type="text" id="filter.blocks" placeholder={props.filters.blockID.toString()} /> <br/>
-            Operations: <br/>
-            <input type="text" id="filter.operations" placeholder={props.filters.operationID.toString()} /> <br/>
-            Accounts: <br/>
-            <input type="text" id="filter.accounts" placeholder={props.filters.accountID.toString()} /> <br/>
+            Blocks IDs: <br/>
+            <input type="text" id="filter.blocks" placeholder={props.filters.blockIDs.toString()} /> <br/>
+            Block Levels: <br/>
+            <input type="text" id="filter.blocks" placeholder={props.filters.levels.toString()} /> <br/>
+            Net IDs: <br/>
+            <input type="text" id="filter.netIDs" placeholder={props.filters.netIDs.toString()} /> <br/>
+            Protocols: <br/>
+            <input type="text" id="filter.protocols" placeholder={props.filters.protocols.toString()} /> <br/>
+            Operation IDs: <br/>
+            <input type="text" id="filter.operationIDs" placeholder={props.filters.operationIDs.toString()} /> <br/>
+            Operation Sources: <br/>
+            <input type="text" id="filter.blocks" placeholder={props.filters.operationSources.toString()} /> <br/>
+            Account IDs: <br/>
+            <input type="text" id="filter.accounts" placeholder={props.filters.accountIDs.toString()} /> <br/>
+            Account Managers: <br/>
+            <input type="text" id="filter.blocks" placeholder={props.filters.accountManagers.toString()} /> <br/>
+            Account Delegates: <br/>
+            <input type="text" id="filter.blocks" placeholder={props.filters.accountDelegates.toString()} /> <br/>
+            Limit: <br/>
+            <input type="text" id="filter.blocks" placeholder={props.filters.limit.toString()} /> <br/>
             <button onClick={() => gatherFilters(props.setFilter)}>Refresh</button>
+
         </div>
     );
 };
@@ -32,11 +55,11 @@ const FilterPanel = (props: FilterPanelProps) => {
 export interface TabPops {
     dataView: DataView;
     hidden: boolean;
-    filters: FilterGroup;
+    filters: ConseilFilter;
 }
 
 const Tab = (props: TabPops) => {
-    Conseil.getBlockHead('alphanet').then((val) => document.getElementById('blocksPanel').innerText = val);
+    Conseil.getBlockHead('alphanet').then((val) => document.getElementById('poop').innerText = val);
     return(
         <div id="blocksPanel" hidden={props.hidden}>
             <p>{props.dataView}</p>
@@ -45,7 +68,7 @@ const Tab = (props: TabPops) => {
 };
 
 export interface DataPanelProps {
-    filters: FilterGroup;
+    filters: ConseilFilter;
     dataView: DataView;
     switchTab:  (dataView: DataView) => void;
 }
@@ -75,6 +98,7 @@ const DataPanel = (props: DataPanelProps) => {
                     filters={props.filters}
                 />
             </div>
+            <p id="poop" />
         </div>
     );
 };
@@ -83,7 +107,7 @@ export interface ArronaxProps {
     state: ArronaxState;
     switchMode: () => void;
     switchTab:  (dataView: DataView) => void;
-    setFilter:  (filters: FilterGroup) => void;
+    setFilter:  (filters: ConseilFilter) => void;
     resetAll:   () => void;
 }
 

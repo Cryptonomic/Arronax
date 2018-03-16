@@ -1,5 +1,7 @@
+import { ConseilFilter } from '../Conseil';
+
 export interface ArronaxState {
-    filters: FilterGroup;
+    filters: ConseilFilter;
     mode: Mode;
     dataView: DataView;
 }
@@ -7,9 +9,3 @@ export interface ArronaxState {
 export enum Mode {Basic, Advanced}
 
 export enum DataView {Blocks, Accounts, Operations}
-
-export interface FilterGroup {
-    blockID: String;
-    accountID: String;
-    operationID: String;
-}
