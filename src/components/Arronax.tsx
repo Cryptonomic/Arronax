@@ -27,9 +27,9 @@ const FilterPanel = (props: FilterPanelProps) => {
     return (
         <div id="filtergroup">
             Blocks IDs: <br/>
-            <input type="text" id="filter.blocks" placeholder={props.filters.blockIDs.toString()} /> <br/>
+            <input type="text" id="filter.blocksIDs" placeholder={props.filters.blockIDs.toString()} /> <br/>
             Block Levels: <br/>
-            <input type="text" id="filter.blocks" placeholder={props.filters.levels.toString()} /> <br/>
+            <input type="text" id="filter.levels" placeholder={props.filters.levels.toString()} /> <br/>
             Net IDs: <br/>
             <input type="text" id="filter.netIDs" placeholder={props.filters.netIDs.toString()} /> <br/>
             Protocols: <br/>
