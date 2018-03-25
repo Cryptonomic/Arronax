@@ -2,6 +2,8 @@ import * as React from 'react';
 import * as Conseil from '../Conseil';
 import { ConseilFilter } from '../Conseil';
 import { ArronaxState, DataView } from '../types/types';
+import { Field, reduxForm } from 'redux-form';
+import { Component, SyntheticEvent } from 'react';
 
 export interface FilterPanelProps {
     filters: ConseilFilter;
@@ -21,6 +23,10 @@ function gatherFilters(setFilter:  (filters: ConseilFilter) => void) {
         accountDelegates: (document.getElementById('filter.accountDelegates') as HTMLInputElement).value.split(','),
         limit: Number((document.getElementById('filter.limit') as HTMLInputElement).value),
     });
+}
+function poopypoop(e: React.ChangeEvent<HTMLInputElement>, props: FilterPanelProps) {
+    e.persist();
+    document.getElementById('poop').innerText = e.target.id + e.target.value + props.filters.limit;
 }
 
 const FilterPanel = (props: FilterPanelProps) => {
@@ -43,14 +49,72 @@ const FilterPanel = (props: FilterPanelProps) => {
             Account Managers: <br/>
             <input type="text" id="filter.blocks" placeholder={props.filters.accountManagers.toString()} /> <br/>
             Account Delegates: <br/>
-            <input type="text" id="filter.blocks" placeholder={props.filters.accountDelegates.toString()} /> <br/>
+            <input
+                type="text"
+                id="filter.blocks"
+                // placeholder={props.filters.accountDelegates.toString()}
+                value="hello"
+                onChange={e => poopypoop(e, props)}
+            /> <br/>
             Limit: <br/>
             <input type="text" id="filter.blocks" placeholder={props.filters.limit.toString()} /> <br/>
             <button onClick={() => gatherFilters(props.setFilter)}>Refresh</button>
-
         </div>
     );
 };
+
+class FilterPanel2 extends React.Component<FilterPanelProps, ConseilFilter> {
+
+    constructor(props: FilterPanelProps) {
+        super(props);
+        this.state = props.filters;
+    }
+
+    handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const foo = event.target.name;
+        if (foo === 'limit') {
+            this.setState({'limit': Number(event.target.value)});
+        } else if (foo === 'levels') {
+            this.setState({'levels': event.target.value.split(',').map(Number)});
+        } else {
+            this.setState({[event.target.name]: [event.target.value]});
+        }
+
+    }
+
+    public render() {
+        return (
+            <div id="filtergroup">
+                Blocks IDs: <br/>
+                <input type="text" id="blocksIDs" value={this.state.blockIDs.toString()} /> <br/>
+                Block Levels: <br/>
+                <input type="text" id="levels" value={this.state.levels.toString()} /> <br/>
+                Net IDs: <br/>
+                <input type="text" id="netIDs" value={this.state.netIDs.toString()} /> <br/>
+                Protocols: <br/>
+                <input type="text" id="protocols" value={this.state.protocols.toString()} /> <br/>
+                Operation IDs: <br/>
+                <input type="text" id="operationIDs" value={this.state.operationIDs.toString()} /> <br/>
+                Operation Sources: <br/>
+                <input type="text" id="blocks" value={this.state.operationSources.toString()} /> <br/>
+                Account IDs: <br/>
+                <input type="text" id="accounts" value={this.state.accountIDs.toString()} /> <br/>
+                Account Managers: <br/>
+                <input type="text" id="blocks" value={this.state.accountManagers.toString()} /> <br/>
+                Account Delegates: <br/>
+                <input
+                    type="text"
+                    id="blocks"
+                    value="hello"
+                    onChange={this.handleChange}
+                /> <br/>
+                Limit: <br/>
+                <input type="text" id="blocks" value={this.state.limit.toString()} /> <br/>
+                <button onClick={() => gatherFilters(this.props.setFilter)}>Refresh</button>
+            </div>
+        );
+    }
+}
 
 export interface TabPops {
     dataView: DataView;
