@@ -154,14 +154,39 @@ export interface TabProps {
     filters: ConseilFilter;
 }
 
-const Tab = (props: TabProps) => {
-    Conseil.getBlockHead('alphanet').then((val) => document.getElementById('poop').innerText = val);
-    return(
-        <div id="blocksPanel" hidden={props.hidden}>
-            <p>{props.dataView}</p>
-        </div>
-    );
-};
+interface TabState {
+    data: String;
+}
+
+class Tab extends React.Component<TabProps, TabState> {
+
+    constructor(props: TabProps) {
+        super(props);
+        this.state = {data: '{}'};
+        this.refreshData = this.refreshData.bind(this);
+        this.refreshData(props);
+    }
+
+    refreshData(nextProps: TabProps) {
+        if (!nextProps.hidden) {
+            Conseil.getBlockHead('alphanet').
+            then((val) => this.setState({data: val}));
+        }
+    }
+
+    componentWillReceiveProps(nextProps: TabProps) {
+        this.refreshData(nextProps);
+    }
+
+    public render() {
+        return (
+            <div id="blocksPanel" hidden={this.props.hidden}>
+                <p>{this.props.dataView}</p>
+                <p>{this.state.data}</p>
+            </div>
+        );
+    }
+}
 
 export interface DataPanelProps {
     filters: ConseilFilter;
@@ -210,7 +235,7 @@ export interface ArronaxProps {
 export const Arronax = (props: ArronaxProps) =>
     (
         <div id="arronax">
-            <h1>Conseil Test</h1>
+            <h1>Arronax</h1>
             <FilterPanel filters={props.state.filters} setFilter={props.setFilter} />
             <DataPanel filters={props.state.filters} dataView={props.state.dataView} switchTab={props.switchTab} />
         </div>
