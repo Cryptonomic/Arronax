@@ -8,7 +8,7 @@ import Arronax from './containers/Arronax';
 
 const store = createStore<ArronaxState>(applyArronaxAction, {
     filters: {
-        blockIDs: ['hello'],
+        blockIDs: ['head'],
         levels: new Array(),
         netIDs: new Array(),
         protocols: new Array(),
