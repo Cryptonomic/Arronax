@@ -12,7 +12,12 @@ export interface SetFilter {
     filters: ConseilFilter;
 }
 
-export type ArronaxAction = SwitchTab | SetFilter;
+export interface SetNetwork {
+    type: constants.SET_NETWORK;
+    network: string;
+}
+
+export type ArronaxAction = SwitchTab | SetFilter | SetNetwork;
 
 export function switchTab(dataView: DataView): SwitchTab {
     return {
@@ -25,5 +30,12 @@ export function setFilter(filters: ConseilFilter): SetFilter {
     return {
         type: constants.SET_FILTER,
         filters: filters
+    };
+}
+
+export function setNetwork(network: string): SetNetwork {
+    return {
+        type: constants.SET_NETWORK,
+        network: network
     };
 }

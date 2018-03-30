@@ -4,6 +4,7 @@ export interface ArronaxState {
     filters: ConseilFilter;
     mode: Mode;
     dataView: DataView;
+    network: string;
 }
 
 export enum Mode {Basic, Advanced}

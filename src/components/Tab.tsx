@@ -8,6 +8,7 @@ interface TabProps {
     dataView: DataView;
     hidden: boolean;
     filters: ConseilFilter;
+    network: string;
 }
 
 interface TabState {
@@ -28,7 +29,7 @@ export class Tab extends React.Component<TabProps, TabState> {
             let funcToCall = Conseil.getBlocks;
             if (this.props.dataView === DataView.Operations) {funcToCall = Conseil.getOperations; }
             if (this.props.dataView === DataView.Accounts) {funcToCall = Conseil.getAccounts; }
-            funcToCall.apply(null, ['alphanet', nextProps.filters]).
+            funcToCall.apply(null, [this.props.network, nextProps.filters]).
             then((val) => this.setState({data: JSON.parse(decodeURI(val))}));
         }
     }

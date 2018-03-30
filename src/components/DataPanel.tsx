@@ -6,6 +6,7 @@ import { Tab } from './Tab';
 interface DataPanelProps {
     filters: ConseilFilter;
     dataView: DataView;
+    network: string;
     switchTab:  (dataView: DataView) => void;
 }
 
@@ -22,16 +23,19 @@ export const DataPanel = (props: DataPanelProps) => {
                     dataView={DataView.Blocks}
                     hidden={props.dataView !== DataView.Blocks}
                     filters={props.filters}
+                    network={props.network}
                 />
                 <Tab
                     dataView={DataView.Operations}
                     hidden={props.dataView !== DataView.Operations}
                     filters={props.filters}
+                    network={props.network}
                 />
                 <Tab
                     dataView={DataView.Accounts}
                     hidden={props.dataView !== DataView.Accounts}
                     filters={props.filters}
+                    network={props.network}
                 />
             </div>
         </div>

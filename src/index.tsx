@@ -21,6 +21,7 @@ const store = createStore<ArronaxState>(applyArronaxAction, {
     },
     mode: Mode.Basic,
     dataView: DataView.Blocks,
+    network: 'alphanet'
 });
 
 ReactDOM.render(

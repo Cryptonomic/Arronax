@@ -12,6 +12,7 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.ArronaxAction>) {
     return {
         switchTab:  (dataView: DataView) => dispatch(actions.switchTab(dataView)),
         setFilter:  (filters: ConseilFilter) => dispatch(actions.setFilter(filters)),
+        setNetwork: (network: string) => dispatch(actions.setNetwork(network))
     };
 }
 
