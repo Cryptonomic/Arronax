@@ -20,7 +20,6 @@ export class NetworkSelector extends React.Component<NetworkSelectorProps, Objec
     public render() {
         return (
             <div id="network-selector">
-                <h1>Arronax</h1>
                 <p>
                 Network:
                 <select value={this.props.network} onChange={this.handleNetworkUpdate}>
