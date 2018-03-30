@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as Conseil from '../Conseil';
 import { ConseilFilter } from '../Conseil';
 import { ArronaxState, DataView } from '../types/types';
+import * as JsonToTable from 'ts-react-json-table';
 
 export interface FilterPanelProps {
     filters: ConseilFilter;
@@ -155,14 +156,14 @@ export interface TabProps {
 }
 
 interface TabState {
-    data: String;
+    data: Object;
 }
 
 class Tab extends React.Component<TabProps, TabState> {
 
     constructor(props: TabProps) {
         super(props);
-        this.state = {data: '{}'};
+        this.state = {data: [{'hello': 'world'}]};
         this.refreshData = this.refreshData.bind(this);
         this.refreshData(props);
     }
@@ -170,7 +171,7 @@ class Tab extends React.Component<TabProps, TabState> {
     refreshData(nextProps: TabProps) {
         if (!nextProps.hidden) {
             Conseil.getBlocks('alphanet', nextProps.filters).
-            then((val) => this.setState({data: val}));
+            then((val) => this.setState({data: JSON.parse(decodeURI(val))}));
         }
     }
 
@@ -182,7 +183,7 @@ class Tab extends React.Component<TabProps, TabState> {
         return (
             <div id="blocksPanel" hidden={this.props.hidden}>
                 <p>{this.props.dataView}</p>
-                <p>{this.state.data}</p>
+                <JsonToTable rows={this.state.data} />
             </div>
         );
     }
