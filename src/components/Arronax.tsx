@@ -163,14 +163,17 @@ class Tab extends React.Component<TabProps, TabState> {
 
     constructor(props: TabProps) {
         super(props);
-        this.state = {data: [{'hello': 'world'}]};
+        this.state = {data: []};
         this.refreshData = this.refreshData.bind(this);
         this.refreshData(props);
     }
 
     refreshData(nextProps: TabProps) {
         if (!nextProps.hidden) {
-            Conseil.getBlocks('alphanet', nextProps.filters).
+            let funcToCall = Conseil.getBlocks;
+            if (this.props.dataView === DataView.Operations) {funcToCall = Conseil.getOperations; }
+            if (this.props.dataView === DataView.Accounts) {funcToCall = Conseil.getAccounts; }
+            funcToCall.apply(null, ['alphanet', nextProps.filters]).
             then((val) => this.setState({data: JSON.parse(decodeURI(val))}));
         }
     }
@@ -182,7 +185,6 @@ class Tab extends React.Component<TabProps, TabState> {
     public render() {
         return (
             <div id="blocksPanel" hidden={this.props.hidden}>
-                <p>{this.props.dataView}</p>
                 <JsonToTable rows={this.state.data} />
             </div>
         );

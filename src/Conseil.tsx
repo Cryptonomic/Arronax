@@ -57,3 +57,11 @@ export function getBlock(network: string, hash: String) {
 export function getBlocks(network: string, filter: ConseilFilter) {
     return queryNautilusWithFilter(network, 'blocks', filter);
 }
+
+export function getOperations(network: string, filter: ConseilFilter) {
+    return queryNautilusWithFilter(network, 'operations', filter);
+}
+
+export function getAccounts(network: string, filter: ConseilFilter) {
+    return queryNautilusWithFilter(network, 'accounts', filter);
+}
