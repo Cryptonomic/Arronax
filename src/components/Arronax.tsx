@@ -6,10 +6,8 @@ import { DataPanel } from './DataPanel';
 
 export interface ArronaxProps {
     state: ArronaxState;
-    switchMode: () => void;
     switchTab:  (dataView: DataView) => void;
     setFilter:  (filters: ConseilFilter) => void;
-    resetAll:   () => void;
 }
 
 export const Arronax = (props: ArronaxProps) =>
