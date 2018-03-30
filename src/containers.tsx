@@ -1,8 +1,8 @@
-import { Arronax } from '../components/Arronax';
+import { Arronax } from './components/Arronax';
 import { connect, Dispatch } from 'react-redux';
-import { ArronaxState, DataView } from '../types/types';
-import * as actions from '../actions/actions';
-import { ConseilFilter } from '../Conseil';
+import { ArronaxState, DataView } from './types';
+import * as actions from './actions';
+import { ConseilFilter } from './Conseil';
 
 export function mapStateToProps(state: ArronaxState) {
     return {'state': state};

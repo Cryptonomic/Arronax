@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import applyArronaxAction from './reducers/reducers';
+import applyArronaxAction from './reducers';
 import { createStore } from 'redux';
-import { ArronaxState, DataView, Mode } from './types/types';
+import { ArronaxState, DataView, Mode } from './types';
 import { Provider } from 'react-redux';
-import Arronax from './containers/Arronax';
+import Arronax from './containers';
 
 const store = createStore<ArronaxState>(applyArronaxAction, {
     filters: {

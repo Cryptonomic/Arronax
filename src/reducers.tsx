@@ -1,6 +1,6 @@
-import { ArronaxAction } from '../actions/actions';
-import { ArronaxState, Mode } from '../types/types';
-import { SWITCH_MODE, SET_FILTER, SWITCH_TAB } from '../constants/constants';
+import { ArronaxAction } from './actions';
+import { ArronaxState, Mode } from './types';
+import { SWITCH_MODE, SET_FILTER, SWITCH_TAB } from './constants';
 
 export default function applyArronaxAction(state: ArronaxState, action: ArronaxAction): ArronaxState {
     switch (action.type) {

@@ -1,6 +1,6 @@
-import * as constants from '../constants/constants';
-import { DataView } from '../types/types';
-import { ConseilFilter } from '../Conseil';
+import * as constants from './constants';
+import { DataView } from './types';
+import { ConseilFilter } from './Conseil';
 
 export interface SwitchMode {
     type: constants.SWITCH_MODE;

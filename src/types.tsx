@@ -1,4 +1,4 @@
-import { ConseilFilter } from '../Conseil';
+import { ConseilFilter } from './Conseil';
 
 export interface ArronaxState {
     filters: ConseilFilter;
