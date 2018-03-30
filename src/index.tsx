@@ -8,15 +8,15 @@ import Arronax from './containers/Arronax';
 
 const store = createStore<ArronaxState>(applyArronaxAction, {
     filters: {
-        blockIDs: ['head'],
-        levels: new Array(),
-        netIDs: new Array(),
-        protocols: new Array(),
-        operationIDs: new Array(),
-        operationSources: new Array(),
-        accountIDs: new Array(),
-        accountManagers: new Array(),
-        accountDelegates: new Array(),
+        block_id: ['BMdK2ymoBh9AjPS1WUvGs33NEcmkZrW2JbtFQH3F6KdDWSgsfeP'],
+        block_level: new Array(),
+        block_netid: new Array(),
+        block_protocol: new Array(),
+        operation_id: new Array(),
+        operation_source: new Array(),
+        account_id: new Array(),
+        account_manager: new Array(),
+        account_delegate: new Array(),
         limit: 100
     },
     mode: Mode.Basic,

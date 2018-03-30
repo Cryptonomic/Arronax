@@ -26,39 +26,39 @@ class FilterPanel extends React.Component<FilterPanelProps, ConseilFilter> {
     }
 
     handleBlockIDs(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({'blockIDs': event.target.value.split(',')});
+        this.setState({'block_id': event.target.value.split(',')});
     }
 
     handleLevels(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({'levels': event.target.value.split(',').map(Number)});
+        this.setState({'block_level': event.target.value.split(',').map(Number)});
     }
 
     handleNetIDs(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({'netIDs': event.target.value.split(',')});
+        this.setState({'block_netid': event.target.value.split(',')});
     }
 
     handleProtocols(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({'protocols': event.target.value.split(',')});
+        this.setState({'block_protocol': event.target.value.split(',')});
     }
 
     handleOperationIDs(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({'operationIDs': event.target.value.split(',')});
+        this.setState({'operation_id': event.target.value.split(',')});
     }
 
     handleOperationSources(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({'operationSources': event.target.value.split(',')});
+        this.setState({'operation_source': event.target.value.split(',')});
     }
 
     handleAccountIDs(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({'accountIDs': event.target.value.split(',')});
+        this.setState({'account_id': event.target.value.split(',')});
     }
 
     handleAccountManagers(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({'accountManagers': event.target.value.split(',')});
+        this.setState({'account_manager': event.target.value.split(',')});
     }
 
     handleAccountDelegates(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({'accountDelegates': event.target.value.split(',')});
+        this.setState({'account_delegate': event.target.value.split(',')});
     }
 
     handleLimit(event: React.ChangeEvent<HTMLInputElement>) {
@@ -76,63 +76,63 @@ class FilterPanel extends React.Component<FilterPanelProps, ConseilFilter> {
                 <input
                     type="text"
                     id="blocksIDs"
-                    value={this.state.blockIDs.toString()}
+                    value={this.state.block_id.toString()}
                     onChange={this.handleBlockIDs}
                 /> <br/>
                 Block Levels: <br/>
                 <input
                     type="text"
                     id="levels"
-                    value={this.state.levels.toString()}
+                    value={this.state.block_level.toString()}
                     onChange={this.handleLevels}
                 /> <br/>
                 Net IDs: <br/>
                 <input
                     type="text"
                     id="netIDs"
-                    value={this.state.netIDs.toString()}
+                    value={this.state.block_netid.toString()}
                     onChange={this.handleNetIDs}
                 /> <br/>
                 Protocols: <br/>
                 <input
                     type="text"
                     id="protocols"
-                    value={this.state.protocols.toString()}
+                    value={this.state.block_protocol.toString()}
                     onChange={this.handleProtocols}
                 /> <br/>
                 Operation IDs: <br/>
                 <input
                     type="text"
                     id="operationIDs"
-                    value={this.state.operationIDs.toString()}
+                    value={this.state.operation_id.toString()}
                     onChange={this.handleOperationIDs}
                 /> <br/>
                 Operation Sources: <br/>
                 <input
                     type="text"
                     id="operationSources"
-                    value={this.state.operationSources.toString()}
+                    value={this.state.operation_source.toString()}
                     onChange={this.handleOperationSources}
                 /> <br/>
                 Account IDs: <br/>
                 <input
                     type="text"
                     id="accounts"
-                    value={this.state.accountIDs.toString()}
+                    value={this.state.account_id.toString()}
                     onChange={this.handleAccountIDs}
                 /> <br/>
                 Account Managers: <br/>
                 <input
                     type="text"
                     id="blocks"
-                    value={this.state.accountManagers.toString()}
+                    value={this.state.account_manager.toString()}
                     onChange={this.handleAccountManagers}
                 /> <br/>
                 Account Delegates: <br/>
                 <input
                     type="text"
                     id="accountDelegates"
-                    value={this.state.accountDelegates.toString()}
+                    value={this.state.account_delegate.toString()}
                     onChange={this.handleAccountDelegates}
                 /> <br/>
                 Limit: <br/>
@@ -169,7 +169,7 @@ class Tab extends React.Component<TabProps, TabState> {
 
     refreshData(nextProps: TabProps) {
         if (!nextProps.hidden) {
-            Conseil.getBlockHead('alphanet').
+            Conseil.getBlocks('alphanet', nextProps.filters).
             then((val) => this.setState({data: val}));
         }
     }
@@ -219,7 +219,6 @@ const DataPanel = (props: DataPanelProps) => {
                     filters={props.filters}
                 />
             </div>
-            <p id="poop" />
         </div>
     );
 };
