@@ -3,6 +3,7 @@ import * as Conseil from '../Conseil';
 import { ConseilFilter } from '../Conseil';
 import { DataView } from '../types';
 import * as JsonToTable from 'ts-react-json-table';
+import { ExpandableGrid } from './ExpandableGrid';
 
 interface TabProps {
     dataView: DataView;
@@ -41,7 +42,7 @@ export class Tab extends React.Component<TabProps, TabState> {
     public render() {
         return (
             <div id="blocksPanel" hidden={this.props.hidden}>
-                <JsonToTable rows={this.state.data} />
+                <ExpandableGrid dataView={this.props.dataView} data={this.state.data}/>
             </div>
         );
     }
