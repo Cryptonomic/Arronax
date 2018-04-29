@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { DataView, TezosBlock } from '../types';
+import { ExpandableGridRow } from './ExpandableGridRow';
 
 interface ExpandableGridPops {
     dataView: DataView;
@@ -18,22 +19,20 @@ export class ExpandableGrid extends React.Component<ExpandableGridPops, Expandab
     }
 
     public render() {
-        return (
-            <table>
-                <tr key="poo">
-                    {this.props.data.length !== 0 ?
-                        Object.keys(this.props.data[0]).map((value, index) => <th key="meh">{value}</th>) :
-                        <th key="meh">Hi</th>}
-                </tr>
-                {
-                    this.props.data.map((value, index) =>
-                        <tr key="foo">
-                            {Object.keys(value).map((value2, index2) =>
-                                <td key="bar">{value[value2]}</td>
-                            )}
-                        </tr>
-                    )}
-            </table>
-        );
+        if (this.props.data.length !== 0) {
+            return (
+                <table>
+                    <tr key="header">
+                        {Object.keys(this.props.data[0]).map((value, index) => <th key="meh">{value}</th>)}
+                    </tr>
+                    {
+                        this.props.data.map((row, index) =>
+                            <ExpandableGridRow key="key" dataView={this.props.dataView} data={row}/>
+                        )}
+                </table>
+            );
+        } else {
+            return(<p>No data to render!</p>);
+        }
     }
 }
