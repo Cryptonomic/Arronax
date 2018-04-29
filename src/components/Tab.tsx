@@ -13,7 +13,7 @@ interface TabProps {
 }
 
 interface TabState {
-    data: Object;
+    data: Object[];
 }
 
 export class Tab extends React.Component<TabProps, TabState> {
