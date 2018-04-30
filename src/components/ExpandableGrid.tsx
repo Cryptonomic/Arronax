@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DataView, TezosBlock } from '../types';
+import { DataView } from '../types';
 import { ExpandableGridRow } from './ExpandableGridRow';
 
 interface ExpandableGridPops {
@@ -23,6 +23,7 @@ export class ExpandableGrid extends React.Component<ExpandableGridPops, Expandab
             return (
                 <table>
                     <tr key="header">
+                        <th>Expand</th>
                         {Object.keys(this.props.data[0]).map((value, index) => <th key="meh">{value}</th>)}
                     </tr>
                     {
