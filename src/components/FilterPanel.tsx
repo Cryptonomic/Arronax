@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ConseilFilter } from '../Conseil';
+import '../style.css';
 
 interface FilterPanelProps {
     filters: ConseilFilter;

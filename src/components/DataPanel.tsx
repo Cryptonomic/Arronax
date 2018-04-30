@@ -2,6 +2,7 @@ import * as React from 'react';
 import { DataView } from '../types';
 import { ConseilFilter } from '../Conseil';
 import { Tab } from './Tab';
+import '../style.css';
 
 interface DataPanelProps {
     filters: ConseilFilter;
