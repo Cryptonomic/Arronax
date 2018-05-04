@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { DataView } from '../types';
+import { TezosDataView } from './TezosDataView';
 
 interface ExpandableGridRowProps {
     dataView: DataView;
@@ -23,6 +24,16 @@ export class ExpandableGridRow extends React.Component<ExpandableGridRowProps, E
         this.setState({isExpanded: !this.state.isExpanded});
     }
 
+    inferID(data: object, dataView: DataView) {
+        const hash = 'hash';
+        const accountId = 'accountId';
+        if (dataView === DataView.Blocks || dataView === DataView.Operations) {
+            return data[hash];
+        } else if (dataView === DataView.Accounts) {
+            return data[accountId];
+        }
+    }
+
     public render() {
         if (!this.state.isExpanded) {
             return (
@@ -38,9 +49,10 @@ export class ExpandableGridRow extends React.Component<ExpandableGridRowProps, E
                 <tr key="foo">
                     <td><button onClick={this.handleOnClick}>-</button></td>
                     <td>
-                        <pre>
-                        {JSON.stringify(this.props.data, null, 2)}
-                        </pre>
+                        <TezosDataView
+                            dataView={this.props.dataView}
+                            id={this.inferID(this.props.data, this.props.dataView)}
+                        />
                     </td>
                 </tr>
             );

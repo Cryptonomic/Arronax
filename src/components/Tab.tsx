@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as Conseil from '../Conseil';
 import { ConseilFilter } from '../Conseil';
 import { DataView } from '../types';
-import * as JsonToTable from 'ts-react-json-table';
 import { ExpandableGrid } from './ExpandableGrid';
 
 interface TabProps {
