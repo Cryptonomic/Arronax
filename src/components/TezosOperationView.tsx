@@ -2,6 +2,7 @@ import * as React from 'react';
 import { getOperation } from '../Conseil';
 
 interface TezosOperationProps {
+    network: string;
     id: string;
 }
 
@@ -19,7 +20,7 @@ export class TezosOperationView extends React.Component<TezosOperationProps, Tez
     }
 
     refreshData(props: TezosOperationProps) {
-        getOperation('alphanet', this.props.id).
+        getOperation(this.props.network, this.props.id).
         then(value => this.setState({data: JSON.parse(decodeURI(value))}));
     }
 

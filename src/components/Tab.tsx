@@ -41,7 +41,11 @@ export class Tab extends React.Component<TabProps, TabState> {
     public render() {
         return (
             <div id="blocksPanel" hidden={this.props.hidden}>
-                <ExpandableGrid dataView={this.props.dataView} data={this.state.data}/>
+                <ExpandableGrid
+                    dataView={this.props.dataView}
+                    network={this.props.network}
+                    data={this.state.data}
+                />
             </div>
         );
     }

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { getBlock } from '../Conseil';
 
 interface TezosBlockProps {
+    network: string;
     id: string;
 }
 
@@ -19,7 +20,7 @@ export class TezosBlockView extends React.Component<TezosBlockProps, TezosBlockS
     }
 
     refreshData(props: TezosBlockProps) {
-        getBlock('alphanet', this.props.id).
+        getBlock(this.props.network, this.props.id).
         then(value => this.setState({data: JSON.parse(decodeURI(value))}));
     }
 

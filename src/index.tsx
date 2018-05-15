@@ -8,7 +8,7 @@ import Arronax from './containers';
 
 const store = createStore<ArronaxState>(applyArronaxAction, {
     filters: {
-        block_id: ['BMdK2ymoBh9AjPS1WUvGs33NEcmkZrW2JbtFQH3F6KdDWSgsfeP'],
+        block_id: ['BKicZSTXo4dtHiJcnbAQqJQVwfk2K1xn2MV4zhamXaTGs6xxfGi'],
         block_level: new Array(),
         block_netid: new Array(),
         block_protocol: new Array(),
@@ -21,7 +21,7 @@ const store = createStore<ArronaxState>(applyArronaxAction, {
     },
     mode: Mode.Basic,
     dataView: DataView.Blocks,
-    network: 'alphanet'
+    network: 'zeronet'
 });
 
 ReactDOM.render(

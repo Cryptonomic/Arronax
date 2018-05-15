@@ -4,6 +4,7 @@ import { ExpandableGridRow } from './ExpandableGridRow';
 
 interface ExpandableGridPops {
     dataView: DataView;
+    network: string;
     data: Object[];
 }
 
@@ -28,7 +29,12 @@ export class ExpandableGrid extends React.Component<ExpandableGridPops, Expandab
                     </tr>
                     {
                         this.props.data.map((row, index) =>
-                            <ExpandableGridRow key="key" dataView={this.props.dataView} data={row}/>
+                            <ExpandableGridRow
+                                key="key"
+                                dataView={this.props.dataView}
+                                network={this.props.network}
+                                data={row}
+                            />
                         )}
                 </table>
             );

@@ -23,7 +23,6 @@ export class NetworkSelector extends React.Component<NetworkSelectorProps, Objec
                 <p>
                 Network:
                 <select value={this.props.network} onChange={this.handleNetworkUpdate}>
-                <option>alphanet</option>
                 <option>zeronet</option>
                 </select>
                 </p>

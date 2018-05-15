@@ -4,6 +4,7 @@ import { TezosDataView } from './TezosDataView';
 
 interface ExpandableGridRowProps {
     dataView: DataView;
+    network: string;
     data: Object;
 }
 
@@ -51,6 +52,7 @@ export class ExpandableGridRow extends React.Component<ExpandableGridRowProps, E
                     <td>
                         <TezosDataView
                             dataView={this.props.dataView}
+                            network={this.props.network}
                             id={this.inferID(this.props.data, this.props.dataView)}
                         />
                     </td>

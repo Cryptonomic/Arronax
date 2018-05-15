@@ -2,6 +2,7 @@ import * as React from 'react';
 import { getAccount } from '../Conseil';
 
 interface TezosAccountProps {
+    network: string;
     id: string;
 }
 
@@ -19,7 +20,7 @@ export class TezosAccountView extends React.Component<TezosAccountProps, TezosAc
     }
 
     refreshData(props: TezosAccountProps) {
-        getAccount('alphanet', this.props.id).
+        getAccount(this.props.network, this.props.id).
         then(value => this.setState({data: JSON.parse(decodeURI(value))}));
     }
 
