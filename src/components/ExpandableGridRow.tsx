@@ -6,6 +6,7 @@ interface ExpandableGridRowProps {
     dataView: DataView;
     network: string;
     data: Object;
+    rowNumber: number;
 }
 
 interface ExpandableGridRowState {
@@ -38,16 +39,16 @@ export class ExpandableGridRow extends React.Component<ExpandableGridRowProps, E
     public render() {
         if (!this.state.isExpanded) {
             return (
-                <tr key="foo">
+                <tr key={'row' + this.props.rowNumber}>
                     <td><button onClick={this.handleOnClick}>+</button></td>
-                    {Object.keys(this.props.data).map((value2, index2) =>
-                        <td key="bar">{this.props.data[value2]}</td>
+                    {Object.keys(this.props.data).map((value, index) =>
+                        <td key={'row' + this.props.rowNumber + ':: col' + index}>{this.props.data[value]}</td>
                     )}
                 </tr>
             );
         } else {
             return (
-                <tr key="foo">
+                <tr key={'row' + this.props.rowNumber}>
                     <td><button onClick={this.handleOnClick}>-</button></td>
                     <td>
                         <TezosDataView

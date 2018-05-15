@@ -41,5 +41,5 @@ export interface TezosAccount {
     delegateSetable: boolean;
     delegateValue: string;
     balance: number;
-    counter: 2;
+    counter: number;
 }

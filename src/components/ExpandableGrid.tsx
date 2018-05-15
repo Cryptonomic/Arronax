@@ -25,15 +25,16 @@ export class ExpandableGrid extends React.Component<ExpandableGridPops, Expandab
                 <table>
                     <tr key="header">
                         <th>Expand</th>
-                        {Object.keys(this.props.data[0]).map((value, index) => <th key="meh">{value}</th>)}
+                        {Object.keys(this.props.data[0]).map((value, index) => <th key={value}>{value}</th>)}
                     </tr>
                     {
                         this.props.data.map((row, index) =>
                             <ExpandableGridRow
-                                key="key"
+                                key={'gridrow' + index}
                                 dataView={this.props.dataView}
                                 network={this.props.network}
                                 data={row}
+                                rowNumber={index}
                             />
                         )}
                 </table>
