@@ -22,20 +22,20 @@ export type ArronaxAction = SwitchTab | SetFilter | SetNetwork;
 export function switchTab(dataView: DataView): SwitchTab {
     return {
         type: constants.SWITCH_TAB,
-        dataView: dataView
+        dataView
     };
 }
 
 export function setFilter(filters: ConseilFilter): SetFilter {
     return {
         type: constants.SET_FILTER,
-        filters: filters
+        filters
     };
 }
 
 export function setNetwork(network: string): SetNetwork {
     return {
         type: constants.SET_NETWORK,
-        network: network
+        network
     };
 }

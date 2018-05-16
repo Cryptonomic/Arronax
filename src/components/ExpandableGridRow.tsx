@@ -39,16 +39,16 @@ export class ExpandableGridRow extends React.Component<ExpandableGridRowProps, E
     public render() {
         if (!this.state.isExpanded) {
             return (
-                <tr key={'row' + this.props.rowNumber}>
+                <tr key={`row+${this.props.rowNumber}`}>
                     <td><button onClick={this.handleOnClick}>+</button></td>
                     {Object.keys(this.props.data).map((value, index) =>
-                        <td key={'row' + this.props.rowNumber + ':: col' + index}>{this.props.data[value]}</td>
+                        <td key={`row+${this.props.rowNumber}::col${index}`}>{this.props.data[value]}</td>
                     )}
                 </tr>
             );
         } else {
             return (
-                <tr key={'row' + this.props.rowNumber}>
+                <tr key={`row+${this.props.rowNumber}`}>
                     <td><button onClick={this.handleOnClick}>-</button></td>
                     <td>
                         <TezosDataView

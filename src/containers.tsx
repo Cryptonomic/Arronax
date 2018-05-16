@@ -5,7 +5,11 @@ import * as actions from './actions';
 import { ConseilFilter } from './Conseil';
 
 export function mapStateToProps(state: ArronaxState) {
-    return {'state': state};
+    return {
+        'filters': state.filters,
+        'dataView': state.dataView,
+        'network': state.network
+    };
 }
 
 export function mapDispatchToProps(dispatch: Dispatch<actions.ArronaxAction>) {
