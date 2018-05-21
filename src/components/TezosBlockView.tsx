@@ -29,7 +29,7 @@ export class TezosBlockView extends React.Component<TezosBlockProps, TezosBlockS
     }
 
     public render() {
-        if (this.state.data === {}) {
+        if (Object.keys(this.state.data).length === 0) {
             return (
                 <p>Fetching Tezos block..</p>
             );

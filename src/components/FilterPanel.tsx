@@ -61,7 +61,7 @@ export class FilterPanel extends React.Component<FilterPanelProps, ConseilFilter
     }
 
     handleLimit(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({'limit': Number(event.target.value)});
+        this.setState({limit: Number(event.target.value)});
     }
 
     handleSubmit(event: React.MouseEvent<HTMLButtonElement>) {

@@ -15,7 +15,7 @@ export interface ConseilFilter {
 
 function queryNautilus(network: string, command: string, payload: string): Promise<string> {
     return new Promise((resolve, reject) => {
-        let url = `https://localhost:1337/tezos/${network}/${command}`;
+        let url = `https://conseil.cryptonomic.tech:1337/tezos/${network}/${command}`;
         const xmlHttp = new XMLHttpRequest();
         xmlHttp.open('GET', url, true);
         xmlHttp.setRequestHeader('apiKey', 'hooman');

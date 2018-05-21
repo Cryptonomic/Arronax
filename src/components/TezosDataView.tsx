@@ -22,18 +22,23 @@ export class TezosDataView extends React.Component<TezosDataProps, TezosDataStat
     }
 
     public render() {
-        if (this.props.dataView === DataView.Blocks) {
-            return(
-                <TezosBlockView id={this.props.id} network={this.props.network}/>
-            );
-        } else if (this.props.dataView === DataView.Accounts) {
-            return(
-                <TezosAccountView id={this.props.id} network={this.props.network}/>
-            );
-        } else {
-            return(
-                <TezosOperationView id={this.props.id} network={this.props.network} />
-            );
+        switch (this.props.dataView) {
+            case (DataView.Blocks):
+                return(
+                    <TezosBlockView id={this.props.id} network={this.props.network}/>
+                );
+            case (DataView.Accounts):
+                return(
+                    <TezosAccountView id={this.props.id} network={this.props.network}/>
+                );
+            case (DataView.Operations):
+                return(
+                    <TezosOperationView id={this.props.id} network={this.props.network} />
+                );
+            default:
+                return(
+                    <p>Invalid view!</p>
+                );
         }
     }
 }

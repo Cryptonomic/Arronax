@@ -20,8 +20,8 @@ export class TezosOperationView extends React.Component<TezosOperationProps, Tez
     }
 
     refreshData(props: TezosOperationProps) {
-        getOperation(this.props.network, this.props.id).
-        then(value => this.setState({data: JSON.parse(decodeURI(value))}));
+        getOperation(this.props.network, this.props.id)
+            .then(value => this.setState({data: JSON.parse(decodeURI(value))}));
     }
 
     componentWillReceiveProps(nextProps: TezosOperationProps) {
