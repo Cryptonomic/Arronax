@@ -24,39 +24,39 @@ export class FilterPanel extends React.Component<FilterPanelProps, ConseilFilter
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleBlockIDs(event: React.ChangeEvent<HTMLInputElement>) {
+    handleBlockIDs(event: React.ChangeEvent<HTMLTextAreaElement>) {
         this.setState({'block_id': event.target.value.split(',')});
     }
 
-    handleLevels(event: React.ChangeEvent<HTMLInputElement>) {
+    handleLevels(event: React.ChangeEvent<HTMLTextAreaElement>) {
         this.setState({'block_level': event.target.value.split(',').map(Number)});
     }
 
-    handleNetIDs(event: React.ChangeEvent<HTMLInputElement>) {
+    handleNetIDs(event: React.ChangeEvent<HTMLTextAreaElement>) {
         this.setState({'block_netid': event.target.value.split(',')});
     }
 
-    handleProtocols(event: React.ChangeEvent<HTMLInputElement>) {
+    handleProtocols(event: React.ChangeEvent<HTMLTextAreaElement>) {
         this.setState({'block_protocol': event.target.value.split(',')});
     }
 
-    handleOperationIDs(event: React.ChangeEvent<HTMLInputElement>) {
+    handleOperationIDs(event: React.ChangeEvent<HTMLTextAreaElement>) {
         this.setState({'operation_id': event.target.value.split(',')});
     }
 
-    handleOperationSources(event: React.ChangeEvent<HTMLInputElement>) {
+    handleOperationSources(event: React.ChangeEvent<HTMLTextAreaElement>) {
         this.setState({'operation_source': event.target.value.split(',')});
     }
 
-    handleAccountIDs(event: React.ChangeEvent<HTMLInputElement>) {
+    handleAccountIDs(event: React.ChangeEvent<HTMLTextAreaElement>) {
         this.setState({'account_id': event.target.value.split(',')});
     }
 
-    handleAccountManagers(event: React.ChangeEvent<HTMLInputElement>) {
+    handleAccountManagers(event: React.ChangeEvent<HTMLTextAreaElement>) {
         this.setState({'account_manager': event.target.value.split(',')});
     }
 
-    handleAccountDelegates(event: React.ChangeEvent<HTMLInputElement>) {
+    handleAccountDelegates(event: React.ChangeEvent<HTMLTextAreaElement>) {
         this.setState({'account_delegate': event.target.value.split(',')});
     }
 
@@ -71,77 +71,100 @@ export class FilterPanel extends React.Component<FilterPanelProps, ConseilFilter
     public render() {
         return (
             <div id="filtergroup">
-                Blocks IDs: <br/>
-                <input
-                    type="text"
-                    id="blocksIDs"
-                    value={this.state.block_id.toString()}
-                    onChange={this.handleBlockIDs}
-                /> <br/>
-                Block Levels: <br/>
-                <input
-                    type="text"
-                    id="levels"
-                    value={this.state.block_level.toString()}
-                    onChange={this.handleLevels}
-                /> <br/>
-                Net IDs: <br/>
-                <input
-                    type="text"
-                    id="netIDs"
-                    value={this.state.block_netid.toString()}
-                    onChange={this.handleNetIDs}
-                /> <br/>
-                Protocols: <br/>
-                <input
-                    type="text"
-                    id="protocols"
-                    value={this.state.block_protocol.toString()}
-                    onChange={this.handleProtocols}
-                /> <br/>
-                Operation IDs: <br/>
-                <input
-                    type="text"
-                    id="operationIDs"
-                    value={this.state.operation_id.toString()}
-                    onChange={this.handleOperationIDs}
-                /> <br/>
-                Operation Sources: <br/>
-                <input
-                    type="text"
-                    id="operationSources"
-                    value={this.state.operation_source.toString()}
-                    onChange={this.handleOperationSources}
-                /> <br/>
-                Account IDs: <br/>
-                <input
-                    type="text"
-                    id="accounts"
-                    value={this.state.account_id.toString()}
-                    onChange={this.handleAccountIDs}
-                /> <br/>
-                Account Managers: <br/>
-                <input
-                    type="text"
-                    id="blocks"
-                    value={this.state.account_manager.toString()}
-                    onChange={this.handleAccountManagers}
-                /> <br/>
-                Account Delegates: <br/>
-                <input
-                    type="text"
-                    id="accountDelegates"
-                    value={this.state.account_delegate.toString()}
-                    onChange={this.handleAccountDelegates}
-                /> <br/>
-                Limit: <br/>
-                <input
-                    type="text"
-                    id="limit"
-                    value={this.state.limit.toString()}
-                    onChange={this.handleLimit}
-                /> <br/>
-                <button onClick={this.handleSubmit}>Refresh</button>
+                <div className="filter">
+                    <div>Blocks IDs:</div>
+                    <textarea
+                        className="filter"
+                        id="blocksIDs"
+                        value={this.state.block_id.toString()}
+                        onChange={this.handleBlockIDs}
+                    />
+                </div>
+                <div className="filter">
+                    <div>Block Levels:</div>
+                    <textarea
+                        className="filter"
+                        id="levels"
+                        value={this.state.block_level.toString()}
+                        onChange={this.handleLevels}
+                    />
+                </div>
+                <div className="filter">
+                    <div>Net IDs:</div>
+                    <textarea
+                        className="filter"
+                        id="netIDs"
+                        value={this.state.block_netid.toString()}
+                        onChange={this.handleNetIDs}
+                    />
+                </div>
+                <div className="filter">
+                    <div>Protocols:</div>
+                    <textarea
+                        className="filter"
+                        id="protocols"
+                        value={this.state.block_protocol.toString()}
+                        onChange={this.handleProtocols}
+                    />
+                </div>
+                <div className="filter">
+                    <div>Operation IDs:</div>
+                    <textarea
+                        className="filter"
+                        id="operationIDs"
+                        value={this.state.operation_id.toString()}
+                        onChange={this.handleOperationIDs}
+                    />
+                </div>
+                <div className="filter">
+                    <div>Operation Sources:</div>
+                    <textarea
+                        className="filter"
+                        id="operationSources"
+                        value={this.state.operation_source.toString()}
+                        onChange={this.handleOperationSources}
+                    />
+                </div>
+                <div className="filter">
+                    <div>Account IDs:</div>
+                    <textarea
+                        className="filter"
+                        id="accounts"
+                        value={this.state.account_id.toString()}
+                        onChange={this.handleAccountIDs}
+                    />
+                </div>
+                <div className="filter">
+                    <div>Account Managers:</div>
+                    <textarea
+                        className="filter"
+                        id="blocks"
+                        value={this.state.account_manager.toString()}
+                        onChange={this.handleAccountManagers}
+                    />
+                </div>
+                <div className="filter">
+                    <div>Account Delegates:</div>
+                    <textarea
+                        className="filter"
+                        id="accountDelegates"
+                        value={this.state.account_delegate.toString()}
+                        onChange={this.handleAccountDelegates}
+                    />
+                </div>
+                <div className="filter">
+                    <div>Limit:</div>
+                    <input
+                        type="text"
+                        className="filter"
+                        id="limit"
+                        value={this.state.limit.toString()}
+                        onChange={this.handleLimit}
+                    />
+                </div>
+                <div>
+                    <button onClick={this.handleSubmit}>Refresh</button>
+                </div>
             </div>
         );
     }

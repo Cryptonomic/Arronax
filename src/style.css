@@ -10,3 +10,12 @@
     overflow-x: scroll;
     width: 80%;
 }
+
+textarea.filter {
+    width: 80%;
+    height: 3em;
+}
+
+input.filter {
+    width: 80%;
+}
