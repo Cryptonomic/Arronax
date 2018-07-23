@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { ConseilFilter } from '../Conseil';
+import { TezosFilter } from 'conseiljs';
 import { DataView } from '../types';
 import { FilterPanel } from './FilterPanel';
 import { DataPanel } from './DataPanel';
 import { NetworkSelector } from './NetworkSelector';
 
 export interface ArronaxProps {
-    filters: ConseilFilter;
+    filters: TezosFilter;
     dataView: DataView;
     network: string;
     switchTab:  (dataView: DataView) => void;
-    setFilter:  (filters: ConseilFilter) => void;
+    setFilter:  (filters: TezosFilter) => void;
     setNetwork: (network: string) => void;
 }
 

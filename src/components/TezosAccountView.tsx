@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { getAccount } from '../Conseil';
+import { TezosConseilQuery } from 'conseiljs';
+import { mainUrl } from '../constants';
 
 interface TezosAccountProps {
     network: string;
@@ -19,9 +20,10 @@ export class TezosAccountView extends React.Component<TezosAccountProps, TezosAc
         this.refreshData(props);
     }
 
-    refreshData(props: TezosAccountProps) {
-        getAccount(this.props.network, this.props.id).
-        then(value => this.setState({data: JSON.parse(decodeURI(value))}));
+    async refreshData(props: TezosAccountProps) {
+        const url = `${mainUrl}${this.props.network}`;
+        const result = await TezosConseilQuery.getAccount(url, this.props.id, 'hooman');
+        this.setState({data: result});
     }
 
     componentWillReceiveProps(nextProps: TezosAccountProps) {

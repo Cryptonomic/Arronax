@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { ConseilFilter } from '../Conseil';
+import { TezosFilter } from 'conseiljs';
 import '../style.css';
 
 interface FilterPanelProps {
-    filters: ConseilFilter;
-    setFilter:  (filters: ConseilFilter) => void;
+    filters: TezosFilter;
+    setFilter:  (filters: TezosFilter) => void;
 }
 
-export class FilterPanel extends React.Component<FilterPanelProps, ConseilFilter> {
+export class FilterPanel extends React.Component<FilterPanelProps, TezosFilter> {
 
     constructor(props: FilterPanelProps) {
         super(props);

@@ -25,6 +25,7 @@
     "@types/react": "^16.0.40",
     "@types/react-dom": "^16.0.4",
     "@types/react-redux": "^5.0.15",
+    "conseiljs": "^0.1.25",
     "querystring": "^0.2.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",

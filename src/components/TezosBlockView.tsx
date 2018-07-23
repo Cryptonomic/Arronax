@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { getBlock } from '../Conseil';
+import { TezosConseilQuery } from 'conseiljs';
+import { mainUrl } from '../constants';
 
 interface TezosBlockProps {
     network: string;
@@ -19,9 +20,10 @@ export class TezosBlockView extends React.Component<TezosBlockProps, TezosBlockS
         this.refreshData(props);
     }
 
-    refreshData(props: TezosBlockProps) {
-        getBlock(this.props.network, this.props.id).
-        then(value => this.setState({data: JSON.parse(decodeURI(value))}));
+    async refreshData(props: TezosBlockProps) {
+        const url = `${mainUrl}${this.props.network}`;
+        const result = TezosConseilQuery.getBlock(url, this.props.id, 'hooman');
+        this.setState({data: result});
     }
 
     componentWillReceiveProps(nextProps: TezosBlockProps) {

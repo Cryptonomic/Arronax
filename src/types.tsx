@@ -1,7 +1,7 @@
-import { ConseilFilter } from './Conseil';
+import { TezosFilter } from 'conseiljs';
 
 export interface ArronaxState {
-    filters: ConseilFilter;
+    filters: TezosFilter;
     dataView: DataView;
     network: string;
 }

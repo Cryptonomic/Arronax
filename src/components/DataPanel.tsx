@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { DataView } from '../types';
-import { ConseilFilter } from '../Conseil';
+import { TezosFilter } from 'conseiljs';
 import { Tab } from './Tab';
 import '../style.css';
 
 interface DataPanelProps {
-    filters: ConseilFilter;
+    filters: TezosFilter;
     dataView: DataView;
     network: string;
     switchTab:  (dataView: DataView) => void;
