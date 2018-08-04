@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TezosConseilQuery, TezosFilter } from 'conseiljs';
 import { DataView } from '../types';
 import { ExpandableGrid } from './ExpandableGrid';
-import { mainUrl } from '../constants';
+import config from '../config';
 
 interface TabProps {
     dataView: DataView;
@@ -28,8 +28,8 @@ export class Tab extends React.Component<TabProps, TabState> {
         if (!nextProps.hidden) {
             const { getAccounts, getOperations, getBlocks } = TezosConseilQuery;
             let results;
-            const apiKey = 'hooman';
-            const url = `${mainUrl}${this.props.network}`;
+            const apiKey = config.key;
+            const url = `${config.url}${this.props.network}`;
             if (this.props.dataView === DataView.Operations) {
                 results = await getOperations(url, nextProps.filters, apiKey);
             } else if (this.props.dataView === DataView.Accounts) {
