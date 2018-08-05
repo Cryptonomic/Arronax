@@ -22,7 +22,7 @@ export class TezosBlockView extends React.Component<TezosBlockProps, TezosBlockS
 
     async refreshData(props: TezosBlockProps) {
         const url = `${config.url}${this.props.network}`;
-        const result = TezosConseilQuery.getBlock(url, this.props.id, config.key);
+        const result = await TezosConseilQuery.getBlock(url, this.props.id, config.key);
         this.setState({data: result});
     }
 

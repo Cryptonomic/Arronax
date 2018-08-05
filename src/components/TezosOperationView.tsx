@@ -22,7 +22,7 @@ export class TezosOperationView extends React.Component<TezosOperationProps, Tez
 
     async refreshData(props: TezosOperationProps) {
         const url = `${config.url}${this.props.network}`;
-        const result = TezosConseilQuery.getOperationGroup(url, this.props.id, config.key);
+        const result = await TezosConseilQuery.getOperationGroup(url, this.props.id, config.key);
         this.setState({data: result});
     }
 

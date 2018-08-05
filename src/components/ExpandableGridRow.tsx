@@ -29,8 +29,11 @@ export class ExpandableGridRow extends React.Component<ExpandableGridRowProps, E
     inferID(data: object, dataView: DataView) {
         const hash = 'hash';
         const accountId = 'accountId';
-        if (dataView === DataView.Blocks || dataView === DataView.Operations) {
+        const groupHash = 'operationGroupHash';
+        if (dataView === DataView.Blocks) {
             return data[hash];
+        } else if (dataView === DataView.Operations) {
+            return data[groupHash];
         } else if (dataView === DataView.Accounts) {
             return data[accountId];
         }
