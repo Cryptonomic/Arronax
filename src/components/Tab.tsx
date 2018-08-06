@@ -1,13 +1,13 @@
 import * as React from 'react';
-import * as Conseil from '../Conseil';
-import { ConseilFilter } from '../Conseil';
+import { TezosConseilQuery, TezosFilter } from 'conseiljs';
 import { DataView } from '../types';
 import { ExpandableGrid } from './ExpandableGrid';
+import config from '../config';
 
 interface TabProps {
     dataView: DataView;
     hidden: boolean;
-    filters: ConseilFilter;
+    filters: TezosFilter;
     network: string;
 }
 
@@ -24,13 +24,20 @@ export class Tab extends React.Component<TabProps, TabState> {
         this.refreshData(props);
     }
 
-    refreshData(nextProps: TabProps) {
+    async refreshData(nextProps: TabProps) {
         if (!nextProps.hidden) {
-            let funcToCall = Conseil.getBlocks;
-            if (this.props.dataView === DataView.Operations) {funcToCall = Conseil.getOperations; }
-            if (this.props.dataView === DataView.Accounts) {funcToCall = Conseil.getAccounts; }
-            funcToCall.apply(null, [this.props.network, nextProps.filters]).
-            then((val) => this.setState({data: JSON.parse(decodeURI(val))}));
+            const { getAccounts, getOperations, getBlocks } = TezosConseilQuery;
+            let results;
+            const apiKey = config.key;
+            const url = `${config.url}${this.props.network}`;
+            if (this.props.dataView === DataView.Operations) {
+                results = await getOperations(url, nextProps.filters, apiKey);
+            } else if (this.props.dataView === DataView.Accounts) {
+                results = await getAccounts(url, nextProps.filters, apiKey);
+            } else {
+                results = await getBlocks(url, nextProps.filters, apiKey);
+            }
+            this.setState({data: results});
         }
     }
 

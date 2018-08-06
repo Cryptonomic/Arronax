@@ -5,20 +5,12 @@ import { createStore } from 'redux';
 import { ArronaxState, DataView } from './types';
 import { Provider } from 'react-redux';
 import Arronax from './containers';
+import { TezosConseilQuery } from 'conseiljs';
+
+const emptyFilters = TezosConseilQuery.getEmptyTezosFilter();
 
 const store = createStore<ArronaxState>(applyArronaxAction, {
-    filters: {
-        block_id: ['BKicZSTXo4dtHiJcnbAQqJQVwfk2K1xn2MV4zhamXaTGs6xxfGi'],
-        block_level: new Array(),
-        block_netid: new Array(),
-        block_protocol: new Array(),
-        operation_id: new Array(),
-        operation_source: new Array(),
-        account_id: new Array(),
-        account_manager: new Array(),
-        account_delegate: new Array(),
-        limit: 100
-    },
+    filters: emptyFilters,
     dataView: DataView.Blocks,
     network: 'zeronet'
 });

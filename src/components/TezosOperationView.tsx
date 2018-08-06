@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { getOperation } from '../Conseil';
+import { TezosConseilQuery } from 'conseiljs';
+import config from '../config';
 
 interface TezosOperationProps {
     network: string;
@@ -19,9 +20,10 @@ export class TezosOperationView extends React.Component<TezosOperationProps, Tez
         this.refreshData(props);
     }
 
-    refreshData(props: TezosOperationProps) {
-        getOperation(this.props.network, this.props.id)
-            .then(value => this.setState({data: JSON.parse(decodeURI(value))}));
+    async refreshData(props: TezosOperationProps) {
+        const url = `${config.url}${this.props.network}`;
+        const result = await TezosConseilQuery.getOperationGroup(url, this.props.id, config.key);
+        this.setState({data: result});
     }
 
     componentWillReceiveProps(nextProps: TezosOperationProps) {
