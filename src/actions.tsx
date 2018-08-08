@@ -1,6 +1,6 @@
 import * as constants from './constants';
 import { DataView } from './types';
-import { ConseilFilter } from './Conseil';
+import { TezosFilter } from 'conseiljs';
 
 export interface SwitchTab {
     type: constants.SWITCH_TAB;
@@ -9,7 +9,7 @@ export interface SwitchTab {
 
 export interface SetFilter {
     type: constants.SET_FILTER;
-    filters: ConseilFilter;
+    filters: TezosFilter;
 }
 
 export interface SetNetwork {
@@ -26,7 +26,7 @@ export function switchTab(dataView: DataView): SwitchTab {
     };
 }
 
-export function setFilter(filters: ConseilFilter): SetFilter {
+export function setFilter(filters: TezosFilter): SetFilter {
     return {
         type: constants.SET_FILTER,
         filters
