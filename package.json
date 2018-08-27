@@ -10,6 +10,11 @@
     "test": "react-scripts-ts test --env=jsdom",
     "lint": "tslint -c tslint.json --format stylish -p ."
   },
+  "lint-staged": {
+    "*.{ts, tsx}": [
+      "tslint -c tslint.json --format stylish -p"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Cryptonomic/Arronax.git"
@@ -39,6 +44,7 @@
     "@types/react-redux": "^6.0.6",
     "@types/redux": "^3.6.31",
     "awesome-typescript-loader": "^5.2.0",
+    "husky": "^0.14.3",
     "prettier": "^1.14.2",
     "react-scripts-ts": "2.17.0",
     "source-map-loader": "^0.2.4",
