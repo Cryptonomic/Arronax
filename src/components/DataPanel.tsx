@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DataView } from '../types';
 import { TezosFilter } from 'conseiljs';
-import { Tab } from './Tab';
+import Tab from './Tab';
 import '../style.css';
 
 interface DataPanelProps {

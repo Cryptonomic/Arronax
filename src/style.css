@@ -19,3 +19,8 @@ textarea.filter {
 input.filter {
     width: 80%;
 }
+
+#message-id {
+    width: 100%;
+    text-align: center;
+}

@@ -6,3 +6,6 @@ export type SET_FILTER = typeof SET_FILTER;
 
 export const SET_NETWORK = 'SET_NETWORK';
 export type SET_NETWORK = typeof SET_NETWORK;
+
+export const SET_ERROR = 'SET_ERROR';
+export type SET_ERROR = typeof SET_ERROR;

@@ -12,7 +12,8 @@ const emptyFilters = TezosConseilQuery.getEmptyTezosFilter();
 const store = createStore<ArronaxState>(applyArronaxAction, {
     filters: emptyFilters,
     dataView: DataView.Blocks,
-    network: 'zeronet'
+    network: 'zeronet',
+    error: ''
 });
 
 ReactDOM.render(

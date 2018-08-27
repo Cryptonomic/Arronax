@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { TezosConseilQuery } from 'conseiljs';
 import config from '../config';
+import * as actions from '../actions';
 
 interface TezosBlockProps {
     network: string;
     id: string;
+    setError:  (error: string) => actions.SetError;
 }
 
 interface TezosBlockState {
@@ -22,7 +24,13 @@ export class TezosBlockView extends React.Component<TezosBlockProps, TezosBlockS
 
     async refreshData(props: TezosBlockProps) {
         const url = `${config.url}${this.props.network}`;
-        const result = await TezosConseilQuery.getBlock(url, this.props.id, config.key);
+        const result = await TezosConseilQuery.getBlock(url, this.props.id, config.key)
+        .catch( (error) => {
+            console.log('-debug: Error in: getBlock:');
+            console.error(error);
+            props.setError(error.message);
+            return {};
+        });
         this.setState({data: result});
     }
 

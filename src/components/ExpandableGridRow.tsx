@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DataView } from '../types';
-import { TezosDataView } from './TezosDataView';
+import TezosDataView from './TezosDataView';
 
 interface ExpandableGridRowProps {
     dataView: DataView;

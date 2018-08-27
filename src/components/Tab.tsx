@@ -1,21 +1,24 @@
 import * as React from 'react';
 import { TezosConseilQuery, TezosFilter } from 'conseiljs';
+import { connect, Dispatch } from 'react-redux';
 import { DataView } from '../types';
 import { ExpandableGrid } from './ExpandableGrid';
 import config from '../config';
+import * as actions from '../actions';
 
 interface TabProps {
     dataView: DataView;
     hidden: boolean;
     filters: TezosFilter;
     network: string;
+    setError:  (error: string) => actions.SetError;
 }
 
 interface TabState {
     data: Object[];
 }
 
-export class Tab extends React.Component<TabProps, TabState> {
+class Tab extends React.Component<TabProps, TabState> {
 
     constructor(props: TabProps) {
         super(props);
@@ -31,13 +34,32 @@ export class Tab extends React.Component<TabProps, TabState> {
             const apiKey = config.key;
             const url = `${config.url}${this.props.network}`;
             if (this.props.dataView === DataView.Operations) {
-                results = await getOperations(url, nextProps.filters, apiKey);
+                results = await getOperations(url, nextProps.filters, apiKey)
+                .catch( (error) => {
+                    console.log('-debug: Error in: getOperations:');
+                    console.error(error);
+                    nextProps.setError(error.message);
+                    return [];
+                });
             } else if (this.props.dataView === DataView.Accounts) {
-                results = await getAccounts(url, nextProps.filters, apiKey);
+                results = await getAccounts(url, nextProps.filters, apiKey)
+                .catch( (error) => {
+                    console.log('-debug: Error in: status.getAccounts:');
+                    console.error(error);
+                    nextProps.setError(error.message);
+                    return [];
+                });
             } else {
-                results = await getBlocks(url, nextProps.filters, apiKey);
+                results = await getBlocks(url, nextProps.filters, apiKey)
+                .catch( (error) => {
+                    console.log('-debug: Error in: getBlocks:');
+                    console.error(error);
+                    nextProps.setError(error.message);
+                    return [];
+                });
             }
             this.setState({data: results});
+            
         }
     }
 
@@ -57,3 +79,11 @@ export class Tab extends React.Component<TabProps, TabState> {
         );
     }
 }
+
+function mapDispatchToProps(dispatch: Dispatch<actions.ArronaxAction>) {
+    return {
+        setError:  (error: string) => dispatch(actions.setError(error)),
+    };
+}
+
+export default connect(mapDispatchToProps)(Tab);

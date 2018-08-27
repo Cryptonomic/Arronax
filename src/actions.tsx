@@ -16,8 +16,12 @@ export interface SetNetwork {
     type: constants.SET_NETWORK;
     network: string;
 }
+export interface SetError {
+    type: constants.SET_ERROR;
+    error: string;
+}
 
-export type ArronaxAction = SwitchTab | SetFilter | SetNetwork;
+export type ArronaxAction = SwitchTab | SetFilter | SetNetwork | SetError;
 
 export function switchTab(dataView: DataView): SwitchTab {
     return {
@@ -37,5 +41,12 @@ export function setNetwork(network: string): SetNetwork {
     return {
         type: constants.SET_NETWORK,
         network
+    };
+}
+
+export function setError(error: string): SetError {
+    return {
+        type: constants.SET_ERROR,
+        error
     };
 }

@@ -4,6 +4,7 @@ export interface ArronaxState {
     filters: TezosFilter;
     dataView: DataView;
     network: string;
+    error: string;
 }
 
 export enum DataView {Blocks, Accounts, Operations}
