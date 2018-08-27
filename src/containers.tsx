@@ -1,5 +1,6 @@
 import { Arronax } from './components/Arronax';
-import { connect, Dispatch } from 'react-redux';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { ArronaxState, DataView } from './types';
 import * as actions from './actions';
 import { TezosFilter } from 'conseiljs';
