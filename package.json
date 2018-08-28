@@ -26,14 +26,18 @@
   "homepage": "https://github.com/Cryptonomic/Arronax#readme",
   "dependencies": {
     "conseiljs": "^0.1.25",
+    "invariant": "^2.2.4",
+    "lodash": "^4.17.10",
     "querystring": "^0.2.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-redux": "^5.0.7",
     "redux": "4.0.0",
-    "ts-react-json-table": "^0.1.1"
+    "ts-react-json-table": "^0.1.1",
+    "typescript": "3.0.1"
   },
   "devDependencies": {
+    "@types/prop-types": "^15.5.5",
     "@types/react": "^16.4.12",
     "@types/react-dom": "^16.0.7",
     "@types/react-redux": "^6.0.6",
