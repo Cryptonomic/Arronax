@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { DataView } from '../types';
-import { TezosBlockView } from './TezosBlockView';
-import { TezosAccountView } from './TezosAccountView';
-import { TezosOperationView } from './TezosOperationView';
+import TezosConseilView from './TezosConseilView';
 
 interface TezosDataProps {
     dataView: DataView;
@@ -10,35 +8,25 @@ interface TezosDataProps {
     id: string;
 }
 
-interface TezosDataState {
-
-}
-
-export class TezosDataView extends React.Component<TezosDataProps, TezosDataState> {
-
-    constructor(props: TezosDataProps) {
-        super(props);
-        this.state = {};
+const TezosDataView = (props: TezosDataProps) => {
+    const { dataView, id, network } = props;
+    let type = '';
+    switch (dataView) {
+        case (DataView.Blocks):
+            type = 'block';
+            break;
+        case (DataView.Accounts):
+            type = 'account';
+            break;
+        case (DataView.Operations):
+            type = 'operation';
+            break;
+        default:
+            return(
+                <p>Invalid view!</p>
+            );
     }
+    return (<TezosConseilView type={type} id={id} network={network} />);
+};
 
-    public render() {
-        switch (this.props.dataView) {
-            case (DataView.Blocks):
-                return(
-                    <TezosBlockView id={this.props.id} network={this.props.network}/>
-                );
-            case (DataView.Accounts):
-                return(
-                    <TezosAccountView id={this.props.id} network={this.props.network}/>
-                );
-            case (DataView.Operations):
-                return(
-                    <TezosOperationView id={this.props.id} network={this.props.network} />
-                );
-            default:
-                return(
-                    <p>Invalid view!</p>
-                );
-        }
-    }
-}
+export default TezosDataView;

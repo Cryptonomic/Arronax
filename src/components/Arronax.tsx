@@ -3,7 +3,7 @@ import { TezosFilter } from 'conseiljs';
 import { DataView } from '../types';
 import { FilterPanel } from './FilterPanel';
 import { DataPanel } from './DataPanel';
-import { NetworkSelector } from './NetworkSelector';
+import NetworkSelector from './NetworkSelector';
 
 export interface ArronaxProps {
     filters: TezosFilter;

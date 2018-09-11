@@ -41,8 +41,10 @@ export class Tab extends React.Component<TabProps, TabState> {
         }
     }
 
-    componentWillReceiveProps(nextProps: TabProps) {
-        this.refreshData(nextProps);
+    componentDidUpdate(prevProps: TabProps, prevState: TabState) {
+        if (prevProps.network !== this.props.network) {
+            this.refreshData(this.props);
+        }
     }
 
     public render() {
