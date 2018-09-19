@@ -4,7 +4,7 @@ import { ArronaxAction } from './actions';
 import { ArronaxImmutableState, DataView } from './types';
 import { SET_FILTER, SWITCH_TAB, SET_NETWORK } from './constants';
 
-const emptyFilters = TezosConseilQuery.getEmptyTezosFilter();
+const emptyFilters: TezosFilter = TezosConseilQuery.getEmptyTezosFilter();
 
 const initialState = fromJS({
   filters: emptyFilters,
