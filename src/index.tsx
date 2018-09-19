@@ -5,15 +5,8 @@ import { createStore } from 'redux';
 import { ArronaxState, DataView } from './types';
 import { Provider } from 'react-redux';
 import Arronax from './containers';
-import { TezosConseilQuery } from 'conseiljs';
 
-const emptyFilters = TezosConseilQuery.getEmptyTezosFilter();
-
-const store = createStore<ArronaxState>(applyArronaxAction, {
-    filters: emptyFilters,
-    dataView: DataView.Blocks,
-    network: 'zeronet'
-});
+const store = createStore(applyArronaxAction);
 
 ReactDOM.render(
     <Provider store={store}>
