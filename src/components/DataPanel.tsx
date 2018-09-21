@@ -21,20 +21,7 @@ export const DataPanel = (props: DataPanelProps) => {
             </div>
             <div id="data_content">
                 <Tab
-                    dataView={DataView.Blocks}
-                    hidden={props.dataView !== DataView.Blocks}
-                    filters={props.filters}
-                    network={props.network}
-                />
-                <Tab
-                    dataView={DataView.Operations}
-                    hidden={props.dataView !== DataView.Operations}
-                    filters={props.filters}
-                    network={props.network}
-                />
-                <Tab
-                    dataView={DataView.Accounts}
-                    hidden={props.dataView !== DataView.Accounts}
+                    dataView={props.dataView}
                     filters={props.filters}
                     network={props.network}
                 />

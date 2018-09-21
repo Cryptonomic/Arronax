@@ -22,7 +22,7 @@ export default class TezosConseilView extends React.Component<TezosConseilProps,
     }
 
     async refreshData(props: TezosConseilProps) {
-        const { type, id, network } = this.props;
+        const { type, id, network } = props;
         const url = `${config.url}${network}`;        
         let result;
         switch (type) {
