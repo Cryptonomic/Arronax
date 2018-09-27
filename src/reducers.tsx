@@ -1,20 +1,20 @@
 import { ArronaxAction } from './actions';
 import { ArronaxState, DataView } from './types';
 import { SET_FILTER, SWITCH_TAB, SET_NETWORK } from './constants';
-import { TezosConseilQuery } from 'conseiljs';
+import { TezosConseilQuery, TezosFilter } from 'conseiljs';
 
-const emptyFilters = TezosConseilQuery.getEmptyTezosFilter();
+const emptyFilters: TezosFilter = TezosConseilQuery.getEmptyTezosFilter();
 
-const initialState = {
+const initialState: ArronaxState = {
   filters: emptyFilters,
   dataView: DataView.Blocks,
   network: 'zeronet'
 };
 
-export default function applyArronaxAction(
+export default (
   state: ArronaxState = initialState,
   action: ArronaxAction
-): ArronaxState {
+): ArronaxState => {
   switch (action.type) {
     case SET_FILTER:
       return { ...state, filters: action.filters };
@@ -25,4 +25,4 @@ export default function applyArronaxAction(
     default:
       return state;
   }
-}
+};
