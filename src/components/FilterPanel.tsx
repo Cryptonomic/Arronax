@@ -12,19 +12,9 @@ export class FilterPanel extends React.Component<FilterPanelProps, TezosFilter> 
     constructor(props: FilterPanelProps) {
         super(props);
         this.state = props.filters;
-        this.handleBlockIDs = this.handleBlockIDs.bind(this);
-        this.handleLevels = this.handleLevels.bind(this);
-        this.handleNetIDs = this.handleNetIDs.bind(this);
-        this.handleProtocols = this.handleProtocols.bind(this);
-        this.handleOperationIDs = this.handleOperationIDs.bind(this);
-        this.handleAccountIDs = this.handleAccountIDs.bind(this);
-        this.handleAccountManagers = this.handleAccountManagers.bind(this);
-        this.handleAccountDelegates = this.handleAccountDelegates.bind(this);
-        this.handleLimit = this.handleLimit.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleBlockIDs(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    handleBlockIDs = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({'block_id': event.target.value.split(',')});
     }
 
@@ -32,11 +22,11 @@ export class FilterPanel extends React.Component<FilterPanelProps, TezosFilter> 
         this.setState({'block_level': event.target.value.split(',').map(Number)});
     }
 
-    handleNetIDs(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    handleNetIDs = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({'block_netid': event.target.value.split(',')});
     }
 
-    handleProtocols(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    handleProtocols = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({'block_protocol': event.target.value.split(',')});
     }
 
@@ -44,27 +34,27 @@ export class FilterPanel extends React.Component<FilterPanelProps, TezosFilter> 
         this.setState({'operation_id': event.target.value.split(',')});
     }
 
-    handleOperationSources(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    handleOperationSources = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({'operation_source': event.target.value.split(',')});
     }
 
-    handleAccountIDs(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    handleAccountIDs = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({'account_id': event.target.value.split(',')});
     }
 
-    handleAccountManagers(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    handleAccountManagers = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({'account_manager': event.target.value.split(',')});
     }
 
-    handleAccountDelegates(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    handleAccountDelegates = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({'account_delegate': event.target.value.split(',')});
     }
 
-    handleLimit(event: React.ChangeEvent<HTMLInputElement>) {
+    handleLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({limit: Number(event.target.value)});
     }
 
-    handleSubmit(event: React.MouseEvent<HTMLButtonElement>) {
+    handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
         this.props.setFilter(this.state);
     }
 
