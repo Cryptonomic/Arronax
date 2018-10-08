@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { DataView } from '../types';
 import { TezosFilter } from 'conseiljs';
-import { Tab } from './Tab';
-/* tslint:disable no-import-side-effect */
-import '../style.css';
-/* tslint:enable */
+import { DataView } from 'types';
+import { Tab } from 'components/Tab';
+import 'style.css';
 
 interface DataPanelProps {
   filters: TezosFilter;

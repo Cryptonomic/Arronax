@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { TezosFilter } from 'conseiljs';
-/* tslint:disable no-import-side-effect */
-import '../style.css';
-/* tslint:enable */
+import 'style.css';
 
 interface FilterPanelProps {
   filters: TezosFilter;

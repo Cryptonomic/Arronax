@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { DataView } from '../types';
-import { ExpandableGridRow } from './ExpandableGridRow';
+import { DataView } from 'types';
+import { ExpandableGridRow } from 'components/ExpandableGridRow';
 
 interface ExpandableGridPops {
   dataView: DataView;

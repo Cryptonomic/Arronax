@@ -1,6 +1,6 @@
 import { TezosFilter } from 'conseiljs';
+import { DataView } from 'types';
 import * as constants from './constants';
-import { DataView } from './types';
 
 export interface SwitchTab {
   type: constants.SWITCH_TAB;

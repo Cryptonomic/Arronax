@@ -1,3 +1,4 @@
+import { Arronax } from 'components/Arronax';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';

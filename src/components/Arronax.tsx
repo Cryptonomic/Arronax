@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { TezosFilter } from 'conseiljs';
-import { DataView } from '../types';
-import { FilterPanel } from './FilterPanel';
-import { DataPanel } from './DataPanel';
-import { NetworkSelector } from './NetworkSelector';
+import { DataView } from 'types';
+import { FilterPanel } from 'components/FilterPanel';
+import { DataPanel } from 'components/DataPanel';
+import { NetworkSelector } from 'components/NetworkSelector';
 
 export interface ArronaxProps {
   filters: TezosFilter;
