@@ -17,6 +17,10 @@ export class FilterPanel extends React.Component<FilterPanelProps, TezosFilter> 
         this.handleNetIDs = this.handleNetIDs.bind(this);
         this.handleProtocols = this.handleProtocols.bind(this);
         this.handleOperationIDs = this.handleOperationIDs.bind(this);
+        this.handleOperationSources = this.handleOperationSources.bind(this);
+        this.handleOperationDestinations = this.handleOperationDestinations.bind(this);
+        this.handleOperationParticipants = this.handleOperationParticipants.bind(this);
+        this.handleOperationKinds = this.handleOperationKinds.bind(this);
         this.handleAccountIDs = this.handleAccountIDs.bind(this);
         this.handleAccountManagers = this.handleAccountManagers.bind(this);
         this.handleAccountDelegates = this.handleAccountDelegates.bind(this);
@@ -46,6 +50,18 @@ export class FilterPanel extends React.Component<FilterPanelProps, TezosFilter> 
 
     handleOperationSources(event: React.ChangeEvent<HTMLTextAreaElement>) {
         this.setState({'operation_source': event.target.value.split(',')});
+    }
+
+    handleOperationDestinations(event: React.ChangeEvent<HTMLTextAreaElement>) {
+        this.setState({'operation_destination': event.target.value.split(',')});
+    }
+
+    handleOperationParticipants(event: React.ChangeEvent<HTMLTextAreaElement>) {
+        this.setState({'operation_participant': event.target.value.split(',')});
+    }
+
+    handleOperationKinds(event: React.ChangeEvent<HTMLTextAreaElement>) {
+        this.setState({'operation_kind': event.target.value.split(',')});
     }
 
     handleAccountIDs(event: React.ChangeEvent<HTMLTextAreaElement>) {
