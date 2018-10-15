@@ -4,10 +4,12 @@
   "description": "A multi-chain block explorer.",
   "main": "index.js",
   "scripts": {
+    "build": "react-app-rewired build --scripts-version react-scripts-ts",
+    "eject": "react-scripts eject",
     "lint": "tslint -c tslint.json --format stylish -p .",
-    "start": "react-scripts-ts start",
-    "start:zeronet": "react-scripts-ts start && NODE_ENV=zeronet",
-    "start:betanet": "react-scripts-ts start && NODE_ENV=betanet",
+    "start": "react-app-rewired start --scripts-version react-scripts-ts",
+    "start:zeronet": "react-app-rewired start --scripts-version react-scripts-ts && NODE_ENV=zeronet",
+    "start:betanet": "react-app-rewired start --scripts-version react-scripts-ts && NODE_ENV=betanet",
     "tsc": "tsc -p ./ --noEmit",
     "tsc:watch": "tsc -p ./ --noEmit -w",
     "test": "jest",
@@ -29,7 +31,9 @@
   },
   "homepage": "https://github.com/Cryptonomic/Arronax#readme",
   "dependencies": {
+    "antd": "^3.10.1",
     "conseiljs": "^0.1.25",
+    "moment": "^2.22.2",
     "querystring": "^0.2.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
@@ -41,16 +45,19 @@
   "devDependencies": {
     "@types/enzyme": "^3.1.14",
     "@types/jest": "^23.3.7",
+    "@types/prop-types": "^15.5.6",
     "@types/react": "^16.4.12",
     "@types/react-dom": "^16.0.7",
     "@types/react-redux": "^6.0.6",
     "@types/redux": "^3.6.31",
     "awesome-typescript-loader": "^5.2.0",
+    "babel-plugin-import": "^1.9.1",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.6.0",
     "jest": "^23.6.0",
     "node-fetch": "^1.7.3",
     "prettier": "^1.14.2",
+    "react-app-rewired": "^1.6.2",
     "react-scripts-ts": "2.17.0",
     "source-map-loader": "^0.2.4",
     "ts-jest": "^23.10.4",
@@ -58,6 +65,6 @@
     "tslint-config-prettier": "^1.15.0",
     "tslint-plugin-prettier": "^1.3.0",
     "tslint-react": "^3.6.0",
-    "typescript": "3.0.1"
+    "typescript": "3.1.3"
   }
 }
