@@ -1,20 +1,27 @@
 import * as React from 'react';
+import styled from 'styled-components';
 import { TezosFilter } from 'conseiljs';
-import { DataView } from 'types';
-import { Tab } from 'components/Tab';
-import 'style.css';
+import { DataView } from '../types';
+import { Tab } from './Tab';
 
 interface DataPanelProps {
   filters: TezosFilter;
   dataView: DataView;
   network: string;
-  switchTab(dataView: DataView): void;
+  switchTab: (dataView: DataView) => void;
 }
 
-export const DataPanel = (props: DataPanelProps) =>
-  (
-    <div id="data">
-      <div id="data_tabs">
+const Wrapper = styled.div`
+  float: right;
+  font-size: xx-small;
+  overflow-x: scroll;
+  width: 80%;
+`;
+
+export const DataPanel = (props: DataPanelProps): JSX.Element => {
+  return (
+    <Wrapper>
+      <div>
         <button onClick={() => props.switchTab(DataView.Blocks)}>Blocks</button>
         <button onClick={() => props.switchTab(DataView.Operations)}>
           Operations
@@ -23,7 +30,7 @@ export const DataPanel = (props: DataPanelProps) =>
           Accounts
         </button>
       </div>
-      <div id="data_content">
+      <div>
         <Tab
           dataView={DataView.Blocks}
           hidden={props.dataView !== DataView.Blocks}
@@ -43,5 +50,6 @@ export const DataPanel = (props: DataPanelProps) =>
           network={props.network}
         />
       </div>
-    </div>
+    </Wrapper>
   );
+};
