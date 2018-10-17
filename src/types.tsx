@@ -3,7 +3,6 @@ import * as Immutable from 'immutable';
 
 export interface ArronaxState {
     filters: TezosFilter;
-    dataView: DataView;
     network: string;
 }
 
@@ -30,17 +29,36 @@ export enum DataView {
 }
 
 export interface TezosBlock {
-  netId: string;
-  protocol: string;
   level: number;
   proto: number;
   predecessor: string;
-  validationPass: string;
-  operationsHash: string;
-  data: string;
-  hash: string;
   timestamp: number;
+  validationPass: number;
   fitness: string;
+  context: string;
+  signature: string;
+  protocol: string;
+  chainId: string;
+  hash: string;
+  operationsHash: string;
+}
+
+export interface TezosOperation {
+  kind: string;
+  source: string;
+  amount: string;
+  destination: string;
+  manager_pub_key: string;
+  balance: string;
+  delegate: string;
+  operationGroupHash: string;
+  operationId: number;
+  fee: string;
+  storageLimit: string;
+  gasLimit: string;
+  blockHash: string;
+  timestamp: number;
+  blockLevel: number;
 }
 
 export interface TezosOperationGroup {

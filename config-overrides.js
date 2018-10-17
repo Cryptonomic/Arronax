@@ -1,9 +1,24 @@
-const { injectBabelPlugin } = require('react-app-rewired');
+const tsImportPluginFactory = require('ts-import-plugin')
+const { getLoader } = require("react-app-rewired");
 
 module.exports = function override(config, env) {
-  console.log(env);
-  return injectBabelPlugin(
-    ['import', { libraryName: 'antd', libraryDirectory: 'es', style: 'css' }],
-     config,
+  const tsLoader = getLoader(
+    config.module.rules,
+    rule =>
+      rule.loader &&
+      typeof rule.loader === 'string' &&
+      rule.loader.includes('ts-loader')
   );
+
+  tsLoader.options = {
+    getCustomTransformers: () => ({
+      before: [ tsImportPluginFactory({
+        libraryDirectory: 'es',
+        libraryName: 'antd',
+        style: 'css',
+      }) ]
+    })
+  };
+
+  return config;
 }

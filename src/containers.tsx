@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { TezosFilter } from 'conseiljs';
-import { Arronax } from './components/Arronax';
-import { ArronaxState, DataView } from './types';
 import { switchTab, setFilter, setNetwork, ArronaxAction } from './actions';
 import {
   makeSelectFilters,

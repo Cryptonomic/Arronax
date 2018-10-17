@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { TezosFilter } from 'conseiljs';
+import { Button } from 'antd';
 
 interface FilterPanelProps {
   filters: TezosFilter;
@@ -8,20 +9,23 @@ interface FilterPanelProps {
 }
 
 const Wrapper = styled.div`
-  float: left;
-  width: 20%;
-  font-size: x-small;
+  width: 100%;
+  padding: 10px;
 `;
 
 const TextAreaFilter = styled.textarea`
-  width: 80%;
+  width: 100%;
   height: 3em;
 `;
 
 const InputFilter = styled.input.attrs({
   type: 'text'
 })`
-  width: 80%;
+  width: 100%;
+`;
+
+const Label = styled.label`
+  color: white
 `;
 
 export class FilterPanel extends React.Component<
@@ -87,81 +91,81 @@ export class FilterPanel extends React.Component<
     this.props.setFilter(this.state);
   }
 
-  public render() {
+  public render(): JSX.Element {
     return (
       <Wrapper>
         <div>
-          <div>Blocks IDs:</div>
+          <Label>Blocks IDs:</Label>
           <TextAreaFilter
             value={this.state.block_id.toString()}
             onChange={this.handleBlockIDs}
           />
         </div>
         <div>
-          <div>Block Levels:</div>
+          <Label>Block Levels:</Label>
           <TextAreaFilter
             value={this.state.block_level.toString()}
             onChange={this.handleLevels}
           />
         </div>
         <div>
-          <div>Net IDs:</div>
+          <Label>Net IDs:</Label>
           <TextAreaFilter
             value={this.state.block_netid.toString()}
             onChange={this.handleNetIDs}
           />
         </div>
         <div>
-          <div>Protocols:</div>
+          <Label>Protocols:</Label>
           <TextAreaFilter
             value={this.state.block_protocol.toString()}
             onChange={this.handleProtocols}
           />
         </div>
         <div>
-          <div>Operation IDs:</div>
+          <Label>Operation IDs:</Label>
           <TextAreaFilter
             value={this.state.operation_id.toString()}
             onChange={this.handleOperationIDs}
           />
         </div>
         <div>
-          <div>Operation Sources:</div>
+          <Label>Operation Sources:</Label>
           <TextAreaFilter
             value={this.state.operation_source.toString()}
             onChange={this.handleOperationSources}
           />
         </div>
         <div>
-          <div>Account IDs:</div>
+          <Label>Account IDs:</Label>
           <TextAreaFilter
             value={this.state.account_id.toString()}
             onChange={this.handleAccountIDs}
           />
         </div>
         <div>
-          <div>Account Managers:</div>
+          <Label>Account Managers:</Label>
           <TextAreaFilter
             value={this.state.account_manager.toString()}
             onChange={this.handleAccountManagers}
           />
         </div>
         <div>
-          <div>Account Delegates:</div>
+          <Label>Account Delegates:</Label>
           <TextAreaFilter
             value={this.state.account_delegate.toString()}
             onChange={this.handleAccountDelegates}
           />
         </div>
         <div>
-          <div>Limit:</div>
+          <Label>Limit:</Label>
           <InputFilter
             value={this.state.limit.toString()}
             onChange={this.handleLimit}
           />
         </div>
-        <div>
-          <button onClick={this.handleSubmit}>Refresh</button>
+        <div style={{paddingTop: 20}}>
+          <Button onClick={this.handleSubmit}>Refresh</Button>
         </div>
       </Wrapper>
     );
