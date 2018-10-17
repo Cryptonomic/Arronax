@@ -1,24 +1,31 @@
-import { Arronax } from './components/Arronax';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { ArronaxState, DataView } from './types';
-import * as actions from './actions';
+import { createStructuredSelector } from 'reselect';
 import { TezosFilter } from 'conseiljs';
+import { Arronax } from './components/Arronax';
+import { ArronaxState, DataView } from './types';
+import { switchTab, setFilter, setNetwork, ArronaxAction } from './actions';
+import {
+  makeSelectFilters,
+  makeSelectDataView,
+  makeSelectNetwork
+} from './selectors';
 
-function mapStateToProps(state: ArronaxState) {
-    return {
-        'filters': state.filters,
-        'dataView': state.dataView,
-        'network': state.network
-    };
+const mapStateToProps = createStructuredSelector({
+  filters: makeSelectFilters,
+  dataView: makeSelectDataView,
+  network: makeSelectNetwork
+});
+
+function mapDispatchToProps(dispatch: Dispatch<ArronaxAction>) {
+  return {
+    switchTab: (dataView: DataView) => dispatch(switchTab(dataView)),
+    setFilter: (filters: TezosFilter) => dispatch(setFilter(filters)),
+    setNetwork: (network: string) => dispatch(setNetwork(network))
+  };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<actions.ArronaxAction>) {
-    return {
-        switchTab:  (dataView: DataView) => dispatch(actions.switchTab(dataView)),
-        setFilter:  (filters: TezosFilter) => dispatch(actions.setFilter(filters)),
-        setNetwork: (network: string) => dispatch(actions.setNetwork(network))
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Arronax);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Arronax);
