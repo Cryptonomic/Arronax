@@ -1,38 +1,29 @@
 import React from 'react';
 import moment from 'moment';
-import { TezosConseilQuery, TezosFilter } from 'conseiljs';
 import { ColumnProps } from 'antd/lib/table';
-import Table from './Table';
+import { TezosFilter } from 'conseiljs';
+import { TezosOperation } from 'types';
 import ExpandedRow from './ExpandedRow';
-import { TezosOperation } from '../../types';
-import config from '../../config';
+import Table from './Table';
 
 interface Props {
   filters: TezosFilter;
-  network: string;
+  operations: TezosOperation[];
+  fetching: boolean;
+  fetchOperations: () => void;
 }
 
-interface State {
-  data: TezosOperation[];
-}
-
-export default class BlockGrid extends React.Component<Props, State> {
+export default class BlockGrid extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.state = { data: [] };
-    this.refreshData(props);
-  }
-
-  refreshData = async (nextProps: Props) => {
-    const { getOperations } = TezosConseilQuery;
-    const apiKey = config.key;
-    const url = `${config.url}${this.props.network}`;
-    const results = await getOperations(url, nextProps.filters, apiKey);
-    this.setState({ data: results });
+    this.props.fetchOperations();
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    this.refreshData(nextProps);
+    if (nextProps.filters !== this.props.filters) {
+      this.props.fetchOperations();
+    }
   }
 
   getColumns = (): Array<ColumnProps<TezosOperation>> => ([
@@ -48,6 +39,7 @@ export default class BlockGrid extends React.Component<Props, State> {
   ])
 
   render() {
+    const { operations, fetching } = this.props;
     return (
       <Table
         pagination={{
@@ -58,7 +50,8 @@ export default class BlockGrid extends React.Component<Props, State> {
         rowKey="operationId"
         columns={this.getColumns()}
         expandedRowRender={(record: TezosOperation) => <ExpandedRow record={record} />}
-        dataSource={this.state.data}
+        dataSource={operations}
+        loading={fetching}
       />
     );
   }
