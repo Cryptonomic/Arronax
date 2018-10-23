@@ -1,13 +1,28 @@
 import * as React from 'react';
+import styled from 'styled-components';
 import { TezosFilter } from 'conseiljs';
-/* tslint:disable no-import-side-effect */
-import '../style.css';
-/* tslint:enable */
 
 interface FilterPanelProps {
   filters: TezosFilter;
-  setFilter(filters: TezosFilter): void;
+  setFilter: (filters: TezosFilter) => void;
 }
+
+const Wrapper = styled.div`
+  float: left;
+  width: 20%;
+  font-size: x-small;
+`;
+
+const TextAreaFilter = styled.textarea`
+  width: 80%;
+  height: 3em;
+`;
+
+const InputFilter = styled.input.attrs({
+  type: 'text'
+})`
+  width: 80%;
+`;
 
 export class FilterPanel extends React.Component<
   FilterPanelProps,
@@ -74,94 +89,73 @@ export class FilterPanel extends React.Component<
 
   public render() {
     return (
-      <div id="filtergroup">
-        <div className="filter">
+      <Wrapper>
+        <div>
           <div>Blocks IDs:</div>
-          <textarea
-            className="filter"
-            id="blocksIDs"
+          <TextAreaFilter
             value={this.state.block_id.toString()}
             onChange={this.handleBlockIDs}
           />
         </div>
-        <div className="filter">
+        <div>
           <div>Block Levels:</div>
-          <textarea
-            className="filter"
-            id="levels"
+          <TextAreaFilter
             value={this.state.block_level.toString()}
             onChange={this.handleLevels}
           />
         </div>
-        <div className="filter">
+        <div>
           <div>Net IDs:</div>
-          <textarea
-            className="filter"
-            id="netIDs"
+          <TextAreaFilter
             value={this.state.block_netid.toString()}
             onChange={this.handleNetIDs}
           />
         </div>
-        <div className="filter">
+        <div>
           <div>Protocols:</div>
-          <textarea
-            className="filter"
-            id="protocols"
+          <TextAreaFilter
             value={this.state.block_protocol.toString()}
             onChange={this.handleProtocols}
           />
         </div>
-        <div className="filter">
+        <div>
           <div>Operation IDs:</div>
-          <textarea
-            className="filter"
-            id="operationIDs"
+          <TextAreaFilter
             value={this.state.operation_id.toString()}
             onChange={this.handleOperationIDs}
           />
         </div>
-        <div className="filter">
+        <div>
           <div>Operation Sources:</div>
-          <textarea
-            className="filter"
-            id="operationSources"
+          <TextAreaFilter
             value={this.state.operation_source.toString()}
             onChange={this.handleOperationSources}
           />
         </div>
-        <div className="filter">
+        <div>
           <div>Account IDs:</div>
-          <textarea
-            className="filter"
-            id="accounts"
+          <TextAreaFilter
             value={this.state.account_id.toString()}
             onChange={this.handleAccountIDs}
           />
         </div>
-        <div className="filter">
+        <div>
           <div>Account Managers:</div>
-          <textarea
-            className="filter"
-            id="blocks"
+          <TextAreaFilter
             value={this.state.account_manager.toString()}
             onChange={this.handleAccountManagers}
           />
         </div>
-        <div className="filter">
+        <div>
           <div>Account Delegates:</div>
-          <textarea
-            className="filter"
-            id="accountDelegates"
+          <TextAreaFilter
             value={this.state.account_delegate.toString()}
             onChange={this.handleAccountDelegates}
           />
         </div>
-        <div className="filter">
+        <div>
           <div>Limit:</div>
-          <input
-            type="text"
-            className="filter"
-            id="limit"
+          <InputFilter
             value={this.state.limit.toString()}
             onChange={this.handleLimit}
           />
@@ -169,7 +163,7 @@ export class FilterPanel extends React.Component<
         <div>
           <button onClick={this.handleSubmit}>Refresh</button>
         </div>
-      </div>
+      </Wrapper>
     );
   }
 }
