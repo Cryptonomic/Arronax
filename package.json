@@ -30,12 +30,14 @@
   "homepage": "https://github.com/Cryptonomic/Arronax#readme",
   "dependencies": {
     "conseiljs": "^0.1.25",
+    "immutable": "^3.8.2",
     "querystring": "^0.2.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-redux": "^5.0.7",
     "redux": "4.0.0",
     "styled-components": "^3.4.5",
+    "reselect": "^3.0.1",
     "ts-react-json-table": "^0.1.1"
   },
   "devDependencies": {

@@ -1,27 +1,28 @@
-import { ArronaxAction } from 'actions';
-import { ArronaxState, DataView } from 'types';
+import { fromJS } from 'immutable';
 import { TezosConseilQuery, TezosFilter } from 'conseiljs';
+import { ArronaxAction } from 'actions';
+import { ArronaxImmutableState, DataView } from 'types';
 import { SET_FILTER, SWITCH_TAB, SET_NETWORK } from './constants';
 
 const emptyFilters: TezosFilter = TezosConseilQuery.getEmptyTezosFilter();
 
-export const initialState: ArronaxState = {
+export const initialState: ArronaxImmutableState = fromJS({
   filters: emptyFilters,
   dataView: DataView.Blocks,
   network: 'zeronet'
-};
+});
 
 export default (
-  state: ArronaxState = initialState,
+  state: ArronaxImmutableState = initialState,
   action: ArronaxAction
-): ArronaxState => {
+): ArronaxImmutableState => {
   switch (action.type) {
     case SET_FILTER:
-      return { ...state, filters: action.filters };
+      return state.set('filters', fromJS(action.filters));
     case SWITCH_TAB:
-      return { ...state, dataView: action.dataView };
+      return state.set('dataView', fromJS(action.dataView));
     case SET_NETWORK:
-      return { ...state, network: action.network };
+      return state.set('network', fromJS(action.network));
     default:
       return state;
   }

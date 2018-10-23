@@ -14,7 +14,8 @@ export interface ArronaxProps {
   setNetwork(network: string): void;
 }
 
-export const Arronax = (props: ArronaxProps) => (
+/* @TODO temporary solution, should use ArronaxProps instead */
+export const Arronax = (props: any): JSX.Element => (
   <div id="arronax">
     <h1>Arronax</h1>
     <NetworkSelector network={props.network} setNetwork={props.setNetwork} />

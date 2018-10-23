@@ -1,10 +1,36 @@
 import { TezosFilter } from 'conseiljs';
+import * as Immutable from 'immutable';
 
 export interface ArronaxState {
-    filters: TezosFilter;
-    dataView: DataView;
-    network: string;
+  filters: TezosFilter;
+  dataView: DataView;
+  network: string;
 }
+
+export interface ImmutableState {
+  filters: ImmutableMap<TezosFilter>;
+  dataView: number;
+  network: string;
+}
+/* tslint:disable:no-any */
+export interface ImmutableMap<T>
+  extends Immutable.Map<string, Immutable.Map<string, any>> {
+  toJS(): T;
+}
+
+export interface ArronaxImmutableState
+  extends Immutable.Map<string, ImmutableMap<TezosFilter> | number | string> {
+  toJS(): ArronaxState;
+  get<K extends keyof ArronaxState>(
+    key: K,
+    defaultValue?: ImmutableState[K]
+  ): ImmutableState[K];
+  set<K extends keyof ArronaxState>(
+    key: K,
+    value: ImmutableState[K]
+  ): ArronaxImmutableState;
+}
+/* tslint:enable:no-any */
 
 export enum DataView {
   Blocks,
