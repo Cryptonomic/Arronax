@@ -1,8 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import applyArronaxAction from 'reducers';
+import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import Arronax from './containers';
-import store from './store';
+import Arronax from 'containers';
+
+const store = createStore(applyArronaxAction);
 
 ReactDOM.render(
   <Provider store={store}>

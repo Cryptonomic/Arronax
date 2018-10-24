@@ -1,7 +1,7 @@
-import { ArronaxAction } from './actions';
-import { ArronaxState, DataView } from './types';
-import { SET_FILTER, SWITCH_TAB, SET_NETWORK } from './constants';
+import { ArronaxAction } from 'actions';
+import { ArronaxState, DataView } from 'types';
 import { TezosConseilQuery, TezosFilter } from 'conseiljs';
+import { SET_FILTER, SWITCH_TAB, SET_NETWORK } from './constants';
 
 const emptyFilters: TezosFilter = TezosConseilQuery.getEmptyTezosFilter();
 

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TezosConseilQuery, TezosFilter } from 'conseiljs';
-import { DataView } from '../types';
-import { ExpandableGrid } from './ExpandableGrid';
-import config from '../config';
+import { DataView } from 'types';
+import { ExpandableGrid } from 'components/ExpandableGrid';
+import config from 'config';
 
 interface TabProps {
   dataView: DataView;
