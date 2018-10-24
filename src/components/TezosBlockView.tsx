@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TezosConseilQuery } from 'conseiljs';
-import config from '../config';
+import config from 'config';
 
 interface TezosBlockProps {
   network: string;

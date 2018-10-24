@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "outDir": "dist/",
+    "baseUrl": "./src/",
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "module": "commonjs",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "allowJs": true,

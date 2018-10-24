@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { DataView } from '../types';
-import { TezosBlockView } from './TezosBlockView';
-import { TezosAccountView } from './TezosAccountView';
-import { TezosOperationView } from './TezosOperationView';
+import { DataView } from 'types';
+import { TezosBlockView } from 'components/TezosBlockView';
+import { TezosAccountView } from 'components/TezosAccountView';
+import { TezosOperationView } from 'components/TezosOperationView';
 
 interface TezosDataProps {
   dataView: DataView;
