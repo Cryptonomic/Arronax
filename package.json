@@ -14,6 +14,11 @@
     "test:watch": "jest --watch",
     "test:update": "jest -u"
   },
+  "lint-staged": {
+    "*.{ts, tsx}": [
+      "tslint -c tslint.json --format stylish -p"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Cryptonomic/Arronax.git"
@@ -48,6 +53,7 @@
     "awesome-typescript-loader": "^5.2.0",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.6.0",
+    "husky": "^0.14.3",
     "jest": "^23.6.0",
     "node-fetch": "^1.7.3",
     "prettier": "^1.14.2",
