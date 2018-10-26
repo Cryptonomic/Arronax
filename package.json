@@ -4,6 +4,7 @@
   "description": "A multi-chain block explorer.",
   "main": "index.js",
   "scripts": {
+    "build": "react-scripts-ts build",
     "lint": "tslint -c tslint.json --format stylish -p .",
     "start": "react-scripts-ts start",
     "start:zeronet": "react-scripts-ts start && NODE_ENV=zeronet",
@@ -40,8 +41,7 @@
     "react-dom": "^16.4.2",
     "react-redux": "^5.0.7",
     "redux": "4.0.0",
-    "styled-components": "^3.4.5",
-    "ts-react-json-table": "^0.1.1"
+    "styled-components": "^3.4.5"
   },
   "devDependencies": {
     "@types/enzyme": "^3.1.14",
