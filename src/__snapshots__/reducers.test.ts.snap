@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Arronax stories initial state should match a snapshot 1`] = `
+Object {
+  "dataView": 0,
+  "filters": Object {
+    "account_delegate": Array [],
+    "account_id": Array [],
+    "account_manager": Array [],
+    "block_id": Array [],
+    "block_level": Array [],
+    "block_netid": Array [],
+    "block_protocol": Array [],
+    "limit": 100,
+    "operation_destination": Array [],
+    "operation_id": Array [],
+    "operation_kind": Array [],
+    "operation_participant": Array [],
+    "operation_source": Array [],
+  },
+  "network": "zeronet",
+}
+`;
