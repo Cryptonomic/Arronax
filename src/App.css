@@ -1,0 +1,7 @@
+.block-grid.ant-table-row {
+  background: white;
+}
+
+.ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+  padding: 10px 16px;
+}

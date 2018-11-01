@@ -1,11 +1,5 @@
 import { TezosFilter } from 'conseiljs';
-import { DataView } from 'types';
 import * as constants from './constants';
-
-export interface SwitchTab {
-  type: constants.SWITCH_TAB;
-  dataView: DataView;
-}
 
 export interface SetFilter {
   type: constants.SET_FILTER;
@@ -17,13 +11,7 @@ export interface SetNetwork {
   network: string;
 }
 
-export type ArronaxAction = SwitchTab | SetFilter | SetNetwork;
-
-export const switchTab = (dataView: DataView): SwitchTab =>
-  ({
-    dataView,
-    type: constants.SWITCH_TAB
-  });
+export type ArronaxAction =  SetFilter | SetNetwork;
 
 export const setFilter = (filters: TezosFilter): SetFilter =>
   ({
