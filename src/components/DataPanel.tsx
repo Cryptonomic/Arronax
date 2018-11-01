@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { TezosFilter } from 'conseiljs';
 import { Tabs } from 'antd';
-import BlockGrid from 'components/BlockGrid';
-import OperationsGrid from 'components/OperationsGrid';
-import AccountGrid from 'components/AccountGrid';
+import BlocksGrid from 'containers/Blocks';
+import AccountsGrid from 'containers/Accounts';
+import OperationsGrid from 'containers/Operations';
+import { DataView } from '../types';
 
 const TabPane = Tabs.TabPane;
 
@@ -15,17 +16,15 @@ interface DataPanelProps {
 export const DataPanel = (props: DataPanelProps): JSX.Element => (
   <div className="card-container">
     <Tabs type="card">
-      <TabPane tab="Blocks" key={'Blocks'}>
-        <BlockGrid filters={props.filters} network={props.network} />
+      <TabPane tab="Blocks" key={DataView.Blocks}>
+        <BlocksGrid filters={props.filters} network={props.network} />
       </TabPane>
-      <TabPane tab="Operations" key={'Operations'}>
+      <TabPane tab="Operations" key={DataView.Operations}>
         <OperationsGrid filters={props.filters} network={props.network} />
       </TabPane>
-      <TabPane tab="Accounts" key={'Accounts'}>
-        <AccountGrid filters={props.filters} network={props.network} />
+      <TabPane tab="Accounts" key={DataView.Accounts}>
+        <AccountsGrid filters={props.filters} network={props.network} />
       </TabPane>
     </Tabs>
   </div>
 );
-
-export default DataPanel;

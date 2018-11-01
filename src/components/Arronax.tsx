@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { TezosFilter } from 'conseiljs';
 import { Layout } from 'antd';
-import { FilterPanel } from 'components/FilterPanel';
-import { DataPanel } from 'components/DataPanel';
-import { NetworkSelector } from 'components/NetworkSelector';
+import { FilterPanel } from './FilterPanel';
+import { DataPanel } from './DataPanel';
+import { NetworkSelector } from './NetworkSelector';
+/* tslint:disable no-import-side-effect */
+import '../App.css';
 
 const { Content, Sider } = Layout;
 
@@ -14,7 +16,7 @@ export interface ArronaxProps {
   setNetwork(network: string): void;
 }
 
-export const Arronax = (props: ArronaxProps): JSX.Element => (
+export default (props): JSX.Element => (
   <Layout style={{ height: '100vh' }}>
     {/* <Header>Arronax</Header> */}
     <Sider>
