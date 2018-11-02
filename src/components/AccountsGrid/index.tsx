@@ -9,6 +9,7 @@ interface Props {
   filters: TezosFilter;
   accounts: TezosAccount[];
   fetching: boolean;
+  error: string;
   fetchAccounts: () => void;
 }
 
@@ -32,22 +33,25 @@ export default class BlockGrid extends React.Component<Props> {
   ])
 
   render() {
-    const { fetching, accounts } = this.props;
-    return (
-      <Table
-        pagination={{
-          pageSize: 15,
-          simple: true
-        }}
-        rowClassName={() => 'block-grid'}
-        rowKey="accountId"
-        columns={this.getColumns()}
-        expandedRowRender={(record: TezosAccount) => (
-          <ExpandedRow record={record} />
-        )}
-        dataSource={accounts}
-        loading={fetching}
-      />
-    );
+    const { fetching, accounts, error } = this.props;
+    let accountsView = <p>{error}</p>;
+    if (!error) {
+        accountsView = (
+            <Table
+                pagination={{
+                    pageSize: 15,
+                    simple: true
+                }}
+                rowClassName={() => 'block-grid'}
+                rowKey="accountId"
+                columns={this.getColumns()}
+                expandedRowRender={(record: TezosAccount) => (
+                    <ExpandedRow record={record} />
+                )}
+                dataSource={accounts}
+                loading={fetching}
+            />);
+    }
+    return (accountsView);
   }
 }

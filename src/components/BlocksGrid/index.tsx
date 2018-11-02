@@ -9,6 +9,7 @@ import ExpandedRow from './ExpandedRow';
 interface Props {
   blocks: TezosBlock[];
   fetching: boolean;
+  error: string;
   fetchBlocks: () => void;
   filters: TezosFilter;
 }
@@ -45,22 +46,26 @@ export default class BlockGrid extends React.Component<Props> {
   ]
 
   render() {
-    const { blocks, fetching } = this.props;
-    return (
-      <Table
-        pagination={{
-          pageSize: 15,
-          simple: true
-        }}
-        rowClassName={() => 'block-grid'}
-        rowKey="hash"
-        columns={this.getColumns()}
-        expandedRowRender={(record: TezosBlock) => (
-          <ExpandedRow record={record} />
-        )}
-        dataSource={blocks}
-        loading={fetching}
-      />
-    );
+    const { blocks, fetching, error } = this.props;
+    let blocksView = <p>{error}</p>;
+    if (!error) {
+      blocksView = (
+          <Table
+              pagination={{
+                  pageSize: 15,
+                  simple: true
+              }}
+              rowClassName={() => 'block-grid'}
+              rowKey="hash"
+              columns={this.getColumns()}
+              expandedRowRender={(record: TezosBlock) => (
+                  <ExpandedRow record={record} />
+              )}
+              dataSource={blocks}
+              loading={fetching}
+          />
+      );
+    }
+    return (blocksView);
   }
 }

@@ -16,3 +16,9 @@ export const makeSelectFetching = () =>
     selectBlocksDomain,
     (substate: BlocksStateMap) => substate.get('fetching')
   );
+
+export const makeSelectError = () =>
+    createSelector<GlobalStateMap, any, any>(
+        selectBlocksDomain,
+        (substate: BlocksStateMap) => substate.get('error')
+    );

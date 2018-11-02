@@ -16,3 +16,9 @@ export const makeSelectFetching = () =>
     selectAccountsDomain,
     (substate: AccountsStateMap) => substate.get('fetching')
   );
+
+export const makeSelectError = () =>
+    createSelector<GlobalStateMap, any, any>(
+        selectAccountsDomain,
+        (substate: AccountsStateMap) => substate.get('error')
+    );

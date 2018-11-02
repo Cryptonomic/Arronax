@@ -7,7 +7,7 @@ import AccountsGrid from 'components/AccountsGrid';
 import { makeSelectFilters } from 'containers/App/selectors';
 import { GlobalStateMap } from 'types';
 import { fetchAccounts, AccountsAction } from './actions';
-import { makeSelectAccounts, makeSelectFetching } from './selectors';
+import { makeSelectAccounts, makeSelectFetching, makeSelectError } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
@@ -18,7 +18,8 @@ interface DispatchToProps {
 const mapStateToProps = createStructuredSelector<GlobalStateMap, any>({
   accounts: makeSelectAccounts(),
   filters: makeSelectFilters(),
-  fetching: makeSelectFetching()
+  fetching: makeSelectFetching(),
+  error: makeSelectError()
 });
 
 const mapDispatchToProps = (

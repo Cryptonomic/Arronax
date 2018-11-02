@@ -4,7 +4,7 @@ import { makeSelectFilters, makeSelectNetwork } from 'containers/App/selectors';
 import { TezosBlock } from 'types';
 import config from 'config';
 import { FETCH_BLOCKS } from './constants';
-import { setBlocks } from './actions';
+import {fetchBlocksFailed, setBlocks} from './actions';
 
 export function* fetchBlocks() {
   const filters = yield select(makeSelectFilters());
@@ -17,7 +17,7 @@ export function* fetchBlocks() {
     const blocks: TezosBlock[] = yield call(getBlocks, url, filters, apiKey);
     yield put(setBlocks(blocks));
   } catch (err) {
-    console.log(err);
+    yield put(fetchBlocksFailed(err.message));
   }
 }
 
