@@ -10,13 +10,13 @@ interface Props {
   filters: TezosFilter;
   operations: TezosOperation[];
   fetching: boolean;
+  error: string;
   fetchOperations: () => void;
 }
 
 export default class BlockGrid extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
-    this.state = { data: [] };
     this.props.fetchOperations();
   }
 
@@ -39,20 +39,24 @@ export default class BlockGrid extends React.Component<Props> {
   ])
 
   render() {
-    const { operations, fetching } = this.props;
-    return (
-      <Table
-        pagination={{
-          pageSize: 15,
-          simple: true
-        }}
-        rowClassName={() => 'block-grid'}
-        rowKey="operationId"
-        columns={this.getColumns()}
-        expandedRowRender={(record: TezosOperation) => <ExpandedRow record={record} />}
-        dataSource={operations}
-        loading={fetching}
-      />
-    );
+    const { operations, fetching, error } = this.props;
+    let operationsView = <p>{error}</p>;
+    if (!error) {
+      operationsView = (
+        <Table
+          pagination={{
+              pageSize: 15,
+              simple: true
+          }}
+          rowClassName={() => 'block-grid'}
+          rowKey="operationId"
+          columns={this.getColumns()}
+          expandedRowRender={(record: TezosOperation) => <ExpandedRow record={record} />}
+          dataSource={operations}
+          loading={fetching}
+        />
+      );
+    }
+    return (operationsView);
   }
 }

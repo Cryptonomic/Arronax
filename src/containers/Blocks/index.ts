@@ -7,7 +7,7 @@ import BlocksGrid from 'components/BlocksGrid';
 import { makeSelectFilters } from 'containers/App/selectors';
 import { GlobalStateMap } from 'types';
 import { fetchBlocks, BlocksAction } from './actions';
-import { makeSelectBlocks, makeSelectFetching } from './selectors';
+import {makeSelectBlocks, makeSelectError, makeSelectFetching} from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
@@ -18,7 +18,8 @@ interface DispatchToProps {
 const mapStateToProps = createStructuredSelector<GlobalStateMap, any>({
   blocks: makeSelectBlocks(),
   filters: makeSelectFilters(),
-  fetching: makeSelectFetching()
+  fetching: makeSelectFetching(),
+  error: makeSelectError()
 });
 
 const mapDispatchToProps = (

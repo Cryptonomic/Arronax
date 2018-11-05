@@ -3,3 +3,6 @@ export type FETCH_ACCOUNTS = typeof FETCH_ACCOUNTS;
 
 export const SET_ACCOUNTS = 'Accounts/SET_ACCOUNTS';
 export type SET_ACCOUNTS = typeof SET_ACCOUNTS;
+
+export const FETCH_ACCOUNTS_FAILED = 'Accounts/FETCH_ACCOUNTS_FAILED';
+export type FETCH_ACCOUNTS_FAILED = typeof FETCH_ACCOUNTS_FAILED;

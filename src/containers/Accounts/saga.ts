@@ -4,7 +4,7 @@ import { makeSelectFilters, makeSelectNetwork } from 'containers/App/selectors';
 import { TezosAccount } from 'types';
 import config from 'config';
 import { FETCH_ACCOUNTS } from './constants';
-import { setAccounts } from './actions';
+import {fetchAccountsFailed, setAccounts} from './actions';
 
 export function* fetchAccounts() {
   const filters = yield select(makeSelectFilters());
@@ -17,7 +17,7 @@ export function* fetchAccounts() {
     const accounts: TezosAccount[] = yield call(getAccounts, url, filters, apiKey);
     yield put(setAccounts(accounts));
   } catch (err) {
-    console.log(err);
+    yield put(fetchAccountsFailed(err.message));
   }
 }
 

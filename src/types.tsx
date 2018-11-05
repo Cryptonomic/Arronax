@@ -30,6 +30,7 @@ export interface ArronaxStateMap extends Immutable.Map<string, any> {
 export interface BlocksState {
   items: ImmutableMap<TezosBlock[]>;
   fetching: boolean;
+  error: string;
 }
 
 export interface BlocksStateMap extends Map<string, any> {
@@ -44,6 +45,7 @@ export interface BlocksStateMap extends Map<string, any> {
 export interface AccountsState {
   items: ImmutableMap<TezosAccount[]>;
   fetching: boolean;
+  error: string;
 }
 
 export interface AccountsStateMap extends Map<string, any> {
@@ -58,6 +60,7 @@ export interface AccountsStateMap extends Map<string, any> {
 export interface OperationsState {
   items: ImmutableMap<TezosOperation[]>;
   fetching: boolean;
+  error: string;
 }
 
 export interface OperationsStateMap extends Map<string, any> {
