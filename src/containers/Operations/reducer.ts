@@ -5,7 +5,8 @@ import {FETCH_OPERATIONS, FETCH_OPERATIONS_FAILED, SET_OPERATIONS} from './const
 
 export const initialState: OperationsStateMap = fromJS({
   items: [],
-  fetching: false
+  fetching: false,
+  error: ''
 });
 
 export default (
