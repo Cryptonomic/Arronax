@@ -37,20 +37,21 @@ export default class BlockGrid extends React.Component<Props> {
     let accountsView = <p>{error}</p>;
     if (!error) {
         accountsView = (
-            <Table
-                pagination={{
-                    pageSize: 15,
-                    simple: true
-                }}
-                rowClassName={() => 'block-grid'}
-                rowKey="accountId"
-                columns={this.getColumns()}
-                expandedRowRender={(record: TezosAccount) => (
-                    <ExpandedRow record={record} />
-                )}
-                dataSource={accounts}
-                loading={fetching}
-            />);
+          <Table
+            pagination={{
+                pageSize: 15,
+                simple: true
+            }}
+            rowClassName={() => 'block-grid'}
+            rowKey="accountId"
+            columns={this.getColumns()}
+            expandedRowRender={(record: TezosAccount) => (
+                <ExpandedRow record={record} />
+            )}
+            dataSource={accounts}
+            loading={fetching}
+          />
+        );
     }
     return (accountsView);
   }

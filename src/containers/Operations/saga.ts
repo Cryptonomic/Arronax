@@ -4,7 +4,7 @@ import { makeSelectFilters, makeSelectNetwork } from 'containers/App/selectors';
 import { TezosOperation } from 'types';
 import config from 'config';
 import { FETCH_OPERATIONS } from './constants';
-import { setOperations } from './actions';
+import {fetchOperationsFailed, setOperations} from './actions';
 
 export function* fetchOperations() {
   const filters = yield select(makeSelectFilters());
@@ -17,7 +17,7 @@ export function* fetchOperations() {
     const operations: TezosOperation[] = yield call(getOperations, url, filters, apiKey);
     yield put(setOperations(operations));
   } catch (err) {
-    console.log(err);
+    yield put(fetchOperationsFailed(err.message));
   }
 }
 

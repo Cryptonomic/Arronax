@@ -7,7 +7,7 @@ import OperationsGrid from 'components/OperationsGrid';
 import { makeSelectFilters } from 'containers/App/selectors';
 import { GlobalStateMap } from 'types';
 import { fetchOperations, OperationsAction } from './actions';
-import { makeSelectOperations, makeSelectFetching } from './selectors';
+import {makeSelectOperations, makeSelectFetching, makeSelectError} from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
@@ -18,7 +18,8 @@ interface DispatchToProps {
 const mapStateToProps = createStructuredSelector<GlobalStateMap, any>({
   operations: makeSelectOperations(),
   filters: makeSelectFilters(),
-  fetching: makeSelectFetching()
+  fetching: makeSelectFetching(),
+  error: makeSelectError()
 });
 
 const mapDispatchToProps = (
