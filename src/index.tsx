@@ -1,15 +1,16 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import applyArronaxAction from 'reducers';
-import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import Arronax from 'containers';
+import configureStore from './configureStore';
+import App from './containers/App';
 
-const store = createStore(applyArronaxAction);
+const initialState = {};
+const store = configureStore(initialState);
+const MOUNT_NODE = document.getElementById('root');
 
 ReactDOM.render(
   <Provider store={store}>
-    <Arronax />
+    <App />
   </Provider>,
-  document.getElementById('root')
+  MOUNT_NODE
 );
