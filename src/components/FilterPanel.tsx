@@ -92,10 +92,6 @@ export class FilterPanel extends React.Component<
     this.state = props.filters;
   }
 
-  public handleLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ limit: Number(event.target.value) });
-  }
-
   public handleFilterProps = (
     propName: string,
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
