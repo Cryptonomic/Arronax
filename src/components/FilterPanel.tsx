@@ -25,8 +25,63 @@ const InputFilter = styled.input.attrs({
 `;
 
 const Label = styled.label`
-  color: white
+  color: white;
 `;
+
+const controls = [
+  {
+    label: 'Block IDs',
+    type: 'block_id'
+  },
+  {
+    label: 'Block Levels',
+    type: 'block_level'
+  },
+  {
+    label: 'Net IDs',
+    type: 'block_netid'
+  },
+  {
+    label: 'Protocols',
+    type: 'block_protocol'
+  },
+  {
+    label: 'Operation IDs',
+    type: 'operation_id'
+  },
+  {
+    label: 'Operation Sources',
+    type: 'operation_source'
+  },
+  {
+    label: 'Operation Participants',
+    type: 'operation_participant'
+  },
+  {
+    label: 'Operation Destinations',
+    type: 'operation_destination'
+  },
+  {
+    label: 'Operation Kinds',
+    type: 'operation_kind'
+  },
+  {
+    label: 'Account IDs',
+    type: 'account_id'
+  },
+  {
+    label: 'Account Managers',
+    type: 'account_manager'
+  },
+  {
+    label: 'Account Delegates',
+    type: 'account_delegate'
+  },
+  {
+    label: 'Limit',
+    type: 'limit'
+  }
+];
 
 export class FilterPanel extends React.Component<
   FilterPanelProps,
@@ -37,54 +92,15 @@ export class FilterPanel extends React.Component<
     this.state = props.filters;
   }
 
-  public handleBlockIDs = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    this.setState({ block_id: event.target.value.split(',') });
-  }
-
-  public handleLevels = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  public handleFilterProps = (
+    propName: string,
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    event.preventDefault();
+    // @ts-ignore
     this.setState({
-      block_level: event.target.value.split(',').map(Number)
+        [propName]: propName === 'limit' ? Number(event.target.value) : event.target.value.split(',')
     });
-  }
-
-  public handleNetIDs = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    this.setState({ block_netid: event.target.value.split(',') });
-  }
-
-  public handleProtocols = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    this.setState({ block_protocol: event.target.value.split(',') });
-  }
-
-  public handleOperationIDs = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    this.setState({ operation_id: event.target.value.split(',') });
-  }
-
-  public handleOperationSources = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    this.setState({ operation_source: event.target.value.split(',') });
-  }
-
-  public handleAccountIDs = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    this.setState({ account_id: event.target.value.split(',') });
-  }
-
-  public handleAccountManagers = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    this.setState({ account_manager: event.target.value.split(',') });
-  }
-
-  public handleAccountDelegates = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    this.setState({ account_delegate: event.target.value.split(',') });
-  }
-
-  public handleLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ limit: Number(event.target.value) });
   }
 
   public handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -94,78 +110,35 @@ export class FilterPanel extends React.Component<
   public render(): JSX.Element {
     return (
       <Wrapper>
-        <div>
-          <Label>Blocks IDs:</Label>
-          <TextAreaFilter
-            value={this.state.block_id.toString()}
-            onChange={this.handleBlockIDs}
-          />
-        </div>
-        <div>
-          <Label>Block Levels:</Label>
-          <TextAreaFilter
-            value={this.state.block_level.toString()}
-            onChange={this.handleLevels}
-          />
-        </div>
-        <div>
-          <Label>Net IDs:</Label>
-          <TextAreaFilter
-            value={this.state.block_netid.toString()}
-            onChange={this.handleNetIDs}
-          />
-        </div>
-        <div>
-          <Label>Protocols:</Label>
-          <TextAreaFilter
-            value={this.state.block_protocol.toString()}
-            onChange={this.handleProtocols}
-          />
-        </div>
-        <div>
-          <Label>Operation IDs:</Label>
-          <TextAreaFilter
-            value={this.state.operation_id.toString()}
-            onChange={this.handleOperationIDs}
-          />
-        </div>
-        <div>
-          <Label>Operation Sources:</Label>
-          <TextAreaFilter
-            value={this.state.operation_source.toString()}
-            onChange={this.handleOperationSources}
-          />
-        </div>
-        <div>
-          <Label>Account IDs:</Label>
-          <TextAreaFilter
-            value={this.state.account_id.toString()}
-            onChange={this.handleAccountIDs}
-          />
-        </div>
-        <div>
-          <Label>Account Managers:</Label>
-          <TextAreaFilter
-            value={this.state.account_manager.toString()}
-            onChange={this.handleAccountManagers}
-          />
-        </div>
-        <div>
-          <Label>Account Delegates:</Label>
-          <TextAreaFilter
-            value={this.state.account_delegate.toString()}
-            onChange={this.handleAccountDelegates}
-          />
-        </div>
-        <div>
-          <Label>Limit:</Label>
-          <InputFilter
-            value={this.state.limit.toString()}
-            onChange={this.handleLimit}
-          />
-        </div>
-        <div style={{paddingTop: 20}}>
-          <Button onClick={this.handleSubmit}>Refresh</Button>
+        {controls.map(control => {
+          if (control.type === 'limit') {
+            return (
+              <div key={control.type}>
+                <Label>{control.label}:</Label>
+                <InputFilter
+                    value={this.state[control.type].toString()}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                        this.handleFilterProps(control.type, event)
+                    }
+                />
+              </div>
+            );
+          } else {
+            return (
+              <div key={control.type}>
+                <Label>{control.label}:</Label>
+                <TextAreaFilter
+                    value={this.state[control.type].toString()}
+                    onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        this.handleFilterProps(control.type, event)
+                    }
+                />
+              </div>
+            );
+          }
+        })}
+        <div style={{ paddingTop: 20 }}>
+          <Button htmlType="button" onClick={this.handleSubmit}>Refresh</Button>
         </div>
       </Wrapper>
     );

@@ -17,7 +17,7 @@ export interface ArronaxProps {
 }
 
 export default (props): JSX.Element => (
-  <Layout style={{ height: '100vh' }}>
+  <Layout style={{ height: '100%' }}>
     {/* <Header>Arronax</Header> */}
     <Sider>
       <NetworkSelector network={props.network} setNetwork={props.setNetwork} />
