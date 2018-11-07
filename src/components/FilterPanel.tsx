@@ -76,6 +76,10 @@ const controls = [
   {
     label: 'Account Delegates',
     type: 'account_delegate'
+  },
+  {
+    label: 'Limit',
+    type: 'limit'
   }
 ];
 
@@ -94,11 +98,13 @@ export class FilterPanel extends React.Component<
 
   public handleFilterProps = (
     propName: string,
-    event: React.ChangeEvent<HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     event.preventDefault();
     // @ts-ignore
-    this.setState({ [propName]: event.target.value.split(',') });
+    this.setState({
+        [propName]: propName === 'limit' ? Number(event.target.value) : event.target.value.split(',')
+    });
   }
 
   public handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -108,24 +114,33 @@ export class FilterPanel extends React.Component<
   public render(): JSX.Element {
     return (
       <Wrapper>
-        {controls.map(control => (
-          <div key={control.type}>
-            <Label>{control.label}:</Label>
-            <TextAreaFilter
-              value={this.state[control.type].toString()}
-              onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
-                this.handleFilterProps(control.type, event)
-              }
-            />
-          </div>
-        ))}
-        <div>
-          <Label>Limit:</Label>
-          <InputFilter
-            value={this.state.limit.toString()}
-            onChange={this.handleLimit}
-          />
-        </div>
+        {controls.map(control => {
+          if (control.type === 'limit') {
+            return (
+              <div key={control.type}>
+                <Label>{control.label}:</Label>
+                <InputFilter
+                    value={this.state[control.type].toString()}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                        this.handleFilterProps(control.type, event)
+                    }
+                />
+              </div>
+            );
+          } else {
+            return (
+              <div key={control.type}>
+                <Label>{control.label}:</Label>
+                <TextAreaFilter
+                    value={this.state[control.type].toString()}
+                    onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        this.handleFilterProps(control.type, event)
+                    }
+                />
+              </div>
+            );
+          }
+        })}
         <div style={{ paddingTop: 20 }}>
           <Button htmlType="button" onClick={this.handleSubmit}>Refresh</Button>
         </div>
