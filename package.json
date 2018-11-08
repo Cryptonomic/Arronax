@@ -42,32 +42,38 @@
     "styled-components": "^3.4.5"
   },
   "devDependencies": {
-    "@types/immutable": "^3.8.7",
-    "@types/prop-types": "^15.5.6",
     "@types/enzyme": "^3.1.14",
+    "@types/immutable": "^3.8.7",
     "@types/jest": "^23.3.7",
+    "@types/prop-types": "^15.5.6",
     "@types/react": "^16.4.12",
     "@types/react-dom": "^16.0.7",
     "@types/react-redux": "^6.0.6",
     "@types/redux": "^3.6.31",
     "awesome-typescript-loader": "^5.2.0",
     "babel-plugin-import": "^1.9.1",
-    "prettier": "^1.14.2",
-    "react-app-rewire-less": "^2.1.3",
-    "react-app-rewired": "^1.6.2",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.6.0",
     "husky": "^0.14.3",
     "jest": "^23.6.0",
     "node-fetch": "^1.7.3",
-    "react-scripts-ts": "2.17.0",
+    "prettier": "^1.14.2",
+    "react-app-rewire-less": "^2.1.3",
+    "react-app-rewired": "^1.6.2",
+    "react-scripts-ts": "^4.0.8",
     "source-map-loader": "^0.2.4",
     "ts-import-plugin": "^1.5.5",
+    "ts-jest": "^23.10.4",
     "tslint-config-airbnb": "^5.10.0",
     "tslint-config-prettier": "^1.15.0",
     "tslint-plugin-prettier": "^1.3.0",
     "tslint-react": "^3.6.0",
-    "typescript": "3.1.3",
-    "ts-jest": "^23.10.4"
-  }
+    "typescript": "3.1.3"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
