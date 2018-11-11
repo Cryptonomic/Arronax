@@ -35,15 +35,15 @@ const filterPanelControl: React.SFC<FilterControlProps> = (props) => {
     if (props.ctrlType === 'limit') {
         return (
             <>
-            <Label>{props.ctrlLabel}:</Label>
-            <InputFilter
-                bordered={props.ctrlBordered}
-                value={props.ctrlValue}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                    props.ctrlChange(props.ctrlType, props.ctrlControlIndex, event)
-                }
-            />
-                </>
+                <Label>{props.ctrlLabel}:</Label>
+                <InputFilter
+                    bordered={props.ctrlBordered}
+                    value={props.ctrlValue}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                        props.ctrlChange(props.ctrlType, props.ctrlControlIndex, event)
+                    }
+                />
+            </>
         );
     } else {
         return (
