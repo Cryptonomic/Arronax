@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TezosFilter } from 'conseiljs';
 import { Layout } from 'antd';
-import { FilterPanel } from './FilterPanel';
+import { FilterPanel } from './FilterPanel/FilterPanel';
 import { DataPanel } from './DataPanel';
 import { NetworkSelector } from './NetworkSelector';
 /* tslint:disable no-import-side-effect */
