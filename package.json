@@ -12,6 +12,11 @@
     "start:betanet": "react-app-rewired start --scripts-version react-scripts-ts && NODE_ENV=betanet",
     "test": "react-app-rewired test --scripts-version react-scripts-ts --env=jsdom"
   },
+  "lint-staged": {
+    "*.{ts, tsx}": [
+      "tslint -c tslint.json --format stylish -p"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Cryptonomic/Arronax.git"
