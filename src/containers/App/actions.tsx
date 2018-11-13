@@ -1,24 +1,16 @@
 import { TezosFilter } from 'conseiljs';
-import { SET_FILTER, SET_NETWORK } from './constants';
+import { SET_FILTER } from './constants';
 
 export interface SetFilter {
   type: SET_FILTER;
   filters: TezosFilter;
-}
-
-export interface SetNetwork {
-  type: SET_NETWORK;
   network: string;
 }
 
-export type ArronaxAction = SetFilter | SetNetwork;
+export type ArronaxAction = SetFilter;
 
-export const setFilter = (filters: TezosFilter): SetFilter => ({
+export const setFilter = (filters: TezosFilter, network: string): SetFilter => ({
   filters,
-  type: SET_FILTER
-});
-
-export const setNetwork = (network: string): SetNetwork => ({
   network,
-  type: SET_NETWORK
+  type: SET_FILTER
 });

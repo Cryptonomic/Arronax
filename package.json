@@ -15,7 +15,7 @@
   },
   "lint-staged": {
     "*.{ts, tsx}": [
-      "tslint -c tslint.json --format stylish -p"
+      "tslint -c tslint.json --format stylish -p ."
     ]
   },
   "repository": {

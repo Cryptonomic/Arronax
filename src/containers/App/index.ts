@@ -4,15 +4,14 @@ import { createStructuredSelector } from 'reselect';
 import { TezosFilter } from 'conseiljs';
 import Arronax from 'components/Arronax';
 import { ArronaxState, GlobalStateMap } from 'types';
-import { ArronaxAction, setFilter, setNetwork } from './actions';
+import { ArronaxAction, setFilter } from './actions';
 import {
   makeSelectFilters,
   makeSelectNetwork,
 } from './selectors';
 
 interface DispatchToProps {
-  setFilter(filters: TezosFilter): void;
-  setNetwork(network: string): void;
+  setFilter(filters: TezosFilter, network: string): void;
 }
 
 const mapStateToProps = createStructuredSelector<
@@ -26,11 +25,8 @@ const mapStateToProps = createStructuredSelector<
 const mapDispatchToProps = (
   dispatch: Dispatch<ArronaxAction>
 ): DispatchToProps => ({
-  setFilter: (filters: TezosFilter) => {
-    dispatch(setFilter(filters));
-  },
-  setNetwork: (network: string) => {
-    dispatch(setNetwork(network));
+  setFilter: (filters: TezosFilter, network: string) => {
+    dispatch(setFilter(filters, network));
   }
 });
 

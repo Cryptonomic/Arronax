@@ -2,7 +2,7 @@ import { fromJS } from 'immutable';
 import { TezosConseilQuery, TezosFilter } from 'conseiljs';
 import { ArronaxStateMap } from 'types';
 import { ArronaxAction } from './actions';
-import { SET_FILTER, SET_NETWORK } from './constants';
+import { SET_FILTER } from './constants';
 
 const emptyFilters: TezosFilter = TezosConseilQuery.getEmptyTezosFilter();
 
@@ -17,9 +17,7 @@ export default (
 ): ArronaxStateMap => {
   switch (action.type) {
     case SET_FILTER:
-      return state.set('filters', fromJS(action.filters));
-    case SET_NETWORK:
-      return state.set('network', fromJS(action.network));
+      return state.set('filters', fromJS(action.filters)).set('network', action.network);
     default:
       return state;
   }
