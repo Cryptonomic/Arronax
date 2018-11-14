@@ -134,7 +134,7 @@ export class FilterPanel extends React.Component<
               </div>
           );
         })}
-        <div style={{ paddingTop: 20 }}>
+        <div style={{margin: 'auto', marginTop: '10px', width: '100px'}}>
           <Button htmlType="button" onClick={this.handleSubmit}>Refresh</Button>
         </div>
       </div>

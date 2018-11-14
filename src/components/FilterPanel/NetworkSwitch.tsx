@@ -10,8 +10,7 @@ interface NetworkSwitchProps {
 const Option = Select.Option;
 
 const networkSwitch: React.SFC<NetworkSwitchProps> = (props) => (
-    <div id="network-selector">
-        <label htmlFor="selector">Network:</label>
+    <div id="network-selector" style={{margin: 'auto', marginBottom: '10px', width: '100px'}}>
         <Select
             value={props.network}
             onChange={props.ntwChange}
