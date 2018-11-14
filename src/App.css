@@ -5,7 +5,3 @@
 .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
   padding: 10px 16px;
 }
-
-textarea.untouched, input.untouched {
-  border: 2px solid red;
-}

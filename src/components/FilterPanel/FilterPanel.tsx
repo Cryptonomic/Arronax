@@ -3,10 +3,16 @@ import { TezosFilter } from 'conseiljs';
 import { Button } from 'antd';
 
 import FilterPanelControl from './FilterPanelControl';
+import NetworkSwitch from './NetworkSwitch';
 
 interface FilterPanelProps {
   filters: TezosFilter;
-  setFilter: (filters: TezosFilter) => void;
+  network: string;
+  setFilter: (filters: TezosFilter, network: string) => void;
+}
+
+interface FilterPanelState extends TezosFilter {
+  network: string;
 }
 
 const controls = [
@@ -79,11 +85,11 @@ const controls = [
 
 export class FilterPanel extends React.Component<
   FilterPanelProps,
-  TezosFilter
+  FilterPanelState
 > {
   public constructor(props: FilterPanelProps) {
     super(props);
-    this.state = props.filters;
+    this.state = {...props.filters, ...{ network: props.network} };
   }
 
   public handleFilterProps = (
@@ -99,14 +105,21 @@ export class FilterPanel extends React.Component<
     controls[ctrlPosition].applied = false;
   }
 
+  public handleNetworkSwitch = value => {
+    this.setState({network: value});
+  }
+
   public handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
-    this.props.setFilter(this.state);
+    const filterProps = {...this.state};
+    delete filterProps.network;
+    this.props.setFilter(filterProps, this.state.network);
     controls.forEach(control => control.applied = true);
   }
 
   public render(): JSX.Element {
     return (
       <div style={{width: '100%', padding: '10px'}}>
+        <NetworkSwitch network={this.state.network} ntwChange={(value) => this.handleNetworkSwitch(value)}/>
         {controls.map((control, index) => {
           return (
               <div key={index}>
@@ -121,7 +134,7 @@ export class FilterPanel extends React.Component<
               </div>
           );
         })}
-        <div style={{ paddingTop: 20 }}>
+        <div style={{margin: 'auto', marginTop: '10px', width: '100px'}}>
           <Button htmlType="button" onClick={this.handleSubmit}>Refresh</Button>
         </div>
       </div>
