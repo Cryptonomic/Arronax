@@ -8,8 +8,6 @@
     "eject": "react-scripts-ts eject",
     "lint": "tslint -c tslint.json --format stylish -p .",
     "start": "react-app-rewired start --scripts-version react-scripts-ts",
-    "start:zeronet": "react-app-rewired start --scripts-version react-scripts-ts && NODE_ENV=zeronet",
-    "start:betanet": "react-app-rewired start --scripts-version react-scripts-ts && NODE_ENV=betanet",
     "test": "react-app-rewired test --scripts-version react-scripts-ts --env=jsdom",
     "precommit": "lint-staged"
   },
