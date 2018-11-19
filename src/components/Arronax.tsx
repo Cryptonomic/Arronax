@@ -35,7 +35,7 @@ class Arronax extends React.PureComponent<ArronaxProps, ArronaxState> {
                 config.key = parsedRes.key;
                 this.setState({loaded: true});
             })
-            .catch(() => console.log('Error during config initialization.'))
+            .catch(() => console.log('Error during config initialization.'));
     }
 
     render(): JSX.Element {
