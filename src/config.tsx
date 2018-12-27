@@ -1,15 +1,11 @@
-const betanet = {
-    url : 'http://conseil-prod.cryptonomic-infra.tech/tezos/',
-    key: 'hooman'
+type Config = {
+  url: string;
+  key: string;
 };
-  
-const zeronet = {
-    url : 'https://conseil-staging.cryptonomic-infra.tech/tezos/',
-    key: 'hooman'
-};
-  
-const config = process.env.NODE_ENV === 'betanet'
-? betanet
-: zeronet;
 
-export default config;
+const defaultConfig: Config = {
+  url: 'https://conseil-staging.cryptonomic-infra.tech/tezos/',
+  key: 'hooman'
+};
+
+export default defaultConfig;

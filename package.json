@@ -1,44 +1,61 @@
 {
-  "name": "Arronax",
-  "version": "0.1.0",
-  "description": "A multi-chain block explorer.",
+  "name": "react-typescript-samples",
+  "version": "1.0.0",
+  "description": "Sample working with React,TypeScript and Webpack)",
   "main": "index.js",
   "scripts": {
-    "start": "react-scripts-ts start",
-    "start:zeronet": "react-scripts-ts start && NODE_ENV=zeronet",
-    "start:betanet": "react-scripts-ts start && NODE_ENV=betanet",
-    "test": "npm test"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --mode development --inline --hot --open",
+    "build": "webpack --mode development"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Cryptonomic/Arronax.git"
-  },
-  "keywords": [
-    "Tezos",
-    "Ethereum"
-  ],
-  "author": "Cryptonomic Inc",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/Cryptonomic/Arronax/issues"
-  },
-  "homepage": "https://github.com/Cryptonomic/Arronax#readme",
-  "dependencies": {
-    "@types/react": "^16.0.40",
-    "@types/react-dom": "^16.0.4",
-    "@types/react-redux": "^5.0.15",
-    "conseiljs": "^0.1.25",
-    "querystring": "^0.2.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-redux": "^5.0.7",
-    "react-scripts-ts": "2.12.0",
-    "redux": "^3.7.2",
-    "ts-react-json-table": "^0.1.1"
-  },
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "awesome-typescript-loader": "^3.5.0",
-    "source-map-loader": "^0.2.3",
-    "typescript": "^2.7.2"
+    "@types/node": "^10.12.18",
+    "@types/react": "^16.4.7",
+    "@types/react-dom": "^16.0.6",
+    "@types/react-redux": "^6.0.5",
+    "@types/react-router-dom": "^4.3.0",
+    "awesome-typescript-loader": "^5.2.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-dev-expression": "^0.2.1",
+    "babel-plugin-flow-runtime": "^0.17.0",
+    "babel-plugin-polished": "^1.1.0",
+    "babel-plugin-styled-components": "^1.8.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-classes": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-react-optimize": "^1.0.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "condition-loader": "^1.0.5",
+    "cross-env": "^5.2.0",
+    "css-loader": "^1.0.0",
+    "file-loader": "^1.1.11",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.4.1",
+    "style-loader": "^0.21.0",
+    "url-loader": "^1.0.1",
+    "webpack": "^4.16.2",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.5"
+  },
+  "dependencies": {
+    "@material-ui/core": "^3.7.1",
+    "@material-ui/icons": "^3.0.1",
+    "conseiljs": "https://github.com/Cryptonomic/ConseilJS.git#86-ledger-peerdependency",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-redux": "^5.0.7",
+    "react-router-dom": "^4.2.2",
+    "react-router-redux": "^4.0.8",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0",
+    "styled-components": "^4.1.3",
+    "typescript": "^3.0.1"
   }
 }
