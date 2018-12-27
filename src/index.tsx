@@ -1,23 +1,16 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import applyArronaxAction from './reducers';
-import { createStore } from 'redux';
-import { ArronaxState, DataView } from './types';
 import { Provider } from 'react-redux';
-import Arronax from './containers';
-import { TezosConseilQuery } from 'conseiljs';
+import configureStore from './configureStore';
+import App from './containers/App';
 
-const emptyFilters = TezosConseilQuery.getEmptyTezosFilter();
-
-const store = createStore<ArronaxState>(applyArronaxAction, {
-    filters: emptyFilters,
-    dataView: DataView.Blocks,
-    network: 'zeronet'
-});
+const initialState = {};
+const store = configureStore(initialState);
+const MOUNT_NODE = document.getElementById('root');
 
 ReactDOM.render(
-    <Provider store={store}>
-        <Arronax />
-    </Provider>,
-    document.getElementById('root')
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  MOUNT_NODE
 );

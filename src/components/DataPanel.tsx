@@ -1,44 +1,30 @@
 import * as React from 'react';
-import { DataView } from '../types';
 import { TezosFilter } from 'conseiljs';
-import { Tab } from './Tab';
-import '../style.css';
+import { Tabs } from 'antd';
+import BlocksGrid from 'containers/Blocks';
+import AccountsGrid from 'containers/Accounts';
+import OperationsGrid from 'containers/Operations';
+import { DataView } from '../types';
+
+const TabPane = Tabs.TabPane;
 
 interface DataPanelProps {
-    filters: TezosFilter;
-    dataView: DataView;
-    network: string;
-    switchTab:  (dataView: DataView) => void;
+  filters: TezosFilter;
+  network: string;
 }
 
-export const DataPanel = (props: DataPanelProps) => {
-    return(
-        <div id="data">
-            <div id="data_tabs">
-                <button onClick={() => props.switchTab(DataView.Blocks)}>Blocks</button>
-                <button onClick={() => props.switchTab(DataView.Operations)}>Operations</button>
-                <button onClick={() => props.switchTab(DataView.Accounts)}>Accounts</button>
-            </div>
-            <div id="data_content">
-                <Tab
-                    dataView={DataView.Blocks}
-                    hidden={props.dataView !== DataView.Blocks}
-                    filters={props.filters}
-                    network={props.network}
-                />
-                <Tab
-                    dataView={DataView.Operations}
-                    hidden={props.dataView !== DataView.Operations}
-                    filters={props.filters}
-                    network={props.network}
-                />
-                <Tab
-                    dataView={DataView.Accounts}
-                    hidden={props.dataView !== DataView.Accounts}
-                    filters={props.filters}
-                    network={props.network}
-                />
-            </div>
-        </div>
-    );
-};
+export const DataPanel = (props: DataPanelProps): JSX.Element => (
+  <div className="card-container">
+    <Tabs type="card">
+      <TabPane tab="Blocks" key={DataView.Blocks}>
+        <BlocksGrid filters={props.filters} network={props.network} />
+      </TabPane>
+      <TabPane tab="Operations" key={DataView.Operations}>
+        <OperationsGrid filters={props.filters} network={props.network} />
+      </TabPane>
+      <TabPane tab="Accounts" key={DataView.Accounts}>
+        <AccountsGrid filters={props.filters} network={props.network} />
+      </TabPane>
+    </Tabs>
+  </div>
+);

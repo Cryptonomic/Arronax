@@ -22,10 +22,9 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noUnusedLocals": true,
     "strict": true,
     "pretty": true,
-    "removeComments": true,
+    "removeComments": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "src/**/*.spec.*", "src/**/*.test.*"]
