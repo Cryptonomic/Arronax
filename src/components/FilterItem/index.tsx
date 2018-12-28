@@ -28,27 +28,39 @@ const LabelWrapper = styled(FormHelperText)`
 
 interface Props {
   label: string;
-  value?: string;
-  index: number;
-  onChange: (value: string, index: number) => void;
+  value?: any;
+  type: string;
+  onChange: (value: string, type: string) => void;
 }
 
 const FilterItem: React.StatelessComponent<Props> = (props) => {
-  const {value, label, index, onChange} = props;
+  const {value, label, type, onChange} = props;
+  let realValue = '';
+  if (type === 'limit') {
+    realValue = value;
+  } else {
+    value.forEach((item, index) => {
+      if (index === 0) {
+        realValue = item;
+      } else {
+        realValue += ', ' + item;
+      }
+    })
+  }
   return (
     <Container>
       <LabelWrapper>{label}</LabelWrapper>
       <TextFieldWrapper
-        value={value}
+        value={realValue}
         margin="normal"
         variant="outlined"
-        onChange={event => onChange(event.target.value, index)}
+        onChange={event => onChange(event.target.value, type)}
       />
     </Container>    
   );
 };
 FilterItem.defaultProps = {
-  value: ''
+  value: []
 }
 
 export default FilterItem;

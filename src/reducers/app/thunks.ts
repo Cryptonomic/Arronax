@@ -1,5 +1,5 @@
 import { TezosConseilQuery } from 'conseiljs/dist/conseiljs.web';
-import { setItemsAction, setFilterAction, setLoadingAction } from './actions';
+import { setItemsAction, initDataAction, setLoadingAction, setNetworkAction } from './actions';
 import config from '../../config';
 const { getBlocks, getOperations, getAccounts  } = TezosConseilQuery;
 const ConseilOperations = {
@@ -14,13 +14,35 @@ export const setItems = (type, items) => {
   };
 }
 
-export const setFilter = (filter) => {
-  return dispatch => {
-    dispatch(setFilterAction(filter));
-  };
+export const submitFilters = () => async (dispatch, state) => {
+  dispatch(initDataAction());
+  const network = state().app.network;
+  const filters = state().app.filters;
+  const category = state().app.selectedTab;
+  dispatch(setLoadingAction(true));
+  const apiKey = config.key;
+  const url = `${config.url}${network}`;
+  const items = await ConseilOperations[category](url, filters, apiKey);
+  dispatch(setItemsAction(category, items));
+  dispatch(setLoadingAction(false));
 }
 
-export const fetchItemsAction = (category: string) =>async (dispatch, state) => {
+export const changeNetwork = (network: string) => async (dispatch, state) => {
+  const oldNetwork = state().app.network;
+  if (oldNetwork === network) return;
+  dispatch(initDataAction());
+  dispatch(setNetworkAction(network));
+  const filters = state().app.filters;
+  const category = state().app.selectedTab;
+  dispatch(setLoadingAction(true));
+  const apiKey = config.key;
+  const url = `${config.url}${network}`;
+  const items = await ConseilOperations[category](url, filters, apiKey);
+  dispatch(setItemsAction(category, items));
+  dispatch(setLoadingAction(false));
+}
+
+export const fetchItemsAction = (category: string) => async (dispatch, state) => {
   const network = state().app.network;
   const filters = state().app.filters;
   const originItems = state().app[category];

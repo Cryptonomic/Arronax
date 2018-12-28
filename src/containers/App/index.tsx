@@ -12,6 +12,7 @@ const Container = styled.div`
 
 const MainContainer = styled.div`
     position: relative;
+    background: #f0f2f5;
 `;
 
 const LoadingContainer = styled.div`
@@ -33,10 +34,6 @@ export interface Props {
 class Arronax extends React.Component<Props, {}> {
     constructor(props: Props) {
         super(props);
-    }
-
-    componentDidMount = async () => {
-
     }
 
     render() {

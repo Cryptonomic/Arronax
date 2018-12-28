@@ -7,21 +7,12 @@ import SelectField from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Input from '@material-ui/core/Input';
 import FilterItem from '../../components/FilterItem';
-// import { createStructuredSelector } from 'reselect';
-// import { TezosFilter, TezosConseilQuery } from 'conseiljs/dist/conseiljs.web';
+import { TezosFilter } from 'conseiljs/dist/conseiljs.web';
 import { getFilter, getNetwork } from '../../reducers/app/selectors';
-import { string, number } from 'prop-types';
-// import config from '../../config';
+import {submitFilters, changeNetwork} from '../../reducers/app/thunks';
+import {setFilterAction} from '../../reducers/app/actions';
 
-interface ItemProps {
-    label: string;
-    type: string;
-    applied: boolean;
-    value?: string;
-}
-
-
-const initFilterItems = [
+const controls = [
     {
       label: 'Block IDs',
       type: 'block_id',
@@ -129,43 +120,45 @@ const SubmitBtn = styled(Input) `
 `;
 
 interface Props {
-    filters: any;
+    filters: TezosFilter;
     network: string;
-    // setFilter(filters: any, network: string): void;
+    setFilter(filters: TezosFilter): void;
+    submitFilters(): void;
+    changeNetwork(network: string): void;
 }
-
-interface State {
-    items: ItemProps[];
-}
-
-class SidePanel extends React.Component<Props, State> {
+class SidePanel extends React.Component<Props, {}> {
     constructor(props: Props) {
         super(props);
-        this.state = {
-            items: initFilterItems
-        };
     }
 
-    componentDidMount = async () => {
+    onChangeNetwork = (event) => {
+      const {changeNetwork} = this.props;
+      changeNetwork(event.target.value);
     }
 
-    onChangeNetwork = () => {
+    onChangedFilterItem = (val: string, type: string) => {
+      const {filters, setFilter} = this.props;
+      let newFilters;
+      let newVal;
+      if (type === 'limit') {
+        newVal = val;
+      } else {
+        const emptyStrs = val.replace(' ', '');
+        newVal = emptyStrs.split(',');
+      }
 
-    }
-
-    onChangedFilterItem = (val: string, index: number) => {
-        const {items} = this.state;
-        items[index].value = val;
-        this.setState({items});
+      newFilters = {...filters, [type]: newVal};
+      setFilter(newFilters);
     }
 
     handleSubmit = (event) => {
-        event.preventDefault();
+      const {submitFilters} = this.props;
+      submitFilters();
+      event.preventDefault();
     }
 
     render() {
-        const {network} = this.props;
-        const {items} = this.state;
+        const {network, filters} = this.props;
         return (
             <MainContainer>
                 <SelectContainer>
@@ -178,13 +171,13 @@ class SidePanel extends React.Component<Props, State> {
                     </SelectWrapper>
                 </SelectContainer>
                 <FilterForm onSubmit={this.handleSubmit}>
-                    {items.map((item, index) => {
+                    {controls.map((item, index) => {
                         return (
                             <FilterItem
                                 key={index}
                                 label={item.label}
-                                value={item.value}
-                                index={index}
+                                value={filters[item.type]}
+                                type={item.type}
                                 onChange={this.onChangedFilterItem}
                             />
                         );
@@ -203,10 +196,12 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  
+  setFilter: (filters: TezosFilter) => dispatch(setFilterAction(filters)),
+  submitFilters: () => dispatch(submitFilters()),
+  changeNetwork: (network: string) => dispatch(changeNetwork(network))
 });
 
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(SidePanel);

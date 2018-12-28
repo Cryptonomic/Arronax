@@ -5,12 +5,20 @@ import styled from 'styled-components';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
+import CustomTable from '../../components/CustomTable';
 
 import { getItems, getTab } from '../../reducers/app/selectors';
 import { fetchItemsAction } from '../../reducers/app/thunks';
 import { setTabAction } from '../../reducers/app/actions';
 
 const Container = styled.div`
+  flex: 1;
+  padding: 50px;
+`;
+
+const TabContainer = styled(Typography)`
+
 `;
 
 
@@ -40,7 +48,6 @@ class DataPanel extends React.Component<Props, {}> {
 
     render() {
       const {selectedTab, items} = this.props;
-      console.log('123141', items);
       return (
         <Container>
           <AppBar position="static" color="default">
@@ -50,6 +57,9 @@ class DataPanel extends React.Component<Props, {}> {
               <Tab value="accounts" label="Accounts" />
             </Tabs>
           </AppBar>
+          <TabContainer component="div">
+            <CustomTable items={items} category={selectedTab} />
+          </TabContainer>
         </Container>
           
       );

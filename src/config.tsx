@@ -4,7 +4,7 @@ type Config = {
 };
 
 const defaultConfig: Config = {
-  url: 'https://conseil-staging.cryptonomic-infra.tech/tezos/',
+  url: 'https://conseil-staging2.cryptonomic-infra.tech/tezos/',
   key: 'hooman'
 };
 
