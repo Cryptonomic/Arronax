@@ -13,3 +13,4 @@ typings/
 # TSC
 dist
 build
+src/config.tsx
