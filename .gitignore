@@ -13,3 +13,6 @@ typings/
 # TSC
 dist
 build
+
+# OSX
+.DS_Store
