@@ -44,7 +44,7 @@
     "webpack-dev-server": "^3.1.5"
   },
   "dependencies": {
-    "@material-ui/core": "^3.7.1",
+    "@material-ui/core": "3.7.1",
     "@material-ui/icons": "^3.0.1",
     "conseiljs": "https://github.com/Cryptonomic/ConseilJS.git#86-ledger-peerdependency",
     "moment": "^2.23.0",
