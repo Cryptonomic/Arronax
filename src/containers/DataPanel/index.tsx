@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-// import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -17,10 +16,32 @@ const Container = styled.div`
   padding: 50px;
 `;
 
+const TabsWrapper = styled(Tabs)`
+
+`;
+
 const TabContainer = styled(Typography)`
 
 `;
 
+const TabWrapper = styled.div`
+
+`;
+
+const tabsArray = [
+  {
+    value: 'blocks',
+    title: 'Blocks'
+  },
+  {
+    value: 'operations',
+    title: 'Operations'
+  },
+  {
+    value: 'accounts',
+    title: 'Accounts'
+  }
+];
 
 interface Props {
     items: any[];
@@ -50,13 +71,17 @@ class DataPanel extends React.Component<Props, {}> {
       const {selectedTab, items} = this.props;
       return (
         <Container>
-          <AppBar position="static" color="default">
-            <Tabs value={selectedTab} onChange={this.onChangeTab}>
-              <Tab value="blocks" label="Blocks" />
-              <Tab value="operations" label="Operations" />
-              <Tab value="accounts" label="Accounts" />
-            </Tabs>
-          </AppBar>
+          <TabsWrapper
+            value={selectedTab}
+            onChange={this.onChangeTab}
+          >
+            {tabsArray.map((item, index) => (
+              <Tab
+                key={index}
+                value={item.value}
+                component={() => <TabWrapper>{item.title}</TabWrapper>} />
+            ))}
+          </TabsWrapper>
           <TabContainer component="div">
             <CustomTable items={items} category={selectedTab} />
           </TabContainer>
@@ -77,7 +102,4 @@ const mapDispatchToProps = (dispatch) => ({
   
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(DataPanel);
+export default connect(mapStateToProps, mapDispatchToProps)(DataPanel);

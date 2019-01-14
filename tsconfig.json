@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "components/*": ["src/components/*"]
+    },
     "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",

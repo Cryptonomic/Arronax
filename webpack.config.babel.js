@@ -2,6 +2,7 @@ let path = require('path');
 let HtmlWebpackPlugin = require('html-webpack-plugin');
 let MiniCssExtractPlugin = require('mini-css-extract-plugin');
 let webpack = require('webpack');
+var TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
 
 var basePath = __dirname;
 
@@ -13,6 +14,9 @@ module.exports = {
   context: path.join(basePath, 'src'),
   resolve: {
     extensions: ['.js', '.ts', '.tsx'],
+    plugins: [
+      new TsConfigPathsPlugin()
+    ]
     // modules: [path.join(__dirname, 'dist'), 'node_modules']
   },
   entry: {
@@ -54,6 +58,55 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             cacheDirectory: true
+          }
+        }
+      },
+      // WOFF Font
+      {
+        test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            mimetype: 'application/font-woff'
+          }
+        }
+      },
+      // WOFF2 Font
+      {
+        test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            mimetype: 'application/font-woff'
+          }
+        }
+      },
+      // TTF Font
+      {
+        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            mimetype: 'application/octet-stream'
+          }
+        }
+      },
+      // EOT Font
+      {
+        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+        use: 'file-loader'
+      },
+      // SVG Font
+      {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            mimetype: 'image/svg+xml'
           }
         }
       }

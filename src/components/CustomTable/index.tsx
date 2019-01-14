@@ -12,7 +12,6 @@ import CustomTableRow from '../CustomTableRow';
 
 const TableContainer = styled(Table)`
   width: 100%;
-  margin-top: 20px;
   background: #fff;
   border-radius: 4px;
 `;

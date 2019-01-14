@@ -6,7 +6,7 @@ import FormControl from '@material-ui/core/FormControl';
 import SelectField from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Input from '@material-ui/core/Input';
-import FilterItem from '../../components/FilterItem';
+import FilterItem from 'components/FilterItem';
 import { TezosFilter } from 'conseiljs/dist/conseiljs.web';
 import { getFilter, getNetwork } from '../../reducers/app/selectors';
 import {submitFilters, changeNetwork} from '../../reducers/app/thunks';
