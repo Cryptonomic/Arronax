@@ -37,15 +37,15 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
   if (oldNetwork === network) return;
   dispatch(initDataAction());
   dispatch(setNetworkAction(network));
-  // const filters = state().app.filters;
-  // const category = state().app.selectedTab;
-  // dispatch(setLoadingAction(true));
-  // const config = getConfig(network);
-  // const apiKey = config.key;
-  // const url = `${config.url}${network}`;
-  // const items = await ConseilOperations[category](url, filters, apiKey);
-  // dispatch(setItemsAction(category, items));
-  // dispatch(setLoadingAction(false));
+  const filters = state().app.filters;
+  const category = state().app.selectedTab;
+  dispatch(setLoadingAction(true));
+  const config = getConfig(network);
+  const apiKey = config.key;
+  const url = `${config.url}${network}`;
+  const items = await ConseilOperations[category](url, filters, apiKey);
+  dispatch(setItemsAction(category, items));
+  dispatch(setLoadingAction(false));
 }
 
 export const fetchItemsAction = (category: string) => async (dispatch, state) => {

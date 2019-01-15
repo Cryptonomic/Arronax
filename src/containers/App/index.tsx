@@ -124,10 +124,9 @@ class Arronax extends React.Component<Props, States> {
     }
 
     onChangeTab = (value) => {
-        // const {changeTab, fetchItems} = this.props;
-        const {changeTab} = this.props;
+        const {changeTab, fetchItems} = this.props;
         changeTab(value);
-        // fetchItems(value);    
+        fetchItems(value);
     }
 
     onFilterCollapse = () => {
