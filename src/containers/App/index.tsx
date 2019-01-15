@@ -5,22 +5,23 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { getLoading, getNetwork, getTab } from '../../reducers/app/selectors';
-import {changeNetwork} from '../../reducers/app/thunks';
+import { getLoading, getNetwork, getTab, getItems } from '../../reducers/app/selectors';
+import {changeNetwork, fetchItemsAction} from '../../reducers/app/thunks';
 import { setTabAction } from '../../reducers/app/actions';
-import SidePanel from '../SidePanel';
-import DataPanel from '../DataPanel';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
 import FilterPanel from 'components/FilterPanel';
+import Footer from 'components/Footer';
+import CustomTable from 'components/CustomTable';
 
 const Container = styled.div`
     padding: 50px 0;
+    min-height: calc(100vh - 405px);
 `;
 
 const MainContainer = styled.div`
     position: relative;
-    background: #f0f2f5;
+    min-height: 100vh;
 `;
 
 const LoadingContainer = styled.div`
@@ -51,11 +52,12 @@ const TabsWrapper = styled(Tabs)`
             height: 5px;
         }
     }
-
 `;
 
-const TabContainer = styled(Typography)`
-
+const TabContainer = styled.div`
+    padding: 0px 30px;
+    position: relative;
+    width: 100%;
 `;
 
 const TabItem = styled.div`
@@ -93,8 +95,10 @@ export interface Props {
     isLoading: boolean;
     network: string;
     selectedTab: string;
+    items: any[];
     changeNetwork(network: string): void;
     changeTab: (type: string) => void;
+    fetchItems: (type: string) => void;
 }
 
 export interface States {
@@ -107,6 +111,11 @@ class Arronax extends React.Component<Props, States> {
         this.state = {
             isFilterCollapse: false
         }
+    }
+
+    componentDidMount = () => {
+        const {fetchItems, selectedTab} = this.props;
+        fetchItems(selectedTab);
     }
 
     onChangeNetwork = (event) => {
@@ -131,7 +140,7 @@ class Arronax extends React.Component<Props, States> {
     }
 
     render() {
-        const {isLoading, network, selectedTab} = this.props;
+        const {isLoading, network, selectedTab, items} = this.props;
         const {isFilterCollapse} = this.state;
         return (
             <MainContainer>
@@ -160,9 +169,10 @@ class Arronax extends React.Component<Props, States> {
                         <FilterExTxt>e.g. What were blocks where baked by Foudation Baker 1 in the past 24 hours?</FilterExTxt>
                     </FilterHeader>
                     <TabContainer component="div">
-                        {/* <CustomTable items={items} category={selectedTab} /> */}
+                        <CustomTable items={items} category={selectedTab} />
                     </TabContainer>
                 </Container>
+                <Footer />
                 {isLoading && 
                     <LoadingContainer>
                         <CircularProgress />
@@ -171,20 +181,20 @@ class Arronax extends React.Component<Props, States> {
             </MainContainer>
             
         )
-
-        
     }
 }
 
 const mapStateToProps = (state: any) => ({
   isLoading: getLoading(state),
   network: getNetwork(state),
-  selectedTab: getTab(state)
+  selectedTab: getTab(state),
+  items: getItems(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
     changeNetwork: (network: string) => dispatch(changeNetwork(network)),
-    changeTab: (type: string) => dispatch(setTabAction(type))
+    changeTab: (type: string) => dispatch(setTabAction(type)),
+    fetchItems: (type: string) => dispatch(fetchItemsAction(type)),
 });
 
 export default connect(

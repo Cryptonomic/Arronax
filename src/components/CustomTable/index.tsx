@@ -5,10 +5,10 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TableFooter from '@material-ui/core/TableFooter';
-import TablePagination from '@material-ui/core/TablePagination';
 import getColumns from '../../utils/getColumns';
 import CustomTableRow from '../CustomTableRow';
+import CustomTableHeader from '../TableHeader';
+import CustomPaginator from '../CustomPaginator';
 
 const TableContainer = styled(Table)`
   width: 100%;
@@ -16,29 +16,29 @@ const TableContainer = styled(Table)`
   border-radius: 4px;
 `;
 
-const StyledCell = styled(TableCell)`
-  &&& {
-    padding: 0;
-    font-weight: 300;
-    color:rgba(0, 0, 0, 0.54);
+const desc = (a, b, orderBy) => {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
   }
-`;
-
-const StyledHeadCell = styled(TableCell)`
-  &&& {
-    padding: 0;
-    font-weight: bold;
-    color: rgba(0, 0, 0, 0.9);
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
   }
-`;
+  return 0;
+}
 
-const TableHeaderWrapper = styled(TableHead)`
-  &&& {
-    background: rgb(250, 250, 250);
-    font-weight: bold;
-  }
-`;
+const stableSort = (array, cmp) => {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = cmp(a[0], b[0]);
+    if (order !== 0) return order;
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map(el => el[0]);
+}
 
+const getSorting = (order, orderBy) => {
+  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
+}
 
 interface Props {
   category: string;
@@ -48,6 +48,8 @@ interface Props {
 interface State {
   page: number;
   rowsPerPage: number;
+  order: 'asc' | 'desc';
+  orderBy: string;
 }
 
 class CustomTable extends React.Component<Props, State> {
@@ -55,11 +57,13 @@ class CustomTable extends React.Component<Props, State> {
     super(props);
     this.state = {
       page: 0,
-      rowsPerPage: 10
+      rowsPerPage: 10,
+      order: 'asc',
+      orderBy: 'level',
     };
   }
   
-  handleChangePage = (event, page) => {
+  handleChangePage = (page) => {
     this.setState({ page });
   };
 
@@ -67,51 +71,42 @@ class CustomTable extends React.Component<Props, State> {
     this.setState({ rowsPerPage: event.target.value });
   };
 
+  handleRequestSort = (property: string) => {
+    const orderBy = property;
+    let order: 'asc' | 'desc' = 'desc';
+
+    if (this.state.orderBy === property && this.state.order === 'desc') {
+      order = 'asc';
+    }
+
+    this.setState({ order, orderBy });
+  };
+
   render() {
     const {items, category} = this.props;
-    const {page, rowsPerPage} = this.state;
+    const {page, rowsPerPage, order, orderBy} = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
-    const realRows = items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    const realRows = stableSort(items, getSorting(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
     const columns = getColumns(category);
     return (
-      <TableContainer>
-        <TableHeaderWrapper>
-          <TableRow>
-            <StyledCell padding='checkbox'></StyledCell>
-            {columns.map(column => {
-              return (<StyledHeadCell key={column.key}>{column.title}</StyledHeadCell>)
+      <React.Fragment>
+        <TableContainer>
+          <CustomTableHeader rows={columns} order={order} orderBy={orderBy} createSortHandler={this.handleRequestSort}/>
+          <TableBody>
+            {realRows.map((row, index) => {
+              return (
+                <CustomTableRow key={index} category={category} item={row} />
+              );
             })}
-          </TableRow>
-        </TableHeaderWrapper>
-        <TableBody>
-          {realRows.map((row, index) => {
-            return (
-              <CustomTableRow key={index} category={category} item={row} />
-            );
-          })}
-          {emptyRows > 0 && (
-            <TableRow style={{ height: 48 * emptyRows }}>
-              <TableCell colSpan={6} />
-            </TableRow>
-          )}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              rowsPerPageOptions={[10, 15, 20]}
-              colSpan={3}
-              count={items.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              SelectProps={{
-                native: true,
-              }}
-              onChangePage={this.handleChangePage}
-              onChangeRowsPerPage={this.handleChangeRowsPerPage}
-            />
-          </TableRow>
-        </TableFooter>
-      </TableContainer>    
+            {emptyRows > 0 && (
+              <TableRow style={{ height: 48 * emptyRows }}>
+                <TableCell colSpan={6} />
+              </TableRow>
+            )}
+          </TableBody>
+        </TableContainer>
+        <CustomPaginator page={page} totalNumber={items.length} onChangePage={this.handleChangePage} />
+      </React.Fragment>
     );
   }
 };

@@ -2,8 +2,8 @@ const getColumns = (category: string) => {
   switch(category) {
     case 'blocks':
       return [
-        { title: 'Block hash', dataIndex: 'hash', key: 'blockHash' },
         { title: 'Level', dataIndex: 'level', key: 'level' },
+        { title: 'Block hash', dataIndex: 'hash', key: 'blockHash' },
         { title: 'Timestamp', dataIndex: 'timestamp', key: 'timestamp' }
       ];
     case 'operations':
