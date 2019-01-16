@@ -487,8 +487,8 @@ awesome-typescript-loader@^5.0.0, awesome-typescript-loader@^5.2.0:
     webpack-log "^1.2.0"
 
 aws-sdk@^2.326.0:
-  version "2.386.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.386.0.tgz#59c94086a69c4580ffce061d81972d3c1e20d9a1"
+  version "2.388.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.388.0.tgz#de3f8f5576ccaa3477fe66529bdd1546250e8325"
   dependencies:
     buffer "4.9.1"
     events "1.1.1"
@@ -1724,19 +1724,13 @@ concat-stream@^1.5.0:
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
 
-condition-loader@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/condition-loader/-/condition-loader-1.0.5.tgz#81f926361d2fae237336846fea7fb04dc1a70218"
-  dependencies:
-    loader-utils "^1.1.0"
-
 connect-history-api-fallback@^1.3.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/connect-history-api-fallback/-/connect-history-api-fallback-1.6.0.tgz#8b32089359308d111115d81cad3fceab888f97bc"
 
-"conseiljs@https://github.com/Cryptonomic/ConseilJS.git#86-ledger-peerdependency":
+"conseiljs@https://github.com/Cryptonomic/ConseilJS.git#develop-arronax":
   version "0.1.37"
-  resolved "https://github.com/Cryptonomic/ConseilJS.git#2e412c7c9dec5c45bcbc58a1498bd6f9ea014e46"
+  resolved "https://github.com/Cryptonomic/ConseilJS.git#50a2db5684fc5de4082b5434084b39fc48e60dc1"
   dependencies:
     "@ledgerhq/hw-transport" "4.21.0"
     "@ledgerhq/hw-transport-node-hid" "^4.22.0"

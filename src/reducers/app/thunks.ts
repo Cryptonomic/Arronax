@@ -1,4 +1,4 @@
-import { TezosConseilQuery } from 'conseiljs/dist/conseiljs.web';
+import { TezosConseilQuery } from 'conseiljs';
 import { setItemsAction, initDataAction, setLoadingAction, setNetworkAction } from './actions';
 import configs from '../../config';
 const { getBlocks, getOperations, getAccounts  } = TezosConseilQuery;

@@ -36,11 +36,6 @@ module.exports = {
         options: {useBabel: true}
       },
       {
-        test: /\.js$/,
-        loader: 'condition-loader',
-        options: defs
-      },
-      {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
