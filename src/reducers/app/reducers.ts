@@ -6,7 +6,7 @@ import {
   INIT_DATA,
   SET_NETWORK
 } from './types';
-import { TezosConseilQuery, TezosFilter } from 'conseiljs/dist/conseiljs.web';
+import { TezosConseilQuery, TezosFilter } from 'conseiljs';
 import { TezosAccount, TezosBlock, TezosOperation } from '../../types';
 const emptyFilters: TezosFilter = TezosConseilQuery.getEmptyTezosFilter();
 

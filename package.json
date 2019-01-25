@@ -31,7 +31,6 @@
     "babel-preset-react-optimize": "^1.0.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.26.0",
-    "condition-loader": "^1.0.5",
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
     "file-loader": "^1.1.11",
@@ -44,9 +43,9 @@
     "webpack-dev-server": "^3.1.5"
   },
   "dependencies": {
-    "@material-ui/core": "3.7.1",
+    "@material-ui/core": "^3.8.3",
     "@material-ui/icons": "^3.0.1",
-    "conseiljs": "https://github.com/Cryptonomic/ConseilJS.git#86-ledger-peerdependency",
+    "conseiljs": "https://github.com/Cryptonomic/ConseilJS.git#develop-arronax",
     "moment": "^2.23.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
