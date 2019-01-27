@@ -6,13 +6,13 @@ const Container = styled.div`
   position: relative;
   width: 107px;
   height: 52px;
-  border: 1px solid #56C2D9;
+  border: 1px solid #56c2d9;
   border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  color: #56C2D9;
+  color: #56c2d9;
   cursor: pointer;
 `;
 
@@ -26,10 +26,10 @@ const FilterMark = styled.div`
   position: absolute;
   width: 24px;
   height: 24px;
-  background: #56C2D9;
+  background: #56c2d9;
   box-shadow: 0 0 4px 0 rgba(0, 0, 0, 1);
   border-radius: 12px;
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 13px;
   letter-spacing: 0.2px;
   font-weight: 500;
@@ -45,19 +45,19 @@ interface Props {
   onCollapse: () => void;
 }
 
-const FilterTool: React.StatelessComponent<Props> = (props) => {
-  const {value, onCollapse} = props;
+const FilterTool: React.StatelessComponent<Props> = props => {
+  const { value, onCollapse } = props;
   return (
     <Container onClick={onCollapse}>
-      <FilterIconWrapper size='22px' color='#56C2D9' iconName='settings' />
+      <FilterIconWrapper size="22px" color="#56C2D9" iconName="settings" />
       Filter
       {value > 0 && <FilterMark>{value}</FilterMark>}
-    </Container>    
+    </Container>
   );
 };
 
 FilterTool.defaultProps = {
-  value: 0
-}
+  value: 0,
+};
 
 export default FilterTool;

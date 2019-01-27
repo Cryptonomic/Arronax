@@ -3,15 +3,17 @@ import styled from 'styled-components';
 import Collapse from '@material-ui/core/Collapse';
 import CloseIcon from '@material-ui/icons/CloseOutlined';
 import PlusIcon from '@material-ui/icons/Add';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FilterMenu from '../FilterMenu';
 
 const Container = styled.div`
   position: relative;
   padding: 50px 77px 50px 50px;
-  background: #ECEDEF;
+  background: #ecedef;
 `;
 
 const FilterTxt = styled.div`
-  color: #4A4A4A;
+  color: #4a4a4a;
   font-size: 20px;
   margin-bottom: 14px;
 `;
@@ -22,8 +24,15 @@ const DisplayTxt = styled(FilterTxt)`
 
 const AddFilterContainer = styled.div`
   width: 100%;
-  background: #FBFBFB;
-  border: 1px solid #EDEDED;
+  background: #fbfbfb;
+  border: 1px solid #ededed;
+  border-radius: 3px;
+`;
+
+const DisplayContainer = styled.div`
+  width: 100%;
+  background: #fbfbfb;
+  border: 1px solid #ededed;
   border-radius: 3px;
 `;
 
@@ -36,7 +45,7 @@ const AddFilterFooter = styled.div`
 `;
 
 const AddFilterButton = styled.div`
-  color: #56C2D9;
+  color: #56c2d9;
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
@@ -46,13 +55,13 @@ const AddFilterButton = styled.div`
 
 const PlusIconWrapper = styled(PlusIcon)`
   &&& {
-    color: #56C2D9;
+    color: #56c2d9;
     font-size: 27px;
-  }  
+  }
 `;
 
 const FilterExpTxt = styled.div`
-  color: #9B9B9B;
+  color: #9b9b9b;
   font-size: 18px;
   margin-left: 21px;
 `;
@@ -66,8 +75,14 @@ const CloseIconContainer = styled.div`
 
 const CloseIconWrapper = styled(CloseIcon)`
   &&& {
-    color: #9B9B9B;
+    color: #9b9b9b;
     font-size: 27px;
+  }
+`;
+
+const InputHighlight = styled(OutlinedInput)`
+  &&& {
+    background-color: #56c2d9;
   }
 `;
 
@@ -76,8 +91,8 @@ interface Props {
   onClose: () => void;
 }
 
-const FilterPanel: React.StatelessComponent<Props> = (props) => {
-  const {isCollapse, onClose} = props;
+const FilterPanel: React.StatelessComponent<Props> = props => {
+  const { isCollapse, onClose } = props;
   return (
     <Collapse in={isCollapse}>
       <Container>
@@ -91,15 +106,17 @@ const FilterPanel: React.StatelessComponent<Props> = (props) => {
               <PlusIconWrapper />
               Add Filter
             </AddFilterButton>
-            <FilterExpTxt>You can filter by all block attributes and more.</FilterExpTxt>
-
+            <FilterExpTxt>
+              You can filter by all block attributes and more.
+            </FilterExpTxt>
           </AddFilterFooter>
-
         </AddFilterContainer>
-
         <DisplayTxt>Display</DisplayTxt>
+        <DisplayContainer>
+          <FilterMenu />
+        </DisplayContainer>
       </Container>
-    </Collapse>    
+    </Collapse>
   );
 };
 
