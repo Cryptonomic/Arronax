@@ -42,6 +42,7 @@ const NestedTitle = styled.div`
 const DraggableIcon = styled(DragIcon)`
   float: right;
   margin-left: 25px;
+  color: #d8d8d8;
 `;
 
 const ButtonContainer = styled.span`
@@ -77,6 +78,12 @@ const CancelButton = styled(Button)`
   text-align: center;
   width: 113px;
   margin-right: 6px !important;
+`;
+
+const HR = styled.hr`
+  border-color: #d8d8d8 !important;
+  border-style: solid;
+  margin-top: 10px;
 `;
 
 class ColumnDisplay extends React.Component {
@@ -122,10 +129,10 @@ class ColumnDisplay extends React.Component {
           aria-haspopup="true"
           onClick={this.handleClick}
         >
-          Open Menu
+          Columns ({selected.length})
         </Button>
         <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)}>
-          <NestedTitle>Select Up To 6 Columns to Display</NestedTitle>
+          <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
           {getDetailsColumns('blocks').map(name => (
             <MenuItem
               onClick={this.handleChange(name)}
@@ -140,7 +147,7 @@ class ColumnDisplay extends React.Component {
               <DraggableIcon />
             </MenuItem>
           ))}
-          <hr />
+          <HR />
           <ButtonContainer>
             <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
             <SubmitButton variant="contained">Done</SubmitButton>
