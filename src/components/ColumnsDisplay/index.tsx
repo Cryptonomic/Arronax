@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { getTab } from '../../reducers/app/selectors';
+import { setItems } from '../../reducers/app/thunks';
 import styled from 'styled-components';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -99,6 +100,7 @@ const HR = styled.hr`
 
 export interface Props {
   selectedTab: string;
+  setItems: (type: string, items: Array<string>) => {};
 }
 
 class ColumnDisplay extends React.Component<Props> {
@@ -109,6 +111,7 @@ class ColumnDisplay extends React.Component<Props> {
 
   handleChange = name => event => {
     const { selected } = this.state;
+    const { setItems, selectedTab } = this.props;
     const positionInArray = selected.indexOf(name.dataIndex);
     if (positionInArray === -1) {
       this.setState({
@@ -120,15 +123,14 @@ class ColumnDisplay extends React.Component<Props> {
         selected: [...selected],
       });
     }
+    setItems(selectedTab, selected);
   };
 
-  cancelChange = name => {
-    console.log('cancelling');
+  cancelChange = () => {
     this.setState({ anchorEl: null });
   };
 
   handleClick = event => {
-    const { anchorEl } = this.state;
     this.setState({ anchorEl: event.currentTarget });
   };
 
@@ -188,7 +190,12 @@ const mapStateToProps = (state: any) => ({
   selectedTab: getTab(state),
 });
 
+const mapDispatchToProps = dispatch => ({
+  setItems: (type: string, items: Array<string>) =>
+    dispatch(setItems(type, items)),
+});
+
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(ColumnDisplay);

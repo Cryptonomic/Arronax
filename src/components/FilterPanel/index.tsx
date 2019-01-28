@@ -4,7 +4,7 @@ import Collapse from '@material-ui/core/Collapse';
 import CloseIcon from '@material-ui/icons/CloseOutlined';
 import PlusIcon from '@material-ui/icons/Add';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
-import FilterMenu from '../FilterMenu';
+import ColumnsDisplay from '../ColumnsDisplay';
 
 const Container = styled.div`
   position: relative;
@@ -119,7 +119,7 @@ const FilterPanel: React.StatelessComponent<Props> = props => {
         </AddFilterContainer>
         <DisplayTxt>Display</DisplayTxt>
         <DisplayContainer>
-          <FilterMenu />
+          <ColumnsDisplay />
         </DisplayContainer>
       </Container>
     </Collapse>
