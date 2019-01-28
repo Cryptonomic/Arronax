@@ -30,10 +30,10 @@ const AddFilterContainer = styled.div`
 `;
 
 const DisplayContainer = styled.div`
+  align-items: center;
   padding-left: 24px;
   width: 100%;
   height: 93px;
-  margin: 0 auto;
   background: #fbfbfb;
   border: 1px solid #ededed;
   border-radius: 3px;

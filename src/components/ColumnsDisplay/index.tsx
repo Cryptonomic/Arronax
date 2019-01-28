@@ -9,12 +9,19 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DragIcon from '@material-ui/icons/DragHandle';
+import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 
 const Container = styled.div`
+  display: flex;
+  border: 1px solid #d8d8d8;
+  border-radius: 5px;
+`;
+
+const ButtonShell = styled(Button)`
   position: relative;
-  width: 107px;
+  width: 140px;
   height: 52px;
-  border: 1px solid #aaa;
+  border: 1px solid #d8d8d8;
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -48,6 +55,11 @@ const ButtonContainer = styled.span`
   display: flex;
   float: right;
   margin: 4px 20px 15px 10px !important;
+`;
+
+const ArrowIcon = styled(KeyboardArrowDown)`
+  color: #56c2d9;
+  margin-left: 7px;
 `;
 
 const SubmitButton = styled(Button)`
@@ -137,13 +149,14 @@ class ColumnDisplay extends React.Component<Props> {
     const { anchorEl, selected } = this.state;
     return (
       <Container>
-        <Button
+        <ButtonShell
           aria-owns={anchorEl ? 'simple-menu' : undefined}
           aria-haspopup="true"
           onClick={this.handleClick}
         >
           Columns ({selected.length})
-        </Button>
+          <ArrowIcon />
+        </ButtonShell>
         <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)}>
           <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
           {getDetailsColumns(tab).map(name => (
@@ -179,5 +192,3 @@ export default connect(
   mapStateToProps,
   null
 )(ColumnDisplay);
-
-// export default ColumnDisplay;
