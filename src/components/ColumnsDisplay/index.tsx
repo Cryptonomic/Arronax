@@ -8,6 +8,8 @@ import getDetailsColumns from 'src/utils/getDetailsColumns';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import DragIcon from '@material-ui/icons/DragHandle';
+import ListSubheader from '@material-ui/core/ListSubheader';
 
 const Container = styled.div`
   position: relative;
@@ -20,6 +22,61 @@ const Container = styled.div`
   justify-content: center;
   font-size: 18px;
   cursor: pointer;
+`;
+
+const NestedTitle = styled.div`
+  outline: none;
+  display: flex;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: 31px;
+  color: #9b9b9b;
+  font-family: Roboto-Medium;
+  font-size: 16px;
+  font-weight: 500;
+  height: 19px;
+  letter-spacing: 0;
+  width: 333px;
+`;
+
+const DraggableIcon = styled(DragIcon)`
+  float: right;
+  margin-left: 25px;
+`;
+
+const ButtonContainer = styled.span`
+  display: flex;
+  float: right;
+  margin: 4px 20px 15px 10px !important;
+`;
+
+const SubmitButton = styled(Button)`
+  display: flex;
+  background: #56c2d9 !important;
+  border-radius: 5px 5px 5px 5px;
+  height: 42px;
+  width: 113px;
+  color: #ffffff !important;
+  font-family: Roboto-Bold;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 2.43px;
+  text-align: center;
+  width: 113px;
+`;
+const CancelButton = styled(Button)`
+  display: flex;
+  color: #56c2d9 !important;
+  border-radius: 5px 5px 5px 5px;
+  height: 42px;
+  width: 113px;
+  font-family: Roboto-Bold;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 2.43px;
+  text-align: center;
+  width: 113px;
+  margin-right: 6px !important;
 `;
 
 class ColumnDisplay extends React.Component {
@@ -72,6 +129,7 @@ class ColumnDisplay extends React.Component {
           Open Menu
         </Button>
         <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)}>
+          <NestedTitle>Select Up To 6 Columns to Display</NestedTitle>
           {getDetailsColumns('blocks').map(name => (
             <MenuItem
               onClick={this.handleChange(name)}
@@ -83,25 +141,15 @@ class ColumnDisplay extends React.Component {
                 checked={selected.indexOf(name.dataIndex) > -1}
               />
               <ListItemText primary={name.title} />
+              <DraggableIcon />
             </MenuItem>
           ))}
-          <button>Cancel</button>
-          <button>Submit</button>
+          <hr />
+          <ButtonContainer>
+            <CancelButton>Cancel</CancelButton>
+            <SubmitButton variant="contained">Done</SubmitButton>
+          </ButtonContainer>
         </Menu>
-        {/* <Select multiple value={selected} onChange={this.handleChange}>
-            {' '}
-            {getDetailsColumns('blocks').map(name => (
-              <MenuItem key={name.key} value={name.dataIndex}>
-                <Checkbox
-                  disableRipple={true}
-                  checked={selected.indexOf(name.dataIndex) > -1}
-                />
-                <ListItemText primary={name.title} />
-              </MenuItem>
-            ))}
-            <button>Done</button>
-            <button onClick={this.cancelChange}>Cancel</button>
-          </Select> */}
       </Container>
     );
   }
