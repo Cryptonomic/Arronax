@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { getTab } from '../../reducers/app/selectors';
 import styled from 'styled-components';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
 import getDetailsColumns from 'src/utils/getDetailsColumns';
@@ -9,7 +9,6 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DragIcon from '@material-ui/icons/DragHandle';
-import ListSubheader from '@material-ui/core/ListSubheader';
 
 const Container = styled.div`
   position: relative;
@@ -86,7 +85,11 @@ const HR = styled.hr`
   margin-top: 10px;
 `;
 
-class ColumnDisplay extends React.Component {
+export interface Props {
+  selectedTab: string;
+}
+
+class ColumnDisplay extends React.Component<Props> {
   state = {
     selected: [],
     anchorEl: null,
@@ -118,10 +121,20 @@ class ColumnDisplay extends React.Component {
   };
 
   render() {
-    const { anchorEl } = this.state;
-
-    const { selected } = this.state;
-    console.log(selected);
+    const { selectedTab } = this.props;
+    let tab;
+    switch (selectedTab) {
+      case 'blocks':
+        tab = 'blocks';
+        break;
+      case 'operations':
+        tab = 'operations';
+        break;
+      case 'accounts':
+        tab = 'accounts';
+        break;
+    }
+    const { anchorEl, selected } = this.state;
     return (
       <Container>
         <Button
@@ -133,7 +146,7 @@ class ColumnDisplay extends React.Component {
         </Button>
         <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)}>
           <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
-          {getDetailsColumns('blocks').map(name => (
+          {getDetailsColumns(tab).map(name => (
             <MenuItem
               onClick={this.handleChange(name)}
               key={name.key}
@@ -158,4 +171,13 @@ class ColumnDisplay extends React.Component {
   }
 }
 
-export default ColumnDisplay;
+const mapStateToProps = (state: any) => ({
+  selectedTab: getTab(state),
+});
+
+export default connect(
+  mapStateToProps,
+  null
+)(ColumnDisplay);
+
+// export default ColumnDisplay;

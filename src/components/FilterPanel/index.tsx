@@ -30,10 +30,15 @@ const AddFilterContainer = styled.div`
 `;
 
 const DisplayContainer = styled.div`
+  padding-left: 24px;
   width: 100%;
+  height: 93px;
+  margin: 0 auto;
   background: #fbfbfb;
   border: 1px solid #ededed;
   border-radius: 3px;
+  display: flex;
+  flex-grow: row;
 `;
 
 const AddFilterFooter = styled.div`
@@ -89,6 +94,7 @@ const InputHighlight = styled(OutlinedInput)`
 interface Props {
   isCollapse: boolean;
   onClose: () => void;
+  selectedTab: string;
 }
 
 const FilterPanel: React.StatelessComponent<Props> = props => {
