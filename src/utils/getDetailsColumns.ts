@@ -86,7 +86,7 @@ const getDetailsColumns = (category: string) => {
         { title: 'Script', dataIndex: 'script', key: 'script' },
         { title: 'Balance', dataIndex: 'balance', key: 'balance' },
         { title: 'Block level', dataIndex: 'blockLevel', key: 'blockLevel' },
-        { title: 'Block Id', dataIndex: 'blockId', key: 'blockId' },
+        { title: 'Block ID', dataIndex: 'blockId', key: 'blockId' },
       ];
   }
 };
