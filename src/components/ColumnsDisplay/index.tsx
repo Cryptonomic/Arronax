@@ -102,11 +102,7 @@ class ColumnDisplay extends React.Component {
 
   cancelChange = name => {
     console.log('cancelling');
-
-    // set state back to current state before manipulation
-    this.setState({
-      selected: [],
-    });
+    this.setState({ anchorEl: null });
   };
 
   handleClick = event => {
@@ -146,7 +142,7 @@ class ColumnDisplay extends React.Component {
           ))}
           <hr />
           <ButtonContainer>
-            <CancelButton>Cancel</CancelButton>
+            <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
             <SubmitButton variant="contained">Done</SubmitButton>
           </ButtonContainer>
         </Menu>
