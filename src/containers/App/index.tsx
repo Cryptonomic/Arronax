@@ -178,13 +178,17 @@ class Arronax extends React.Component<Props, States> {
             title: 'Spendable',
             dataIndex: 'spendable',
             key: 'spendable',
-            isIcon: true,
+            // isIcon: true,
+            // ^ Throws Error:
+            // Warning: Failed prop type: Invalid prop `children` supplied to `TableCell`, expected a ReactNode.
           },
           {
             title: 'Delegatable',
             dataIndex: 'delegateSetable',
             key: 'delegateSetable',
-            isIcon: true,
+            // isIcon: true,
+            // ^ Throws Error:
+            // Warning: Failed prop type: Invalid prop `children` supplied to `TableCell`, expected a ReactNode.
           },
           {
             title: 'Delegate',

@@ -109,7 +109,12 @@ export interface Props {
   selectedColumns: any[];
 }
 
-class ColumnDisplay extends React.Component<Props> {
+export interface States {
+  selected: any[];
+  anchorEl: boolean;
+}
+
+class ColumnDisplay extends React.Component<Props, States> {
   state = {
     selected: [],
     anchorEl: null,
@@ -122,7 +127,7 @@ class ColumnDisplay extends React.Component<Props> {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props) {
     if (nextProps.selectedColumns !== this.state.selected) {
       this.setState({
         selected: [...nextProps.selectedColumns],

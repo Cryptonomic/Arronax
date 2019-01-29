@@ -69,13 +69,13 @@ const getDetailsColumns = (category: string) => {
           title: 'Spendable',
           dataIndex: 'spendable',
           key: 'spendable',
-          isIcon: true,
+          // isIcon: true,
         },
         {
           title: 'Delegatable',
           dataIndex: 'delegatable',
           key: 'delegatable',
-          isIcon: true,
+          // isIcon: true,
         },
         {
           title: 'Delegate',
