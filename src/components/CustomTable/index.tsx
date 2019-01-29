@@ -98,8 +98,7 @@ class CustomTable extends React.Component<Props, State> {
     );
     const columns = getColumns;
     console.log(columns);
-    // need to recreate this getColumns selection in REDUX
-    // (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]0: {title: "Level", dataIndex: "level", key: "level"}1: {title: "Timestamp", dataIndex: "timestamp", key: "timestamp"}2: {title: "Block Hash", dataIndex: "hash", key: "blockHash"}3: {title: "Predecessor Hash", dataIndex: "predecessor", key: "predecessor"}4: {title: "Operations Hash", dataIndex: "operationsHash", key: "operationsHash"}5: {title: "Protocol Hash", dataIndex: "protocol", key: "protocol"}6: {title: "Proto", dataIndex: "proto", key: "proto"}7: {title: "Chain ID", dataIndex: "chainId", key: "chainId"}8: {title: "Validation Pass", dataIndex: "validationPass", key: "validationPass"}9: {title: "Fitness", dataIndex: "fitness", key: "fitness"}10: {title: "Context", dataIndex: "context", key: "context"}11: {title: "Signature", dataIndex: "signature", key: "signature"}length: 12__proto__: Array(0)
+
     return (
       <React.Fragment>
         <TableContainer>
