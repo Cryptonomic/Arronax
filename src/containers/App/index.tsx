@@ -137,7 +137,6 @@ class Arronax extends React.Component<Props, States> {
   onChangeTab = async value => {
     const { changeTab, fetchItems, setColumns } = this.props;
     const columns = await this.findTab(value);
-    console.log(columns);
     await changeTab(value);
     await setColumns(value, columns);
     await fetchItems(value);
