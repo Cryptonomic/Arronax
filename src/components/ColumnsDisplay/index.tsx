@@ -98,9 +98,15 @@ const HR = styled.hr`
   margin-top: 10px;
 `;
 
+// for the checkbox styling
+const style = {
+  color: '#56c2d9',
+};
+
 export interface Props {
   selectedTab: string;
   setColumns: (category: string, items: any[]) => {};
+  selectedColumns: any[];
 }
 
 class ColumnDisplay extends React.Component<Props> {
@@ -111,10 +117,11 @@ class ColumnDisplay extends React.Component<Props> {
 
   handleSubmit = event => {
     const { selected } = this.state;
-    const { selectedTab, setColumns } = this.props;
+    const { selectedTab, setColumns, selectedColumns } = this.props;
     event.preventDefault();
     this.setState({ anchorEl: null });
     setColumns(selectedTab, selected);
+    // NEED TO ADD THE SELECTED COLUMNS TO THE STATE
   };
 
   handleChange = name => event => {
@@ -142,7 +149,7 @@ class ColumnDisplay extends React.Component<Props> {
   };
 
   render() {
-    const { selectedTab } = this.props;
+    const { selectedTab, selectedColumns } = this.props;
     const { anchorEl, selected } = this.state;
     let tab;
     switch (selectedTab) {
@@ -160,6 +167,10 @@ class ColumnDisplay extends React.Component<Props> {
       return selected.dataIndex;
     });
 
+    const selectedReduxIndex = selectedColumns.map(selected => {
+      return selected.dataIndex;
+    });
+
     return (
       <Container>
         <ButtonShell
@@ -167,7 +178,7 @@ class ColumnDisplay extends React.Component<Props> {
           aria-haspopup="true"
           onClick={this.handleClick}
         >
-          Columns ({selected.length})
+          Columns ({selectedColumns.length})
           <ArrowIcon />
         </ButtonShell>
         <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)}>
@@ -179,8 +190,13 @@ class ColumnDisplay extends React.Component<Props> {
               value={name.dataIndex}
             >
               <Checkbox
+                style={style}
+                className="checkbox"
                 disableRipple={true}
-                checked={selectedDataIndex.indexOf(name.dataIndex) > -1}
+                checked={
+                  selectedDataIndex.indexOf(name.dataIndex) > -1 ||
+                  selectedReduxIndex.indexOf(name.dataIndex) > -1
+                }
               />
               <ListItemText primary={name.title} />
               <DraggableIcon />
