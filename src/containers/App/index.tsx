@@ -10,6 +10,7 @@ import {
   getNetwork,
   getTab,
   getItems,
+  getColumns,
 } from '../../reducers/app/selectors';
 import { changeNetwork, fetchItemsAction } from '../../reducers/app/thunks';
 import { setTabAction } from '../../reducers/app/actions';
@@ -146,7 +147,7 @@ class Arronax extends React.Component<Props, States> {
   render() {
     const { isLoading, network, selectedTab, items } = this.props;
     const { isFilterCollapse } = this.state;
-    console.log(items);
+
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />

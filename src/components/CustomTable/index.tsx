@@ -6,7 +6,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-// import getColumns from '../../utils/getColumns';
 import { getColumns } from '../../reducers/app/selectors';
 import CustomTableRow from '../CustomTableRow';
 import CustomTableHeader from '../TableHeader';
@@ -97,8 +96,11 @@ class CustomTable extends React.Component<Props, State> {
       page * rowsPerPage + rowsPerPage
     );
     const columns = getColumns;
-    console.log(columns);
-
+    console.log('COLUMNS', columns);
+    const newColumns = columns.map(column => column.key);
+    console.log('NEW COLUMNS', newColumns);
+    console.log('ITEMS', items);
+    // needing to trim down the ITEMS to match only the selected columns
     return (
       <React.Fragment>
         <TableContainer>

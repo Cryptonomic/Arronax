@@ -5,31 +5,31 @@ const getColumns = (category: string) => {
         { title: 'Level', dataIndex: 'level', key: 'level' },
         { title: 'Timestamp', dataIndex: 'timestamp', key: 'timestamp' },
         { title: 'Block Hash', dataIndex: 'hash', key: 'blockHash' },
-        {
-          title: 'Predecessor Hash',
-          dataIndex: 'predecessor',
-          key: 'predecessor',
-        },
-        {
-          title: 'Operations Hash',
-          dataIndex: 'operationsHash',
-          key: 'operationsHash',
-        },
-        {
-          title: 'Protocol Hash',
-          dataIndex: 'protocol',
-          key: 'protocol',
-        },
-        { title: 'Proto', dataIndex: 'proto', key: 'proto' },
-        { title: 'Chain ID', dataIndex: 'chainId', key: 'chainId' },
-        {
-          title: 'Validation Pass',
-          dataIndex: 'validationPass',
-          key: 'validationPass',
-        },
-        { title: 'Fitness', dataIndex: 'fitness', key: 'fitness' },
-        { title: 'Context', dataIndex: 'context', key: 'context' },
-        { title: 'Signature', dataIndex: 'signature', key: 'signature' },
+        // {
+        //   title: 'Predecessor Hash',
+        //   dataIndex: 'predecessor',
+        //   key: 'predecessor',
+        // },
+        // {
+        //   title: 'Operations Hash',
+        //   dataIndex: 'operationsHash',
+        //   key: 'operationsHash',
+        // },
+        // {
+        //   title: 'Protocol Hash',
+        //   dataIndex: 'protocol',
+        //   key: 'protocol',
+        // },
+        // { title: 'Proto', dataIndex: 'proto', key: 'proto' },
+        // { title: 'Chain ID', dataIndex: 'chainId', key: 'chainId' },
+        // {
+        //   title: 'Validation Pass',
+        //   dataIndex: 'validationPass',
+        //   key: 'validationPass',
+        // },
+        // { title: 'Fitness', dataIndex: 'fitness', key: 'fitness' },
+        // { title: 'Context', dataIndex: 'context', key: 'context' },
+        // { title: 'Signature', dataIndex: 'signature', key: 'signature' },
       ];
     case 'operations':
       return [
