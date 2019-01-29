@@ -12,7 +12,11 @@ import {
   getItems,
   getColumns,
 } from '../../reducers/app/selectors';
-import { changeNetwork, fetchItemsAction } from '../../reducers/app/thunks';
+import {
+  changeNetwork,
+  fetchItemsAction,
+  setColumns,
+} from '../../reducers/app/thunks';
 import { setTabAction } from '../../reducers/app/actions';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
@@ -105,6 +109,7 @@ export interface Props {
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
+  setColumns: (category: string, items: any[]) => {};
 }
 
 export interface States {
@@ -129,10 +134,68 @@ class Arronax extends React.Component<Props, States> {
     changeNetwork(event.target.value);
   };
 
-  onChangeTab = value => {
-    const { changeTab, fetchItems } = this.props;
-    changeTab(value);
-    fetchItems(value);
+  onChangeTab = async value => {
+    const { changeTab, fetchItems, setColumns } = this.props;
+    const columns = await this.findTab(value);
+    console.log(columns);
+    await changeTab(value);
+    await setColumns(value, columns);
+    await fetchItems(value);
+  };
+
+  findTab = value => {
+    switch (value) {
+      case 'blocks':
+        return [
+          { title: 'Level', dataIndex: 'level', key: 'level' },
+          { title: 'Timestamp', dataIndex: 'timestamp', key: 'timestamp' },
+          { title: 'Block Hash', dataIndex: 'hash', key: 'blockHash' },
+          {
+            title: 'Predecessor Hash',
+            dataIndex: 'predecessor',
+            key: 'predecessor',
+          },
+          {
+            title: 'Operations Hash',
+            dataIndex: 'operationsHash',
+            key: 'operationsHash',
+          },
+        ];
+      case 'operations':
+        return [
+          { title: 'Kind', dataIndex: 'kind', key: 'kind' },
+          { title: 'Source', dataIndex: 'source', key: 'source' },
+          {
+            title: 'Destination',
+            dataIndex: 'destination',
+            key: 'destination',
+          },
+          { title: 'Amount', dataIndex: 'amount', key: 'amount' },
+          { title: 'Fee', dataIndex: 'fee', key: 'fee' },
+        ];
+      case 'accounts':
+        return [
+          { title: 'Account ID', dataIndex: 'accountId', key: 'accountId' },
+          { title: 'Manager', dataIndex: 'manager', key: 'manager' },
+          {
+            title: 'Spendable',
+            dataIndex: 'spendable',
+            key: 'spendable',
+            isIcon: true,
+          },
+          {
+            title: 'Delegatable',
+            dataIndex: 'delegateSetable',
+            key: 'delegateSetable',
+            isIcon: true,
+          },
+          {
+            title: 'Delegate',
+            dataIndex: 'delegate',
+            key: 'delegateValue',
+          },
+        ];
+    }
   };
 
   onFilterCollapse = () => {
@@ -203,6 +266,8 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  setColumns: (category: string, items: any[]) =>
+    dispatch(setColumns(category, items)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
   fetchItems: (type: string) => dispatch(fetchItemsAction(type)),

@@ -7,6 +7,7 @@ import {
   SET_NETWORK,
   SET_COLUMNS,
 } from './types';
+
 import { TezosConseilQuery, TezosFilter } from 'conseiljs';
 import { TezosAccount, TezosBlock, TezosOperation } from '../../types';
 const emptyFilters: TezosFilter = TezosConseilQuery.getEmptyTezosFilter();
