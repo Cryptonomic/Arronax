@@ -22,6 +22,10 @@ const StyledCell = styled(TableCell)`
     border: none;
   }
 `;
+
+const SpanContainer = styled.span`
+  display: flex;
+`;
 interface Props {
   category: string;
   item: any;
@@ -35,9 +39,13 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
       {selectedColumns.map(column => {
         return (
           <StyledCell key={column.key}>
-            {column.dataIndex === 'timestamp'
-              ? moment(item[column.dataIndex]).format('dd MM YYYY h:mm:ss a')
-              : item[column.dataIndex]}
+            {column.dataIndex === 'timestamp' ? (
+              moment(item[column.dataIndex]).format('dd MM YYYY h:mm:ss a')
+            ) : (
+              // NOTE: SpanContainer necessary to avoid error (for passing isIcon: boolean):
+              // Warning: Failed prop type: Invalid prop children supplied to TableCell, expected a ReactNode.
+              <SpanContainer>{item[column.dataIndex]}</SpanContainer>
+            )}
           </StyledCell>
         );
       })}
