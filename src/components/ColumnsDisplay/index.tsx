@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { getTab } from '../../reducers/app/selectors';
+import { getTab, getColumns } from '../../reducers/app/selectors';
 import { setColumns } from '../../reducers/app/thunks';
 import styled from 'styled-components';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
-import getColumns from 'src/utils/getColumns';
+import getColumnData from 'src/utils/getColumns';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -172,7 +172,7 @@ class ColumnDisplay extends React.Component<Props> {
         </ButtonShell>
         <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)}>
           <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
-          {getColumns(tab).map(name => (
+          {getColumnData(tab).map(name => (
             <MenuItem
               onClick={this.handleChange(name)}
               key={name.key}
@@ -201,6 +201,7 @@ class ColumnDisplay extends React.Component<Props> {
 
 const mapStateToProps = (state: any) => ({
   selectedTab: getTab(state),
+  selectedColumns: getColumns(state),
 });
 
 const mapDispatchToProps = dispatch => ({

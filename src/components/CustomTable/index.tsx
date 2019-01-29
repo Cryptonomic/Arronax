@@ -96,11 +96,6 @@ class CustomTable extends React.Component<Props, State> {
       page * rowsPerPage + rowsPerPage
     );
     const columns = getColumns;
-    console.log('COLUMNS', columns);
-    const newColumns = columns.map(column => column.key);
-    console.log('NEW COLUMNS', newColumns);
-    console.log('ITEMS', items);
-    // needing to trim down the ITEMS to match only the selected columns
     return (
       <React.Fragment>
         <TableContainer>
