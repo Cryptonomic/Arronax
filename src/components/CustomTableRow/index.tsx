@@ -33,7 +33,6 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
   return (
     <TableRowWrapper>
       {selectedColumns.map(column => {
-        console.log(column);
         return (
           <StyledCell key={column.key}>
             {column.dataIndex === 'timestamp'

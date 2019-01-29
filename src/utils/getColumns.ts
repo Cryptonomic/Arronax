@@ -69,17 +69,13 @@ const getColumns = (category: string) => {
           title: 'Spendable',
           dataIndex: 'spendable',
           key: 'spendable',
-          // isIcon: true,
-          // ^ Throws Error:
-          // Warning: Failed prop type: Invalid prop `children` supplied to `TableCell`, expected a ReactNode.
+          isIcon: true,
         },
         {
           title: 'Delegatable',
           dataIndex: 'delegateSetable',
           key: 'delegateSetable',
-          // isIcon: true,
-          // ^ Throws Error:
-          // Warning: Failed prop type: Invalid prop `children` supplied to `TableCell`, expected a ReactNode.
+          isIcon: true,
         },
         {
           title: 'Delegate',
