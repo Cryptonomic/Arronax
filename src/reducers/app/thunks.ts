@@ -1,22 +1,34 @@
 import { TezosConseilQuery } from 'conseiljs';
-import { setItemsAction, initDataAction, setLoadingAction, setNetworkAction } from './actions';
+import {
+  setItemsAction,
+  initDataAction,
+  setLoadingAction,
+  setNetworkAction,
+  setColumnsAction,
+} from './actions';
 import configs from '../../config';
-const { getBlocks, getOperations, getAccounts  } = TezosConseilQuery;
+const { getBlocks, getOperations, getAccounts } = TezosConseilQuery;
 const ConseilOperations = {
   blocks: getBlocks,
   operations: getOperations,
-  accounts: getAccounts
+  accounts: getAccounts,
 };
 
-const getConfig = (val) => {
+const getConfig = val => {
   return configs.find(conf => conf.value === val);
-}
+};
 
 export const setItems = (type, items) => {
   return dispatch => {
     dispatch(setItemsAction(type, items));
   };
-}
+};
+
+export const setColumns = (type, items) => {
+  return dispatch => {
+    dispatch(setColumnsAction(type, items));
+  };
+};
 
 export const submitFilters = () => async (dispatch, state) => {
   dispatch(initDataAction());
@@ -30,7 +42,7 @@ export const submitFilters = () => async (dispatch, state) => {
   const items = await ConseilOperations[category](url, filters, apiKey);
   dispatch(setItemsAction(category, items));
   dispatch(setLoadingAction(false));
-}
+};
 
 export const changeNetwork = (network: string) => async (dispatch, state) => {
   const oldNetwork = state().app.network;
@@ -46,9 +58,12 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
   const items = await ConseilOperations[category](url, filters, apiKey);
   dispatch(setItemsAction(category, items));
   dispatch(setLoadingAction(false));
-}
+};
 
-export const fetchItemsAction = (category: string) => async (dispatch, state) => {
+export const fetchItemsAction = (category: string) => async (
+  dispatch,
+  state
+) => {
   const network = state().app.network;
   const filters = state().app.filters;
   const originItems = state().app[category];

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { getTab } from '../../reducers/app/selectors';
-import { setItems } from '../../reducers/app/thunks';
+import { setColumns } from '../../reducers/app/thunks';
 import styled from 'styled-components';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
-import getDetailsColumns from 'src/utils/getDetailsColumns';
+import getColumns from 'src/utils/getColumns';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -100,7 +100,7 @@ const HR = styled.hr`
 
 export interface Props {
   selectedTab: string;
-  setItems: (type: string, items: Array<string>) => {};
+  setColumns: (category: string, items: any[]) => {};
 }
 
 class ColumnDisplay extends React.Component<Props> {
@@ -109,13 +109,21 @@ class ColumnDisplay extends React.Component<Props> {
     anchorEl: null,
   };
 
+  handleSubmit = event => {
+    const { selected } = this.state;
+    const { selectedTab, setColumns } = this.props;
+    event.preventDefault();
+    this.setState({ anchorEl: null });
+    setColumns(selectedTab, selected);
+  };
+
   handleChange = name => event => {
     const { selected } = this.state;
-    const { setItems, selectedTab } = this.props;
+    const { setColumns, selectedTab } = this.props;
     const positionInArray = selected.indexOf(name.dataIndex);
     if (positionInArray === -1) {
       this.setState({
-        selected: [...selected, name.dataIndex],
+        selected: [...selected, name],
       });
     } else {
       selected.splice(positionInArray, 1);
@@ -123,7 +131,6 @@ class ColumnDisplay extends React.Component<Props> {
         selected: [...selected],
       });
     }
-    setItems(selectedTab, selected);
   };
 
   cancelChange = () => {
@@ -136,6 +143,7 @@ class ColumnDisplay extends React.Component<Props> {
 
   render() {
     const { selectedTab } = this.props;
+    const { anchorEl, selected } = this.state;
     let tab;
     switch (selectedTab) {
       case 'blocks':
@@ -148,7 +156,10 @@ class ColumnDisplay extends React.Component<Props> {
         tab = 'accounts';
         break;
     }
-    const { anchorEl, selected } = this.state;
+    const selectedDataIndex = selected.map(selected => {
+      return selected.dataIndex;
+    });
+
     return (
       <Container>
         <ButtonShell
@@ -161,7 +172,7 @@ class ColumnDisplay extends React.Component<Props> {
         </ButtonShell>
         <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)}>
           <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
-          {getDetailsColumns(tab).map(name => (
+          {getColumns(tab).map(name => (
             <MenuItem
               onClick={this.handleChange(name)}
               key={name.key}
@@ -169,7 +180,7 @@ class ColumnDisplay extends React.Component<Props> {
             >
               <Checkbox
                 disableRipple={true}
-                checked={selected.indexOf(name.dataIndex) > -1}
+                checked={selectedDataIndex.indexOf(name.dataIndex) > -1}
               />
               <ListItemText primary={name.title} />
               <DraggableIcon />
@@ -178,7 +189,9 @@ class ColumnDisplay extends React.Component<Props> {
           <HR />
           <ButtonContainer>
             <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
-            <SubmitButton variant="contained">Done</SubmitButton>
+            <SubmitButton onClick={this.handleSubmit} variant="contained">
+              Done
+            </SubmitButton>
           </ButtonContainer>
         </Menu>
       </Container>
@@ -191,8 +204,8 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setItems: (type: string, items: Array<string>) =>
-    dispatch(setItems(type, items)),
+  setColumns: (category: string, items: any[]) =>
+    dispatch(setColumns(category, items)),
 });
 
 export default connect(
