@@ -111,9 +111,25 @@ export interface Props {
 
 class ColumnDisplay extends React.Component<Props> {
   state = {
-    selected: this.props.selectedColumns,
+    selected: [],
     anchorEl: null,
   };
+
+  componentDidMount() {
+    const { selectedColumns } = this.props;
+    this.setState({
+      selected: [...selectedColumns],
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // You don't have to do this check first, but it can help prevent an unneeded render
+    if (nextProps.selectedColumns !== this.state.selected) {
+      this.setState({
+        selected: [...nextProps.selectedColumns],
+      });
+    }
+  }
 
   handleSubmit = event => {
     const { selected } = this.state;
@@ -125,6 +141,7 @@ class ColumnDisplay extends React.Component<Props> {
   };
 
   handleChange = name => event => {
+    const { selectedTab } = this.props;
     const { selected } = this.state;
     const positionInArray = selected.findIndex(
       selected => selected.dataIndex === name.dataIndex
@@ -139,6 +156,7 @@ class ColumnDisplay extends React.Component<Props> {
         selected: [...selected],
       });
     }
+    setColumns(selectedTab, selected);
   };
 
   cancelChange = () => {
