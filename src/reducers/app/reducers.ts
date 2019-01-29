@@ -26,7 +26,26 @@ const initialState: AppState = {
   filters: emptyFilters,
   network: 'zeronet',
   blocks: [],
-  columns: [],
+  columns: [
+    { title: 'Level', dataIndex: 'level', key: 'level' },
+    { title: 'Timestamp', dataIndex: 'timestamp', key: 'timestamp' },
+    { title: 'Block Hash', dataIndex: 'hash', key: 'blockHash' },
+    {
+      title: 'Predecessor Hash',
+      dataIndex: 'predecessor',
+      key: 'predecessor',
+    },
+    {
+      title: 'Operations Hash',
+      dataIndex: 'operationsHash',
+      key: 'operationsHash',
+    },
+    {
+      title: 'Protocol Hash',
+      dataIndex: 'protocol',
+      key: 'protocol',
+    },
+  ],
   accounts: [],
   operations: [],
   isLoading: false,
