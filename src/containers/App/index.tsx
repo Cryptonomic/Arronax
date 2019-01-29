@@ -3,14 +3,12 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {
   getLoading,
   getNetwork,
   getTab,
   getItems,
-  getColumns,
 } from '../../reducers/app/selectors';
 import {
   changeNetwork,

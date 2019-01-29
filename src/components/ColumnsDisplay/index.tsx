@@ -123,7 +123,6 @@ class ColumnDisplay extends React.Component<Props> {
   }
 
   componentWillReceiveProps(nextProps) {
-    // You don't have to do this check first, but it can help prevent an unneeded render
     if (nextProps.selectedColumns !== this.state.selected) {
       this.setState({
         selected: [...nextProps.selectedColumns],
@@ -137,7 +136,6 @@ class ColumnDisplay extends React.Component<Props> {
     event.preventDefault();
     this.setState({ anchorEl: null });
     setColumns(selectedTab, selected);
-    // NEED TO ADD THE SELECTED COLUMNS TO THE STATE
   };
 
   handleChange = name => event => {
