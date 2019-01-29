@@ -111,7 +111,7 @@ export interface Props {
 
 class ColumnDisplay extends React.Component<Props> {
   state = {
-    selected: [],
+    selected: this.props.selectedColumns,
     anchorEl: null,
   };
 
@@ -126,8 +126,9 @@ class ColumnDisplay extends React.Component<Props> {
 
   handleChange = name => event => {
     const { selected } = this.state;
-    const { setColumns, selectedTab } = this.props;
-    const positionInArray = selected.indexOf(name.dataIndex);
+    const positionInArray = selected.findIndex(
+      selected => selected.dataIndex === name.dataIndex
+    );
     if (positionInArray === -1) {
       this.setState({
         selected: [...selected, name],
@@ -167,10 +168,6 @@ class ColumnDisplay extends React.Component<Props> {
       return selected.dataIndex;
     });
 
-    const selectedReduxIndex = selectedColumns.map(selected => {
-      return selected.dataIndex;
-    });
-
     return (
       <Container>
         <ButtonShell
@@ -193,10 +190,7 @@ class ColumnDisplay extends React.Component<Props> {
                 style={style}
                 className="checkbox"
                 disableRipple={true}
-                checked={
-                  selectedDataIndex.indexOf(name.dataIndex) > -1 ||
-                  selectedReduxIndex.indexOf(name.dataIndex) > -1
-                }
+                checked={selectedDataIndex.indexOf(name.dataIndex) > -1}
               />
               <ListItemText primary={name.title} />
               <DraggableIcon />
