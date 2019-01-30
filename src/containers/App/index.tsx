@@ -178,13 +178,13 @@ class Arronax extends React.Component<Props, States> {
             title: 'Spendable',
             dataIndex: 'spendable',
             key: 'spendable',
-            isIcon: true,
+            // isIcon: true,
           },
           {
             title: 'Delegatable',
             dataIndex: 'delegateSetable',
             key: 'delegateSetable',
-            isIcon: true,
+            // isIcon: true,
           },
           {
             title: 'Delegate',

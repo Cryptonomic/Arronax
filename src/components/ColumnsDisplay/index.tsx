@@ -100,23 +100,29 @@ const HR = styled.hr`
   margin-top: 10px;
 `;
 
-const styles = {
+const styles = () => ({
   checkbox: {
     '&$checked': {
       color: '#56c2d9',
     },
   },
   checked: {},
-};
+});
 
-export interface Props {
-  selectedTab: string;
-  setColumns: (category: string, items: any[]) => {};
-  selectedColumns: any[];
-  classes: any;
+interface SelectedColumnsData {
+  dataIndex: string;
+  title: string;
+  key: string;
 }
 
-export interface States {
+interface Props {
+  selectedTab: string;
+  setColumns(category: string, items: any[]);
+  selectedColumns: any[];
+  classes?: any;
+}
+
+interface States {
   selected: any[];
   anchorEl: boolean;
 }
@@ -150,7 +156,7 @@ class ColumnDisplay extends React.Component<Props, States> {
     setColumns(selectedTab, selected);
   };
 
-  handleChange = name => event => {
+  handleChange = (name: SelectedColumnsData) => event => {
     const { selectedTab } = this.props;
     const { selected } = this.state;
     const positionInArray = selected.findIndex(
@@ -236,7 +242,7 @@ class ColumnDisplay extends React.Component<Props, States> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = state => ({
   selectedTab: getTab(state),
   selectedColumns: getColumns(state),
 });
