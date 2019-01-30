@@ -100,14 +100,14 @@ const HR = styled.hr`
   margin-top: 10px;
 `;
 
-const styles = theme => ({
+const styles = {
   checkbox: {
     '&$checked': {
       color: '#56c2d9',
     },
   },
   checked: {},
-});
+};
 
 export interface Props {
   selectedTab: string;
