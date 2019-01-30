@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { getTab, getColumns } from '../../reducers/app/selectors';
 import { setColumns } from '../../reducers/app/thunks';
 import styled from 'styled-components';
+import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
 import getColumnData from 'src/utils/getColumns';
@@ -98,15 +100,20 @@ const HR = styled.hr`
   margin-top: 10px;
 `;
 
-// for the checkbox styling
-const style = {
-  color: '#56c2d9',
-};
+const styles = theme => ({
+  checkbox: {
+    '&$checked': {
+      color: '#56c2d9',
+    },
+  },
+  checked: {},
+});
 
 export interface Props {
   selectedTab: string;
   setColumns: (category: string, items: any[]) => {};
   selectedColumns: any[];
+  classes: any;
 }
 
 export interface States {
@@ -171,7 +178,7 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   render() {
-    const { selectedTab, selectedColumns } = this.props;
+    const { selectedTab, selectedColumns, classes } = this.props;
     const { anchorEl, selected } = this.state;
     let tab;
     switch (selectedTab) {
@@ -208,8 +215,8 @@ class ColumnDisplay extends React.Component<Props, States> {
               value={name.dataIndex}
             >
               <Checkbox
-                style={style}
-                className="checkbox"
+                classes={{ root: classes.checkbox, checked: classes.checked }}
+                // className={classes.root}
                 disableRipple={true}
                 checked={selectedDataIndex.indexOf(name.dataIndex) > -1}
               />
@@ -240,7 +247,10 @@ const mapDispatchToProps = dispatch => ({
     dispatch(setColumns(category, items)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+export default compose(
+  withStyles(styles),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(ColumnDisplay);
