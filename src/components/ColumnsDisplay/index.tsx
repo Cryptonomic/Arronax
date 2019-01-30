@@ -4,7 +4,7 @@ import { compose } from 'redux';
 import { getTab, getColumns } from '../../reducers/app/selectors';
 import { setColumns } from '../../reducers/app/thunks';
 import styled from 'styled-components';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, createStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
 import getColumnData from 'src/utils/getColumns';
@@ -100,14 +100,14 @@ const HR = styled.hr`
   margin-top: 10px;
 `;
 
-const styles = () => ({
+const styles = {
   checkbox: {
     '&$checked': {
       color: '#56c2d9',
     },
   },
   checked: {},
-});
+};
 
 interface SelectedColumnsData {
   dataIndex: string;
@@ -115,17 +115,17 @@ interface SelectedColumnsData {
   key: string;
 }
 
-interface Props {
+type Props = {
   selectedTab: string;
-  setColumns(category: string, items: any[]): any[];
+  setColumns: (category: string, items: any[]) => void;
   selectedColumns: any[];
-  classes?: any;
-}
+  classes: any;
+};
 
-interface States {
+type States = {
   selected: any[];
   anchorEl: boolean;
-}
+};
 
 class ColumnDisplay extends React.Component<Props, States> {
   state = {
@@ -252,10 +252,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(setColumns(category, items)),
 });
 
-export default compose(
-  withStyles(styles),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
-)(ColumnDisplay);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(ColumnDisplay));

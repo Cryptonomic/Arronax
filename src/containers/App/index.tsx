@@ -107,7 +107,7 @@ export interface Props {
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
-  setColumns(category: string, items: any[]): any[];
+  setColumns(category: string, items: any[]): void;
 }
 
 export interface States {
