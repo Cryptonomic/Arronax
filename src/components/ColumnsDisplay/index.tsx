@@ -117,7 +117,7 @@ interface SelectedColumnsData {
 
 interface Props {
   selectedTab: string;
-  setColumns(category: string, items: any[]);
+  setColumns(category: string, items: any[]): any[];
   selectedColumns: any[];
   classes?: any;
 }
