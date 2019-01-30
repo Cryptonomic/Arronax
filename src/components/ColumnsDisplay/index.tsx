@@ -216,7 +216,6 @@ class ColumnDisplay extends React.Component<Props, States> {
             >
               <Checkbox
                 classes={{ root: classes.checkbox, checked: classes.checked }}
-                // className={classes.root}
                 disableRipple={true}
                 checked={selectedDataIndex.indexOf(name.dataIndex) > -1}
               />
