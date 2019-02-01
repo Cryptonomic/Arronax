@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { compose } from 'redux';
 import { getTab, getColumns } from '../../reducers/app/selectors';
 import { setColumns } from '../../reducers/app/thunks';
 import styled from 'styled-components';
@@ -34,8 +33,8 @@ const ButtonShell = styled(Button)`
 `;
 
 const NestedTitle = styled.div`
+  flex-shrink: 0;
   outline: none;
-  display: flex;
   margin-top: 15px;
   margin-bottom: 15px;
   margin-left: 31px;
@@ -55,6 +54,7 @@ const DraggableIcon = styled(DragIcon)`
 `;
 
 const ButtonContainer = styled.span`
+  flex-shrink: 0;
   display: flex;
   float: right;
   margin: 4px 20px 15px 10px !important;
@@ -63,6 +63,21 @@ const ButtonContainer = styled.span`
 const ArrowIcon = styled(KeyboardArrowDown)`
   color: #56c2d9;
   margin-left: 7px;
+`;
+
+const MenuContainer = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+`;
+
+const MenuContents = styled.div`
+  height: 390px;
+  flex: 1;
+  overflow: auto;
+  min-height: 1.25em;
+  padding-top: 10px;
 `;
 
 const SubmitButton = styled(Button)`
@@ -97,7 +112,37 @@ const CancelButton = styled(Button)`
 const HR = styled.hr`
   border-color: #d8d8d8 !important;
   border-style: solid;
-  margin-top: 10px;
+  margin-top: 0px;
+`;
+
+const FadeOut = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 25px;
+  pointer-events: none;
+`;
+
+const FadeTop = styled(FadeOut)`
+  margin-top: -10px;
+  background-image: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 1) 80%
+  );
+  z-index: 10;
+`;
+
+const FadeBottom = styled.div`
+  width: 100%;
+  margin-top: -25px;
+  height: 35px;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(235, 235, 235, 0.7) 0%,
+    rgba(255, 255, 255, 1) 60%
+  );
+  z-index: 10;
 `;
 
 const styles = {
@@ -183,6 +228,14 @@ class ColumnDisplay extends React.Component<Props, States> {
     this.setState({ anchorEl: event.currentTarget });
   };
 
+  handleScroll = e => {
+    const bottom =
+      e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+    if (bottom) {
+      console.log('yoooo!');
+    }
+  };
+
   render() {
     const { selectedTab, selectedColumns, classes } = this.props;
     const { anchorEl, selected } = this.state;
@@ -212,31 +265,40 @@ class ColumnDisplay extends React.Component<Props, States> {
           Columns ({selectedColumns.length})
           <ArrowIcon />
         </ButtonShell>
-        <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)}>
-          <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
-          {getColumnData(tab).map(name => (
-            <MenuItem
-              onClick={this.handleChange(name)}
-              key={name.key}
-              value={name.dataIndex}
-            >
-              <Checkbox
-                classes={{ root: classes.checkbox, checked: classes.checked }}
-                disableRipple={true}
-                checked={selectedDataIndex.indexOf(name.dataIndex) > -1}
-              />
-              <ListItemText primary={name.title} />
-              <DraggableIcon />
-            </MenuItem>
-          ))}
-          <HR />
-          <ButtonContainer>
-            <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
-            <SubmitButton onClick={this.handleSubmit} variant="contained">
-              Done
-            </SubmitButton>
-          </ButtonContainer>
-        </Menu>
+        <MenuContainer>
+          <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)}>
+            <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
+            <MenuContents onScroll={this.handleScroll}>
+              <FadeTop />
+              {getColumnData(tab).map(name => (
+                <MenuItem
+                  onClick={this.handleChange(name)}
+                  key={name.key}
+                  value={name.dataIndex}
+                >
+                  <Checkbox
+                    classes={{
+                      root: classes.checkbox,
+                      checked: classes.checked,
+                    }}
+                    disableRipple={true}
+                    checked={selectedDataIndex.indexOf(name.dataIndex) > -1}
+                  />
+                  <ListItemText primary={name.title} />
+                  <DraggableIcon />
+                </MenuItem>
+              ))}
+            </MenuContents>
+            <FadeBottom />
+            <HR />
+            <ButtonContainer>
+              <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
+              <SubmitButton onClick={this.handleSubmit} variant="contained">
+                Done
+              </SubmitButton>
+            </ButtonContainer>
+          </Menu>
+        </MenuContainer>
       </Container>
     );
   }
