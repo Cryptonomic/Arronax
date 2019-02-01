@@ -36,7 +36,7 @@ const NestedTitle = styled.div`
   flex-shrink: 0;
   outline: none;
   margin-top: 15px;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   margin-left: 31px;
   color: #9b9b9b;
   font-family: Roboto-Medium;
@@ -78,6 +78,10 @@ const MenuContents = styled.div`
   overflow: auto;
   min-height: 1.25em;
   padding-top: 10px;
+`;
+
+const MenuItems = styled.div`
+  margin-top: 10px;
 `;
 
 const SubmitButton = styled(Button)`
@@ -123,7 +127,7 @@ const FadeOut = styled.div`
 `;
 
 const FadeTop = styled(FadeOut)`
-  margin-top: -10px;
+  margin-top: -15px;
   background-image: linear-gradient(
     to top,
     rgba(255, 255, 255, 0.7) 0%,
@@ -134,7 +138,7 @@ const FadeTop = styled(FadeOut)`
 
 const FadeBottom = styled.div`
   width: 100%;
-  margin-top: -25px;
+  margin-top: -35px;
   height: 35px;
   pointer-events: none;
   background-image: linear-gradient(
@@ -275,22 +279,24 @@ class ColumnDisplay extends React.Component<Props, States> {
             <MenuContents onScroll={this.handleScroll}>
               <FadeTop />
               {getColumnData(tab).map(name => (
-                <MenuItem
-                  onClick={this.handleChange(name)}
-                  key={name.key}
-                  value={name.dataIndex}
-                >
-                  <Checkbox
-                    classes={{
-                      root: classes.checkbox,
-                      checked: classes.checked,
-                    }}
-                    disableRipple={true}
-                    checked={selectedDataIndex.indexOf(name.dataIndex) > -1}
-                  />
-                  <ListItemText primary={name.title} />
-                  <DraggableIcon />
-                </MenuItem>
+                <MenuItems>
+                  <MenuItem
+                    onClick={this.handleChange(name)}
+                    key={name.key}
+                    value={name.dataIndex}
+                  >
+                    <Checkbox
+                      classes={{
+                        root: classes.checkbox,
+                        checked: classes.checked,
+                      }}
+                      disableRipple={true}
+                      checked={selectedDataIndex.indexOf(name.dataIndex) > -1}
+                    />
+                    <ListItemText primary={name.title} />
+                    <DraggableIcon />
+                  </MenuItem>
+                </MenuItems>
               ))}
             </MenuContents>
             {fadeBottom && <FadeBottom />}
