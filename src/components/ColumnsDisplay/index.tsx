@@ -139,8 +139,8 @@ const FadeBottom = styled.div`
   pointer-events: none;
   background-image: linear-gradient(
     to bottom,
-    rgba(235, 235, 235, 0.7) 0%,
-    rgba(255, 255, 255, 1) 60%
+    rgba(255, 255, 255, 1) 0%,
+    rgba(235, 235, 235, 0.7) 60%
   );
   z-index: 10;
 `;
@@ -170,12 +170,14 @@ type Props = {
 type States = {
   selected: any[];
   anchorEl: boolean;
+  fadeBottom: boolean;
 };
 
 class ColumnDisplay extends React.Component<Props, States> {
   state = {
     selected: [],
     anchorEl: null,
+    fadeBottom: true,
   };
 
   componentDidMount() {
@@ -232,13 +234,15 @@ class ColumnDisplay extends React.Component<Props, States> {
     const bottom =
       e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
     if (bottom) {
-      console.log('yoooo!');
+      this.setState({ fadeBottom: false });
+    } else {
+      this.setState({ fadeBottom: true });
     }
   };
 
   render() {
     const { selectedTab, selectedColumns, classes } = this.props;
-    const { anchorEl, selected } = this.state;
+    const { anchorEl, selected, fadeBottom } = this.state;
     let tab;
     switch (selectedTab) {
       case 'blocks':
@@ -289,7 +293,7 @@ class ColumnDisplay extends React.Component<Props, States> {
                 </MenuItem>
               ))}
             </MenuContents>
-            <FadeBottom />
+            {fadeBottom && <FadeBottom />}
             <HR />
             <ButtonContainer>
               <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
