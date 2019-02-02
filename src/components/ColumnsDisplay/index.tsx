@@ -80,10 +80,6 @@ const MenuContents = styled.div`
   padding-top: 10px;
 `;
 
-const MenuItems = styled.div`
-  position: relative;
-`;
-
 const SubmitButton = styled(Button)`
   display: flex;
   background: #56c2d9 !important;
@@ -137,9 +133,7 @@ const FadeTop = styled(FadeOut)`
 `;
 
 const FadeBottom = styled.div`
-  cursor: none;
   position: absolute;
-  pointer-events: none;
   width: 100%;
   margin-top: -35px;
   padding-top: 10px;
@@ -204,7 +198,7 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   handleSubmit = event => {
     const { selected } = this.state;
-    const { selectedTab, setColumns, selectedColumns } = this.props;
+    const { selectedTab, setColumns } = this.props;
     event.preventDefault();
     this.setState({ anchorEl: null });
     setColumns(selectedTab, selected);
@@ -237,9 +231,10 @@ class ColumnDisplay extends React.Component<Props, States> {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  handleScroll = e => {
+  handleScroll = event => {
     const bottom =
-      e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+      event.target.scrollHeight - event.target.scrollTop ===
+      event.target.clientHeight;
     if (bottom) {
       this.setState({ fadeBottom: false });
     } else {
@@ -282,24 +277,22 @@ class ColumnDisplay extends React.Component<Props, States> {
             <MenuContents onScroll={this.handleScroll}>
               <FadeTop />
               {getColumnData(tab).map(name => (
-                <MenuItems>
-                  <MenuItem
-                    onClick={this.handleChange(name)}
-                    key={name.key}
-                    value={name.dataIndex}
-                  >
-                    <Checkbox
-                      classes={{
-                        root: classes.checkbox,
-                        checked: classes.checked,
-                      }}
-                      disableRipple={true}
-                      checked={selectedDataIndex.indexOf(name.dataIndex) > -1}
-                    />
-                    <ListItemText primary={name.title} />
-                    <DraggableIcon />
-                  </MenuItem>
-                </MenuItems>
+                <MenuItem
+                  onClick={this.handleChange(name)}
+                  key={name.key}
+                  value={name.dataIndex}
+                >
+                  <Checkbox
+                    classes={{
+                      root: classes.checkbox,
+                      checked: classes.checked,
+                    }}
+                    disableRipple={true}
+                    checked={selectedDataIndex.indexOf(name.dataIndex) > -1}
+                  />
+                  <ListItemText primary={name.title} />
+                  <DraggableIcon />
+                </MenuItem>
               ))}
             </MenuContents>
             {fadeBottom && <FadeBottom />}
