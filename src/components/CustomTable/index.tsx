@@ -16,6 +16,10 @@ const TableContainer = styled(Table)`
   border-radius: 4px;
 `;
 
+const Overflow = styled.div`
+  overflow-x: auto;
+`;
+
 const desc = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -97,26 +101,28 @@ class CustomTable extends React.Component<Props, State> {
     const columns = getColumns;
     return (
       <React.Fragment>
-        <TableContainer>
-          <CustomTableHeader
-            rows={columns}
-            order={order}
-            orderBy={orderBy}
-            createSortHandler={this.handleRequestSort}
-          />
-          <TableBody>
-            {realRows.map((row, index) => {
-              return (
-                <CustomTableRow key={index} category={category} item={row} />
-              );
-            })}
-            {emptyRows > 0 && (
-              <TableRow style={{ height: 48 * emptyRows }}>
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
-          </TableBody>
-        </TableContainer>
+        <Overflow>
+          <TableContainer>
+            <CustomTableHeader
+              rows={columns}
+              order={order}
+              orderBy={orderBy}
+              createSortHandler={this.handleRequestSort}
+            />
+            <TableBody>
+              {realRows.map((row, index) => {
+                return (
+                  <CustomTableRow key={index} category={category} item={row} />
+                );
+              })}
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 48 * emptyRows }}>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+          </TableContainer>
+        </Overflow>
         <CustomPaginator
           page={page}
           totalNumber={items.length}
