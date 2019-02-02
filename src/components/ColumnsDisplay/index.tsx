@@ -75,6 +75,7 @@ const MenuContainer = styled.div`
 const MenuContents = styled.div`
   height: 390px;
   flex: 1;
+  outline: none;
   overflow: auto;
   min-height: 1.25em;
   padding-top: 10px;
@@ -147,6 +148,9 @@ const FadeBottom = styled.div`
 `;
 
 const styles = {
+  menuItem: {
+    backgroundColor: 'transparent',
+  },
   checkbox: {
     '&$checked': {
       color: '#56c2d9',
@@ -278,9 +282,11 @@ class ColumnDisplay extends React.Component<Props, States> {
               <FadeTop />
               {getColumnData(tab).map(name => (
                 <MenuItem
+                  style={{ backgroundColor: 'transparent' }}
                   onClick={this.handleChange(name)}
                   key={name.key}
                   value={name.dataIndex}
+                  classes={{ root: classes.menuItem }}
                 >
                   <Checkbox
                     classes={{
