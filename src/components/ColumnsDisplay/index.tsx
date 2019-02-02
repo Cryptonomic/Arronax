@@ -36,7 +36,7 @@ const NestedTitle = styled.div`
   flex-shrink: 0;
   outline: none;
   margin-top: 15px;
-  margin-bottom: 5px;
+  margin-bottom: 12px;
   margin-left: 31px;
   color: #9b9b9b;
   font-family: Roboto-Medium;
@@ -81,7 +81,7 @@ const MenuContents = styled.div`
 `;
 
 const MenuItems = styled.div`
-  margin-top: 10px;
+  position: relative;
 `;
 
 const SubmitButton = styled(Button)`
@@ -122,12 +122,12 @@ const HR = styled.hr`
 const FadeOut = styled.div`
   position: absolute;
   width: 100%;
-  height: 25px;
+  height: 20px;
   pointer-events: none;
 `;
 
 const FadeTop = styled(FadeOut)`
-  margin-top: -15px;
+  margin-top: -20px;
   background-image: linear-gradient(
     to top,
     rgba(255, 255, 255, 0.7) 0%,
@@ -137,16 +137,19 @@ const FadeTop = styled(FadeOut)`
 `;
 
 const FadeBottom = styled.div`
+  cursor: none;
+  position: absolute;
+  pointer-events: none;
   width: 100%;
   margin-top: -35px;
+  padding-top: 10px;
   height: 35px;
-  pointer-events: none;
   background-image: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(235, 235, 235, 0.7) 60%
+    rgba(255, 255, 255, 0.11) 0%,
+    rgba(200, 200, 200, 1) 70%
   );
-  z-index: 10;
+  z-index: 11;
 `;
 
 const styles = {
