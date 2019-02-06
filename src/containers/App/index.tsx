@@ -103,11 +103,11 @@ export interface Props {
   isLoading: boolean;
   network: string;
   selectedTab: string;
-  items: any[];
+  items: object[];
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
-  setColumns(category: string, items: any[]): void;
+  setColumns(category: string, items: object[]): void;
 }
 
 export interface States {
@@ -263,7 +263,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setColumns: (category: string, items: any[]) =>
+  setColumns: (category: string, items: object[]) =>
     dispatch(setColumns(category, items)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
