@@ -33,6 +33,7 @@ const ButtonShell = styled(Button)`
 `;
 
 const NestedTitle = styled.div`
+  cursor: default;
   flex-shrink: 0;
   outline: none;
   margin-top: 15px;
