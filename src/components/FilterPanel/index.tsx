@@ -85,12 +85,6 @@ const CloseIconWrapper = styled(CloseIcon)`
   }
 `;
 
-const InputHighlight = styled(OutlinedInput)`
-  &&& {
-    background-color: #56c2d9;
-  }
-`;
-
 interface Props {
   selectedTab: string;
   isCollapse: boolean;
