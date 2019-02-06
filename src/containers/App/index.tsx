@@ -207,32 +207,7 @@ class Arronax extends React.Component<Props, States> {
   render() {
     const { isLoading, network, selectedTab, items } = this.props;
     const { isFilterCollapse } = this.state;
-    // const shortenedItems = items.forEach(item => {
-    //   let itemsArray = Object.keys(item);
-    //   itemsArray.forEach(hash => {
-    //     if (
-    //       hash.toLowerCase().includes('hash') ||
-    //       hash.toLowerCase().includes('predecessor') ||
-    //       hash.toLowerCase().includes('accountid') ||
-    //       hash.toLowerCase().includes('blockid') ||
-    //       hash.toLowerCase().includes('manager') ||
-    //       hash.toLowerCase().includes('context') ||
-    //       hash.toLowerCase().includes('signature') ||
-    //       hash.toLowerCase().includes('protocol')
-    //     ) {
-    //       const hashRepresentation = item[hash];
-    //       const firstHalf = hashRepresentation.substring(0, 5);
-    //       const secondHalf = hashRepresentation.substring(
-    //         hashRepresentation.length - 6,
-    //         hashRepresentation.length
-    //       );
-    //       const newHash = `${firstHalf}...${secondHalf}`;
-    //       item[hash] = newHash;
-    //     }
-    //   });
-    //   return item;
-    // });
-    // console.log(shortenedItems);
+
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />

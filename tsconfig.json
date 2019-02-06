@@ -4,7 +4,6 @@
     "paths": {
       "components/*": ["src/components/*"]
     },
-    "lib": ["dom", "es7"],
     "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
