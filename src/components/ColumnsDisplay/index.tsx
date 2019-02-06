@@ -151,7 +151,14 @@ const FadeBottom = styled.div`
 
 const styles = {
   menuItem: {
-    backgroundColor: 'transparent',
+    '&&&': {
+      backgroundColor: 'transparent',
+    },
+  },
+  removeSelector: {
+    '&&&': {
+      cursor: 'default',
+    },
   },
   checkbox: {
     '&$checked': {
@@ -211,26 +218,26 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   handleChange = (name: SelectedColumnsData) => event => {
-    const { selectedTab } = this.props;
     const { selected } = this.state;
     const positionInArray = selected.findIndex(
       selected => selected.dataIndex === name.dataIndex
     );
-    if (positionInArray === -1) {
+    if (positionInArray === -1 && selected.length <= 5) {
       this.setState({
         selected: [...selected, name],
       });
-    } else {
+    } else if (positionInArray > -1 && selected.length <= 6) {
       selected.splice(positionInArray, 1);
       this.setState({
         selected: [...selected],
       });
     }
-    setColumns(selectedTab, selected);
   };
 
   cancelChange = () => {
+    const { selectedColumns } = this.props;
     this.setState({ anchorEl: null });
+    this.setState({ selected: [...selectedColumns] });
   };
 
   handleClick = event => {
@@ -250,7 +257,7 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   render() {
     const { selectedTab, selectedColumns, classes } = this.props;
-    const { anchorEl, selected, fadeBottom } = this.state;
+    const { anchorEl, fadeBottom, selected } = this.state;
     let tab;
     switch (selectedTab) {
       case 'blocks':
@@ -284,13 +291,24 @@ class ColumnDisplay extends React.Component<Props, States> {
               <FadeTop />
               {getColumnData(tab).map(name => (
                 <MenuItem
-                  style={{ backgroundColor: 'transparent' }}
+                  className={
+                    selected.length >= 6 &&
+                    selectedDataIndex.indexOf(name.dataIndex) === -1
+                      ? classes.removeSelector
+                      : null
+                  }
+                  classes={{ root: classes.menuItem }}
                   onClick={this.handleChange(name)}
                   key={name.key}
                   value={name.dataIndex}
-                  classes={{ root: classes.menuItem }}
                 >
                   <Checkbox
+                    className={
+                      selected.length >= 6 &&
+                      selectedDataIndex.indexOf(name.dataIndex) === -1
+                        ? classes.removeSelector
+                        : null
+                    }
                     classes={{
                       root: classes.checkbox,
                       checked: classes.checked,

@@ -92,9 +92,9 @@ const InputHighlight = styled(OutlinedInput)`
 `;
 
 interface Props {
+  selectedTab: string;
   isCollapse: boolean;
   onClose: () => void;
-  selectedTab: string;
 }
 
 const FilterPanel: React.StatelessComponent<Props> = props => {
