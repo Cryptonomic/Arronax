@@ -176,13 +176,13 @@ interface SelectedColumnsData {
 
 type Props = {
   selectedTab: string;
-  setColumns: (category: string, items: any[]) => void;
-  selectedColumns: any[];
+  setColumns: (category: string, items: object[]) => void;
+  selectedColumns: object[];
   classes: any;
 };
 
 type States = {
-  selected: any[];
+  selected: object[];
   anchorEl: boolean;
   fadeBottom: boolean;
 };
@@ -342,7 +342,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setColumns: (category: string, items: any[]) =>
+  setColumns: (category: string, items: object[]) =>
     dispatch(setColumns(category, items)),
 });
 
