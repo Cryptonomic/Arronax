@@ -9,7 +9,6 @@ import {
   getNetwork,
   getTab,
   getItems,
-  getColumns,
 } from '../../reducers/app/selectors';
 import {
   changeNetwork,
@@ -104,7 +103,6 @@ export interface Props {
   isLoading: boolean;
   network: string;
   selectedTab: string;
-  selectedColumns: object[];
   items: any[];
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
@@ -262,7 +260,6 @@ const mapStateToProps = (state: any) => ({
   network: getNetwork(state),
   selectedTab: getTab(state),
   items: getItems(state),
-  selectedColumns: getColumns(state),
 });
 
 const mapDispatchToProps = dispatch => ({
