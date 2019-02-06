@@ -135,6 +135,7 @@ const FadeTop = styled(FadeOut)`
 `;
 
 const FadeBottom = styled.div`
+  outline: none;
   position: absolute;
   width: 100%;
   margin-top: -35px;
