@@ -36,6 +36,7 @@ const SpanContainer = styled.span`
 const styles = {
   linkUnderline: {
     textDecoration: 'none',
+    color: '#10ADE4',
   },
 };
 
