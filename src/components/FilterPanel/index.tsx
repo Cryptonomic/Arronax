@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import Collapse from '@material-ui/core/Collapse';
 import CloseIcon from '@material-ui/icons/CloseOutlined';
 import PlusIcon from '@material-ui/icons/Add';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
 import ColumnsDisplay from '../ColumnsDisplay';
 
 const Container = styled.div`

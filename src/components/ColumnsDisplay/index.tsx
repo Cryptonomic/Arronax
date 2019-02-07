@@ -121,7 +121,6 @@ const FadeOut = styled.div`
   position: absolute;
   width: 100%;
   height: 20px;
-  pointer-events: none;
 `;
 
 const FadeTop = styled(FadeOut)`
@@ -135,6 +134,8 @@ const FadeTop = styled(FadeOut)`
 `;
 
 const FadeBottom = styled.div`
+  overflow: visible;
+  pointer-events: none;
   outline: none;
   position: absolute;
   width: 100%;
@@ -146,7 +147,7 @@ const FadeBottom = styled.div`
     rgba(255, 255, 255, 0.11) 0%,
     rgba(200, 200, 200, 1) 70%
   );
-  z-index: 11;
+  z-index: 10;
 `;
 
 const styles = {
