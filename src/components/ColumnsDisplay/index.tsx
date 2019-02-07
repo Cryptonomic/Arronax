@@ -139,13 +139,13 @@ const FadeBottom = styled.div`
   outline: none;
   position: absolute;
   width: 100%;
-  margin-top: -35px;
+  margin-top: -55px;
   padding-top: 10px;
-  height: 35px;
+  height: 55px;
   background-image: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.11) 0%,
-    rgba(200, 200, 200, 1) 70%
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.8) 50%
   );
   z-index: 10;
 `;
