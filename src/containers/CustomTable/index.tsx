@@ -6,9 +6,9 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import { getColumns } from '../../reducers/app/selectors';
-import CustomTableRow from '../CustomTableRow';
-import CustomTableHeader from '../TableHeader';
-import CustomPaginator from '../CustomPaginator';
+import CustomTableRow from '../../components/CustomTableRow';
+import CustomTableHeader from '../../components/TableHeader';
+import CustomPaginator from '../../components/CustomPaginator';
 
 const TableContainer = styled(Table)`
   width: 100%;
