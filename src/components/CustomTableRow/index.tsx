@@ -40,7 +40,7 @@ interface Props {
   selectedColumns: any[];
 }
 
-export const displayType = (item, dataIndex) => {
+export const displayType = (shortenedItem, item, dataIndex) => {
   if (dataIndex === 'accountId' || dataIndex === 'manager') {
     return (
       <>
@@ -49,7 +49,7 @@ export const displayType = (item, dataIndex) => {
           href={`https://zeronet.tzscan.io/${item[dataIndex]}`}
           style={styles.linkUnderline}
         >
-          {item[dataIndex]}
+          {shortenedItem[dataIndex]}
         </a>
       </>
     );
@@ -67,7 +67,7 @@ export const displayType = (item, dataIndex) => {
           href={`https://zeronet.tzscan.io/${item[dataIndex]}`}
           style={styles.linkUnderline}
         >
-          {item[dataIndex]}
+          {shortenedItem[dataIndex]}
         </a>
       </>
     );
@@ -78,7 +78,8 @@ export const displayType = (item, dataIndex) => {
 
 const CustomTableRow: React.StatelessComponent<Props> = props => {
   const { selectedColumns, item } = props;
-  let itemsArray = Object.keys(item);
+  const shortenedItem = { ...item };
+  let itemsArray = Object.keys(shortenedItem);
   itemsArray.forEach(hash => {
     if (
       hash.toLowerCase().includes('hash') ||
@@ -94,9 +95,9 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
         hashRepresentation.length
       );
       const newHash = `${firstHalf}...${secondHalf}`;
-      item[hash] = newHash;
+      shortenedItem[hash] = newHash;
     }
-    return item[hash];
+    return shortenedItem[hash];
   });
 
   return (
@@ -110,7 +111,7 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
               // NOTE: SpanContainer necessary to avoid error (for passing isIcon: boolean):
               // Warning: Failed prop type: Invalid prop children supplied to TableCell, expected a ReactNode.
               <SpanContainer>
-                {displayType(item, column.dataIndex)}
+                {displayType(shortenedItem, item, column.dataIndex)}
               </SpanContainer>
             )}
           </StyledCell>
