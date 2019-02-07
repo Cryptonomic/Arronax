@@ -5,6 +5,7 @@ import { getColumns } from '../../reducers/app/selectors';
 import styled from 'styled-components';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
+import Circle from '@material-ui/icons/FiberManualRecord';
 
 const TableRowWrapper = styled(TableRow)`
   &&& {
@@ -26,14 +27,43 @@ const StyledCell = styled(TableCell)`
 const SpanContainer = styled.span`
   display: flex;
 `;
+
+const styles = {
+  linkUnderline: {
+    textDecoration: 'none',
+  },
+};
+
 interface Props {
   category: string;
-  item: any;
+  item: object;
   selectedColumns: any[];
 }
 
 const CustomTableRow: React.StatelessComponent<Props> = props => {
   const { selectedColumns, item } = props;
+  const itemBeforeShortening = { ...item };
+  let itemsArray = Object.keys(item);
+  itemsArray.forEach(hash => {
+    if (
+      hash.toLowerCase().includes('hash') ||
+      hash.toLowerCase().includes('predecessor') ||
+      hash.toLowerCase().includes('accountid') ||
+      hash.toLowerCase().includes('blockid') ||
+      hash.toLowerCase().includes('manager')
+    ) {
+      const hashRepresentation = item[hash];
+      const firstHalf = hashRepresentation.substring(0, 6);
+      const secondHalf = hashRepresentation.substring(
+        hashRepresentation.length - 6,
+        hashRepresentation.length
+      );
+      const newHash = `${firstHalf}...${secondHalf}`;
+      item[hash] = newHash;
+    }
+    return item[hash];
+  });
+
   return (
     <TableRowWrapper>
       {selectedColumns.map(column => {
@@ -44,7 +74,31 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
             ) : (
               // NOTE: SpanContainer necessary to avoid error (for passing isIcon: boolean):
               // Warning: Failed prop type: Invalid prop children supplied to TableCell, expected a ReactNode.
-              <SpanContainer>{item[column.dataIndex]}</SpanContainer>
+              <SpanContainer>
+                {column.dataIndex === 'predecessor' ||
+                column.dataIndex === 'hash' ||
+                column.dataIndex === 'operationsHash' ||
+                column.dataIndex === 'accountId' ||
+                column.dataIndex === 'blockId' ||
+                column.dataIndex === 'blockHash' ||
+                column.dataIndex === 'operationGroupHash' ||
+                column.dataIndex === 'manager' ? (
+                  <span>
+                    {' '}
+                    <Circle /> <Circle />{' '}
+                    <a
+                      href={`https://zeronet.tzscan.io/${
+                        itemBeforeShortening[column.dataIndex]
+                      }`}
+                      style={styles.linkUnderline}
+                    >
+                      {item[column.dataIndex]}
+                    </a>
+                  </span>
+                ) : (
+                  item[column.dataIndex]
+                )}
+              </SpanContainer>
             )}
           </StyledCell>
         );
