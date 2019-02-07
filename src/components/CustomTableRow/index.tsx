@@ -14,6 +14,11 @@ const TableRowWrapper = styled(TableRow)`
     }
   }
 `;
+
+const StyledCircle = styled(Circle)`
+  color: rgb(255, 155, 213);
+`;
+
 const StyledCell = styled(TableCell)`
   &&& {
     color: #4a4a4a;
@@ -44,7 +49,7 @@ export const displayType = (shortenedItem, item, dataIndex) => {
   if (dataIndex === 'accountId' || dataIndex === 'manager') {
     return (
       <>
-        <Circle /> <Circle />
+        <StyledCircle /> <StyledCircle />
         <a
           href={`https://zeronet.tzscan.io/${item[dataIndex]}`}
           style={styles.linkUnderline}
