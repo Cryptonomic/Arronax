@@ -15,8 +15,14 @@ const TableRowWrapper = styled(TableRow)`
   }
 `;
 
-const StyledCircle = styled(Circle)`
+const StyledCircle1 = styled(Circle)`
   color: rgb(255, 155, 213);
+`;
+
+const StyledCircle2 = styled(Circle)`
+  color: rgb(215, 195, 113);
+  margin-left: -4px;
+  margin-right: 7px;
 `;
 
 const StyledCell = styled(TableCell)`
@@ -50,7 +56,8 @@ export const displayType = (shortenedItem, item, dataIndex) => {
   if (dataIndex === 'accountId' || dataIndex === 'manager') {
     return (
       <>
-        <StyledCircle /> <StyledCircle />
+        <StyledCircle1 />
+        <StyledCircle2 />
         <a
           href={`https://zeronet.tzscan.io/${item[dataIndex]}`}
           style={styles.linkUnderline}
