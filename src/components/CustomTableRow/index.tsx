@@ -42,14 +42,6 @@ interface Props {
 
 export const displayType = (item, dataIndex) => {
   if (dataIndex === 'accountId' || dataIndex === 'manager') {
-    const hashRepresentation = item[dataIndex];
-    const firstHalf = hashRepresentation.substring(0, 6);
-    const secondHalf = hashRepresentation.substring(
-      hashRepresentation.length - 6,
-      hashRepresentation.length
-    );
-    const newHash = `${firstHalf}...${secondHalf}`;
-    item[dataIndex] = newHash;
     return (
       <>
         <Circle /> <Circle />
@@ -57,7 +49,7 @@ export const displayType = (item, dataIndex) => {
           href={`https://zeronet.tzscan.io/${item[dataIndex]}`}
           style={styles.linkUnderline}
         >
-          {newHash}
+          {item[dataIndex]}
         </a>
       </>
     );
@@ -69,21 +61,13 @@ export const displayType = (item, dataIndex) => {
     dataIndex === 'blockHash' ||
     dataIndex === 'operationGroupHash'
   ) {
-    const hashRepresentation = item[dataIndex];
-    const firstHalf = hashRepresentation.substring(0, 6);
-    const secondHalf = hashRepresentation.substring(
-      hashRepresentation.length - 6,
-      hashRepresentation.length
-    );
-    const newHash = `${firstHalf}...${secondHalf}`;
-    item[dataIndex] = newHash;
     return (
       <>
         <a
           href={`https://zeronet.tzscan.io/${item[dataIndex]}`}
           style={styles.linkUnderline}
         >
-          {newHash}
+          {item[dataIndex]}
         </a>
       </>
     );
@@ -94,27 +78,26 @@ export const displayType = (item, dataIndex) => {
 
 const CustomTableRow: React.StatelessComponent<Props> = props => {
   const { selectedColumns, item } = props;
-  const itemBeforeShortening = { ...item };
-  // let itemsArray = Object.keys(item);
-  // itemsArray.forEach(hash => {
-  //   if (
-  //     hash.toLowerCase().includes('hash') ||
-  //     hash.toLowerCase().includes('predecessor') ||
-  //     hash.toLowerCase().includes('accountid') ||
-  //     hash.toLowerCase().includes('blockid') ||
-  //     hash.toLowerCase().includes('manager')
-  //   ) {
-  //     const hashRepresentation = item[hash];
-  //     const firstHalf = hashRepresentation.substring(0, 6);
-  //     const secondHalf = hashRepresentation.substring(
-  //       hashRepresentation.length - 6,
-  //       hashRepresentation.length
-  //     );
-  //     const newHash = `${firstHalf}...${secondHalf}`;
-  //     item[hash] = newHash;
-  //   }
-  //   return item[hash];
-  // });
+  let itemsArray = Object.keys(item);
+  itemsArray.forEach(hash => {
+    if (
+      hash.toLowerCase().includes('hash') ||
+      hash.toLowerCase().includes('predecessor') ||
+      hash.toLowerCase().includes('accountid') ||
+      hash.toLowerCase().includes('blockid') ||
+      hash.toLowerCase().includes('manager')
+    ) {
+      const hashRepresentation = item[hash];
+      const firstHalf = hashRepresentation.substring(0, 6);
+      const secondHalf = hashRepresentation.substring(
+        hashRepresentation.length - 6,
+        hashRepresentation.length
+      );
+      const newHash = `${firstHalf}...${secondHalf}`;
+      item[hash] = newHash;
+    }
+    return item[hash];
+  });
 
   return (
     <TableRowWrapper>
