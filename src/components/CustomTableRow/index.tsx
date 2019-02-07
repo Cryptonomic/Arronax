@@ -40,29 +40,81 @@ interface Props {
   selectedColumns: any[];
 }
 
+export const displayType = (item, dataIndex) => {
+  if (dataIndex === 'accountId' || dataIndex === 'manager') {
+    const hashRepresentation = item[dataIndex];
+    const firstHalf = hashRepresentation.substring(0, 6);
+    const secondHalf = hashRepresentation.substring(
+      hashRepresentation.length - 6,
+      hashRepresentation.length
+    );
+    const newHash = `${firstHalf}...${secondHalf}`;
+    item[dataIndex] = newHash;
+    return (
+      <>
+        <Circle /> <Circle />
+        <a
+          href={`https://zeronet.tzscan.io/${item[dataIndex]}`}
+          style={styles.linkUnderline}
+        >
+          {newHash}
+        </a>
+      </>
+    );
+  } else if (
+    dataIndex === 'predecessor' ||
+    dataIndex === 'hash' ||
+    dataIndex === 'operationsHash' ||
+    dataIndex === 'blockId' ||
+    dataIndex === 'blockHash' ||
+    dataIndex === 'operationGroupHash'
+  ) {
+    const hashRepresentation = item[dataIndex];
+    const firstHalf = hashRepresentation.substring(0, 6);
+    const secondHalf = hashRepresentation.substring(
+      hashRepresentation.length - 6,
+      hashRepresentation.length
+    );
+    const newHash = `${firstHalf}...${secondHalf}`;
+    item[dataIndex] = newHash;
+    return (
+      <>
+        <a
+          href={`https://zeronet.tzscan.io/${item[dataIndex]}`}
+          style={styles.linkUnderline}
+        >
+          {newHash}
+        </a>
+      </>
+    );
+  } else {
+    return item[dataIndex];
+  }
+};
+
 const CustomTableRow: React.StatelessComponent<Props> = props => {
   const { selectedColumns, item } = props;
   const itemBeforeShortening = { ...item };
-  let itemsArray = Object.keys(item);
-  itemsArray.forEach(hash => {
-    if (
-      hash.toLowerCase().includes('hash') ||
-      hash.toLowerCase().includes('predecessor') ||
-      hash.toLowerCase().includes('accountid') ||
-      hash.toLowerCase().includes('blockid') ||
-      hash.toLowerCase().includes('manager')
-    ) {
-      const hashRepresentation = item[hash];
-      const firstHalf = hashRepresentation.substring(0, 6);
-      const secondHalf = hashRepresentation.substring(
-        hashRepresentation.length - 6,
-        hashRepresentation.length
-      );
-      const newHash = `${firstHalf}...${secondHalf}`;
-      item[hash] = newHash;
-    }
-    return item[hash];
-  });
+  // let itemsArray = Object.keys(item);
+  // itemsArray.forEach(hash => {
+  //   if (
+  //     hash.toLowerCase().includes('hash') ||
+  //     hash.toLowerCase().includes('predecessor') ||
+  //     hash.toLowerCase().includes('accountid') ||
+  //     hash.toLowerCase().includes('blockid') ||
+  //     hash.toLowerCase().includes('manager')
+  //   ) {
+  //     const hashRepresentation = item[hash];
+  //     const firstHalf = hashRepresentation.substring(0, 6);
+  //     const secondHalf = hashRepresentation.substring(
+  //       hashRepresentation.length - 6,
+  //       hashRepresentation.length
+  //     );
+  //     const newHash = `${firstHalf}...${secondHalf}`;
+  //     item[hash] = newHash;
+  //   }
+  //   return item[hash];
+  // });
 
   return (
     <TableRowWrapper>
@@ -75,29 +127,7 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
               // NOTE: SpanContainer necessary to avoid error (for passing isIcon: boolean):
               // Warning: Failed prop type: Invalid prop children supplied to TableCell, expected a ReactNode.
               <SpanContainer>
-                {column.dataIndex === 'predecessor' ||
-                column.dataIndex === 'hash' ||
-                column.dataIndex === 'operationsHash' ||
-                column.dataIndex === 'accountId' ||
-                column.dataIndex === 'blockId' ||
-                column.dataIndex === 'blockHash' ||
-                column.dataIndex === 'operationGroupHash' ||
-                column.dataIndex === 'manager' ? (
-                  <span>
-                    {' '}
-                    <Circle /> <Circle />{' '}
-                    <a
-                      href={`https://zeronet.tzscan.io/${
-                        itemBeforeShortening[column.dataIndex]
-                      }`}
-                      style={styles.linkUnderline}
-                    >
-                      {item[column.dataIndex]}
-                    </a>
-                  </span>
-                ) : (
-                  item[column.dataIndex]
-                )}
+                {displayType(item, column.dataIndex)}
               </SpanContainer>
             )}
           </StyledCell>
