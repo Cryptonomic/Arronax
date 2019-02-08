@@ -157,6 +157,11 @@ class Arronax extends React.Component<Props, States> {
             dataIndex: 'operationsHash',
             key: 'operationsHash',
           },
+          {
+            title: 'Protocol Hash',
+            dataIndex: 'protocol',
+            key: 'protocol',
+          },
         ];
       case 'operations':
         return [

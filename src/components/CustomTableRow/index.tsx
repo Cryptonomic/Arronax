@@ -69,13 +69,9 @@ export const displayType = (shortenedItem, item, dataIndex) => {
   } else if (
     dataIndex === 'predecessor' ||
     dataIndex === 'hash' ||
-    dataIndex === 'operationsHash' ||
     dataIndex === 'blockId' ||
     dataIndex === 'blockHash' ||
-    dataIndex === 'operationGroupHash' ||
-    dataIndex === 'protocol' ||
-    dataIndex === 'context' ||
-    dataIndex === 'signature'
+    dataIndex === 'operationGroupHash'
   ) {
     return (
       <>
@@ -87,6 +83,13 @@ export const displayType = (shortenedItem, item, dataIndex) => {
         </a>
       </>
     );
+  } else if (
+    dataIndex === 'protocol' ||
+    dataIndex === 'context' ||
+    dataIndex === 'operationsHash' ||
+    dataIndex === 'signature'
+  ) {
+    return shortenedItem[dataIndex];
   } else {
     return item[dataIndex];
   }
