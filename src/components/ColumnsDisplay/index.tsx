@@ -119,7 +119,7 @@ const HR = styled.hr`
   outline: none;
 `;
 
-const FadeOut = styled.div`
+const FadeOut = styled.span`
   position: absolute;
   width: 100%;
   height: 20px;
@@ -239,10 +239,14 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   onClickAway = event => {
     const { selectedColumns } = this.props;
-    console.log(event.target.className);
     if (
       event.target.tagName === 'DIV' &&
-      !event.target.className.includes('MuiMenu-paper-51')
+      !event.target.className.includes('MuiMenu-paper-51') &&
+      !event.target.className.includes('MuiListItemText-root-222') &&
+      !event.target.className.includes(
+        'ColumnsDisplay__NestedTitle-jjrws9-2'
+      ) &&
+      !event.target.className.includes('ColumnsDisplay__MenuContents-jjrws9-7')
     ) {
       this.setState({ anchorEl: null });
       this.setState({ selected: [...selectedColumns] });
