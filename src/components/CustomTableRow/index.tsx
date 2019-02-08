@@ -72,7 +72,8 @@ export const displayType = (shortenedItem, item, dataIndex) => {
     dataIndex === 'operationsHash' ||
     dataIndex === 'blockId' ||
     dataIndex === 'blockHash' ||
-    dataIndex === 'operationGroupHash'
+    dataIndex === 'operationGroupHash' ||
+    dataIndex === 'protocol'
   ) {
     return (
       <>
@@ -99,7 +100,8 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
       hash.toLowerCase().includes('predecessor') ||
       hash.toLowerCase().includes('accountid') ||
       hash.toLowerCase().includes('blockid') ||
-      hash.toLowerCase().includes('manager')
+      hash.toLowerCase().includes('manager') ||
+      hash.toLowerCase().includes('protocol')
     ) {
       const hashRepresentation = item[hash];
       const firstHalf = hashRepresentation.substring(0, 6);
@@ -121,8 +123,6 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
             {column.dataIndex === 'timestamp' ? (
               moment(item[column.dataIndex]).format('dd MM YYYY h:mm:ss a')
             ) : (
-              // NOTE: SpanContainer necessary to avoid error (for passing isIcon: boolean):
-              // Warning: Failed prop type: Invalid prop children supplied to TableCell, expected a ReactNode.
               <SpanContainer>
                 {displayType(shortenedItem, item, column.dataIndex)}
               </SpanContainer>
