@@ -20,7 +20,7 @@ import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
 import FilterPanel from 'components/FilterPanel';
 import Footer from 'components/Footer';
-import CustomTable from 'components/CustomTable';
+import CustomTable from '../CustomTable';
 
 const Container = styled.div`
   padding: 50px 0;

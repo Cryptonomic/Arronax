@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { getTab, getColumns } from '../../reducers/app/selectors';
 import { setColumns } from '../../reducers/app/thunks';
 import styled from 'styled-components';
-import { withStyles, createStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
 import getColumnData from 'src/utils/getColumns';
@@ -115,13 +115,13 @@ const HR = styled.hr`
   border-color: #d8d8d8 !important;
   border-style: solid;
   margin-top: 0px;
+  outline: none;
 `;
 
-const FadeOut = styled.div`
+const FadeOut = styled.span`
   position: absolute;
   width: 100%;
   height: 20px;
-  pointer-events: none;
 `;
 
 const FadeTop = styled(FadeOut)`
@@ -135,18 +135,20 @@ const FadeTop = styled(FadeOut)`
 `;
 
 const FadeBottom = styled.div`
+  overflow: visible;
+  pointer-events: none;
   outline: none;
   position: absolute;
   width: 100%;
-  margin-top: -35px;
+  margin-top: -55px;
   padding-top: 10px;
-  height: 35px;
+  height: 55px;
   background-image: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.11) 0%,
-    rgba(200, 200, 200, 1) 70%
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.8) 50%
   );
-  z-index: 11;
+  z-index: 10;
 `;
 
 const styles = {
@@ -236,8 +238,7 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   cancelChange = () => {
     const { selectedColumns } = this.props;
-    this.setState({ anchorEl: null });
-    this.setState({ selected: [...selectedColumns] });
+    this.setState({ selected: [...selectedColumns], anchorEl: null });
   };
 
   handleClick = event => {
@@ -285,7 +286,7 @@ class ColumnDisplay extends React.Component<Props, States> {
           <ArrowIcon />
         </ButtonShell>
         <MenuContainer>
-          <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)}>
+          <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.cancelChange}>
             <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
             <MenuContents onScroll={this.handleScroll}>
               <FadeTop />
@@ -322,7 +323,7 @@ class ColumnDisplay extends React.Component<Props, States> {
               ))}
             </MenuContents>
             {fadeBottom && <FadeBottom />}
-            <HR />
+            <HR />{' '}
             <ButtonContainer>
               <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
               <SubmitButton onClick={this.handleSubmit} variant="contained">
