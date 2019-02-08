@@ -7,15 +7,15 @@ type Config = {
 
 const configs: Config[] = [
   {
-    value: 'zeronet',
-    title: 'Tezos Zeronet',
-    url: 'https://conseil-staging2.cryptonomic-infra.tech/tezos/',
+    value: 'alphanet',
+    title: 'Tezos Alphanet',
+    url: 'https://conseil-dev.cryptonomic-infra.tech:443',
     key: 'hooman'
   },
   {
     value: 'mainnet',
     title: 'Tezos Mainnet',
-    url: 'https://tezos-prod.cryptonomic-infra.tech/tezos/',
+    url: 'https://tezos-prod.cryptonomic-infra.tech',
     key: 'galleon'
   }
 ]

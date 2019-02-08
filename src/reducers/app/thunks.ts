@@ -1,4 +1,4 @@
-import { TezosConseilQuery } from 'conseiljs';
+import { TezosConseilClient } from 'conseiljs';
 import {
   setItemsAction,
   initDataAction,
@@ -7,7 +7,7 @@ import {
   setColumnsAction,
 } from './actions';
 import configs from '../../config';
-const { getBlocks, getOperations, getAccounts } = TezosConseilQuery;
+const { getBlocks, getOperations, getAccounts } = TezosConseilClient;
 const ConseilOperations = {
   blocks: getBlocks,
   operations: getOperations,
@@ -37,9 +37,11 @@ export const submitFilters = () => async (dispatch, state) => {
   const category = state().app.selectedTab;
   dispatch(setLoadingAction(true));
   const config = getConfig(network);
-  const apiKey = config.key;
-  const url = `${config.url}${network}`;
-  const items = await ConseilOperations[category](url, filters, apiKey);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key
+  }
+  const items = await ConseilOperations[category](serverInfo, network, filters);
   dispatch(setItemsAction(category, items));
   dispatch(setLoadingAction(false));
 };
@@ -53,9 +55,11 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
   const category = state().app.selectedTab;
   dispatch(setLoadingAction(true));
   const config = getConfig(network);
-  const apiKey = config.key;
-  const url = `${config.url}${network}`;
-  const items = await ConseilOperations[category](url, filters, apiKey);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key
+  }
+  const items = await ConseilOperations[category](serverInfo, network, filters);
   dispatch(setItemsAction(category, items));
   dispatch(setLoadingAction(false));
 };
@@ -70,9 +74,11 @@ export const fetchItemsAction = (category: string) => async (
   if (originItems.length > 0) return;
   dispatch(setLoadingAction(true));
   const config = getConfig(network);
-  const apiKey = config.key;
-  const url = `${config.url}${network}`;
-  const items = await ConseilOperations[category](url, filters, apiKey);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key
+  }
+  const items = await ConseilOperations[category](serverInfo, network, filters);
   dispatch(setItemsAction(category, items));
   dispatch(setLoadingAction(false));
 };
