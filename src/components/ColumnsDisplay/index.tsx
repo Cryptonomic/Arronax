@@ -116,6 +116,7 @@ const HR = styled.hr`
   border-color: #d8d8d8 !important;
   border-style: solid;
   margin-top: 0px;
+  outline: none;
 `;
 
 const FadeOut = styled.div`
@@ -238,7 +239,11 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   onClickAway = event => {
     const { selectedColumns } = this.props;
-    if (event.target.tagName === 'DIV') {
+    console.log(event.target.className);
+    if (
+      event.target.tagName === 'DIV' &&
+      !event.target.className.includes('MuiMenu-paper-51')
+    ) {
       this.setState({ anchorEl: null });
       this.setState({ selected: [...selectedColumns] });
     }
@@ -296,9 +301,7 @@ class ColumnDisplay extends React.Component<Props, States> {
         </ButtonShell>
         <MenuContainer>
           <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)}>
-            <ClickAwayListener onClickAway={this.onClickAway}>
-              <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
-            </ClickAwayListener>
+            <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
             <MenuContents onScroll={this.handleScroll}>
               <FadeTop />
               {getColumnData(tab).map(name => (
@@ -334,13 +337,15 @@ class ColumnDisplay extends React.Component<Props, States> {
               ))}
             </MenuContents>
             {fadeBottom && <FadeBottom />}
-            <HR />
-            <ButtonContainer>
-              <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
-              <SubmitButton onClick={this.handleSubmit} variant="contained">
-                Done
-              </SubmitButton>
-            </ButtonContainer>
+            <HR />{' '}
+            <ClickAwayListener onClickAway={this.onClickAway}>
+              <ButtonContainer>
+                <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
+                <SubmitButton onClick={this.handleSubmit} variant="contained">
+                  Done
+                </SubmitButton>
+              </ButtonContainer>
+            </ClickAwayListener>
           </Menu>
         </MenuContainer>
       </Container>
