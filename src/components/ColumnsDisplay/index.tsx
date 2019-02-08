@@ -3,12 +3,11 @@ import { connect } from 'react-redux';
 import { getTab, getColumns } from '../../reducers/app/selectors';
 import { setColumns } from '../../reducers/app/thunks';
 import styled from 'styled-components';
-import { withStyles, createStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
 import getColumnData from 'src/utils/getColumns';
 import Button from '@material-ui/core/Button';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DragIcon from '@material-ui/icons/DragHandle';
@@ -257,10 +256,6 @@ class ColumnDisplay extends React.Component<Props, States> {
     }
   };
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
-
   render() {
     const { selectedTab, selectedColumns, classes } = this.props;
     const { anchorEl, fadeBottom, selected } = this.state;
@@ -291,7 +286,7 @@ class ColumnDisplay extends React.Component<Props, States> {
           <ArrowIcon />
         </ButtonShell>
         <MenuContainer>
-          <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.handleClose}>
+          <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.cancelChange}>
             <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
             <MenuContents onScroll={this.handleScroll}>
               <FadeTop />
