@@ -8,6 +8,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
 import getColumnData from 'src/utils/getColumns';
 import Button from '@material-ui/core/Button';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DragIcon from '@material-ui/icons/DragHandle';
@@ -235,6 +236,14 @@ class ColumnDisplay extends React.Component<Props, States> {
     }
   };
 
+  onClickAway = event => {
+    const { selectedColumns } = this.props;
+    if (event.target.tagName === 'DIV') {
+      this.setState({ anchorEl: null });
+      this.setState({ selected: [...selectedColumns] });
+    }
+  };
+
   cancelChange = () => {
     const { selectedColumns } = this.props;
     this.setState({ anchorEl: null });
@@ -287,7 +296,9 @@ class ColumnDisplay extends React.Component<Props, States> {
         </ButtonShell>
         <MenuContainer>
           <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)}>
-            <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
+            <ClickAwayListener onClickAway={this.onClickAway}>
+              <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
+            </ClickAwayListener>
             <MenuContents onScroll={this.handleScroll}>
               <FadeTop />
               {getColumnData(tab).map(name => (
