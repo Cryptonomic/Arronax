@@ -73,7 +73,9 @@ export const displayType = (shortenedItem, item, dataIndex) => {
     dataIndex === 'blockId' ||
     dataIndex === 'blockHash' ||
     dataIndex === 'operationGroupHash' ||
-    dataIndex === 'protocol'
+    dataIndex === 'protocol' ||
+    dataIndex === 'context' ||
+    dataIndex === 'signature'
   ) {
     return (
       <>
@@ -101,7 +103,9 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
       hash.toLowerCase().includes('accountid') ||
       hash.toLowerCase().includes('blockid') ||
       hash.toLowerCase().includes('manager') ||
-      hash.toLowerCase().includes('protocol')
+      hash.toLowerCase().includes('protocol') ||
+      hash.toLowerCase().includes('context') ||
+      hash.toLowerCase().includes('signature')
     ) {
       const hashRepresentation = item[hash];
       const firstHalf = hashRepresentation.substring(0, 6);
