@@ -237,26 +237,9 @@ class ColumnDisplay extends React.Component<Props, States> {
     }
   };
 
-  onClickAway = event => {
-    const { selectedColumns } = this.props;
-    if (
-      event.target.tagName === 'DIV' &&
-      !event.target.className.includes('MuiMenu-paper-51') &&
-      !event.target.className.includes('MuiListItemText-root-222') &&
-      !event.target.className.includes(
-        'ColumnsDisplay__NestedTitle-jjrws9-2'
-      ) &&
-      !event.target.className.includes('ColumnsDisplay__MenuContents-jjrws9-7')
-    ) {
-      this.setState({ anchorEl: null });
-      this.setState({ selected: [...selectedColumns] });
-    }
-  };
-
   cancelChange = () => {
     const { selectedColumns } = this.props;
-    this.setState({ anchorEl: null });
-    this.setState({ selected: [...selectedColumns] });
+    this.setState({ selected: [...selectedColumns], anchorEl: null });
   };
 
   handleClick = event => {
@@ -272,6 +255,10 @@ class ColumnDisplay extends React.Component<Props, States> {
     } else {
       this.setState({ fadeBottom: true });
     }
+  };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
   };
 
   render() {
@@ -304,7 +291,7 @@ class ColumnDisplay extends React.Component<Props, States> {
           <ArrowIcon />
         </ButtonShell>
         <MenuContainer>
-          <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)}>
+          <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.handleClose}>
             <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
             <MenuContents onScroll={this.handleScroll}>
               <FadeTop />
@@ -342,14 +329,12 @@ class ColumnDisplay extends React.Component<Props, States> {
             </MenuContents>
             {fadeBottom && <FadeBottom />}
             <HR />{' '}
-            <ClickAwayListener onClickAway={this.onClickAway}>
-              <ButtonContainer>
-                <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
-                <SubmitButton onClick={this.handleSubmit} variant="contained">
-                  Done
-                </SubmitButton>
-              </ButtonContainer>
-            </ClickAwayListener>
+            <ButtonContainer>
+              <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
+              <SubmitButton onClick={this.handleSubmit} variant="contained">
+                Done
+              </SubmitButton>
+            </ButtonContainer>
           </Menu>
         </MenuContainer>
       </Container>
