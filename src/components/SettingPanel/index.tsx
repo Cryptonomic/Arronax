@@ -90,7 +90,7 @@ interface Props {
   onClose: () => void;
 }
 
-const FilterPanel: React.StatelessComponent<Props> = props => {
+const SettingPanel: React.StatelessComponent<Props> = props => {
   const { isCollapse, onClose } = props;
   return (
     <Collapse in={isCollapse}>
@@ -119,4 +119,4 @@ const FilterPanel: React.StatelessComponent<Props> = props => {
   );
 };
 
-export default FilterPanel;
+export default SettingPanel;
