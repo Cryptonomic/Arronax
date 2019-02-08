@@ -12,6 +12,11 @@ export const getLoading = createSelector(
   apps => apps.isLoading
 );
 
+export const getColumns = createSelector(
+  getAppState,
+  apps => apps.columns
+);
+
 export const getFilter = createSelector(
   getAppState,
   apps => apps.filters
