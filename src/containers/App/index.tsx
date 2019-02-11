@@ -18,7 +18,7 @@ import {
 import { setTabAction } from '../../reducers/app/actions';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
-import SettingPanel from 'components/SettingPanel';
+import SettingsPanel from 'components/SettingsPanel';
 import Footer from 'components/Footer';
 import CustomTable from '../CustomTable';
 
@@ -228,7 +228,7 @@ class Arronax extends React.Component<Props, States> {
               />
             ))}
           </TabsWrapper>
-          <SettingPanel
+          <SettingsPanel
             selectedTab={selectedTab}
             isCollapse={isFilterCollapse}
             onClose={this.onCloseFilter}
