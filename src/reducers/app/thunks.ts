@@ -1,13 +1,15 @@
-import { TezosConseilClient } from 'conseiljs';
+import { TezosConseilClient, ConseilMetadataClient } from 'conseiljs';
 import {
   setItemsAction,
   initDataAction,
   setLoadingAction,
   setNetworkAction,
   setColumnsAction,
+  setAttributesAction
 } from './actions';
 import configs from '../../config';
 const { getBlocks, getOperations, getAccounts } = TezosConseilClient;
+const { getAttributes, getAttributeValues } = ConseilMetadataClient;
 const ConseilOperations = {
   blocks: getBlocks,
   operations: getOperations,
@@ -80,5 +82,18 @@ export const fetchItemsAction = (category: string) => async (
   }
   const items = await ConseilOperations[category](serverInfo, network, filters);
   dispatch(setItemsAction(category, items));
+  dispatch(setLoadingAction(false));
+};
+
+export const fetchAttributes = () => async (
+  dispatch,
+  state
+) => {
+  const network = state().app.network;
+  const selectedTab = state().app.selectedTab;  
+  dispatch(setLoadingAction(true));
+  const config = getConfig(network);  
+  const attributes = await getAttributes(config.url, config.key, 'tezos', network, selectedTab);
+  dispatch(setAttributesAction(selectedTab, attributes));
   dispatch(setLoadingAction(false));
 };

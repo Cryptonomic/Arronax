@@ -6,6 +6,10 @@ import {
   INIT_DATA,
   SET_NETWORK,
   SET_COLUMNS,
+  SET_ATTRIBUTES,
+  ADD_FILTER,
+  REMOVE_FILTER,
+  CHANGE_FILTER
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -17,6 +21,9 @@ export interface AppState {
   network: string;
   blocks: TezosBlock[];
   columns: Array<object>;
+  attributes: object;
+  operators: object[];
+  selectetFilters: object;
   accounts: TezosAccount[];
   operations: TezosOperation[];
   isLoading: boolean;
@@ -27,6 +34,29 @@ const initialState: AppState = {
   filters: emptyFilters,
   network: 'alphanet',
   blocks: [],
+  attributes: {
+    blocks: [],
+    operations: [],
+    accounts: []
+  },
+  selectetFilters: {
+    blocks: [],
+    operations: [],
+    accounts: []
+  },
+  operators: [
+    {name: 'BETWEEN', displayName: 'between'},
+    {name: 'EQ', displayName: 'equal'},
+    {name: 'IN', displayName: 'in'},
+    {name: 'LIKE', displayName: 'like'},
+    {name: 'LT', displayName: 'less than'},
+    {name: 'BEFORE', displayName: 'before'},
+    {name: 'GT', displayName: 'greater than'},
+    {name: 'AFTER', displayName: 'after'},
+    {name: 'STARTSWITH', displayName: 'starts with'},
+    {name: 'ENDSWITH', displayName: 'ends With'},
+    {name: 'ISNULL', displayName: 'is null'}
+  ],
   columns: [
     { title: 'Level', dataIndex: 'level', key: 'level' },
     { title: 'Timestamp', dataIndex: 'timestamp', key: 'timestamp' },
@@ -75,6 +105,36 @@ const appReducer = (state = initialState, action) => {
       return { ...state, network: action.network };
     case INIT_DATA:
       return { ...state, ...initDatas };
+    case SET_ATTRIBUTES: {
+      const attributes = state.attributes;
+      attributes[action.category] = action.attributes;
+      return { ...state, attributes };
+    }
+    case ADD_FILTER: {
+      const selectetFilters = state.selectetFilters;
+      let filters = selectetFilters[action.category];
+      const emptyFilter = {
+        name: '',
+        operator: ''
+      };
+      filters = filters.concat(emptyFilter);
+      selectetFilters[action.category] = filters;
+      return { ...state, selectetFilters };
+    }
+    case REMOVE_FILTER: {
+      const selectetFilters = state.selectetFilters;
+      let filters = selectetFilters[action.category];
+      filters.splice(action.index, 1);
+      selectetFilters[action.category] = [...filters];
+      return { ...state, selectetFilters };
+    }
+    case CHANGE_FILTER: {
+      const selectetFilters = state.selectetFilters;
+      let filters = selectetFilters[action.category];
+      filters[action.index] = action.filter;
+      selectetFilters[action.category] = [...filters];
+      return { ...state, selectetFilters };
+    }
   }
   return state;
 };

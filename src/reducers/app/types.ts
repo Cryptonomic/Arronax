@@ -5,3 +5,7 @@ export const SET_TAB = 'SET_TAB';
 export const SET_LOADING = 'SET_LOADING';
 export const INIT_DATA = 'INIT_DATA';
 export const SET_NETWORK = 'SET_NETWORK';
+export const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
+export const ADD_FILTER = 'ADD_FILTER';
+export const REMOVE_FILTER = 'REMOVE_FILTER';
+export const CHANGE_FILTER = 'CHANGE_FILTER';
