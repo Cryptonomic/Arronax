@@ -7,9 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { getTab, getAttributes, getSelectedFilters, getOperators } from '../../reducers/app/selectors';
 import { addFilterAction, removeFilterAction, changeFilterAction } from '../../reducers/app/actions';
 import { fetchAttributes } from '../../reducers/app/thunks';
-
 import FilterSelect from '../FilterSelect';
-
 
 const Container = styled.div`
   width: 100%;

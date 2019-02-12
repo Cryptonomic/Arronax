@@ -21,8 +21,6 @@ const DisplayTxt = styled(FilterTxt)`
   margin-top: 20px;
 `;
 
-
-
 const DisplayContainer = styled.div`
   align-items: center;
   padding-left: 24px;
@@ -34,8 +32,6 @@ const DisplayContainer = styled.div`
   display: flex;
   flex-grow: row;
 `;
-
-
 
 const CloseIconContainer = styled.div`
   position: absolute;
