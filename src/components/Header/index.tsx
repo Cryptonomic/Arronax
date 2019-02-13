@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import styled from 'styled-components';
 import FormControl from '@material-ui/core/FormControl';
@@ -12,8 +11,9 @@ import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import TezosIcon from '../TezosIcon';
+import getConfigs from '../../utils/getconfig';
 
-import configs from '../../config';
+const configs = getConfigs();
 
 const HeaderContainer = styled.div`
   width: 100%;
@@ -21,20 +21,29 @@ const HeaderContainer = styled.div`
   padding: 0 30px;
   display: flex;
   align-items: center;
-  background: linear-gradient(-225deg, #BCFCFF 0%, #9CD9E1 12.85%, #84BFCA 22.66%, #75AEBC 28.69%, #417895 48.65%, #395D94 85.37%, #34386E 100%);
+  background: linear-gradient(
+    -225deg,
+    #bcfcff 0%,
+    #9cd9e1 12.85%,
+    #84bfca 22.66%,
+    #75aebc 28.69%,
+    #417895 48.65%,
+    #395d94 85.37%,
+    #34386e 100%
+  );
 `;
 const HeaderLogo = styled.div`
   font-family: 'Futura';
   font-weight: 400;
   font-size: 36px;
-  color: #FFFFFE;
+  color: #fffffe;
   letter-spacing: 5.46px;
 `;
 
 const IconContainer = styled.div`
   width: 35px;
   height: 35px;
-  background: #669FB1;
+  background: #669fb1;
   border-radius: 35px;
   display: flex;
   align-items: center;
@@ -43,9 +52,9 @@ const IconContainer = styled.div`
 `;
 
 const SelectContainer = styled(FormControl)`
- &&& {
-  margin-left: 12px;
- }
+  &&& {
+    margin-left: 12px;
+  }
 `;
 
 const SelectWrapper = styled(SelectField)`
@@ -62,8 +71,8 @@ const SelectWrapper = styled(SelectField)`
     font-size: 24px;
     font-weight: 300;
     letter-spacing: 2.57px;
-    color: #FFFFFE;
-  }  
+    color: #fffffe;
+  }
 `;
 
 const DownIcon = styled(ArrowDropDown)`
@@ -103,7 +112,7 @@ const RevertSearchIcon = styled(SearchIcon)`
 
 const MenuHeaderItem = styled(MenuItem)`
   &&& {
-    color: #9B9B9B;
+    color: #9b9b9b;
     box-sizing: border-box;
     padding: 5px 25px;
     opacity: 1;
@@ -113,11 +122,11 @@ const MenuHeaderItem = styled(MenuItem)`
 
 const MainMenuItem = styled(MenuItem)`
   &&& {
-    &[class*='selected'] {      
-      background-color: rgba(101, 200, 206, 0.13);
+    &[class*='selected'] {
+      background-color: rgba(101,  200, 206, 0.13);
     }
     &:hover {
-      background-color: rgba(101, 200, 206, 0.1);
+      background-color: rgba(101,  200, 206, 0.1);
     }
   }
 `;
@@ -126,39 +135,35 @@ const UncheckedIcon = styled(RadioButtonUncheckedIcon)`
   &&& {
     font-size: 18px;
   }
-
 `;
 
 const CheckedIcon = styled(RadioButtonCheckedIcon)`
   &&& {
     font-size: 18px;
-    color: #00C4DC;
+    color: #00c4dc;
   }
 `;
 
 const MenuContent = styled.span``;
 
-const SelectRenderWrapper = styled.div`
+const SelectRenderWrapper = styled.div``;
 
-`;
-
-const getConfig = (val) => {
+const getConfig = val => {
   return configs.find(conf => conf.value === val);
-}
-
+};
 
 interface Props {
   network: string;
   onChangeNetwork(event: any): void;
 }
 
-const Header: React.StatelessComponent<Props> = (props) => {
-  const {network, onChangeNetwork} = props;
+const Header: React.StatelessComponent<Props> = props => {
+  const { network, onChangeNetwork } = props;
   return (
     <HeaderContainer>
       <HeaderLogo>ARRONAX</HeaderLogo>
       <IconContainer>
-        <TezosIcon size='22px' color='#FFFFFF' iconName='tezos' />
+        <TezosIcon size="22px" color="#FFFFFF" iconName="tezos" />
       </IconContainer>
       <SelectContainer>
         <SelectWrapper
@@ -167,16 +172,18 @@ const Header: React.StatelessComponent<Props> = (props) => {
           IconComponent={DownIcon}
           renderValue={value => {
             const config = getConfig(value);
-            return (
-              <SelectRenderWrapper>{config.title}</SelectRenderWrapper>
-            );
+            return <SelectRenderWrapper>{config.title}</SelectRenderWrapper>;
           }}
         >
           <MenuHeaderItem value="" disabled>
             Select Preferred Tezos Network
           </MenuHeaderItem>
-          {configs.map((config) => (
-            <MainMenuItem key={config.value} value={config.value} component='div'>
+          {configs.map(config => (
+            <MainMenuItem
+              key={config.value}
+              value={config.value}
+              component="div"
+            >
               <Radio
                 checked={network === config.value}
                 icon={<UncheckedIcon fontSize="small" />}
@@ -194,9 +201,8 @@ const Header: React.StatelessComponent<Props> = (props) => {
           <RevertSearchIcon />
         </IconButton>
       </SearchContainer>
-
     </HeaderContainer>
   );
-}
+};
 
 export default Header;

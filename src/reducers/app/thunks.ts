@@ -6,13 +6,15 @@ import {
   setNetworkAction,
   setColumnsAction,
 } from './actions';
-import configs from '../../config';
+import getConfigs from '../../utils/getconfig';
 const { getBlocks, getOperations, getAccounts } = TezosConseilClient;
 const ConseilOperations = {
   blocks: getBlocks,
   operations: getOperations,
   accounts: getAccounts,
 };
+
+const configs = getConfigs();
 
 const getConfig = val => {
   return configs.find(conf => conf.value === val);
@@ -39,8 +41,8 @@ export const submitFilters = () => async (dispatch, state) => {
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
-    apiKey: config.key
-  }
+    apiKey: config.key,
+  };
   const items = await ConseilOperations[category](serverInfo, network, filters);
   dispatch(setItemsAction(category, items));
   dispatch(setLoadingAction(false));
@@ -57,8 +59,8 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
-    apiKey: config.key
-  }
+    apiKey: config.key,
+  };
   const items = await ConseilOperations[category](serverInfo, network, filters);
   dispatch(setItemsAction(category, items));
   dispatch(setLoadingAction(false));
@@ -76,8 +78,8 @@ export const fetchItemsAction = (category: string) => async (
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
-    apiKey: config.key
-  }
+    apiKey: config.key,
+  };
   const items = await ConseilOperations[category](serverInfo, network, filters);
   dispatch(setItemsAction(category, items));
   dispatch(setLoadingAction(false));
