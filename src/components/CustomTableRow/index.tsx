@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as moment from 'moment';
 import { connect } from 'react-redux';
-import { getColumns } from '../../reducers/app/selectors';
+import { getColumns, getNetwork } from '../../reducers/app/selectors';
 import styled from 'styled-components';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
@@ -51,18 +51,17 @@ interface Props {
   category: string;
   item: object;
   selectedColumns: any[];
+  network: string;
 }
 
-const network = config.map(config => console.log(config));
-
-export const displayType = (shortenedItem, item, dataIndex) => {
+export const displayType = (network, shortenedItem, item, dataIndex) => {
   if (dataIndex === 'accountId' || dataIndex === 'manager') {
     return (
       <React.Fragment>
         <StyledCircle1 />
         <StyledCircle2 />
         <a
-          href={`https://zeronet.tzscan.io/${item[dataIndex]}`}
+          href={`https://${network}.tzscan.io/${item[dataIndex]}`}
           style={styles.linkUnderline}
         >
           {shortenedItem[dataIndex]}
@@ -79,7 +78,7 @@ export const displayType = (shortenedItem, item, dataIndex) => {
     return (
       <React.Fragment>
         <a
-          href={`https://zeronet.tzscan.io/${item[dataIndex]}`}
+          href={`https://${network}.tzscan.io/${item[dataIndex]}`}
           style={styles.linkUnderline}
         >
           {shortenedItem[dataIndex]}
@@ -99,7 +98,7 @@ export const displayType = (shortenedItem, item, dataIndex) => {
 };
 
 const CustomTableRow: React.StatelessComponent<Props> = props => {
-  const { selectedColumns, item } = props;
+  const { selectedColumns, item, network } = props;
   const shortenedItem = { ...item };
   let itemsArray = Object.keys(shortenedItem);
   itemsArray.forEach(hash => {
@@ -134,7 +133,7 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
               moment(item[column.dataIndex]).format('dd MM YYYY h:mm:ss a')
             ) : (
               <SpanContainer>
-                {displayType(shortenedItem, item, column.dataIndex)}
+                {displayType(network, shortenedItem, item, column.dataIndex)}
               </SpanContainer>
             )}
           </StyledCell>
@@ -145,6 +144,7 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
 };
 
 const mapStateToProps = (state: any) => ({
+  network: getNetwork(state),
   selectedColumns: getColumns(state),
 });
 
