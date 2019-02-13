@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { getTab, getColumns } from '../../reducers/app/selectors';
+import { getEntity, getColumns } from '../../reducers/app/selectors';
 import { setColumns } from '../../reducers/app/thunks';
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
@@ -177,8 +177,8 @@ interface SelectedColumnsData {
 }
 
 type Props = {
-  selectedTab: string;
-  setColumns: (category: string, items: object[]) => void;
+  selectedEntity: string;
+  setColumns: (entity: string, items: object[]) => void;
   selectedColumns: object[];
   classes: any;
 };
@@ -213,10 +213,10 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   handleSubmit = event => {
     const { selected } = this.state;
-    const { selectedTab, setColumns } = this.props;
+    const { selectedEntity, setColumns } = this.props;
     event.preventDefault();
     this.setState({ anchorEl: null });
-    setColumns(selectedTab, selected);
+    setColumns(selectedEntity, selected);
   };
 
   handleChange = (name: SelectedColumnsData) => event => {
@@ -257,10 +257,10 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   render() {
-    const { selectedTab, selectedColumns, classes } = this.props;
+    const { selectedEntity, selectedColumns, classes } = this.props;
     const { anchorEl, fadeBottom, selected } = this.state;
     let tab;
-    switch (selectedTab) {
+    switch (selectedEntity) {
       case 'blocks':
         tab = 'blocks';
         break;
@@ -338,13 +338,13 @@ class ColumnDisplay extends React.Component<Props, States> {
 }
 
 const mapStateToProps = state => ({
-  selectedTab: getTab(state),
+  selectedEntity: getEntity(state),
   selectedColumns: getColumns(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  setColumns: (category: string, items: object[]) =>
-    dispatch(setColumns(category, items)),
+  setColumns: (entity: string, items: object[]) =>
+    dispatch(setColumns(entity, items)),
 });
 
 export default connect(

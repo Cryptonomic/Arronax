@@ -44,8 +44,13 @@ const ExplorerLink = styled.a`
   color: #10ade4;
 `;
 interface Props {
+<<<<<<< HEAD
   category: string;
   item: object;
+=======
+  entity: string;
+  item: any;
+>>>>>>> 01ebccb1ca46152990c33871d122860d989b9fa1
   selectedColumns: any[];
   network: string;
 }

@@ -7,7 +7,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import {
   getLoading,
   getNetwork,
-  getTab,
+  getEntity,
   getItems,
 } from '../../reducers/app/selectors';
 import {
@@ -102,12 +102,12 @@ const tabsArray = [
 export interface Props {
   isLoading: boolean;
   network: string;
-  selectedTab: string;
+  selectedEntity: string;
   items: object[];
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
-  setColumns(category: string, items: object[]): void;
+  setColumns(entity: string, items: object[]): void;
 }
 
 export interface States {
@@ -123,8 +123,8 @@ class Arronax extends React.Component<Props, States> {
   }
 
   componentDidMount = () => {
-    const { fetchItems, selectedTab } = this.props;
-    fetchItems(selectedTab);
+    const { fetchItems, selectedEntity } = this.props;
+    fetchItems(selectedEntity);
   };
 
   onChangeNetwork = event => {
@@ -210,21 +210,21 @@ class Arronax extends React.Component<Props, States> {
   };
 
   render() {
-    const { isLoading, network, selectedTab, items } = this.props;
+    const { isLoading, network, selectedEntity, items } = this.props;
     const { isFilterCollapse } = this.state;
 
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
         <Container>
-          <TabsWrapper value={selectedTab}>
+          <TabsWrapper value={selectedEntity}>
             {tabsArray.map((item, index) => (
               <Tab
                 key={index}
                 value={item.value}
                 component={() => (
                   <TabItem
-                    isSelected={selectedTab === item.value}
+                    isSelected={selectedEntity === item.value}
                     onClick={() => this.onChangeTab(item.value)}
                   >
                     {item.title}
@@ -234,7 +234,7 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
-            selectedTab={selectedTab}
+            selectedEntity={selectedEntity}
             isCollapse={isFilterCollapse}
             onClose={this.onCloseFilter}
           />
@@ -246,7 +246,7 @@ class Arronax extends React.Component<Props, States> {
             </FilterExTxt>
           </FilterHeader>
           <TabContainer component="div">
-            <CustomTable items={items} category={selectedTab} />
+            <CustomTable items={items} entity={selectedEntity} />
           </TabContainer>
         </Container>
         <Footer />
@@ -263,13 +263,13 @@ class Arronax extends React.Component<Props, States> {
 const mapStateToProps = (state: any) => ({
   isLoading: getLoading(state),
   network: getNetwork(state),
-  selectedTab: getTab(state),
+  selectedEntity: getEntity(state),
   items: getItems(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  setColumns: (category: string, items: object[]) =>
-    dispatch(setColumns(category, items)),
+  setColumns: (entity: string, items: object[]) =>
+    dispatch(setColumns(entity, items)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
   fetchItems: (type: string) => dispatch(fetchItemsAction(type)),

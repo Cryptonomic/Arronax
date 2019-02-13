@@ -47,7 +47,7 @@ const getSorting = (order, orderBy) => {
 };
 
 interface Props {
-  category: string;
+  entity: string;
   items: any[];
   getColumns: any[];
 }
@@ -90,7 +90,7 @@ class CustomTable extends React.Component<Props, State> {
   };
 
   render() {
-    const { items, category, getColumns } = this.props;
+    const { items, entity, getColumns } = this.props;
     const { page, rowsPerPage, order, orderBy } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
@@ -112,7 +112,7 @@ class CustomTable extends React.Component<Props, State> {
             <TableBody>
               {realRows.map((row, index) => {
                 return (
-                  <CustomTableRow key={index} category={category} item={row} />
+                  <CustomTableRow key={index} entity={entity} item={row} />
                 );
               })}
               {emptyRows > 0 && (
