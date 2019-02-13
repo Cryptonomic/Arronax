@@ -7,7 +7,9 @@ import {
   setColumnsAction,
   setAttributesAction
 } from './actions';
-import configs from '../../config';
+import getConfigs from '../../utils/getconfig';
+
+const configs = getConfigs();
 const { getBlocks, getOperations, getAccounts } = TezosConseilClient;
 const { getAttributes, getAttributeValues } = ConseilMetadataClient;
 const ConseilOperations = {
