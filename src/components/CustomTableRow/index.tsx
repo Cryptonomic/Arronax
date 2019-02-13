@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Circle from '@material-ui/icons/FiberManualRecord';
-import config from '../../config';
 
 const TableRowWrapper = styled(TableRow)`
   &&& {
@@ -40,13 +39,10 @@ const SpanContainer = styled.span`
   display: flex;
 `;
 
-const styles = {
-  linkUnderline: {
-    textDecoration: 'none',
-    color: '#10ADE4',
-  },
-};
-
+const ExplorerLink = styled.a`
+  text-decoration: none;
+  color: #10ade4;
+`;
 interface Props {
   category: string;
   item: object;
@@ -56,16 +52,18 @@ interface Props {
 
 export const displayType = (network, shortenedItem, item, dataIndex) => {
   if (dataIndex === 'accountId' || dataIndex === 'manager') {
+    console.log(item);
+    console.log(shortenedItem);
     return (
       <React.Fragment>
         <StyledCircle1 />
         <StyledCircle2 />
-        <a
+        <ExplorerLink
           href={`https://${network}.tzscan.io/${item[dataIndex]}`}
-          style={styles.linkUnderline}
+          target="_blank"
         >
           {shortenedItem[dataIndex]}
-        </a>
+        </ExplorerLink>
       </React.Fragment>
     );
   } else if (
@@ -77,12 +75,12 @@ export const displayType = (network, shortenedItem, item, dataIndex) => {
   ) {
     return (
       <React.Fragment>
-        <a
+        <ExplorerLink
           href={`https://${network}.tzscan.io/${item[dataIndex]}`}
-          style={styles.linkUnderline}
+          target="_blank"
         >
           {shortenedItem[dataIndex]}
-        </a>
+        </ExplorerLink>
       </React.Fragment>
     );
   } else if (
