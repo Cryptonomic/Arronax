@@ -13,7 +13,9 @@ import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import TezosIcon from '../TezosIcon';
 
-import configs from '../../config';
+import getConfigs from '../../utils/getconfig';
+
+const configs = getConfigs();
 
 const HeaderContainer = styled.div`
   width: 100%;

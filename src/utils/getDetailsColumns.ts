@@ -1,5 +1,5 @@
-const getDetailsColumns = (category: string) => {
-  switch (category) {
+const getDetailsColumns = (entity: string) => {
+  switch (entity) {
     case 'blocks':
       return [
         { title: 'Level', dataIndex: 'level', key: 'level' },
