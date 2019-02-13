@@ -48,6 +48,16 @@
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.3.tgz#6310a047f12d21a1036fb031317219892440416f"
 
+"@ledgerhq/devices@^4.38.0":
+  version "4.38.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/devices/-/devices-4.38.0.tgz#06e4ac7f1e49827b9cd32c34c2f20c28c3b42fdc"
+  dependencies:
+    "@ledgerhq/errors" "^4.38.0"
+
+"@ledgerhq/errors@^4.38.0":
+  version "4.38.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.38.0.tgz#5260118b2cb1069f706d9316bf6f2ee1f6935f43"
+
 "@ledgerhq/hw-transport-node-hid@4.24.0":
   version "4.24.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-hid/-/hw-transport-node-hid-4.24.0.tgz#8457969d66819e8f7f50d5dd96527ab26cd3787d"
@@ -63,10 +73,18 @@
   dependencies:
     events "^3.0.0"
 
-"@ledgerhq/hw-transport@^4.21.0", "@ledgerhq/hw-transport@^4.24.0":
+"@ledgerhq/hw-transport@^4.21.0":
   version "4.35.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.35.0.tgz#aa7b851111ed759cd7489fa07a7b34c1773e8314"
   dependencies:
+    events "^3.0.0"
+
+"@ledgerhq/hw-transport@^4.24.0":
+  version "4.38.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.38.0.tgz#cd7c20d87a99d1e68d77b9b858a9cf70a3c96044"
+  dependencies:
+    "@ledgerhq/devices" "^4.38.0"
+    "@ledgerhq/errors" "^4.38.0"
     events "^3.0.0"
 
 "@material-ui/core@^3.8.3":
@@ -486,9 +504,9 @@ awesome-typescript-loader@^5.2.0:
     source-map-support "^0.5.3"
     webpack-log "^1.2.0"
 
-aws-sdk@^2.397.0, aws-sdk@^2.400.0:
-  version "2.400.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.400.0.tgz#21041439ceeba8e6339b7bed54f2f3703243bbef"
+aws-sdk@^2.400.0:
+  version "2.401.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.401.0.tgz#867fd36fa4fc789da8b7c1c387f4ca41b757af75"
   dependencies:
     buffer "4.9.1"
     events "1.1.1"
@@ -1736,31 +1754,13 @@ connect-history-api-fallback@^1.3.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/connect-history-api-fallback/-/connect-history-api-fallback-1.6.0.tgz#8b32089359308d111115d81cad3fceab888f97bc"
 
-"conseiljs@https://github.com/Cryptonomic/ConseilJS.git#146ec4f4a487581087df3d19f1a906fd46303121":
-  version "0.1.42"
-  resolved "https://github.com/Cryptonomic/ConseilJS.git#146ec4f4a487581087df3d19f1a906fd46303121"
+conseiljs@0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/conseiljs/-/conseiljs-0.2.0.tgz#67fed445d624dc57e4ab695a36b396a651222dd9"
   dependencies:
     "@ledgerhq/hw-transport" "4.24.0"
     "@ledgerhq/hw-transport-node-hid" "4.24.0"
     aws-sdk "^2.400.0"
-    babel-runtime "6.26.0"
-    base-n "git://github.com/yourcodesucks/base-n.git"
-    basil-tezos-ledger "0.0.1"
-    bip32 "^1.0.0"
-    bip39 "^2.5.0"
-    bs58check "^2.1.2"
-    https "^1.0.0"
-    node-fetch "^2.3.0"
-    sodium-native "^2.2.6"
-    zxcvbn "^4.4.2"
-
-"conseiljs@https://github.com/Cryptonomic/ConseilJS.git#df62fa803f8883b7833dbf5d947eb06cab678ee4":
-  version "0.1.42"
-  resolved "https://github.com/Cryptonomic/ConseilJS.git#df62fa803f8883b7833dbf5d947eb06cab678ee4"
-  dependencies:
-    "@ledgerhq/hw-transport" "4.24.0"
-    "@ledgerhq/hw-transport-node-hid" "4.24.0"
-    aws-sdk "^2.397.0"
     babel-runtime "6.26.0"
     base-n "git://github.com/yourcodesucks/base-n.git"
     basil-tezos-ledger "0.0.1"
@@ -3034,7 +3034,7 @@ inherits@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.1.tgz#b17d08d326b4423e568eff719f91b0b1cbdf69f1"
 
-ini@^1.3.4, ini@^1.3.5, ini@~1.3.0:
+ini@^1.3.4, ini@~1.3.0:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.5.tgz#eee25f56db1c9ec6085e0c22778083f596abf927"
 
@@ -3691,7 +3691,7 @@ multicast-dns@^6.0.1:
     dns-packet "^1.3.1"
     thunky "^1.0.2"
 
-nan@^2.10.0, nan@^2.12.1, nan@^2.4.0, nan@^2.8.0, nan@^2.9.2:
+nan@^2.10.0, nan@^2.12.1, nan@^2.8.0, nan@^2.9.2:
   version "2.12.1"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.12.1.tgz#7b1aa193e9aa86057e3c7bbd0ac448e770925552"
 
@@ -3765,10 +3765,6 @@ node-fetch@^2.3.0:
 node-forge@0.7.5:
   version "0.7.5"
   resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-0.7.5.tgz#6c152c345ce11c52f465c2abd957e8639cd674df"
-
-node-gyp-build@^3.0.0:
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-3.8.0.tgz#0f57efeb1971f404dfcbfab975c284de7c70f14a"
 
 node-hid@^0.7.2:
   version "0.7.6"
@@ -4894,14 +4890,6 @@ sockjs@0.3.19:
   dependencies:
     faye-websocket "^0.10.0"
     uuid "^3.0.1"
-
-sodium-native@^2.2.6:
-  version "2.2.6"
-  resolved "https://registry.yarnpkg.com/sodium-native/-/sodium-native-2.2.6.tgz#29dd34f994111568db60f5021d09e7016ba67323"
-  dependencies:
-    ini "^1.3.5"
-    nan "^2.4.0"
-    node-gyp-build "^3.0.0"
 
 source-list-map@^2.0.0:
   version "2.0.1"
