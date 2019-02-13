@@ -23,6 +23,9 @@ matrix:
             - xz-utils
             - xorriso
             - rpm
+            - g++-4.8-multilib
+            - gcc-multilib
+            - libusb-1.0-0-dev
 
 cache:
   yarn: true
