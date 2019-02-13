@@ -55,7 +55,7 @@ interface Props {
 export const displayType = (shortenedItem, item, dataIndex) => {
   if (dataIndex === 'accountId' || dataIndex === 'manager') {
     return (
-      <>
+      <React.Fragment>
         <StyledCircle1 />
         <StyledCircle2 />
         <a
@@ -64,7 +64,7 @@ export const displayType = (shortenedItem, item, dataIndex) => {
         >
           {shortenedItem[dataIndex]}
         </a>
-      </>
+      </React.Fragment>
     );
   } else if (
     dataIndex === 'predecessor' ||
@@ -74,14 +74,14 @@ export const displayType = (shortenedItem, item, dataIndex) => {
     dataIndex === 'operationGroupHash'
   ) {
     return (
-      <>
+      <React.Fragment>
         <a
           href={`https://zeronet.tzscan.io/${item[dataIndex]}`}
           style={styles.linkUnderline}
         >
           {shortenedItem[dataIndex]}
         </a>
-      </>
+      </React.Fragment>
     );
   } else if (
     dataIndex === 'protocol' ||
