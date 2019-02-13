@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Circle from '@material-ui/icons/FiberManualRecord';
+import config from '../../config';
 
 const TableRowWrapper = styled(TableRow)`
   &&& {
@@ -51,6 +52,8 @@ interface Props {
   item: object;
   selectedColumns: any[];
 }
+
+const network = config.map(config => console.log(config));
 
 export const displayType = (shortenedItem, item, dataIndex) => {
   if (dataIndex === 'accountId' || dataIndex === 'manager') {
