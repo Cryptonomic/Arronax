@@ -8,12 +8,12 @@ import {
   SET_COLUMNS,
 } from './types';
 
-import { TezosConseilQuery, TezosFilter } from 'conseiljs';
+import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
 import { TezosAccount, TezosBlock, TezosOperation } from '../../types';
-const emptyFilters: TezosFilter = TezosConseilQuery.getEmptyTezosFilter();
+const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
 
 export interface AppState {
-  filters: TezosFilter;
+  filters: ConseilQuery;
   network: string;
   blocks: TezosBlock[];
   columns: Array<object>;
@@ -25,7 +25,7 @@ export interface AppState {
 
 const initialState: AppState = {
   filters: emptyFilters,
-  network: 'zeronet',
+  network: 'alphanet',
   blocks: [],
   columns: [
     { title: 'Level', dataIndex: 'level', key: 'level' },

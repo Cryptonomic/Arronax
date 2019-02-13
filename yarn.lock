@@ -48,6 +48,15 @@
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.3.tgz#6310a047f12d21a1036fb031317219892440416f"
 
+"@ledgerhq/hw-transport-node-hid@4.24.0":
+  version "4.24.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-hid/-/hw-transport-node-hid-4.24.0.tgz#8457969d66819e8f7f50d5dd96527ab26cd3787d"
+  dependencies:
+    "@ledgerhq/hw-transport" "^4.24.0"
+    lodash "^4.17.11"
+    node-hid "^0.7.2"
+    usb "^1.3.3"
+
 "@ledgerhq/hw-transport-node-hid@^4.22.0":
   version "4.33.3"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-hid/-/hw-transport-node-hid-4.33.3.tgz#5e96dca2be0a23d80814303f262398087b208a6a"
@@ -63,9 +72,21 @@
   dependencies:
     events "^2.0.0"
 
+"@ledgerhq/hw-transport@4.24.0":
+  version "4.24.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.24.0.tgz#8def925d8c2e1f73d15128d9e27ead729870be58"
+  dependencies:
+    events "^3.0.0"
+
 "@ledgerhq/hw-transport@^4.21.0", "@ledgerhq/hw-transport@^4.32.0":
   version "4.32.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.32.0.tgz#592b9dc51459cb1cd31ce9444cf943f627bc4beb"
+  dependencies:
+    events "^3.0.0"
+
+"@ledgerhq/hw-transport@^4.24.0":
+  version "4.35.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.35.0.tgz#aa7b851111ed759cd7489fa07a7b34c1773e8314"
   dependencies:
     events "^3.0.0"
 
@@ -451,6 +472,10 @@ asn1.js@^4.0.0:
     inherits "^2.0.1"
     minimalistic-assert "^1.0.0"
 
+assert-plus@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/assert-plus/-/assert-plus-1.0.0.tgz#f12e0f3c5d77b0b1cdd9146942e4e96c1e4dd525"
+
 assert@^1.1.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/assert/-/assert-1.4.1.tgz#99912d591836b5a6f5b345c0f07eefc08fc65d91"
@@ -489,6 +514,20 @@ awesome-typescript-loader@^5.0.0, awesome-typescript-loader@^5.2.0:
 aws-sdk@^2.326.0:
   version "2.388.0"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.388.0.tgz#de3f8f5576ccaa3477fe66529bdd1546250e8325"
+  dependencies:
+    buffer "4.9.1"
+    events "1.1.1"
+    ieee754 "1.1.8"
+    jmespath "0.15.0"
+    querystring "0.2.0"
+    sax "1.2.1"
+    url "0.10.3"
+    uuid "3.3.2"
+    xml2js "0.4.19"
+
+aws-sdk@^2.397.0:
+  version "2.399.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.399.0.tgz#43cb0aac79a1d534baf7e537b84f9a6beccb5f7b"
   dependencies:
     buffer "4.9.1"
     events "1.1.1"
@@ -1258,6 +1297,12 @@ balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
 
+"base-n@git://github.com/yourcodesucks/base-n.git":
+  version "1.0.0"
+  resolved "git://github.com/yourcodesucks/base-n.git#9d983f475c7396fbdc2fcbbc35b4821f0deeaa25"
+  dependencies:
+    dashdash "^1.14.1"
+
 base-x@^3.0.2:
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/base-x/-/base-x-3.0.5.tgz#d3ada59afed05b921ab581ec3112e6444ba0795a"
@@ -1468,7 +1513,7 @@ bs58@^4.0.0:
   dependencies:
     base-x "^3.0.2"
 
-bs58check@<3.0.0, bs58check@^2.1.1:
+bs58check@<3.0.0, bs58check@^2.1.1, bs58check@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/bs58check/-/bs58check-2.1.2.tgz#53b018291228d82a5aa08e7d796fdafda54aebfc"
   dependencies:
@@ -1728,6 +1773,25 @@ connect-history-api-fallback@^1.3.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/connect-history-api-fallback/-/connect-history-api-fallback-1.6.0.tgz#8b32089359308d111115d81cad3fceab888f97bc"
 
+"conseiljs@https://github.com/Cryptonomic/ConseilJS.git#beta2-package":
+  version "0.1.42"
+  resolved "https://github.com/Cryptonomic/ConseilJS.git#f6d79a981925aee662b66167f9fa29c483749ce4"
+  dependencies:
+    "@ledgerhq/hw-transport" "4.24.0"
+    "@ledgerhq/hw-transport-node-hid" "4.24.0"
+    aws-sdk "^2.397.0"
+    babel-runtime "6.26.0"
+    base-n "git://github.com/yourcodesucks/base-n.git"
+    basil-tezos-ledger "0.0.1"
+    bip32 "^1.0.0"
+    bip39 "^2.5.0"
+    bs58check "^2.1.2"
+    https "^1.0.0"
+    libsodium-wrappers "0.5.4"
+    libsodium-wrappers-sumo "0.5.4"
+    node-fetch "^2.3.0"
+    zxcvbn "^4.4.2"
+
 "conseiljs@https://github.com/Cryptonomic/ConseilJS.git#develop-arronax":
   version "0.1.37"
   resolved "https://github.com/Cryptonomic/ConseilJS.git#50a2db5684fc5de4082b5434084b39fc48e60dc1"
@@ -1944,6 +2008,12 @@ d@1:
   resolved "https://registry.yarnpkg.com/d/-/d-1.0.0.tgz#754bb5bfe55451da69a58b94d45f4c5b0462d58f"
   dependencies:
     es5-ext "^0.10.9"
+
+dashdash@^1.14.1:
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
+  dependencies:
+    assert-plus "^1.0.0"
 
 date-now@^0.1.4:
   version "0.1.4"
@@ -3346,13 +3416,13 @@ libsodium-sumo@0.5.4:
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/libsodium-sumo/-/libsodium-sumo-0.5.4.tgz#08af4af945754ee9daf2de9d1385c9fc0e64cec0"
 
-libsodium-wrappers-sumo@^0.5.4:
+libsodium-wrappers-sumo@0.5.4, libsodium-wrappers-sumo@^0.5.4:
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/libsodium-wrappers-sumo/-/libsodium-wrappers-sumo-0.5.4.tgz#ee69f6c960965e0d7d65cc4282c2fb33485d06a2"
   dependencies:
     libsodium-sumo "0.5.4"
 
-libsodium-wrappers@^0.5.4:
+libsodium-wrappers@0.5.4, libsodium-wrappers@^0.5.4:
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/libsodium-wrappers/-/libsodium-wrappers-0.5.4.tgz#0059bf219c3a37b228f823342399b1607a4c5ba4"
   dependencies:
@@ -3725,6 +3795,10 @@ node-fetch@^1.0.1:
   dependencies:
     encoding "^0.1.11"
     is-stream "^1.0.1"
+
+node-fetch@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.3.0.tgz#1a1d940bbfb916a1d3e0219f037e89e71f8c5fa5"
 
 node-forge@0.7.5:
   version "0.7.5"
@@ -4477,6 +4551,10 @@ readdirp@^2.0.0:
     hoist-non-react-statics "^2.3.1"
     react-lifecycles-compat "^3.0.2"
     symbol-observable "^1.0.4"
+
+redux-devtools-extension@^2.13.7:
+  version "2.13.8"
+  resolved "https://registry.yarnpkg.com/redux-devtools-extension/-/redux-devtools-extension-2.13.8.tgz#37b982688626e5e4993ff87220c9bbb7cd2d96e1"
 
 redux-thunk@^2.3.0:
   version "2.3.0"
