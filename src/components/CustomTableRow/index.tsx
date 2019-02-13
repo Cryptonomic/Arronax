@@ -52,8 +52,6 @@ interface Props {
 
 export const displayType = (network, shortenedItem, item, dataIndex) => {
   if (dataIndex === 'accountId' || dataIndex === 'manager') {
-    console.log(item);
-    console.log(shortenedItem);
     return (
       <React.Fragment>
         <StyledCircle1 />
@@ -105,7 +103,7 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
       hash.toLowerCase().includes('predecessor') ||
       hash.toLowerCase().includes('accountid') ||
       hash.toLowerCase().includes('blockid') ||
-      hash.toLowerCase().includes('manager') ||
+      // hash.toLowerCase().includes('manager') ||
       hash.toLowerCase().includes('protocol') ||
       hash.toLowerCase().includes('context') ||
       hash.toLowerCase().includes('signature')
