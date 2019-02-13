@@ -4,7 +4,7 @@ export const getAppState = state => state.app;
 
 export const getItems = createSelector(
   getAppState,
-  apps => apps[apps.selectedTab]
+  apps => apps[apps.selectedEntity]
 );
 
 export const getLoading = createSelector(
@@ -27,14 +27,14 @@ export const getNetwork = createSelector(
   apps => apps.network
 );
 
-export const getTab = createSelector(
+export const getEntity = createSelector(
   getAppState,
-  apps => apps.selectedTab
+  apps => apps.selectedEntity
 );
 
 export const getAttributes = createSelector(
   getAppState,
-  apps => apps.attributes[apps.selectedTab]
+  apps => apps.attributes[apps.selectedEntity]
 );
 
 export const getOperators = createSelector(
@@ -44,5 +44,5 @@ export const getOperators = createSelector(
 
 export const getSelectedFilters = createSelector(
   getAppState,
-  apps => apps.selectetFilters[apps.selectedTab]
+  apps => apps.selectedFilters[apps.selectedEntity]
 );

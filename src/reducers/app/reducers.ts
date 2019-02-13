@@ -23,11 +23,11 @@ export interface AppState {
   columns: Array<object>;
   attributes: object;
   operators: object[];
-  selectetFilters: object;
+  selectedFilters: object;
   accounts: TezosAccount[];
   operations: TezosOperation[];
   isLoading: boolean;
-  selectedTab: string;
+  selectedEntity: string;
 }
 
 const initialState: AppState = {
@@ -39,7 +39,7 @@ const initialState: AppState = {
     operations: [],
     accounts: []
   },
-  selectetFilters: {
+  selectedFilters: {
     blocks: [],
     operations: [],
     accounts: []
@@ -80,10 +80,10 @@ const initialState: AppState = {
   accounts: [],
   operations: [],
   isLoading: false,
-  selectedTab: 'blocks',
+  selectedEntity: 'blocks',
 };
 
-const initDatas = {
+const initEntities = {
   blocks: [],
   accounts: [],
   operations: [],
@@ -94,46 +94,46 @@ const appReducer = (state = initialState, action) => {
     case SET_FILTER:
       return { ...state, filters: action.filters };
     case SET_ITEMS:
-      return { ...state, [action.category]: action.items };
+      return { ...state, [action.entity]: action.items };
     case SET_COLUMNS:
       return { ...state, columns: action.items };
     case SET_TAB:
-      return { ...state, selectedTab: action.category };
+      return { ...state, selectedEntity: action.entity };
     case SET_LOADING:
       return { ...state, isLoading: action.isLoading };
     case SET_NETWORK:
       return { ...state, network: action.network };
     case INIT_DATA:
-      return { ...state, ...initDatas };
+      return { ...state, ...initEntities };
     case SET_ATTRIBUTES: {
       const attributes = state.attributes;
-      attributes[action.category] = action.attributes;
+      attributes[action.entity] = action.attributes;
       return { ...state, attributes };
     }
     case ADD_FILTER: {
-      const selectetFilters = state.selectetFilters;
-      let filters = selectetFilters[action.category];
+      const selectedFilters = state.selectedFilters;
+      let filters = selectedFilters[action.entity];
       const emptyFilter = {
         name: '',
         operator: ''
       };
       filters = filters.concat(emptyFilter);
-      selectetFilters[action.category] = filters;
-      return { ...state, selectetFilters };
+      selectedFilters[action.entity] = filters;
+      return { ...state, selectedFilters };
     }
     case REMOVE_FILTER: {
-      const selectetFilters = state.selectetFilters;
-      let filters = selectetFilters[action.category];
+      const selectedFilters = state.selectedFilters;
+      let filters = selectedFilters[action.entity];
       filters.splice(action.index, 1);
-      selectetFilters[action.category] = [...filters];
-      return { ...state, selectetFilters };
+      selectedFilters[action.entity] = [...filters];
+      return { ...state, selectedFilters };
     }
     case CHANGE_FILTER: {
-      const selectetFilters = state.selectetFilters;
-      let filters = selectetFilters[action.category];
+      const selectedFilters = state.selectedFilters;
+      let filters = selectedFilters[action.entity];
       filters[action.index] = action.filter;
-      selectetFilters[action.category] = [...filters];
-      return { ...state, selectetFilters };
+      selectedFilters[action.entity] = [...filters];
+      return { ...state, selectedFilters };
     }
   }
   return state;

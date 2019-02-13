@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import PlusIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
-import { getTab, getAttributes, getSelectedFilters, getOperators } from '../../reducers/app/selectors';
+import { getEntity, getAttributes, getSelectedFilters, getOperators } from '../../reducers/app/selectors';
 import { addFilterAction, removeFilterAction, changeFilterAction } from '../../reducers/app/actions';
 import { fetchAttributes } from '../../reducers/app/thunks';
 import FilterSelect from '../FilterSelect';
@@ -80,14 +80,14 @@ const attrTabValue = {
 };
 
 type Props = {
-  selectedTab: string;
+  selectedEntity: string;
   attributes: Array<object>;
   filters: object[];
   operators: object[];
   fetchAttributes: () => void;
-  addFilter: (category: string) => void;
-  removeFilter: (category: string, index: number) => void;
-  changeFilter: (category: string, filter: object, index: number) => void;
+  addFilter: (entity: string) => void;
+  removeFilter: (entity: string, index: number) => void;
+  changeFilter: (entity: string, filter: object, index: number) => void;
 };
 
 type States = {
@@ -97,35 +97,35 @@ type States = {
 class FilterPanel extends React.Component<Props, States> {
 
   onAddFilter = () => {
-    const { fetchAttributes, attributes, addFilter, selectedTab } = this.props;
+    const { fetchAttributes, attributes, addFilter, selectedEntity } = this.props;
     if (attributes.length === 0) {
       fetchAttributes();
     }
-    addFilter(selectedTab);
+    addFilter(selectedEntity);
   }
 
   onRemoveFilter = (index) => {
-    const { removeFilter, selectedTab } = this.props;
-    removeFilter(selectedTab, index);
+    const { removeFilter, selectedEntity } = this.props;
+    removeFilter(selectedEntity, index);
   }
 
   onFilterNameChange = (val, index) => {
-    const { filters, selectedTab, changeFilter } = this.props;
+    const { filters, selectedEntity, changeFilter } = this.props;
     const selectedFilter: any = filters[index];
     selectedFilter.name = val;
-    changeFilter(selectedTab, selectedFilter, index);
+    changeFilter(selectedEntity, selectedFilter, index);
   }
 
   onFilterOperatorChange = (val, index) => {
-    const { filters, selectedTab, changeFilter } = this.props;
+    const { filters, selectedEntity, changeFilter } = this.props;
     const selectedFilter: any = filters[index];
     selectedFilter.operator = val;
-    changeFilter(selectedTab, selectedFilter, index);
+    changeFilter(selectedEntity, selectedFilter, index);
   }
 
   render() {
-    const { selectedTab, attributes, filters, operators } = this.props;
-    const footerVal = attrTabValue[selectedTab];
+    const { selectedEntity, attributes, filters, operators } = this.props;
+    const entityName = attrTabValue[selectedEntity];
     return (
       <Container>
         {filters.map((filter: any, index) => {
@@ -144,7 +144,7 @@ class FilterPanel extends React.Component<Props, States> {
               <FilterItemGr>
                 <FilterSelect
                   value={filter.name}
-                  placeholder={`Select ${footerVal} Attribute`}
+                  placeholder={`Select ${entityName} Attribute`}
                   items={newAttributes}
                   onChange={(val) => this.onFilterNameChange(val, index)}
                 />
@@ -170,7 +170,7 @@ class FilterPanel extends React.Component<Props, States> {
           </AddFilterButton>
           {filters.length == 0 &&
             <FilterExpTxt>
-              You can filter by all {footerVal} attributes and more.
+              You can filter by all {entityName} attributes and more.
             </FilterExpTxt>
           }
         </AddFilterFooter>
@@ -180,7 +180,7 @@ class FilterPanel extends React.Component<Props, States> {
 }
 
 const mapStateToProps = state => ({
-  selectedTab: getTab(state),
+  selectedEntity: getEntity(state),
   attributes: getAttributes(state),
   filters: getSelectedFilters(state),
   operators: getOperators(state)
@@ -188,9 +188,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   fetchAttributes: () => dispatch(fetchAttributes()),
-  addFilter: (category: string) => dispatch(addFilterAction(category)),
-  removeFilter: (category: string, index: number) => dispatch(removeFilterAction(category, index)),
-  changeFilter: (category: string, filter: object, index: number) => dispatch(changeFilterAction(category, filter, index))
+  addFilter: (entity: string) => dispatch(addFilterAction(entity)),
+  removeFilter: (entity: string, index: number) => dispatch(removeFilterAction(entity, index)),
+  changeFilter: (entity: string, filter: object, index: number) => dispatch(changeFilterAction(entity, filter, index))
 });
 
 export default connect(

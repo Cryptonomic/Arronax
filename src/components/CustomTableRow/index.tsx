@@ -27,7 +27,7 @@ const SpanContainer = styled.span`
   display: flex;
 `;
 interface Props {
-  category: string;
+  entity: string;
   item: any;
   selectedColumns: any[];
 }

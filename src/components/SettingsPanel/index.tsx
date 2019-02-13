@@ -48,7 +48,7 @@ const CloseIconWrapper = styled(CloseIcon)`
 `;
 
 interface Props {
-  selectedTab: string;
+  selectedEntity: string;
   isCollapse: boolean;
   onClose: () => void;
 }

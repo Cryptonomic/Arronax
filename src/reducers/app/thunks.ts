@@ -36,15 +36,15 @@ export const submitFilters = () => async (dispatch, state) => {
   dispatch(initDataAction());
   const network = state().app.network;
   const filters = state().app.filters;
-  const category = state().app.selectedTab;
+  const entity = state().app.selectedEntity;
   dispatch(setLoadingAction(true));
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
     apiKey: config.key
   }
-  const items = await ConseilOperations[category](serverInfo, network, filters);
-  dispatch(setItemsAction(category, items));
+  const items = await ConseilOperations[entity](serverInfo, network, filters);
+  dispatch(setItemsAction(entity, items));
   dispatch(setLoadingAction(false));
 };
 
@@ -54,25 +54,25 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
   dispatch(initDataAction());
   dispatch(setNetworkAction(network));
   const filters = state().app.filters;
-  const category = state().app.selectedTab;
+  const entity = state().app.selectedEntity;
   dispatch(setLoadingAction(true));
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
     apiKey: config.key
   }
-  const items = await ConseilOperations[category](serverInfo, network, filters);
-  dispatch(setItemsAction(category, items));
+  const items = await ConseilOperations[entity](serverInfo, network, filters);
+  dispatch(setItemsAction(entity, items));
   dispatch(setLoadingAction(false));
 };
 
-export const fetchItemsAction = (category: string) => async (
+export const fetchItemsAction = (entity: string) => async (
   dispatch,
   state
 ) => {
   const network = state().app.network;
   const filters = state().app.filters;
-  const originItems = state().app[category];
+  const originItems = state().app[entity];
   if (originItems.length > 0) return;
   dispatch(setLoadingAction(true));
   const config = getConfig(network);
@@ -80,8 +80,8 @@ export const fetchItemsAction = (category: string) => async (
     url: config.url,
     apiKey: config.key
   }
-  const items = await ConseilOperations[category](serverInfo, network, filters);
-  dispatch(setItemsAction(category, items));
+  const items = await ConseilOperations[entity](serverInfo, network, filters);
+  dispatch(setItemsAction(entity, items));
   dispatch(setLoadingAction(false));
 };
 
@@ -90,10 +90,10 @@ export const fetchAttributes = () => async (
   state
 ) => {
   const network = state().app.network;
-  const selectedTab = state().app.selectedTab;  
+  const selectedEntity = state().app.selectedEntity;  
   dispatch(setLoadingAction(true));
   const config = getConfig(network);  
-  const attributes = await getAttributes(config.url, config.key, 'tezos', network, selectedTab);
-  dispatch(setAttributesAction(selectedTab, attributes));
+  const attributes = await getAttributes(config.url, config.key, 'tezos', network, selectedEntity);
+  dispatch(setAttributesAction(selectedEntity, attributes));
   dispatch(setLoadingAction(false));
 };
