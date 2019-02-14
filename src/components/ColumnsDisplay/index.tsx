@@ -1,12 +1,16 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { getEntity, getColumns } from '../../reducers/app/selectors';
-import { setColumns } from '../../reducers/app/thunks';
+import {
+  getEntity,
+  getColumns,
+  getAttributes,
+} from '../../reducers/app/selectors';
+import { setColumns, fetchAttributes } from '../../reducers/app/thunks';
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
-import getColumnData from 'src/utils/getColumns';
+// import getColumnData from 'src/utils/getColumns';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -178,9 +182,11 @@ interface SelectedColumnsData {
 
 type Props = {
   selectedEntity: string;
+  attributes: any;
   setColumns: (entity: string, items: object[]) => void;
   selectedColumns: object[];
   classes: any;
+  fetchAttributes: () => void;
 };
 
 type States = {
@@ -197,7 +203,10 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   componentDidMount() {
-    const { selectedColumns } = this.props;
+    const { selectedColumns, attributes } = this.props;
+    if (attributes.length === 0) {
+      fetchAttributes();
+    }
     this.setState({
       selected: [...selectedColumns],
     });
@@ -257,7 +266,7 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   render() {
-    const { selectedEntity, selectedColumns, classes } = this.props;
+    const { selectedEntity, selectedColumns, classes, attributes } = this.props;
     const { anchorEl, fadeBottom, selected } = this.state;
     let tab;
     switch (selectedEntity) {
@@ -271,8 +280,8 @@ class ColumnDisplay extends React.Component<Props, States> {
         tab = 'accounts';
         break;
     }
-    const selectedDataIndex = selected.map(selected => {
-      return selected.dataIndex;
+    const selectedName = selected.map(selected => {
+      return selected.name;
     });
 
     return (
@@ -286,27 +295,32 @@ class ColumnDisplay extends React.Component<Props, States> {
           <ArrowIcon />
         </ButtonShell>
         <MenuContainer>
-          <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.cancelChange}>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={this.cancelChange}
+          >
             <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
             <MenuContents onScroll={this.handleScroll}>
               <FadeTop />
-              {getColumnData(tab).map(name => (
+              {attributes.map((name, index) => (
                 <MenuItem
                   className={
                     selected.length >= 6 &&
-                    selectedDataIndex.indexOf(name.dataIndex) === -1
+                    selectedName.indexOf(name.name) === -1
                       ? classes.removeSelector
                       : null
                   }
                   classes={{ root: classes.menuItem }}
                   onClick={this.handleChange(name)}
-                  key={name.key}
-                  value={name.dataIndex}
+                  key={index}
+                  value={name.name}
                 >
                   <Checkbox
                     className={
                       selected.length >= 6 &&
-                      selectedDataIndex.indexOf(name.dataIndex) === -1
+                      selectedName.indexOf(name.name) === -1
                         ? classes.removeSelector
                         : null
                     }
@@ -315,9 +329,9 @@ class ColumnDisplay extends React.Component<Props, States> {
                       checked: classes.checked,
                     }}
                     disableRipple={true}
-                    checked={selectedDataIndex.indexOf(name.dataIndex) > -1}
+                    checked={selectedName.indexOf(name.name) > -1}
                   />
-                  <ListItemText primary={name.title} />
+                  <ListItemText primary={name.displayName} />
                   <DraggableIcon />
                 </MenuItem>
               ))}
@@ -340,11 +354,13 @@ class ColumnDisplay extends React.Component<Props, States> {
 const mapStateToProps = state => ({
   selectedEntity: getEntity(state),
   selectedColumns: getColumns(state),
+  attributes: getAttributes(state),
 });
 
 const mapDispatchToProps = dispatch => ({
   setColumns: (entity: string, items: object[]) =>
     dispatch(setColumns(entity, items)),
+  fetchAttributes: () => dispatch(fetchAttributes()),
 });
 
 export default connect(

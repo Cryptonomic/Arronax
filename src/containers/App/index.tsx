@@ -5,6 +5,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {
+  getAttributes,
   getLoading,
   getNetwork,
   getEntity,
@@ -14,6 +15,7 @@ import {
   changeNetwork,
   fetchItemsAction,
   setColumns,
+  fetchAttributes,
 } from '../../reducers/app/thunks';
 import { setTabAction } from '../../reducers/app/actions';
 import Header from 'components/Header';
@@ -104,10 +106,12 @@ export interface Props {
   network: string;
   selectedEntity: string;
   items: object[];
+  attributes: object[];
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
   setColumns(entity: string, items: object[]): void;
+  fetchAttributes: () => void;
 }
 
 export interface States {
@@ -123,8 +127,16 @@ class Arronax extends React.Component<Props, States> {
   }
 
   componentDidMount = () => {
-    const { fetchItems, selectedEntity } = this.props;
+    const {
+      fetchItems,
+      selectedEntity,
+      attributes,
+      fetchAttributes,
+    } = this.props;
     fetchItems(selectedEntity);
+    if (attributes.length === 0) {
+      fetchAttributes();
+    }
   };
 
   onChangeNetwork = event => {
@@ -133,9 +145,10 @@ class Arronax extends React.Component<Props, States> {
   };
 
   onChangeTab = async (value: string) => {
-    const { changeTab, fetchItems, setColumns } = this.props;
+    const { changeTab, fetchItems, setColumns, fetchAttributes } = this.props;
     const columns = await this.findTab(value);
     await changeTab(value);
+    await fetchAttributes();
     await setColumns(value, columns);
     await fetchItems(value);
   };
@@ -212,7 +225,6 @@ class Arronax extends React.Component<Props, States> {
   render() {
     const { isLoading, network, selectedEntity, items } = this.props;
     const { isFilterCollapse } = this.state;
-
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
@@ -265,6 +277,7 @@ const mapStateToProps = (state: any) => ({
   network: getNetwork(state),
   selectedEntity: getEntity(state),
   items: getItems(state),
+  attributes: getAttributes(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -273,6 +286,7 @@ const mapDispatchToProps = dispatch => ({
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
   fetchItems: (type: string) => dispatch(fetchItemsAction(type)),
+  fetchAttributes: () => dispatch(fetchAttributes()),
 });
 
 export default connect(
