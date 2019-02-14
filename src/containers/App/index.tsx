@@ -316,7 +316,6 @@ class Arronax extends React.Component<Props, States> {
   render() {
     const { isLoading, network, selectedEntity, items } = this.props;
     const { isFilterCollapse } = this.state;
-    console.log(items);
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />

@@ -207,7 +207,6 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   componentDidMount() {
     const { selectedColumns, attributes } = this.props;
-    console.log(selectedColumns);
     this.setState({
       selected: [...selectedColumns],
     });

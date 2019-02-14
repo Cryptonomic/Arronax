@@ -50,46 +50,46 @@ interface Props {
   network: string;
 }
 
-export const displayType = (network, shortenedItem, item, dataIndex) => {
-  if (dataIndex === 'accountId' || dataIndex === 'manager') {
+export const displayType = (network, shortenedItem, item, name) => {
+  if (name === 'account_id' || name === 'manager') {
     return (
       <React.Fragment>
         <StyledCircle1 />
         <StyledCircle2 />
         <ExplorerLink
-          href={`https://${network}.tzscan.io/${item[dataIndex]}`}
+          href={`https://${network}.tzscan.io/${item[name]}`}
           target="_blank"
         >
-          {shortenedItem[dataIndex]}
+          {shortenedItem[name]}
         </ExplorerLink>
       </React.Fragment>
     );
   } else if (
-    dataIndex === 'predecessor' ||
-    dataIndex === 'hash' ||
-    dataIndex === 'blockId' ||
-    dataIndex === 'blockHash' ||
-    dataIndex === 'operationGroupHash'
+    name === 'predecessor' ||
+    name === 'hash' ||
+    name === 'block_id' ||
+    name === 'block_hash' ||
+    name === 'operationGroupHash'
   ) {
     return (
       <React.Fragment>
         <ExplorerLink
-          href={`https://${network}.tzscan.io/${item[dataIndex]}`}
+          href={`https://${network}.tzscan.io/${item[name]}`}
           target="_blank"
         >
-          {shortenedItem[dataIndex]}
+          {shortenedItem[name]}
         </ExplorerLink>
       </React.Fragment>
     );
   } else if (
-    dataIndex === 'protocol' ||
-    dataIndex === 'context' ||
-    dataIndex === 'operationsHash' ||
-    dataIndex === 'signature'
+    name === 'protocol' ||
+    name === 'context' ||
+    name === 'operations_hash' ||
+    name === 'signature'
   ) {
-    return shortenedItem[dataIndex];
+    return shortenedItem[name];
   } else {
-    return item[dataIndex];
+    return item[name];
   }
 };
 
@@ -98,13 +98,12 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
   const shortenedItem = { ...item };
   let itemsArray = Object.keys(shortenedItem);
   itemsArray.forEach(hash => {
-    console.log(hash);
     if (
       hash.toLowerCase().includes('hash') ||
       hash.toLowerCase().includes('predecessor') ||
       hash.toLowerCase().includes('account_id') ||
       hash.toLowerCase().includes('block_id') ||
-      // hash.toLowerCase().includes('manager') ||
+      hash.toLowerCase().includes('manager') ||
       hash.toLowerCase().includes('protocol') ||
       hash.toLowerCase().includes('context') ||
       hash.toLowerCase().includes('signature')
