@@ -175,9 +175,12 @@ const styles = {
 };
 
 interface SelectedColumnsData {
-  dataIndex: string;
-  title: string;
-  key: string;
+  cardinality: null | number;
+  dataType: string;
+  displayName: string;
+  entity: string;
+  keyType: string;
+  name: string;
 }
 
 type Props = {
@@ -204,6 +207,7 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   componentDidMount() {
     const { selectedColumns, attributes } = this.props;
+    console.log(selectedColumns);
     this.setState({
       selected: [...selectedColumns],
     });
@@ -229,7 +233,7 @@ class ColumnDisplay extends React.Component<Props, States> {
   handleChange = (name: SelectedColumnsData) => event => {
     const { selected } = this.state;
     const positionInArray = selected.findIndex(
-      selected => selected.dataIndex === name.dataIndex
+      selected => selected.name === name.name
     );
     if (positionInArray === -1 && selected.length <= 5) {
       this.setState({
