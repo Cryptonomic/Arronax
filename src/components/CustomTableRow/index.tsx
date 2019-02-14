@@ -98,11 +98,12 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
   const shortenedItem = { ...item };
   let itemsArray = Object.keys(shortenedItem);
   itemsArray.forEach(hash => {
+    console.log(hash);
     if (
       hash.toLowerCase().includes('hash') ||
       hash.toLowerCase().includes('predecessor') ||
-      hash.toLowerCase().includes('accountid') ||
-      hash.toLowerCase().includes('blockid') ||
+      hash.toLowerCase().includes('account_id') ||
+      hash.toLowerCase().includes('block_id') ||
       // hash.toLowerCase().includes('manager') ||
       hash.toLowerCase().includes('protocol') ||
       hash.toLowerCase().includes('context') ||
@@ -125,11 +126,11 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
       {selectedColumns.map((column, index) => {
         return (
           <StyledCell key={index}>
-            {column.dataIndex === 'timestamp' ? (
-              moment(item[column.dataIndex]).format('dd MM YYYY h:mm:ss a')
+            {column.name === 'timestamp' ? (
+              moment(item[column.name]).format('dd MM YYYY h:mm:ss a')
             ) : (
               <SpanContainer>
-                {displayType(network, shortenedItem, item, column.dataIndex)}
+                {displayType(network, shortenedItem, item, column.name)}
               </SpanContainer>
             )}
           </StyledCell>
