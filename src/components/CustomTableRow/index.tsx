@@ -69,7 +69,7 @@ export const displayType = (network, shortenedItem, item, name) => {
     name === 'hash' ||
     name === 'block_id' ||
     name === 'block_hash' ||
-    name === 'operationGroupHash'
+    name === 'operation_group_hash'
   ) {
     return (
       <React.Fragment>
@@ -98,13 +98,19 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
   const shortenedItem = { ...item };
   let itemsArray = Object.keys(shortenedItem);
   itemsArray.forEach(hash => {
-    if (
+    console.log(hash, item[hash]);
+    if (hash[item] === null) {
+      return;
+    } else if (
       hash.toLowerCase().includes('hash') ||
       hash.toLowerCase().includes('predecessor') ||
       hash.toLowerCase().includes('account_id') ||
       hash.toLowerCase().includes('block_id') ||
       hash.toLowerCase().includes('manager') ||
       hash.toLowerCase().includes('protocol') ||
+      hash.toLowerCase().includes('block_hash') ||
+      hash.toLowerCase().includes('delegate') ||
+      hash.toLowerCase().includes('opeartion_group_hash') ||
       hash.toLowerCase().includes('context') ||
       hash.toLowerCase().includes('signature')
     ) {
