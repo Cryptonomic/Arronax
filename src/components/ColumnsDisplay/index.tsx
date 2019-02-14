@@ -16,6 +16,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DragIcon from '@material-ui/icons/DragHandle';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
+import { copyFile } from 'fs';
 
 const Container = styled.div`
   display: flex;
@@ -204,18 +205,17 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   componentDidMount() {
     const { selectedColumns, attributes } = this.props;
-    if (attributes.length === 0) {
-      fetchAttributes();
-    }
     this.setState({
       selected: [...selectedColumns],
     });
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.selectedColumns !== this.state.selected) {
+  componentDidUpdate(prevProps: Props) {
+    const { selectedColumns } = this.props;
+    if (selectedColumns !== prevProps.selectedColumns) {
+      console.log(selectedColumns);
       this.setState({
-        selected: [...nextProps.selectedColumns],
+        selected: [...selectedColumns],
       });
     }
   }

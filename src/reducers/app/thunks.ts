@@ -85,8 +85,11 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
 };
 
 export const fetchAttributes = () => async (dispatch, state) => {
-  const network = state().app.network;
   const selectedEntity = state().app.selectedEntity;
+  if (state().app.attributes[selectedEntity].length > 0) {
+    return;
+  }
+  const network = state().app.network;
   dispatch(setLoadingAction(true));
   const config = getConfig(network);
   const attributes = await getAttributes(
