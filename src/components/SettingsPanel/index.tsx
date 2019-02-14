@@ -62,7 +62,7 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
           <CloseIconWrapper />
         </CloseIconContainer>
         <FilterTxt>Filter</FilterTxt>
-        <FilterPanel />        
+        <FilterPanel />
         <DisplayTxt>Display</DisplayTxt>
         <DisplayContainer>
           <ColumnsDisplay />

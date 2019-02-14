@@ -122,9 +122,9 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
 
   return (
     <TableRowWrapper>
-      {selectedColumns.map(column => {
+      {selectedColumns.map((column, index) => {
         return (
-          <StyledCell key={column.key}>
+          <StyledCell key={index}>
             {column.dataIndex === 'timestamp' ? (
               moment(item[column.dataIndex]).format('dd MM YYYY h:mm:ss a')
             ) : (

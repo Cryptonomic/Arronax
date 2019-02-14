@@ -126,18 +126,19 @@ class Arronax extends React.Component<Props, States> {
     };
   }
 
-  componentDidMount = () => {
+  componentDidMount() {
     const {
       fetchItems,
       selectedEntity,
       attributes,
       fetchAttributes,
     } = this.props;
+    // get legit columns
     fetchItems(selectedEntity);
     if (attributes.length === 0) {
       fetchAttributes();
     }
-  };
+  }
 
   onChangeNetwork = event => {
     const { changeNetwork } = this.props;
@@ -157,57 +158,147 @@ class Arronax extends React.Component<Props, States> {
     switch (value) {
       case 'blocks':
         return [
-          { title: 'Level', dataIndex: 'level', key: 'level' },
-          { title: 'Timestamp', dataIndex: 'timestamp', key: 'timestamp' },
-          { title: 'Block Hash', dataIndex: 'hash', key: 'blockHash' },
           {
-            title: 'Predecessor Hash',
-            dataIndex: 'predecessor',
-            key: 'predecessor',
+            cardinality: null,
+            dataType: 'Int',
+            displayName: 'Level',
+            entity: 'blocks',
+            keyType: 'UniqueKey',
+            name: 'level',
           },
           {
-            title: 'Operations Hash',
-            dataIndex: 'operationsHash',
-            key: 'operationsHash',
+            cardinality: null,
+            dataType: 'Int',
+            displayName: 'Proto',
+            entity: 'blocks',
+            keyType: 'UniqueKey',
+            name: 'proto',
           },
           {
-            title: 'Protocol Hash',
-            dataIndex: 'protocol',
-            key: 'protocol',
+            cardinality: null,
+            dataType: 'Int',
+            displayName: 'Predecessor',
+            entity: 'blocks',
+            keyType: 'UniqueKey',
+            name: 'predecessor',
+          },
+          {
+            cardinality: null,
+            dataType: 'Int',
+            displayName: 'Timestamp',
+            entity: 'blocks',
+            keyType: 'UniqueKey',
+            name: 'timestamp',
+          },
+          {
+            cardinality: null,
+            dataType: 'Int',
+            displayName: 'Validation pass',
+            entity: 'blocks',
+            keyType: 'UniqueKey',
+            name: 'validation_pass',
+          },
+          {
+            cardinality: null,
+            dataType: 'Int',
+            displayName: 'Fitness',
+            entity: 'blocks',
+            keyType: 'UniqueKey',
+            name: 'fitness',
           },
         ];
       case 'operations':
         return [
-          { title: 'Kind', dataIndex: 'kind', key: 'kind' },
-          { title: 'Source', dataIndex: 'source', key: 'source' },
           {
-            title: 'Destination',
-            dataIndex: 'destination',
-            key: 'destination',
+            cardinality: null,
+            dataType: 'Int',
+            displayName: 'Kind',
+            entity: 'operations',
+            keyType: 'UniqueKey',
+            name: 'kind',
           },
-          { title: 'Amount', dataIndex: 'amount', key: 'amount' },
-          { title: 'Fee', dataIndex: 'fee', key: 'fee' },
+          {
+            cardinality: null,
+            dataType: 'Int',
+            displayName: 'Source',
+            entity: 'operations',
+            keyType: 'UniqueKey',
+            name: 'source',
+          },
+          {
+            cardinality: null,
+            dataType: 'Int',
+            displayName: 'Destination',
+            entity: 'operations',
+            keyType: 'UniqueKey',
+            name: 'destination',
+          },
+          {
+            cardinality: null,
+            dataType: 'Int',
+            displayName: 'Amount',
+            entity: 'operations',
+            keyType: 'UniqueKey',
+            name: 'amount',
+          },
+          {
+            cardinality: null,
+            dataType: 'Int',
+            displayName: 'Fee',
+            entity: 'operations',
+            keyType: 'UniqueKey',
+            name: 'fee',
+          },
         ];
       case 'accounts':
         return [
-          { title: 'Account ID', dataIndex: 'accountId', key: 'accountId' },
-          { title: 'Manager', dataIndex: 'manager', key: 'manager' },
           {
-            title: 'Spendable',
-            dataIndex: 'spendable',
-            key: 'spendable',
-            isIcon: true,
+            cardinality: 13628,
+            dataType: 'String',
+            displayName: 'Account id',
+            entity: 'accounts',
+            keyType: 'UniqueKey',
+            name: 'account_id',
           },
           {
-            title: 'Delegatable',
-            dataIndex: 'delegateSetable',
-            key: 'delegateSetable',
-            isIcon: true,
+            cardinality: 1841,
+            dataType: 'String',
+            displayName: 'Block id',
+            entity: 'accounts',
+            keyType: 'NonKey',
+            name: 'block_id',
           },
           {
-            title: 'Delegate',
-            dataIndex: 'delegate',
-            key: 'delegateValue',
+            cardinality: 11813,
+            dataType: 'String',
+            displayName: 'Manager',
+            entity: 'accounts',
+            keyType: 'NonKey',
+            name: 'manager',
+          },
+          {
+            cardinality: 2,
+            dataType: 'Boolean',
+            displayName: 'Spendable',
+            entity: 'accounts',
+            keyType: 'NonKey',
+            name: 'spendable',
+          },
+          {
+            cardinality: 2,
+            dataType: 'Boolean',
+            displayName: 'Delegate setable',
+            entity: 'accounts',
+            keyType: 'NonKey',
+            name: 'delegate_setable',
+          },
+          {
+            cardinality: 76,
+            dataType: 'String',
+            displayName: 'Delegate value',
+            entity: 'accounts',
+            keyType: 'NonKey',
+            name: 'delegate_value',
           },
         ];
     }

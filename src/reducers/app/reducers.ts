@@ -9,7 +9,7 @@ import {
   SET_ATTRIBUTES,
   ADD_FILTER,
   REMOVE_FILTER,
-  CHANGE_FILTER
+  CHANGE_FILTER,
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -37,44 +37,74 @@ const initialState: AppState = {
   attributes: {
     blocks: [],
     operations: [],
-    accounts: []
+    accounts: [],
   },
   selectedFilters: {
     blocks: [],
     operations: [],
-    accounts: []
+    accounts: [],
   },
   operators: [
-    {name: 'BETWEEN', displayName: 'between'},
-    {name: 'EQ', displayName: 'equal'},
-    {name: 'IN', displayName: 'in'},
-    {name: 'LIKE', displayName: 'like'},
-    {name: 'LT', displayName: 'less than'},
-    {name: 'BEFORE', displayName: 'before'},
-    {name: 'GT', displayName: 'greater than'},
-    {name: 'AFTER', displayName: 'after'},
-    {name: 'STARTSWITH', displayName: 'starts with'},
-    {name: 'ENDSWITH', displayName: 'ends With'},
-    {name: 'ISNULL', displayName: 'is null'}
+    { name: 'BETWEEN', displayName: 'between' },
+    { name: 'EQ', displayName: 'equal' },
+    { name: 'IN', displayName: 'in' },
+    { name: 'LIKE', displayName: 'like' },
+    { name: 'LT', displayName: 'less than' },
+    { name: 'BEFORE', displayName: 'before' },
+    { name: 'GT', displayName: 'greater than' },
+    { name: 'AFTER', displayName: 'after' },
+    { name: 'STARTSWITH', displayName: 'starts with' },
+    { name: 'ENDSWITH', displayName: 'ends With' },
+    { name: 'ISNULL', displayName: 'is null' },
   ],
   columns: [
-    { title: 'Level', dataIndex: 'level', key: 'level' },
-    { title: 'Timestamp', dataIndex: 'timestamp', key: 'timestamp' },
-    { title: 'Block Hash', dataIndex: 'hash', key: 'blockHash' },
     {
-      title: 'Predecessor Hash',
-      dataIndex: 'predecessor',
-      key: 'predecessor',
+      cardinality: null,
+      dataType: 'Int',
+      displayName: 'Level',
+      entity: 'blocks',
+      keyType: 'UniqueKey',
+      name: 'level',
     },
     {
-      title: 'Operations Hash',
-      dataIndex: 'operationsHash',
-      key: 'operationsHash',
+      cardinality: null,
+      dataType: 'Int',
+      displayName: 'Proto',
+      entity: 'blocks',
+      keyType: 'UniqueKey',
+      name: 'proto',
     },
     {
-      title: 'Protocol Hash',
-      dataIndex: 'protocol',
-      key: 'protocol',
+      cardinality: null,
+      dataType: 'Int',
+      displayName: 'Predecessor',
+      entity: 'blocks',
+      keyType: 'UniqueKey',
+      name: 'predecessor',
+    },
+    {
+      cardinality: null,
+      dataType: 'Int',
+      displayName: 'Timestamp',
+      entity: 'blocks',
+      keyType: 'UniqueKey',
+      name: 'timestamp',
+    },
+    {
+      cardinality: null,
+      dataType: 'Int',
+      displayName: 'Validation pass',
+      entity: 'blocks',
+      keyType: 'UniqueKey',
+      name: 'validation_pass',
+    },
+    {
+      cardinality: null,
+      dataType: 'Int',
+      displayName: 'Fitness',
+      entity: 'blocks',
+      keyType: 'UniqueKey',
+      name: 'fitness',
     },
   ],
   accounts: [],
@@ -115,7 +145,7 @@ const appReducer = (state = initialState, action) => {
       let filters = selectedFilters[action.entity];
       const emptyFilter = {
         name: '',
-        operator: ''
+        operator: '',
       };
       filters = filters.concat(emptyFilter);
       selectedFilters[action.entity] = filters;
