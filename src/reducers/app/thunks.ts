@@ -72,21 +72,22 @@ export const setColumns = (type, items) => {
   };
 };
 
-export const submitFilters = () => async (dispatch, state) => {
-  dispatch(initDataAction());
-  const network = state().app.network;
-  const filters = state().app.filters;
-  const entity = state().app.selectedEntity;
-  dispatch(setLoadingAction(true));
-  const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.key,
-  };
-  const items = await ConseilOperations[entity](serverInfo, network, filters);
-  dispatch(setItemsAction(entity, items));
-  dispatch(setLoadingAction(false));
-};
+// WILL NEED UPDATE TO V2!
+// export const submitFilters = () => async (dispatch, state) => {
+//   dispatch(initDataAction());
+//   const network = state().app.network;
+//   const filters = state().app.filters;
+//   const entity = state().app.selectedEntity;
+//   dispatch(setLoadingAction(true));
+//   const config = getConfig(network);
+//   const serverInfo = {
+//     url: config.url,
+//     apiKey: config.key,
+//   };
+//   const items = await ConseilOperations[entity](serverInfo, network, filters);
+//   dispatch(setItemsAction(entity, items));
+//   dispatch(setLoadingAction(false));
+// };
 
 export const changeNetwork = (network: string) => async (dispatch, state) => {
   const oldNetwork = state().app.network;
