@@ -1,4 +1,17 @@
-import { TezosConseilClient, ConseilMetadataClient } from 'conseiljs';
+import {
+  TezosConseilClient,
+  ConseilMetadataClient,
+  ConseilDataClient,
+  ConseilQueryBuilder,
+} from 'conseiljs';
+const { executeEntityQuery } = ConseilDataClient;
+const {
+  blankQuery,
+  addPredicate,
+  addOrdering,
+  addFields,
+  setLimit,
+} = ConseilQueryBuilder;
 import {
   setItemsAction,
   initDataAction,
@@ -11,7 +24,7 @@ import getConfigs from '../../utils/getconfig';
 
 const configs = getConfigs();
 const { getBlocks, getOperations, getAccounts } = TezosConseilClient;
-const { getAttributes, getAttributeValues } = ConseilMetadataClient;
+const { getAttributes } = ConseilMetadataClient;
 const ConseilOperations = {
   blocks: getBlocks,
   operations: getOperations,
@@ -20,6 +33,31 @@ const ConseilOperations = {
 
 const getConfig = val => {
   return configs.find(conf => conf.value === val);
+};
+
+const getAttributesForQuery = (attributes, entity) => {
+  if (entity === 'blocks') {
+    return [
+      'level',
+      'proto',
+      'predecessor',
+      'timestamp',
+      'validation_pass',
+      'fitness',
+      'context',
+      'signature',
+      'protocol',
+      'chain_id',
+      'hash',
+      'operations_hash',
+    ];
+  } else {
+    let attr = [];
+    attributes[entity].forEach(attribs => {
+      attr.push(attribs.name);
+    });
+    return attr;
+  }
 };
 
 export const setItems = (type, items) => {
@@ -55,7 +93,6 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
   if (oldNetwork === network) return;
   dispatch(initDataAction());
   dispatch(setNetworkAction(network));
-  const filters = state().app.filters;
   const entity = state().app.selectedEntity;
   dispatch(setLoadingAction(true));
   const config = getConfig(network);
@@ -63,23 +100,42 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
     url: config.url,
     apiKey: config.key,
   };
-  const items = await ConseilOperations[entity](serverInfo, network, filters);
+  const attributes = state().app.attributes;
+  const starters = getAttributesForQuery(attributes, entity);
+  let query = blankQuery();
+  query = addFields(query, ...starters);
+  const items = await executeEntityQuery(
+    serverInfo,
+    'tezos',
+    network,
+    entity,
+    query
+  );
   dispatch(setItemsAction(entity, items));
   dispatch(setLoadingAction(false));
 };
 
 export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
-  const network = state().app.network;
-  const filters = state().app.filters;
   const originItems = state().app[entity];
   if (originItems.length > 0) return;
-  dispatch(setLoadingAction(true));
+  const network = state().app.network;
   const config = getConfig(network);
+  const attributes = state().app.attributes;
+  const starters = getAttributesForQuery(attributes, entity);
   const serverInfo = {
     url: config.url,
     apiKey: config.key,
   };
-  const items = await ConseilOperations[entity](serverInfo, network, filters);
+  dispatch(setLoadingAction(true));
+  let query = blankQuery();
+  query = addFields(query, ...starters);
+  const items = await executeEntityQuery(
+    serverInfo,
+    'tezos',
+    network,
+    entity,
+    query
+  );
   dispatch(setItemsAction(entity, items));
   dispatch(setLoadingAction(false));
 };
