@@ -92,10 +92,10 @@ export const setColumns = (type, items) => {
 export const changeNetwork = (network: string) => async (dispatch, state) => {
   const oldNetwork = state().app.network;
   if (oldNetwork === network) return;
+  dispatch(setLoadingAction(true));
   dispatch(initDataAction());
   dispatch(setNetworkAction(network));
   const entity = state().app.selectedEntity;
-  dispatch(setLoadingAction(true));
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,

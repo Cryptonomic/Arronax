@@ -249,6 +249,14 @@ class Arronax extends React.Component<Props, States> {
             keyType: 'UniqueKey',
             name: 'delegate',
           },
+          {
+            cardinality: null,
+            dataType: 'Int',
+            displayName: 'Slots',
+            entity: 'operations',
+            keyType: 'UniqueKey',
+            name: 'slots',
+          },
         ];
       case 'accounts':
         return [
