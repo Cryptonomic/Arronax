@@ -137,8 +137,8 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
     entity,
     query
   );
-  dispatch(setItemsAction(entity, items));
-  dispatch(setLoadingAction(false));
+  await dispatch(setItemsAction(entity, items));
+  await dispatch(setLoadingAction(false));
 };
 
 export const fetchAttributes = () => async (dispatch, state) => {
