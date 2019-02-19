@@ -133,7 +133,6 @@ class Arronax extends React.Component<Props, States> {
       attributes,
       fetchAttributes,
     } = this.props;
-    // get legit columns
     fetchItems(selectedEntity);
     if (attributes.length === 0) {
       fetchAttributes();
