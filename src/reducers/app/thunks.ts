@@ -3,15 +3,10 @@ import {
   ConseilMetadataClient,
   ConseilDataClient,
   ConseilQueryBuilder,
+  ConseilSortDirection,
 } from 'conseiljs';
 const { executeEntityQuery } = ConseilDataClient;
-const {
-  blankQuery,
-  addPredicate,
-  addOrdering,
-  addFields,
-  setLimit,
-} = ConseilQueryBuilder;
+const { blankQuery, addOrdering, addFields, setLimit } = ConseilQueryBuilder;
 import {
   setItemsAction,
   initDataAction,
@@ -90,6 +85,7 @@ export const setColumns = (type, items) => {
 // };
 
 export const changeNetwork = (network: string) => async (dispatch, state) => {
+  // cannot read substring of null error. This way of querying is best though, will update for custom queries when the time comes.
   const oldNetwork = state().app.network;
   if (oldNetwork === network) return;
   dispatch(setLoadingAction(true));
@@ -117,6 +113,7 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
 };
 
 export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
+  // find what attribute all 3 share so that you can set that attribute for the addOrdering funciton 2nd argument
   const originItems = state().app[entity];
   if (originItems.length > 0) return;
   const network = state().app.network;
@@ -130,6 +127,8 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
   let query = blankQuery();
   query = addFields(query, ...starters);
+  query = setLimit(query, 100);
+  query = addOrdering(query, 'block_level', ConseilSortDirection.DESC);
   const items = await executeEntityQuery(
     serverInfo,
     'tezos',
@@ -137,6 +136,7 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
     entity,
     query
   );
+  console.log(items);
   await dispatch(setItemsAction(entity, items));
   await dispatch(setLoadingAction(false));
 };

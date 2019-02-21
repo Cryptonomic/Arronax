@@ -99,7 +99,7 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
   const shortenedItem = { ...item };
   let itemsArray = Object.keys(shortenedItem);
   itemsArray.forEach(hash => {
-    if (hash[item] === null) {
+    if (item[hash] === null) {
       return;
     } else if (
       hash.toLowerCase().includes('hash') ||
