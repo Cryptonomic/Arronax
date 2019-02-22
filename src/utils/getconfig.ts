@@ -3,8 +3,8 @@ const dumbConfigs = [
     value: 'alphanet',
     title: '',
     url: '',
-    key: ''
-  }
+    key: '',
+  },
 ];
 
 const getConfigs = () => {
