@@ -46,7 +46,7 @@ const initialState: AppState = {
   },
   operators: [
     { name: 'BETWEEN', displayName: 'between' },
-    { name: 'EQ', displayName: 'equal' },
+    { name: 'EQ', displayName: 'equals' },
     { name: 'IN', displayName: 'in' },
     { name: 'LIKE', displayName: 'like' },
     { name: 'LT', displayName: 'less than' },

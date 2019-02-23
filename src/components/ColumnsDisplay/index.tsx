@@ -5,7 +5,7 @@ import {
   getColumns,
   getAttributes,
 } from '../../reducers/app/selectors';
-import { setColumns, fetchAttributes } from '../../reducers/app/thunks';
+import { setColumns } from '../../reducers/app/thunks';
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -189,7 +189,6 @@ type Props = {
   setColumns: (entity: string, items: object[]) => void;
   selectedColumns: object[];
   classes: any;
-  fetchAttributes: () => void;
 };
 
 type States = {
@@ -361,7 +360,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   setColumns: (entity: string, items: object[]) =>
     dispatch(setColumns(entity, items)),
-  fetchAttributes: () => dispatch(fetchAttributes()),
 });
 
 export default connect(
