@@ -1,7 +1,5 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import { connect } from 'react-redux';
-import { getColumns, getNetwork } from '../../reducers/app/selectors';
 import styled from 'styled-components';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
