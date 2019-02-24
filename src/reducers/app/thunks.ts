@@ -30,31 +30,6 @@ const getConfig = val => {
   return configs.find(conf => conf.value === val);
 };
 
-const getAttributesForQuery = (attributes, entity) => {
-  if (entity === 'blocks') {
-    return [
-      'level',
-      'proto',
-      'predecessor',
-      'timestamp',
-      'validation_pass',
-      'fitness',
-      'context',
-      'signature',
-      'protocol',
-      'chain_id',
-      'hash',
-      'operations_hash',
-    ];
-  } else {
-    let attr = [];
-    attributes[entity].forEach(attribs => {
-      attr.push(attribs.name);
-    });
-    return attr;
-  }
-};
-
 export const setItems = (type, items) => {
   return dispatch => {
     dispatch(setItemsAction(type, items));
@@ -84,64 +59,6 @@ export const setColumns = (type, items) => {
 //   dispatch(setLoadingAction(false));
 // };
 
-export const changeNetwork = (network: string) => async (dispatch, state) => {
-  const oldNetwork = state().app.network;
-  if (oldNetwork === network) return;
-  dispatch(setLoadingAction(true));
-  dispatch(initDataAction());
-  dispatch(setNetworkAction(network));
-  const entity = state().app.selectedEntity;
-  const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.key,
-  };
-  const attributes = state().app.attributes;
-  const starters = getAttributesForQuery(attributes, entity);
-  let query = blankQuery();
-  query = addFields(query, ...starters);
-  const items = await executeEntityQuery(
-    serverInfo,
-    'tezos',
-    network,
-    entity,
-    query
-  );
-  dispatch(setItemsAction(entity, items));
-  dispatch(setLoadingAction(false));
-};
-
-export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
-  const originItems = state().app[entity];
-  if (originItems.length > 0) return;
-  const network = state().app.network;
-  const config = getConfig(network);
-  const attributes = state().app.attributes;
-  const starters = getAttributesForQuery(attributes, entity);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.key,
-  };
-  dispatch(setLoadingAction(true));
-  let query = blankQuery();
-  query = addFields(query, ...starters);
-  query = setLimit(query, 100);
-  query = addOrdering(
-    query,
-    starters.includes('block_level') ? 'block_level' : 'level',
-    ConseilSortDirection.DESC
-  );
-  const items = await executeEntityQuery(
-    serverInfo,
-    'tezos',
-    network,
-    entity,
-    query
-  );
-  await dispatch(setItemsAction(entity, items));
-  await dispatch(setLoadingAction(false));
-};
-
 export const fetchAttributes = () => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
   if (state().app.attributes[selectedEntity].length > 0) {
@@ -159,4 +76,63 @@ export const fetchAttributes = () => async (dispatch, state) => {
   );
   dispatch(setAttributesAction(selectedEntity, attributes));
   dispatch(setLoadingAction(false));
+};
+
+export const changeNetwork = (network: string) => async (dispatch, state) => {
+  const oldNetwork = state().app.network;
+  if (oldNetwork === network) return;
+  dispatch(setLoadingAction(true));
+  dispatch(initDataAction());
+  dispatch(setNetworkAction(network));
+  const entity = state().app.selectedEntity;
+  const attributeState = await state().app.attributes;
+  const config = getConfig(network);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
+  const attributes = attributeState[entity];
+  let query = blankQuery();
+  query = addFields(query, ...attributes);
+  const items = await executeEntityQuery(
+    serverInfo,
+    'tezos',
+    network,
+    entity,
+    query
+  );
+  dispatch(setItemsAction(entity, items));
+  dispatch(setLoadingAction(false));
+};
+
+export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
+  const originItems = state().app[entity];
+  if (originItems.length > 0) return;
+  const network = state().app.network;
+  const config = getConfig(network);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
+  dispatch(setLoadingAction(true));
+  await dispatch(fetchAttributes());
+  const attributeState = await state().app.attributes;
+  const attributes = attributeState[entity];
+  let query = blankQuery();
+  query = addFields(query, ...attributes);
+  query = setLimit(query, 100);
+  query = addOrdering(
+    query,
+    attributes.includes('block_level') ? 'block_level' : 'level',
+    ConseilSortDirection.DESC
+  );
+  const items = await executeEntityQuery(
+    serverInfo,
+    'tezos',
+    network,
+    entity,
+    query
+  );
+  await dispatch(setItemsAction(entity, items));
+  await dispatch(setLoadingAction(false));
 };
