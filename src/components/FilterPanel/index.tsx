@@ -126,6 +126,13 @@ class FilterPanel extends React.Component<Props, States> {
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
+  onFilterAttributeChange = (val, index) => {
+    const { filters, selectedEntity, changeFilter } = this.props;
+    const selectedFilter: any = filters[index];
+    selectedFilter.attribute = val;
+    changeFilter(selectedEntity, selectedFilter, index);
+  };
+
   render() {
     const { selectedEntity, attributes, filters, operators } = this.props;
     const entityName = attrTabValue[selectedEntity];
@@ -161,6 +168,17 @@ class FilterPanel extends React.Component<Props, States> {
                     items={operators}
                     onChange={event =>
                       this.onFilterOperatorChange(event, index)
+                    }
+                  />
+                )}
+                {filter.operator && <HR />}
+                {filter.operator && (
+                  <FilterSelect
+                    value={filter.attribute}
+                    placeholder={`Select Value`}
+                    items={attributes}
+                    onChange={event =>
+                      this.onFilterAttributeChange(event, index)
                     }
                   />
                 )}
