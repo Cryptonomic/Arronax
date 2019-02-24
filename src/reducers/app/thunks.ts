@@ -30,6 +30,14 @@ const getConfig = val => {
   return configs.find(conf => conf.value === val);
 };
 
+const getAttributeNames = (attributes, entity) => {
+  let attr = [];
+  attributes[entity].forEach(attribs => {
+    attr.push(attribs.name);
+  });
+  return attr;
+};
+
 export const setItems = (type, items) => {
   return dispatch => {
     dispatch(setItemsAction(type, items));
@@ -58,7 +66,6 @@ export const setColumns = (type, items) => {
 //   dispatch(setItemsAction(entity, items));
 //   dispatch(setLoadingAction(false));
 // };
-
 export const fetchAttributes = () => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
   if (state().app.attributes[selectedEntity].length > 0) {
@@ -84,16 +91,17 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
   dispatch(initDataAction());
   dispatch(setNetworkAction(network));
+  await dispatch(fetchAttributes());
   const entity = state().app.selectedEntity;
-  const attributeState = await state().app.attributes;
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
     apiKey: config.key,
   };
-  const attributes = attributeState[entity];
+  const attributes = state().app.attributes;
+  const attributeNames = getAttributeNames(attributes, entity);
   let query = blankQuery();
-  query = addFields(query, ...attributes);
+  query = addFields(query, ...attributeNames);
   const items = await executeEntityQuery(
     serverInfo,
     'tezos',
@@ -110,20 +118,20 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
   if (originItems.length > 0) return;
   const network = state().app.network;
   const config = getConfig(network);
+  const attributes = state().app.attributes;
   const serverInfo = {
     url: config.url,
     apiKey: config.key,
   };
   dispatch(setLoadingAction(true));
   await dispatch(fetchAttributes());
-  const attributeState = await state().app.attributes;
-  const attributes = attributeState[entity];
+  const attributeNames = getAttributeNames(attributes, entity);
   let query = blankQuery();
-  query = addFields(query, ...attributes);
+  query = addFields(query, ...attributeNames);
   query = setLimit(query, 100);
   query = addOrdering(
     query,
-    attributes.includes('block_level') ? 'block_level' : 'level',
+    attributeNames.includes('block_level') ? 'block_level' : 'level',
     ConseilSortDirection.DESC
   );
   const items = await executeEntityQuery(
