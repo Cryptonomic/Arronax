@@ -116,6 +116,7 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
 export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
   const originItems = state().app[entity];
   if (originItems.length > 0) return;
+  dispatch(setLoadingAction(true));
   const network = state().app.network;
   const config = getConfig(network);
   const attributes = state().app.attributes;
@@ -123,7 +124,6 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
     url: config.url,
     apiKey: config.key,
   };
-  dispatch(setLoadingAction(true));
   await dispatch(fetchAttributes());
   const attributeNames = getAttributeNames(attributes, entity);
   let query = blankQuery();
