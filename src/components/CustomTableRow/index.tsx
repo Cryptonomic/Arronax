@@ -145,12 +145,4 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
   );
 };
 
-const mapStateToProps = (state: any) => ({
-  network: getNetwork(state),
-  selectedColumns: getColumns(state),
-});
-
-export default connect(
-  mapStateToProps,
-  null
-)(CustomTableRow);
+export default CustomTableRow;
