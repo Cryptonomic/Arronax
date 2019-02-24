@@ -103,7 +103,7 @@ type States = {
 
 class FilterPanel extends React.Component<Props, States> {
   onAddFilter = () => {
-    const { attributes, addFilter, selectedEntity } = this.props;
+    const { addFilter, selectedEntity } = this.props;
     addFilter(selectedEntity);
   };
 
