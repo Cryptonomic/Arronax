@@ -24,6 +24,7 @@ interface Props {
 
 const TableHeader: React.StatelessComponent<Props> = props => {
   const { rows, order, orderBy, createSortHandler } = props;
+  console.log(rows);
   return (
     <TableHead>
       <TableRow>
