@@ -37,6 +37,10 @@ const FilterItemGr = styled.div`
   display: flex;
 `;
 
+const FilterInput = styled.input`
+  display: flex;a
+`;
+
 const AddFilterFooter = styled.div`
   width: 100%;
   height: ${({ isFilters }) => (isFilters ? '67px' : '93px')};
@@ -133,6 +137,22 @@ class FilterPanel extends React.Component<Props, States> {
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
+  generateFilter = filter => {
+    const { attributes } = this.props;
+    console.log(attributes);
+    if (filter.operator === 'ISNULL') {
+      return;
+    } else if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
+      return (
+        <React.Fragment>
+          <FilterInput />
+          <HR />
+          <FilterInput />
+        </React.Fragment>
+      );
+    }
+  };
+
   render() {
     const { selectedEntity, attributes, filters, operators } = this.props;
     const entityName = attrTabValue[selectedEntity];
@@ -171,17 +191,7 @@ class FilterPanel extends React.Component<Props, States> {
                     }
                   />
                 )}
-                {filter.operator && <HR />}
-                {filter.operator && (
-                  <FilterSelect
-                    value={filter.attribute}
-                    placeholder={`Select Value`}
-                    items={attributes}
-                    onChange={event =>
-                      this.onFilterAttributeChange(event, index)
-                    }
-                  />
-                )}
+                {this.generateFilter(filter)}
               </FilterItemGr>
               <IconButton
                 aria-label="Delete"

@@ -19,7 +19,7 @@ import getConfigs from '../../utils/getconfig';
 
 const configs = getConfigs();
 const { getBlocks, getOperations, getAccounts } = TezosConseilClient;
-const { getAttributes } = ConseilMetadataClient;
+const { getAttributes, getAttributeValues } = ConseilMetadataClient;
 const ConseilOperations = {
   blocks: getBlocks,
   operations: getOperations,
@@ -66,6 +66,7 @@ export const setColumns = (type, items) => {
 //   dispatch(setItemsAction(entity, items));
 //   dispatch(setLoadingAction(false));
 // };
+
 export const fetchAttributes = () => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
   if (state().app.attributes[selectedEntity].length > 0) {
@@ -84,6 +85,26 @@ export const fetchAttributes = () => async (dispatch, state) => {
   dispatch(setAttributesAction(selectedEntity, attributes));
   dispatch(setLoadingAction(false));
 };
+
+// export const fetchValues = () => async (dispatch, state) => {
+//   const selectedEntity = state().app.selectedEntity;
+//   const network = state().app.network;
+//   const attributeState = state().app.attributes;
+//   const attributes = getAttributeNames(attributeState, selectedEntity);
+//   dispatch(setLoadingAction(true));
+//   const config = getConfig(network);
+//   const values = await getAttributeValues(
+//     config.url,
+//     config.key,
+//     'tezos',
+//     network,
+//     'operations',
+//     'nonce'
+//   );
+//   console.log(values);
+//   // dispatch(setAttributesAction(selectedEntity, attributes));
+//   dispatch(setLoadingAction(false));
+// };
 
 export const changeNetwork = (network: string) => async (dispatch, state) => {
   const oldNetwork = state().app.network;
