@@ -125,7 +125,6 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
     apiKey: config.key,
   };
   await dispatch(fetchAttributes());
-  // await dispatch(setColumns(entity, attributes[entity]));
   const attributeNames = getAttributeNames(attributes, entity);
   let query = blankQuery();
   query = addFields(query, ...attributeNames);

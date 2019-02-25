@@ -34,8 +34,8 @@ const desc = (a, b, orderBy) => {
   return 0;
 };
 
-const stableSort = (newArr, cmp) => {
-  const stabilizedThis = newArr.map((el, index) => [el, index]);
+const stableSort = (array, cmp) => {
+  const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = cmp(b[0], a[0]);
     if (order !== 0) return order;
