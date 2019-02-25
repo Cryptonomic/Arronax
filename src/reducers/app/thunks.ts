@@ -38,6 +38,27 @@ const getAttributeNames = (attributes, entity) => {
   return attr;
 };
 
+const getInitialColumns = (entity, columns) => {
+  if (entity !== 'blocks') {
+    const newColumns = columns[entity].slice(0, 6);
+    return newColumns;
+  } else {
+    const newColumns = columns[entity].reduce((acc, element) => {
+      if (element.name === 'level') {
+        acc[0] = element;
+      } else if (element.name === 'timestamp') {
+        acc[1] = element;
+      } else if (element.name === 'hash') {
+        acc[2] = element;
+      } else if (element.name === 'predecessor') {
+        acc[3] = element;
+      }
+      return [...acc];
+    }, []);
+    return newColumns;
+  }
+};
+
 export const setItems = (type, items) => {
   return dispatch => {
     dispatch(setItemsAction(type, items));
@@ -66,6 +87,7 @@ export const setColumns = (type, items) => {
 //   dispatch(setItemsAction(entity, items));
 //   dispatch(setLoadingAction(false));
 // };
+
 export const fetchAttributes = () => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
   if (state().app.attributes[selectedEntity].length > 0) {
@@ -83,6 +105,13 @@ export const fetchAttributes = () => async (dispatch, state) => {
   );
   dispatch(setAttributesAction(selectedEntity, attributes));
   dispatch(setLoadingAction(false));
+};
+
+export const fetchColumns = columns => async (dispatch, state) => {
+  const selectedEntity = state().app.selectedEntity;
+  const newColumns = getInitialColumns(selectedEntity, columns);
+  columns[selectedEntity] = newColumns;
+  await dispatch(setColumns(selectedEntity, columns));
 };
 
 export const changeNetwork = (network: string) => async (dispatch, state) => {
@@ -125,6 +154,7 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
     apiKey: config.key,
   };
   await dispatch(fetchAttributes());
+  await dispatch(fetchColumns(attributes));
   const attributeNames = getAttributeNames(attributes, entity);
   let query = blankQuery();
   query = addFields(query, ...attributeNames);

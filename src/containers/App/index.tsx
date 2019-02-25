@@ -10,6 +10,7 @@ import {
   getNetwork,
   getEntity,
   getItems,
+  getColumns,
 } from '../../reducers/app/selectors';
 import {
   changeNetwork,
@@ -107,6 +108,7 @@ export interface Props {
   selectedEntity: string;
   items: object[];
   attributes: object[];
+  selectedColumns: object[];
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
@@ -151,7 +153,13 @@ class Arronax extends React.Component<Props, States> {
   };
 
   render() {
-    const { isLoading, network, selectedEntity, items } = this.props;
+    const {
+      isLoading,
+      network,
+      selectedEntity,
+      items,
+      selectedColumns,
+    } = this.props;
     const { isFilterCollapse } = this.state;
     return (
       <MainContainer>
@@ -186,7 +194,11 @@ class Arronax extends React.Component<Props, States> {
             </FilterExTxt>
           </FilterHeader>
           <TabContainer component="div">
-            <CustomTable items={items} entity={selectedEntity} />
+            <CustomTable
+              items={items}
+              entity={selectedEntity}
+              selectedColumns={selectedColumns}
+            />
           </TabContainer>
         </Container>
         <Footer />
@@ -201,6 +213,7 @@ class Arronax extends React.Component<Props, States> {
 }
 
 const mapStateToProps = (state: any) => ({
+  selectedColumns: getColumns(state),
   isLoading: getLoading(state),
   network: getNetwork(state),
   selectedEntity: getEntity(state),

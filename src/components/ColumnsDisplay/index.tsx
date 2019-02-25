@@ -204,18 +204,14 @@ class ColumnDisplay extends React.Component<Props, States> {
     fadeBottom: true,
   };
 
-  componentDidMount() {
-    const { selectedColumns, attributes } = this.props;
-    this.setState({
-      selected: [...selectedColumns],
-    });
-  }
-
   componentDidUpdate(prevProps: Props) {
-    const { selectedColumns } = this.props;
-    if (selectedColumns !== prevProps.selectedColumns) {
+    const { selectedColumns, selectedEntity } = this.props;
+    if (
+      selectedColumns[selectedEntity] !==
+      prevProps.selectedColumns[selectedEntity]
+    ) {
       this.setState({
-        selected: [...selectedColumns],
+        selected: [...selectedColumns[selectedEntity]],
       });
     }
   }

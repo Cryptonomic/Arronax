@@ -20,7 +20,7 @@ export interface AppState {
   filters: ConseilQuery;
   network: string;
   blocks: TezosBlock[];
-  columns: Array<object>;
+  columns: object;
   attributes: object;
   operators: object[];
   selectedFilters: object;
@@ -57,7 +57,44 @@ const initialState: AppState = {
     { name: 'ENDSWITH', displayName: 'ends With' },
     { name: 'ISNULL', displayName: 'is null' },
   ],
-  columns: [],
+  columns: {
+    blocks: [
+      {
+        cardinality: null,
+        dataType: 'Int',
+        displayName: 'Level',
+        entity: 'blocks',
+        keyType: 'UniqueKey',
+        name: 'level',
+      },
+      {
+        cardinality: null,
+        dataType: 'DateTime',
+        displayName: 'Timestamp',
+        entity: 'blocks',
+        keyType: 'UniqueKey',
+        name: 'timestamp',
+      },
+      {
+        cardinality: 199298,
+        dataType: 'String',
+        displayName: 'Hash',
+        entity: 'blocks',
+        keyType: 'UniqueKey',
+        name: 'hash',
+      },
+      {
+        cardinality: 199297,
+        dataType: 'String',
+        displayName: 'Predecessor',
+        entity: 'blocks',
+        keyType: 'NonKey',
+        name: 'predecessor',
+      },
+    ],
+    operations: [],
+    accounts: [],
+  },
   accounts: [],
   operations: [],
   isLoading: false,

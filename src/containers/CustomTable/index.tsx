@@ -54,7 +54,7 @@ interface Props {
   attributes: any[];
   entity: string;
   items: any[];
-  selectedColumns: Object[];
+  selectedColumns: any[];
   network: string;
 }
 
@@ -96,21 +96,8 @@ class CustomTable extends React.Component<Props, State> {
   };
 
   render() {
-    const { items, entity, network, attributes } = this.props;
+    const { items, entity, network, attributes, selectedColumns } = this.props;
     const { page, rowsPerPage, order, orderBy } = this.state;
-    const shortenedAttributes = attributes.slice(0, 6);
-    const blockAttributes = attributes.reduce((acc, element, index) => {
-      if (element.name === 'level') {
-        acc[0] = element;
-      } else if (element.name === 'timestamp') {
-        acc[1] = element;
-      } else if (element.name === 'hash') {
-        acc[2] = element;
-      } else if (element.name === 'predecessor') {
-        acc[3] = element;
-      }
-      return [...acc];
-    }, []);
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
     const realRows = stableSort(items, getSorting(order, orderBy)).slice(
@@ -122,7 +109,7 @@ class CustomTable extends React.Component<Props, State> {
         <Overflow>
           <TableContainer>
             <CustomTableHeader
-              rows={entity === 'blocks' ? blockAttributes : shortenedAttributes}
+              rows={selectedColumns[entity]}
               order={order}
               orderBy={orderBy}
               createSortHandler={this.handleRequestSort}
@@ -132,11 +119,7 @@ class CustomTable extends React.Component<Props, State> {
                 return (
                   <CustomTableRow
                     network={network}
-                    selectedColumns={
-                      entity === 'blocks'
-                        ? blockAttributes
-                        : shortenedAttributes
-                    }
+                    selectedColumns={selectedColumns[entity]}
                     key={index}
                     entity={entity}
                     item={row}
