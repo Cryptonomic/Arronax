@@ -5,11 +5,7 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
-import {
-  getColumns,
-  getNetwork,
-  getAttributes,
-} from '../../reducers/app/selectors';
+import { getNetwork, getAttributes } from '../../reducers/app/selectors';
 import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
@@ -54,7 +50,7 @@ interface Props {
   attributes: any[];
   entity: string;
   items: any[];
-  selectedColumns: any[];
+  selectedColumns: object[];
   network: string;
 }
 
@@ -96,7 +92,7 @@ class CustomTable extends React.Component<Props, State> {
   };
 
   render() {
-    const { items, entity, network, attributes, selectedColumns } = this.props;
+    const { items, entity, network, selectedColumns } = this.props;
     const { page, rowsPerPage, order, orderBy } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
@@ -146,7 +142,6 @@ class CustomTable extends React.Component<Props, State> {
 
 const mapStateToProps = (state: any) => ({
   attributes: getAttributes(state),
-  selectedColumns: getColumns(state),
   network: getNetwork(state),
 });
 

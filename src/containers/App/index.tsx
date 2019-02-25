@@ -108,7 +108,7 @@ export interface Props {
   selectedEntity: string;
   items: object[];
   attributes: object[];
-  selectedColumns: object[];
+  selectedColumns: any[];
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;

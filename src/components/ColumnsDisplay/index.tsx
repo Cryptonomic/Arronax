@@ -10,7 +10,6 @@ import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
-// import getColumnData from 'src/utils/getColumns';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -242,8 +241,11 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   cancelChange = () => {
-    const { selectedColumns } = this.props;
-    this.setState({ selected: [...selectedColumns], anchorEl: null });
+    const { selectedColumns, selectedEntity } = this.props;
+    this.setState({
+      selected: [...selectedColumns[selectedEntity]],
+      anchorEl: null,
+    });
   };
 
   handleClick = event => {
@@ -287,7 +289,7 @@ class ColumnDisplay extends React.Component<Props, States> {
           aria-haspopup="true"
           onClick={this.handleClick}
         >
-          Columns ({selectedColumns.length})
+          Columns ({selected.length})
           <ArrowIcon />
         </ButtonShell>
         <MenuContainer>
