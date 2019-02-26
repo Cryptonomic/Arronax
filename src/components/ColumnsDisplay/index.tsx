@@ -204,24 +204,25 @@ class ColumnDisplay extends React.Component<Props, States> {
     fadeBottom: true,
   };
 
-  // componentDidMount() {
-  //   const { selectedColumns, selectedEntity } = this.props;
-  //   this.setState({
-  //     selected: [...selectedColumns[selectedEntity]],
-  //   });
-  // }
+  componentDidMount() {
+    const { selectedColumns, selectedEntity } = this.props;
+    this.setState({
+      selected: [...selectedColumns[selectedEntity]],
+    });
+  }
 
   componentDidUpdate(prevProps: Props) {
-    const { selectedColumns, selectedEntity, columns } = this.props;
-    console.log(selectedColumns);
-    // console.log(columns[selectedEntity]);
-    // console.log(prevProps.selectedColumns[selectedEntity]);
-    // console.log(selectedColumns[selectedEntity]);
-    // if (columns[selectedEntity] !== prevProps.selectedColumns[selectedEntity]) {
-    //   this.setState({
-    //     selected: [...columns[selectedEntity]],
-    //   });
-    // }
+    const { selected } = this.state;
+    const { selectedColumns, selectedEntity } = this.props;
+    if (
+      prevProps.selectedColumns[selectedEntity] !==
+        selectedColumns[selectedEntity] ||
+      selectedEntity !== prevProps.selectedEntity
+    ) {
+      this.setState({
+        selected: [...selectedColumns[selectedEntity]],
+      });
+    }
   }
 
   handleSubmit = event => {
