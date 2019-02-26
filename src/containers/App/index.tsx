@@ -16,7 +16,6 @@ import {
   changeNetwork,
   fetchItemsAction,
   setColumns,
-  fetchAttributes,
 } from '../../reducers/app/thunks';
 import { setTabAction } from '../../reducers/app/actions';
 import Header from 'components/Header';
@@ -161,6 +160,7 @@ class Arronax extends React.Component<Props, States> {
       selectedColumns,
     } = this.props;
     const { isFilterCollapse } = this.state;
+    console.log(selectedColumns);
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
@@ -182,6 +182,7 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
+            selectedColumns={selectedColumns}
             selectedEntity={selectedEntity}
             isCollapse={isFilterCollapse}
             onClose={this.onCloseFilter}

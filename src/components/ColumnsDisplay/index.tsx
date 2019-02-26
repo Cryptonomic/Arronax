@@ -183,10 +183,11 @@ interface SelectedColumnsData {
 }
 
 type Props = {
+  columns: any;
+  selectedColumns: any;
   selectedEntity: string;
   attributes: any;
   setColumns: (entity: string, items: object[]) => void;
-  selectedColumns: object[];
   classes: any;
 };
 
@@ -203,23 +204,32 @@ class ColumnDisplay extends React.Component<Props, States> {
     fadeBottom: true,
   };
 
+  // componentDidMount() {
+  //   const { selectedColumns, selectedEntity } = this.props;
+  //   this.setState({
+  //     selected: [...selectedColumns[selectedEntity]],
+  //   });
+  // }
+
   componentDidUpdate(prevProps: Props) {
-    const { selectedColumns, selectedEntity } = this.props;
-    if (
-      selectedColumns[selectedEntity] !==
-      prevProps.selectedColumns[selectedEntity]
-    ) {
-      this.setState({
-        selected: [...selectedColumns[selectedEntity]],
-      });
-    }
+    const { selectedColumns, selectedEntity, columns } = this.props;
+    console.log(selectedColumns);
+    // console.log(columns[selectedEntity]);
+    // console.log(prevProps.selectedColumns[selectedEntity]);
+    // console.log(selectedColumns[selectedEntity]);
+    // if (columns[selectedEntity] !== prevProps.selectedColumns[selectedEntity]) {
+    //   this.setState({
+    //     selected: [...columns[selectedEntity]],
+    //   });
+    // }
   }
 
   handleSubmit = event => {
     const { selected } = this.state;
-    const { selectedEntity, setColumns } = this.props;
+    const { selectedEntity, setColumns, selectedColumns } = this.props;
     event.preventDefault();
     this.setState({ anchorEl: null });
+    this.setState({ selected: [...selectedColumns[selectedEntity]] });
     setColumns(selectedEntity, selected);
   };
 
@@ -264,7 +274,7 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   render() {
-    const { selectedEntity, selectedColumns, classes, attributes } = this.props;
+    const { selectedEntity, classes, attributes } = this.props;
     const { anchorEl, fadeBottom, selected } = this.state;
     let tab;
     switch (selectedEntity) {
@@ -350,8 +360,8 @@ class ColumnDisplay extends React.Component<Props, States> {
 }
 
 const mapStateToProps = state => ({
+  columns: getColumns(state),
   selectedEntity: getEntity(state),
-  selectedColumns: getColumns(state),
   attributes: getAttributes(state),
 });
 
