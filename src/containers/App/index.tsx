@@ -10,12 +10,9 @@ import {
   getNetwork,
   getEntity,
   getItems,
+  getColumns,
 } from '../../reducers/app/selectors';
-import {
-  changeNetwork,
-  fetchItemsAction,
-  setColumns,
-} from '../../reducers/app/thunks';
+import { changeNetwork, fetchItemsAction } from '../../reducers/app/thunks';
 import { setTabAction } from '../../reducers/app/actions';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
@@ -106,10 +103,10 @@ export interface Props {
   selectedEntity: string;
   items: object[];
   attributes: object[];
+  selectedColumns: any[];
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
-  setColumns(entity: string, items: object[]): void;
 }
 
 export interface States {
@@ -135,6 +132,7 @@ class Arronax extends React.Component<Props, States> {
   };
 
   onChangeTab = async (value: string) => {
+<<<<<<< HEAD
     const { changeTab, fetchItems, setColumns } = this.props;
     // const columns = this.findTab(value);
     changeTab(value);
@@ -283,6 +281,12 @@ class Arronax extends React.Component<Props, States> {
   //       ];
   //   }
   // };
+=======
+    const { changeTab, fetchItems } = this.props;
+    changeTab(value);
+    fetchItems(value);
+  };
+>>>>>>> feat/99-getcolumn-ConseilMetadata
 
   onFilterCollapse = () => {
     const { isFilterCollapse } = this.state;
@@ -294,7 +298,13 @@ class Arronax extends React.Component<Props, States> {
   };
 
   render() {
-    const { isLoading, network, selectedEntity, items } = this.props;
+    const {
+      isLoading,
+      network,
+      selectedEntity,
+      items,
+      selectedColumns,
+    } = this.props;
     const { isFilterCollapse } = this.state;
     return (
       <MainContainer>
@@ -317,6 +327,7 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
+            selectedColumns={selectedColumns}
             selectedEntity={selectedEntity}
             isCollapse={isFilterCollapse}
             onClose={this.onCloseFilter}
@@ -329,7 +340,11 @@ class Arronax extends React.Component<Props, States> {
             </FilterExTxt>
           </FilterHeader>
           <TabContainer component="div">
-            <CustomTable items={items} entity={selectedEntity} />
+            <CustomTable
+              items={items}
+              entity={selectedEntity}
+              selectedColumns={selectedColumns}
+            />
           </TabContainer>
         </Container>
         <Footer />
@@ -344,6 +359,7 @@ class Arronax extends React.Component<Props, States> {
 }
 
 const mapStateToProps = (state: any) => ({
+  selectedColumns: getColumns(state),
   isLoading: getLoading(state),
   network: getNetwork(state),
   selectedEntity: getEntity(state),
@@ -352,8 +368,6 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setColumns: (entity: string, items: object[]) =>
-    dispatch(setColumns(entity, items)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
   fetchItems: (type: string) => dispatch(fetchItemsAction(type)),

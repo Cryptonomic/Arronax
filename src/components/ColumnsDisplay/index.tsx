@@ -1,16 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import {
-  getEntity,
-  getColumns,
-  getAttributes,
-} from '../../reducers/app/selectors';
+import { getEntity, getAttributes } from '../../reducers/app/selectors';
 import { setColumns } from '../../reducers/app/thunks';
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
-// import getColumnData from 'src/utils/getColumns';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -184,10 +179,10 @@ interface SelectedColumnsData {
 }
 
 type Props = {
+  selectedColumns: any;
   selectedEntity: string;
   attributes: any;
   setColumns: (entity: string, items: object[]) => void;
-  selectedColumns: object[];
   classes: any;
 };
 
@@ -205,26 +200,31 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   componentDidMount() {
-    const { selectedColumns, attributes } = this.props;
+    const { selectedColumns, selectedEntity } = this.props;
     this.setState({
-      selected: [...selectedColumns],
+      selected: [...selectedColumns[selectedEntity]],
     });
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { selectedColumns } = this.props;
-    if (selectedColumns !== prevProps.selectedColumns) {
+    const { selectedColumns, selectedEntity } = this.props;
+    if (
+      prevProps.selectedColumns[selectedEntity] !==
+        selectedColumns[selectedEntity] ||
+      selectedEntity !== prevProps.selectedEntity
+    ) {
       this.setState({
-        selected: [...selectedColumns],
+        selected: [...selectedColumns[selectedEntity]],
       });
     }
   }
 
   handleSubmit = event => {
     const { selected } = this.state;
-    const { selectedEntity, setColumns } = this.props;
+    const { selectedEntity, setColumns, selectedColumns } = this.props;
     event.preventDefault();
     this.setState({ anchorEl: null });
+    this.setState({ selected: [...selectedColumns[selectedEntity]] });
     setColumns(selectedEntity, selected);
   };
 
@@ -246,8 +246,11 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   cancelChange = () => {
-    const { selectedColumns } = this.props;
-    this.setState({ selected: [...selectedColumns], anchorEl: null });
+    const { selectedColumns, selectedEntity } = this.props;
+    this.setState({
+      selected: [...selectedColumns[selectedEntity]],
+      anchorEl: null,
+    });
   };
 
   handleClick = event => {
@@ -266,7 +269,7 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   render() {
-    const { selectedEntity, selectedColumns, classes, attributes } = this.props;
+    const { selectedEntity, classes, attributes } = this.props;
     const { anchorEl, fadeBottom, selected } = this.state;
     let tab;
     switch (selectedEntity) {
@@ -291,7 +294,7 @@ class ColumnDisplay extends React.Component<Props, States> {
           aria-haspopup="true"
           onClick={this.handleClick}
         >
-          Columns ({selectedColumns.length})
+          Columns ({selected.length})
           <ArrowIcon />
         </ButtonShell>
         <MenuContainer>
@@ -353,7 +356,6 @@ class ColumnDisplay extends React.Component<Props, States> {
 
 const mapStateToProps = state => ({
   selectedEntity: getEntity(state),
-  selectedColumns: getColumns(state),
   attributes: getAttributes(state),
 });
 

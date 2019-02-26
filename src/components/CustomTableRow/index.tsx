@@ -123,7 +123,6 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
     }
     return shortenedItem[hash];
   });
-
   return (
     <TableRowWrapper>
       {selectedColumns.map((column, index) => {

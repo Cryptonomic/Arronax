@@ -20,7 +20,7 @@ export interface AppState {
   filters: ConseilQuery;
   network: string;
   blocks: TezosBlock[];
-  columns: Array<object>;
+  columns: object;
   attributes: object;
   operators: object[];
   selectedFilters: object;
@@ -57,40 +57,11 @@ const initialState: AppState = {
     { name: 'ENDSWITH', displayName: 'ends With' },
     { name: 'ISNULL', displayName: 'is null' },
   ],
-  columns: [
-    {
-      cardinality: null,
-      dataType: 'Int',
-      displayName: 'Level',
-      entity: 'blocks',
-      keyType: 'UniqueKey',
-      name: 'level',
-    },
-    {
-      cardinality: null,
-      dataType: 'Int',
-      displayName: 'Timestamp',
-      entity: 'blocks',
-      keyType: 'UniqueKey',
-      name: 'timestamp',
-    },
-    {
-      cardinality: null,
-      dataType: 'Int',
-      displayName: 'Hash',
-      entity: 'blocks',
-      keyType: 'UniqueKey',
-      name: 'hash',
-    },
-    {
-      cardinality: null,
-      dataType: 'Int',
-      displayName: 'Predecessor',
-      entity: 'blocks',
-      keyType: 'UniqueKey',
-      name: 'predecessor',
-    },
-  ],
+  columns: {
+    blocks: [],
+    operations: [],
+    accounts: [],
+  },
   accounts: [],
   operations: [],
   isLoading: false,
@@ -109,8 +80,12 @@ const appReducer = (state = initialState, action) => {
       return { ...state, filters: action.filters };
     case SET_ITEMS:
       return { ...state, [action.entity]: action.items };
-    case SET_COLUMNS:
-      return { ...state, columns: action.items };
+    case SET_COLUMNS: {
+      const columns = state.columns;
+      const newColumns = { ...columns };
+      newColumns[action.entity] = action.items;
+      return { ...state, columns: newColumns };
+    }
     case SET_TAB:
       return { ...state, selectedEntity: action.entity };
     case SET_LOADING:

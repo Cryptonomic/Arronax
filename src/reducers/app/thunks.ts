@@ -1,5 +1,4 @@
 import {
-  TezosConseilClient,
   ConseilMetadataClient,
   ConseilDataClient,
   ConseilQueryBuilder,
@@ -18,6 +17,7 @@ import {
 import getConfigs from '../../utils/getconfig';
 
 const configs = getConfigs();
+<<<<<<< HEAD
 const { getBlocks, getOperations, getAccounts } = TezosConseilClient;
 const { getAttributes, getAttributeValues } = ConseilMetadataClient;
 const ConseilOperations = {
@@ -25,6 +25,9 @@ const ConseilOperations = {
   operations: getOperations,
   accounts: getAccounts,
 };
+=======
+const { getAttributes } = ConseilMetadataClient;
+>>>>>>> feat/99-getcolumn-ConseilMetadata
 
 const getConfig = val => {
   return configs.find(conf => conf.value === val);
@@ -36,6 +39,27 @@ const getAttributeNames = (attributes, entity) => {
     attr.push(attribs.name);
   });
   return attr;
+};
+
+const getInitialColumns = (entity, columns) => {
+  if (entity !== 'blocks') {
+    const newColumns = columns.slice(0, 6);
+    return newColumns;
+  } else {
+    const newColumns = columns.reduce((acc, element) => {
+      if (element.name === 'level') {
+        acc[0] = element;
+      } else if (element.name === 'timestamp') {
+        acc[1] = element;
+      } else if (element.name === 'hash') {
+        acc[2] = element;
+      } else if (element.name === 'predecessor') {
+        acc[3] = element;
+      }
+      return [...acc];
+    }, []);
+    return newColumns;
+  }
 };
 
 export const setItems = (type, items) => {
@@ -134,6 +158,13 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
   dispatch(setLoadingAction(false));
 };
 
+export const fetchColumns = columns => async (dispatch, state) => {
+  const selectedEntity = state().app.selectedEntity;
+  const newColumns = await getInitialColumns(selectedEntity, columns);
+  columns[selectedEntity] = newColumns;
+  await dispatch(setColumns(selectedEntity, newColumns));
+};
+
 export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
   const originItems = state().app[entity];
   if (originItems.length > 0) return;
@@ -147,6 +178,9 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
   };
   await dispatch(fetchAttributes());
   const attributeNames = getAttributeNames(attributes, entity);
+  const columns = state().app.columns;
+  columns[entity] = attributes[entity];
+  await dispatch(fetchColumns(columns[entity]));
   let query = blankQuery();
   query = addFields(query, ...attributeNames);
   query = setLimit(query, 100);
