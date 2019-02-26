@@ -17,17 +17,7 @@ import {
 import getConfigs from '../../utils/getconfig';
 
 const configs = getConfigs();
-<<<<<<< HEAD
-const { getBlocks, getOperations, getAccounts } = TezosConseilClient;
-const { getAttributes, getAttributeValues } = ConseilMetadataClient;
-const ConseilOperations = {
-  blocks: getBlocks,
-  operations: getOperations,
-  accounts: getAccounts,
-};
-=======
 const { getAttributes } = ConseilMetadataClient;
->>>>>>> feat/99-getcolumn-ConseilMetadata
 
 const getConfig = val => {
   return configs.find(conf => conf.value === val);
@@ -161,6 +151,7 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
 export const fetchColumns = columns => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
   const newColumns = await getInitialColumns(selectedEntity, columns);
+  console.log(newColumns);
   columns[selectedEntity] = newColumns;
   await dispatch(setColumns(selectedEntity, newColumns));
 };

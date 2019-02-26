@@ -132,161 +132,10 @@ class Arronax extends React.Component<Props, States> {
   };
 
   onChangeTab = async (value: string) => {
-<<<<<<< HEAD
-    const { changeTab, fetchItems, setColumns } = this.props;
-    // const columns = this.findTab(value);
-    changeTab(value);
-    fetchItems(value);
-    // setColumns(value, columns);
-  };
-
-  // findTab = (value: string) => {
-  //   switch (value) {
-  //     case 'blocks':
-  //       return [
-  //         {
-  //           cardinality: null,
-  //           dataType: 'Int',
-  //           displayName: 'Level',
-  //           entity: 'blocks',
-  //           keyType: 'UniqueKey',
-  //           name: 'level',
-  //         },
-  //         {
-  //           cardinality: null,
-  //           dataType: 'Int',
-  //           displayName: 'Timestamp',
-  //           entity: 'blocks',
-  //           keyType: 'UniqueKey',
-  //           name: 'timestamp',
-  //         },
-  //         {
-  //           cardinality: null,
-  //           dataType: 'Int',
-  //           displayName: 'Hash',
-  //           entity: 'blocks',
-  //           keyType: 'UniqueKey',
-  //           name: 'hash',
-  //         },
-  //         {
-  //           cardinality: null,
-  //           dataType: 'Int',
-  //           displayName: 'Predecessor',
-  //           entity: 'blocks',
-  //           keyType: 'UniqueKey',
-  //           name: 'predecessor',
-  //         },
-  //       ];
-  //     case 'operations':
-  //       return [
-  //         {
-  //           cardinality: null,
-  //           dataType: 'Int',
-  //           displayName: 'Kind',
-  //           entity: 'operations',
-  //           keyType: 'UniqueKey',
-  //           name: 'kind',
-  //         },
-  //         {
-  //           cardinality: null,
-  //           dataType: 'Int',
-  //           displayName: 'Operation id',
-  //           entity: 'operations',
-  //           keyType: 'UniqueKey',
-  //           name: 'operation_id',
-  //         },
-  //         {
-  //           cardinality: null,
-  //           dataType: 'Int',
-  //           displayName: 'Operation Group Hash',
-  //           entity: 'operations',
-  //           keyType: 'UniqueKey',
-  //           name: 'operation_group_hash',
-  //         },
-  //         {
-  //           cardinality: null,
-  //           dataType: 'Int',
-  //           displayName: 'Level',
-  //           entity: 'operations',
-  //           keyType: 'UniqueKey',
-  //           name: 'level',
-  //         },
-  //         {
-  //           cardinality: null,
-  //           dataType: 'Int',
-  //           displayName: 'Delegate',
-  //           entity: 'operations',
-  //           keyType: 'UniqueKey',
-  //           name: 'delegate',
-  //         },
-  //         {
-  //           cardinality: null,
-  //           dataType: 'Int',
-  //           displayName: 'Slots',
-  //           entity: 'operations',
-  //           keyType: 'UniqueKey',
-  //           name: 'slots',
-  //         },
-  //       ];
-  //     case 'accounts':
-  //       return [
-  //         {
-  //           cardinality: 13628,
-  //           dataType: 'String',
-  //           displayName: 'Account id',
-  //           entity: 'accounts',
-  //           keyType: 'UniqueKey',
-  //           name: 'account_id',
-  //         },
-  //         {
-  //           cardinality: 1841,
-  //           dataType: 'String',
-  //           displayName: 'Block id',
-  //           entity: 'accounts',
-  //           keyType: 'NonKey',
-  //           name: 'block_id',
-  //         },
-  //         {
-  //           cardinality: 11813,
-  //           dataType: 'String',
-  //           displayName: 'Manager',
-  //           entity: 'accounts',
-  //           keyType: 'NonKey',
-  //           name: 'manager',
-  //         },
-  //         {
-  //           cardinality: 2,
-  //           dataType: 'Boolean',
-  //           displayName: 'Spendable',
-  //           entity: 'accounts',
-  //           keyType: 'NonKey',
-  //           name: 'spendable',
-  //         },
-  //         {
-  //           cardinality: 2,
-  //           dataType: 'Boolean',
-  //           displayName: 'Delegate setable',
-  //           entity: 'accounts',
-  //           keyType: 'NonKey',
-  //           name: 'delegate_setable',
-  //         },
-  //         {
-  //           cardinality: 76,
-  //           dataType: 'String',
-  //           displayName: 'Delegate value',
-  //           entity: 'accounts',
-  //           keyType: 'NonKey',
-  //           name: 'delegate_value',
-  //         },
-  //       ];
-  //   }
-  // };
-=======
     const { changeTab, fetchItems } = this.props;
     changeTab(value);
     fetchItems(value);
   };
->>>>>>> feat/99-getcolumn-ConseilMetadata
 
   onFilterCollapse = () => {
     const { isFilterCollapse } = this.state;
@@ -304,6 +153,7 @@ class Arronax extends React.Component<Props, States> {
       selectedEntity,
       items,
       selectedColumns,
+      attributes,
     } = this.props;
     const { isFilterCollapse } = this.state;
     return (

@@ -93,7 +93,7 @@ const attrTabValue = {
 
 type Props = {
   selectedEntity: string;
-  attributes: Array<object>;
+  attributes: any[];
   filters: object[];
   operators: object[];
   addFilter: (entity: string) => void;
@@ -137,9 +137,15 @@ class FilterPanel extends React.Component<Props, States> {
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
-  generateFilter = filter => {
+  generateFilter = (filter, index) => {
     const { attributes } = this.props;
-    console.log(attributes);
+    const attr = attributes.map(attr => attr);
+    const cards = attr.reduce((acc, current) => {
+      if (current.cardinality < 15) {
+        acc.push(current.name);
+      }
+      return acc;
+    }, []);
     if (filter.operator === 'ISNULL') {
       return;
     } else if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
@@ -150,7 +156,20 @@ class FilterPanel extends React.Component<Props, States> {
           <FilterInput />
         </React.Fragment>
       );
+    } else if (
+      filter.operator !== 'ISNULL' ||
+      filter.operator !== 'BETWEEN' ||
+      (filter.operator !== 'IN' && cards.includes(filter.name))
+    ) {
+      return (
+        <React.Fragment>
+          <input />
+        </React.Fragment>
+      );
+    } else if (!cards.includes(filter.name)) {
+      return <FilterInput />;
     }
+    return;
   };
 
   render() {
@@ -191,7 +210,7 @@ class FilterPanel extends React.Component<Props, States> {
                     }
                   />
                 )}
-                {this.generateFilter(filter)}
+                {this.generateFilter(filter, index)}
               </FilterItemGr>
               <IconButton
                 aria-label="Delete"
