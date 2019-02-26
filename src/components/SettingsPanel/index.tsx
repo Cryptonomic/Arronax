@@ -48,13 +48,14 @@ const CloseIconWrapper = styled(CloseIcon)`
 `;
 
 interface Props {
+  selectedColumns: any;
   selectedEntity: string;
   isCollapse: boolean;
   onClose: () => void;
 }
 
 const SettingsPanel: React.StatelessComponent<Props> = props => {
-  const { isCollapse, onClose } = props;
+  const { isCollapse, onClose, selectedColumns } = props;
   return (
     <Collapse in={isCollapse}>
       <Container>
@@ -62,10 +63,10 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
           <CloseIconWrapper />
         </CloseIconContainer>
         <FilterTxt>Filter</FilterTxt>
-        <FilterPanel />        
+        <FilterPanel />
         <DisplayTxt>Display</DisplayTxt>
         <DisplayContainer>
-          <ColumnsDisplay />
+          <ColumnsDisplay selectedColumns={selectedColumns} />
         </DisplayContainer>
       </Container>
     </Collapse>

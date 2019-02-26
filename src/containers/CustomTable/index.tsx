@@ -5,7 +5,7 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
-import { getColumns } from '../../reducers/app/selectors';
+import { getNetwork, getAttributes } from '../../reducers/app/selectors';
 import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
@@ -33,9 +33,9 @@ const desc = (a, b, orderBy) => {
 const stableSort = (array, cmp) => {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
-    const order = cmp(a[0], b[0]);
+    const order = cmp(b[0], a[0]);
     if (order !== 0) return order;
-    return a[1] - b[1];
+    return b[1] - a[1];
   });
   return stabilizedThis.map(el => el[0]);
 };
@@ -47,9 +47,11 @@ const getSorting = (order, orderBy) => {
 };
 
 interface Props {
+  attributes: any[];
   entity: string;
   items: any[];
-  getColumns: any[];
+  selectedColumns: object[];
+  network: string;
 }
 
 interface State {
@@ -90,7 +92,7 @@ class CustomTable extends React.Component<Props, State> {
   };
 
   render() {
-    const { items, entity, getColumns } = this.props;
+    const { items, entity, network, selectedColumns } = this.props;
     const { page, rowsPerPage, order, orderBy } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
@@ -98,13 +100,12 @@ class CustomTable extends React.Component<Props, State> {
       page * rowsPerPage,
       page * rowsPerPage + rowsPerPage
     );
-    const columns = getColumns;
     return (
       <React.Fragment>
         <Overflow>
           <TableContainer>
             <CustomTableHeader
-              rows={columns}
+              rows={selectedColumns[entity]}
               order={order}
               orderBy={orderBy}
               createSortHandler={this.handleRequestSort}
@@ -112,7 +113,13 @@ class CustomTable extends React.Component<Props, State> {
             <TableBody>
               {realRows.map((row, index) => {
                 return (
-                  <CustomTableRow key={index} entity={entity} item={row} />
+                  <CustomTableRow
+                    network={network}
+                    selectedColumns={selectedColumns[entity]}
+                    key={index}
+                    entity={entity}
+                    item={row}
+                  />
                 );
               })}
               {emptyRows > 0 && (
@@ -134,7 +141,8 @@ class CustomTable extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: any) => ({
-  getColumns: getColumns(state),
+  attributes: getAttributes(state),
+  network: getNetwork(state),
 });
 
 export default connect(

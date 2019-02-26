@@ -9,7 +9,7 @@ import {
   SET_ATTRIBUTES,
   ADD_FILTER,
   REMOVE_FILTER,
-  CHANGE_FILTER
+  CHANGE_FILTER,
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -20,7 +20,7 @@ export interface AppState {
   filters: ConseilQuery;
   network: string;
   blocks: TezosBlock[];
-  columns: Array<object>;
+  columns: object;
   attributes: object;
   operators: object[];
   selectedFilters: object;
@@ -37,46 +37,31 @@ const initialState: AppState = {
   attributes: {
     blocks: [],
     operations: [],
-    accounts: []
+    accounts: [],
   },
   selectedFilters: {
     blocks: [],
     operations: [],
-    accounts: []
+    accounts: [],
   },
   operators: [
-    {name: 'BETWEEN', displayName: 'between'},
-    {name: 'EQ', displayName: 'equal'},
-    {name: 'IN', displayName: 'in'},
-    {name: 'LIKE', displayName: 'like'},
-    {name: 'LT', displayName: 'less than'},
-    {name: 'BEFORE', displayName: 'before'},
-    {name: 'GT', displayName: 'greater than'},
-    {name: 'AFTER', displayName: 'after'},
-    {name: 'STARTSWITH', displayName: 'starts with'},
-    {name: 'ENDSWITH', displayName: 'ends With'},
-    {name: 'ISNULL', displayName: 'is null'}
+    { name: 'BETWEEN', displayName: 'between' },
+    { name: 'EQ', displayName: 'equals' },
+    { name: 'IN', displayName: 'in' },
+    { name: 'LIKE', displayName: 'like' },
+    { name: 'LT', displayName: 'less than' },
+    { name: 'BEFORE', displayName: 'before' },
+    { name: 'GT', displayName: 'greater than' },
+    { name: 'AFTER', displayName: 'after' },
+    { name: 'STARTSWITH', displayName: 'starts with' },
+    { name: 'ENDSWITH', displayName: 'ends With' },
+    { name: 'ISNULL', displayName: 'is null' },
   ],
-  columns: [
-    { title: 'Level', dataIndex: 'level', key: 'level' },
-    { title: 'Timestamp', dataIndex: 'timestamp', key: 'timestamp' },
-    { title: 'Block Hash', dataIndex: 'hash', key: 'blockHash' },
-    {
-      title: 'Predecessor Hash',
-      dataIndex: 'predecessor',
-      key: 'predecessor',
-    },
-    {
-      title: 'Operations Hash',
-      dataIndex: 'operationsHash',
-      key: 'operationsHash',
-    },
-    {
-      title: 'Protocol Hash',
-      dataIndex: 'protocol',
-      key: 'protocol',
-    },
-  ],
+  columns: {
+    blocks: [],
+    operations: [],
+    accounts: [],
+  },
   accounts: [],
   operations: [],
   isLoading: false,
@@ -95,8 +80,12 @@ const appReducer = (state = initialState, action) => {
       return { ...state, filters: action.filters };
     case SET_ITEMS:
       return { ...state, [action.entity]: action.items };
-    case SET_COLUMNS:
-      return { ...state, columns: action.items };
+    case SET_COLUMNS: {
+      const columns = state.columns;
+      const newColumns = { ...columns };
+      newColumns[action.entity] = action.items;
+      return { ...state, columns: newColumns };
+    }
     case SET_TAB:
       return { ...state, selectedEntity: action.entity };
     case SET_LOADING:
@@ -115,7 +104,7 @@ const appReducer = (state = initialState, action) => {
       let filters = selectedFilters[action.entity];
       const emptyFilter = {
         name: '',
-        operator: ''
+        operator: '',
       };
       filters = filters.concat(emptyFilter);
       selectedFilters[action.entity] = filters;

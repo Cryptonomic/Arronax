@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import styled from 'styled-components';
 import TableCell from '@material-ui/core/TableCell';
@@ -8,14 +7,13 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 
 const TableCellWrapper = styled(TableCell)`
   &&& {
-    color: #4A4A4A;
+    color: #4a4a4a;
     font-size: 16px;
     font-weight: 400;
     letter-spacing: 1.95px;
     border: none;
-  }  
+  }
 `;
-
 
 interface Props {
   order: 'asc' | 'desc';
@@ -24,24 +22,24 @@ interface Props {
   createSortHandler(key: string): void;
 }
 
-const TableHeader: React.StatelessComponent<Props> = (props) => {
-  const {rows, order, orderBy, createSortHandler} = props;
+const TableHeader: React.StatelessComponent<Props> = props => {
+  const { rows, order, orderBy, createSortHandler } = props;
   return (
     <TableHead>
       <TableRow>
-        {rows.map(row => {
+        {rows.map((row, index) => {
           return (
             <TableCellWrapper
-              key={row.key}
-              sortDirection={orderBy === row.dataIndex ? order : false}
-              align='left'
+              key={index}
+              sortDirection={orderBy === row.name ? order : false}
+              align="left"
             >
               <TableSortLabel
-                active={orderBy === row.dataIndex}
+                active={orderBy === row.name}
                 direction={order}
-                onClick={() => createSortHandler(row.dataIndex)}
+                onClick={() => createSortHandler(row.name)}
               >
-                {row.title}
+                {row.displayName}
               </TableSortLabel>
             </TableCellWrapper>
           );
@@ -49,6 +47,6 @@ const TableHeader: React.StatelessComponent<Props> = (props) => {
       </TableRow>
     </TableHead>
   );
-}
+};
 
 export default TableHeader;

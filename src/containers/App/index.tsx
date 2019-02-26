@@ -5,16 +5,14 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {
+  getAttributes,
   getLoading,
   getNetwork,
   getEntity,
   getItems,
+  getColumns,
 } from '../../reducers/app/selectors';
-import {
-  changeNetwork,
-  fetchItemsAction,
-  setColumns,
-} from '../../reducers/app/thunks';
+import { changeNetwork, fetchItemsAction } from '../../reducers/app/thunks';
 import { setTabAction } from '../../reducers/app/actions';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
@@ -104,10 +102,11 @@ export interface Props {
   network: string;
   selectedEntity: string;
   items: object[];
+  attributes: object[];
+  selectedColumns: any[];
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
-  setColumns(entity: string, items: object[]): void;
 }
 
 export interface States {
@@ -122,10 +121,10 @@ class Arronax extends React.Component<Props, States> {
     };
   }
 
-  componentDidMount = () => {
+  componentDidMount() {
     const { fetchItems, selectedEntity } = this.props;
     fetchItems(selectedEntity);
-  };
+  }
 
   onChangeNetwork = event => {
     const { changeNetwork } = this.props;
@@ -133,71 +132,9 @@ class Arronax extends React.Component<Props, States> {
   };
 
   onChangeTab = async (value: string) => {
-    const { changeTab, fetchItems, setColumns } = this.props;
-    const columns = await this.findTab(value);
-    await changeTab(value);
-    await setColumns(value, columns);
-    await fetchItems(value);
-  };
-
-  findTab = (value: string) => {
-    switch (value) {
-      case 'blocks':
-        return [
-          { title: 'Level', dataIndex: 'level', key: 'level' },
-          { title: 'Timestamp', dataIndex: 'timestamp', key: 'timestamp' },
-          { title: 'Block Hash', dataIndex: 'hash', key: 'blockHash' },
-          {
-            title: 'Predecessor Hash',
-            dataIndex: 'predecessor',
-            key: 'predecessor',
-          },
-          {
-            title: 'Operations Hash',
-            dataIndex: 'operationsHash',
-            key: 'operationsHash',
-          },
-          {
-            title: 'Protocol Hash',
-            dataIndex: 'protocol',
-            key: 'protocol',
-          },
-        ];
-      case 'operations':
-        return [
-          { title: 'Kind', dataIndex: 'kind', key: 'kind' },
-          { title: 'Source', dataIndex: 'source', key: 'source' },
-          {
-            title: 'Destination',
-            dataIndex: 'destination',
-            key: 'destination',
-          },
-          { title: 'Amount', dataIndex: 'amount', key: 'amount' },
-          { title: 'Fee', dataIndex: 'fee', key: 'fee' },
-        ];
-      case 'accounts':
-        return [
-          { title: 'Account ID', dataIndex: 'accountId', key: 'accountId' },
-          { title: 'Manager', dataIndex: 'manager', key: 'manager' },
-          {
-            title: 'Spendable',
-            dataIndex: 'spendable',
-            key: 'spendable',
-            isIcon: true,
-          },
-          {
-            title: 'Delegatable',
-            dataIndex: 'delegateSetable',
-            key: 'delegateSetable',
-            isIcon: true,
-          },
-          {
-            title: 'Delegate',
-            dataIndex: 'delegate',
-            key: 'delegateValue',
-          },
-        ];
-    }
+    const { changeTab, fetchItems } = this.props;
+    changeTab(value);
+    fetchItems(value);
   };
 
   onFilterCollapse = () => {
@@ -210,9 +147,14 @@ class Arronax extends React.Component<Props, States> {
   };
 
   render() {
-    const { isLoading, network, selectedEntity, items } = this.props;
+    const {
+      isLoading,
+      network,
+      selectedEntity,
+      items,
+      selectedColumns,
+    } = this.props;
     const { isFilterCollapse } = this.state;
-
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
@@ -234,6 +176,7 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
+            selectedColumns={selectedColumns}
             selectedEntity={selectedEntity}
             isCollapse={isFilterCollapse}
             onClose={this.onCloseFilter}
@@ -246,7 +189,11 @@ class Arronax extends React.Component<Props, States> {
             </FilterExTxt>
           </FilterHeader>
           <TabContainer component="div">
-            <CustomTable items={items} entity={selectedEntity} />
+            <CustomTable
+              items={items}
+              entity={selectedEntity}
+              selectedColumns={selectedColumns}
+            />
           </TabContainer>
         </Container>
         <Footer />
@@ -261,15 +208,15 @@ class Arronax extends React.Component<Props, States> {
 }
 
 const mapStateToProps = (state: any) => ({
+  selectedColumns: getColumns(state),
   isLoading: getLoading(state),
   network: getNetwork(state),
   selectedEntity: getEntity(state),
   items: getItems(state),
+  attributes: getAttributes(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  setColumns: (entity: string, items: object[]) =>
-    dispatch(setColumns(entity, items)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
   fetchItems: (type: string) => dispatch(fetchItemsAction(type)),

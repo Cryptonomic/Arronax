@@ -4,9 +4,17 @@ import styled from 'styled-components';
 import PlusIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
-import { getEntity, getAttributes, getSelectedFilters, getOperators } from '../../reducers/app/selectors';
-import { addFilterAction, removeFilterAction, changeFilterAction } from '../../reducers/app/actions';
-import { fetchAttributes } from '../../reducers/app/thunks';
+import {
+  getEntity,
+  getAttributes,
+  getSelectedFilters,
+  getOperators,
+} from '../../reducers/app/selectors';
+import {
+  addFilterAction,
+  removeFilterAction,
+  changeFilterAction,
+} from '../../reducers/app/actions';
 import FilterSelect from '../FilterSelect';
 
 const Container = styled.div`
@@ -25,7 +33,7 @@ const FilterItemContainer = styled.div`
 
 const FilterItemGr = styled.div`
   border-radius: 5px;
-  border: 1px solid #ECEDEF;
+  border: 1px solid #ecedef;
   display: flex;
 `;
 
@@ -57,7 +65,7 @@ const PlusIconWrapper = styled(PlusIcon)`
 
 const DeleteIconWrapper = styled(DeleteIcon)`
   &&& {
-    color: #D8D8D8;
+    color: #d8d8d8;
     font-size: 37px;
   }
 `;
@@ -70,13 +78,13 @@ const FilterExpTxt = styled.div`
 
 const HR = styled.div`
   width: 1px;
-  background-color: #ECEDEF;
+  background-color: #ecedef;
 `;
 
 const attrTabValue = {
   blocks: 'block',
   operations: 'operation',
-  accounts: 'account'
+  accounts: 'account',
 };
 
 type Props = {
@@ -84,7 +92,6 @@ type Props = {
   attributes: Array<object>;
   filters: object[];
   operators: object[];
-  fetchAttributes: () => void;
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
   changeFilter: (entity: string, filter: object, index: number) => void;
@@ -95,33 +102,29 @@ type States = {
 };
 
 class FilterPanel extends React.Component<Props, States> {
-
   onAddFilter = () => {
-    const { fetchAttributes, attributes, addFilter, selectedEntity } = this.props;
-    if (attributes.length === 0) {
-      fetchAttributes();
-    }
+    const { addFilter, selectedEntity } = this.props;
     addFilter(selectedEntity);
-  }
+  };
 
-  onRemoveFilter = (index) => {
+  onRemoveFilter = index => {
     const { removeFilter, selectedEntity } = this.props;
     removeFilter(selectedEntity, index);
-  }
+  };
 
   onFilterNameChange = (val, index) => {
     const { filters, selectedEntity, changeFilter } = this.props;
     const selectedFilter: any = filters[index];
     selectedFilter.name = val;
     changeFilter(selectedEntity, selectedFilter, index);
-  }
+  };
 
   onFilterOperatorChange = (val, index) => {
     const { filters, selectedEntity, changeFilter } = this.props;
     const selectedFilter: any = filters[index];
     selectedFilter.operator = val;
     changeFilter(selectedEntity, selectedFilter, index);
-  }
+  };
 
   render() {
     const { selectedEntity, attributes, filters, operators } = this.props;
@@ -134,8 +137,10 @@ class FilterPanel extends React.Component<Props, States> {
             if (attr.name === filter.name) {
               newAttributes.push(attr);
             }
-            const index = filters.findIndex((item: any) => item.name === attr.name);
-            if (index<0) {
+            const index = filters.findIndex(
+              (item: any) => item.name === attr.name
+            );
+            if (index < 0) {
               newAttributes.push(attr);
             }
           });
@@ -146,33 +151,40 @@ class FilterPanel extends React.Component<Props, States> {
                   value={filter.name}
                   placeholder={`Select ${entityName} Attribute`}
                   items={newAttributes}
-                  onChange={(val) => this.onFilterNameChange(val, index)}
+                  onChange={val => this.onFilterNameChange(val, index)}
                 />
                 {filter.name && <HR />}
-                {filter.name && <FilterSelect
-                  value={filter.operator}
-                  placeholder={`Select Operator`}
-                  items={operators}
-                  onChange={(event) => this.onFilterOperatorChange(event, index)}
-                />}
+                {filter.name && (
+                  <FilterSelect
+                    value={filter.operator}
+                    placeholder={`Select Operator`}
+                    items={operators}
+                    onChange={event =>
+                      this.onFilterOperatorChange(event, index)
+                    }
+                  />
+                )}
               </FilterItemGr>
-              <IconButton aria-label="Delete" onClick={() => this.onRemoveFilter(index)}>
+              <IconButton
+                aria-label="Delete"
+                onClick={() => this.onRemoveFilter(index)}
+              >
                 <DeleteIconWrapper />
               </IconButton>
             </FilterItemContainer>
-          )
+          );
         })}
 
-        <AddFilterFooter isFilters={filters.length>0}>
+        <AddFilterFooter isFilters={filters.length > 0}>
           <AddFilterButton onClick={this.onAddFilter}>
             <PlusIconWrapper />
             Add Filter
           </AddFilterButton>
-          {filters.length == 0 &&
+          {filters.length == 0 && (
             <FilterExpTxt>
               You can filter by all {entityName} attributes and more.
             </FilterExpTxt>
-          }
+          )}
         </AddFilterFooter>
       </Container>
     );
@@ -183,14 +195,15 @@ const mapStateToProps = state => ({
   selectedEntity: getEntity(state),
   attributes: getAttributes(state),
   filters: getSelectedFilters(state),
-  operators: getOperators(state)
+  operators: getOperators(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  fetchAttributes: () => dispatch(fetchAttributes()),
   addFilter: (entity: string) => dispatch(addFilterAction(entity)),
-  removeFilter: (entity: string, index: number) => dispatch(removeFilterAction(entity, index)),
-  changeFilter: (entity: string, filter: object, index: number) => dispatch(changeFilterAction(entity, filter, index))
+  removeFilter: (entity: string, index: number) =>
+    dispatch(removeFilterAction(entity, index)),
+  changeFilter: (entity: string, filter: object, index: number) =>
+    dispatch(changeFilterAction(entity, filter, index)),
 });
 
 export default connect(
