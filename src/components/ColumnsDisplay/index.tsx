@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import {
-  getEntity,
-  getColumns,
-  getAttributes,
-} from '../../reducers/app/selectors';
+import { getEntity, getAttributes } from '../../reducers/app/selectors';
 import { setColumns } from '../../reducers/app/thunks';
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
@@ -183,7 +179,6 @@ interface SelectedColumnsData {
 }
 
 type Props = {
-  columns: any;
   selectedColumns: any;
   selectedEntity: string;
   attributes: any;
@@ -212,7 +207,6 @@ class ColumnDisplay extends React.Component<Props, States> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { selected } = this.state;
     const { selectedColumns, selectedEntity } = this.props;
     if (
       prevProps.selectedColumns[selectedEntity] !==
@@ -361,7 +355,6 @@ class ColumnDisplay extends React.Component<Props, States> {
 }
 
 const mapStateToProps = state => ({
-  columns: getColumns(state),
   selectedEntity: getEntity(state),
   attributes: getAttributes(state),
 });

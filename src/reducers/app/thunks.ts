@@ -1,5 +1,4 @@
 import {
-  TezosConseilClient,
   ConseilMetadataClient,
   ConseilDataClient,
   ConseilQueryBuilder,
@@ -18,13 +17,7 @@ import {
 import getConfigs from '../../utils/getconfig';
 
 const configs = getConfigs();
-const { getBlocks, getOperations, getAccounts } = TezosConseilClient;
 const { getAttributes } = ConseilMetadataClient;
-const ConseilOperations = {
-  blocks: getBlocks,
-  operations: getOperations,
-  accounts: getAccounts,
-};
 
 const getConfig = val => {
   return configs.find(conf => conf.value === val);
@@ -36,6 +29,27 @@ const getAttributeNames = (attributes, entity) => {
     attr.push(attribs.name);
   });
   return attr;
+};
+
+const getInitialColumns = (entity, columns) => {
+  if (entity !== 'blocks') {
+    const newColumns = columns.slice(0, 6);
+    return newColumns;
+  } else {
+    const newColumns = columns.reduce((acc, element) => {
+      if (element.name === 'level') {
+        acc[0] = element;
+      } else if (element.name === 'timestamp') {
+        acc[1] = element;
+      } else if (element.name === 'hash') {
+        acc[2] = element;
+      } else if (element.name === 'predecessor') {
+        acc[3] = element;
+      }
+      return [...acc];
+    }, []);
+    return newColumns;
+  }
 };
 
 export const setItems = (type, items) => {
@@ -113,26 +127,7 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
   dispatch(setItemsAction(entity, items));
   dispatch(setLoadingAction(false));
 };
-const getInitialColumns = (entity, columns) => {
-  if (entity !== 'blocks') {
-    const newColumns = columns.slice(0, 6);
-    return newColumns;
-  } else {
-    const newColumns = columns.reduce((acc, element) => {
-      if (element.name === 'level') {
-        acc[0] = element;
-      } else if (element.name === 'timestamp') {
-        acc[1] = element;
-      } else if (element.name === 'hash') {
-        acc[2] = element;
-      } else if (element.name === 'predecessor') {
-        acc[3] = element;
-      }
-      return [...acc];
-    }, []);
-    return newColumns;
-  }
-};
+
 export const fetchColumns = columns => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
   const newColumns = await getInitialColumns(selectedEntity, columns);
@@ -155,7 +150,6 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
   const attributeNames = getAttributeNames(attributes, entity);
   const columns = state().app.columns;
   columns[entity] = attributes[entity];
-  // await dispatch(setColumns(entity, columns[entity]));
   await dispatch(fetchColumns(columns[entity]));
   let query = blankQuery();
   query = addFields(query, ...attributeNames);
