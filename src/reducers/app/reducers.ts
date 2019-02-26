@@ -115,8 +115,9 @@ const appReducer = (state = initialState, action) => {
       return { ...state, [action.entity]: action.items };
     case SET_COLUMNS: {
       const columns = state.columns;
-      columns[action.entity] = action.items;
-      return { ...state, columns: columns };
+      const newColumns = { ...columns };
+      newColumns[action.entity] = action.items;
+      return { ...state, columns: newColumns };
     }
     case SET_TAB:
       return { ...state, selectedEntity: action.entity };
