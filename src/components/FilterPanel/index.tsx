@@ -85,6 +85,15 @@ const HR = styled.div`
   background-color: #ecedef;
 `;
 
+const AndBlock = styled.div`
+  color: #4a4a4a;
+  font-size: 18px;
+  font-weight: 400;
+  margin-top: 10px;
+  padding-right: 10px;
+  padding-left: 10px;
+`;
+
 const attrTabValue = {
   blocks: 'block',
   operations: 'operation',
@@ -152,6 +161,8 @@ class FilterPanel extends React.Component<Props, States> {
       return (
         <React.Fragment>
           <FilterInput />
+          <HR />
+          <AndBlock>and</AndBlock>
           <HR />
           <FilterInput />
         </React.Fragment>
