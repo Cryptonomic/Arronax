@@ -87,9 +87,12 @@ const HR = styled.div`
 
 const AndBlock = styled.div`
   color: #4a4a4a;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 18px;
   font-weight: 400;
-  margin-top: 10px;
   padding-right: 10px;
   padding-left: 10px;
 `;
