@@ -12,11 +12,7 @@ import {
   getItems,
   getColumns,
 } from '../../reducers/app/selectors';
-import {
-  changeNetwork,
-  fetchItemsAction,
-  setColumns,
-} from '../../reducers/app/thunks';
+import { changeNetwork, fetchItemsAction } from '../../reducers/app/thunks';
 import { setTabAction } from '../../reducers/app/actions';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
@@ -111,7 +107,6 @@ export interface Props {
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
-  setColumns(entity: string, items: object[]): void;
 }
 
 export interface States {
@@ -222,8 +217,6 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setColumns: (entity: string, items: object[]) =>
-    dispatch(setColumns(entity, items)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
   fetchItems: (type: string) => dispatch(fetchItemsAction(type)),
