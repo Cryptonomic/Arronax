@@ -155,7 +155,6 @@ class FilterPanel extends React.Component<Props, States> {
       }
       return acc;
     }, []);
-    console.log(cards);
     if (!filter.operator) {
       return;
     } else if (filter.operator === 'ISNULL') {
@@ -186,8 +185,10 @@ class FilterPanel extends React.Component<Props, States> {
       return (
         <React.Fragment>
           <HR />
-          <FilterInput InputProps={{ disableUnderline: true }} />
-          dropdown
+          <FilterInput
+            placeholder={`Dropdown will go here`}
+            InputProps={{ disableUnderline: true }}
+          />
         </React.Fragment>
       );
     } else {
