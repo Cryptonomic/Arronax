@@ -17,7 +17,7 @@ import {
 import getConfigs from '../../utils/getconfig';
 
 const configs = getConfigs();
-const { getAttributes } = ConseilMetadataClient;
+const { getAttributes, getAttributeValues } = ConseilMetadataClient;
 
 const getConfig = val => {
   return configs.find(conf => conf.value === val);
