@@ -185,12 +185,21 @@ class FilterPanel extends React.Component<Props, States> {
     ) {
       return (
         <React.Fragment>
-          <FilterInput />
+          <HR />
+          <FilterInput InputProps={{ disableUnderline: true }} />
           dropdown
         </React.Fragment>
       );
     } else {
-      return <FilterInput />;
+      return (
+        <React.Fragment>
+          <HR />
+          <FilterInput
+            placeholder={`Placeholder Here`}
+            InputProps={{ disableUnderline: true }}
+          />
+        </React.Fragment>
+      );
     }
   };
 
