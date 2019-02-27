@@ -158,7 +158,10 @@ class FilterPanel extends React.Component<Props, States> {
       }
       return acc;
     }, []);
-    if (filter.operator === 'ISNULL') {
+    console.log(cards);
+    if (!filter.operator) {
+      return;
+    } else if (filter.operator === 'ISNULL') {
       return;
     } else if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
       return (
@@ -171,19 +174,20 @@ class FilterPanel extends React.Component<Props, States> {
         </React.Fragment>
       );
     } else if (
-      filter.operator !== 'ISNULL' ||
-      filter.operator !== 'BETWEEN' ||
-      (filter.operator !== 'IN' && cards.includes(filter.name))
+      filter.operator !== 'ISNULL' &&
+      filter.operator !== 'BETWEEN' &&
+      filter.operator !== 'IN' &&
+      cards.includes(filter.name)
     ) {
       return (
         <React.Fragment>
           <input />
+          dropdown
         </React.Fragment>
       );
-    } else if (!cards.includes(filter.name)) {
+    } else {
       return <FilterInput />;
     }
-    return;
   };
 
   render() {
