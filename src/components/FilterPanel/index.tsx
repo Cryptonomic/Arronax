@@ -16,6 +16,7 @@ import {
   changeFilterAction,
 } from '../../reducers/app/actions';
 import FilterSelect from '../FilterSelect';
+import FilterInput from '../FilterInput';
 
 const Container = styled.div`
   width: 100%;
@@ -35,10 +36,6 @@ const FilterItemGr = styled.div`
   border-radius: 5px;
   border: 1px solid #ecedef;
   display: flex;
-`;
-
-const FilterInput = styled.input`
-  display: flex;a
 `;
 
 const AddFilterFooter = styled.div`
@@ -149,7 +146,7 @@ class FilterPanel extends React.Component<Props, States> {
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
-  generateFilter = (filter, index) => {
+  generateFilter = filter => {
     const { attributes } = this.props;
     const attr = attributes.map(attr => attr);
     const cards = attr.reduce((acc, current) => {
@@ -166,11 +163,18 @@ class FilterPanel extends React.Component<Props, States> {
     } else if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
       return (
         <React.Fragment>
-          <FilterInput />
+          <HR />
+          <FilterInput
+            InputProps={{ disableUnderline: true }}
+            placeholder={`e.g. 123456`}
+          />
           <HR />
           <AndBlock>and</AndBlock>
           <HR />
-          <FilterInput />
+          <FilterInput
+            InputProps={{ disableUnderline: true }}
+            placeholder={`e.g. 123456`}
+          />
         </React.Fragment>
       );
     } else if (
@@ -181,7 +185,7 @@ class FilterPanel extends React.Component<Props, States> {
     ) {
       return (
         <React.Fragment>
-          <input />
+          <FilterInput />
           dropdown
         </React.Fragment>
       );
@@ -228,7 +232,7 @@ class FilterPanel extends React.Component<Props, States> {
                     }
                   />
                 )}
-                {this.generateFilter(filter, index)}
+                {this.generateFilter(filter)}
               </FilterItemGr>
               <IconButton
                 aria-label="Delete"
