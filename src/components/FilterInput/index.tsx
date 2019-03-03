@@ -30,7 +30,6 @@ class FilterInput extends React.Component<Props> {
 
   render() {
     const { placeholder, InputProps, inputProps } = this.props;
-    console.log(inputProps);
     return (
       <Container>
         <TextInput

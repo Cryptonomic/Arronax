@@ -5,8 +5,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 
-const Container = styled.div`
-`;
+const Container = styled.div``;
 
 const ButtonShell = styled(Button)`
   &&& {
@@ -63,28 +62,35 @@ const FadeOut = styled.span`
 
 const FadeTop = styled(FadeOut)`
   top: 38px;
-  background-image: linear-gradient(to top, rgba(255,255,255,0) 0%,rgba(255,255,255,0.8) 50%);
+  background-image: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.8) 50%
+  );
   z-index: 10;
 `;
 
 const FadeBottom = styled(FadeOut)`
   bottom: 8px;
-  background-image: linear-gradient( rgba(255,255,255,0) 0%,rgba(255,255,255,0.8) 50% );
+  background-image: linear-gradient(
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.8) 50%
+  );
 `;
 
 const MainMenuItem = styled(MenuItem)`
   &&& {
-    &[class*='selected'] {      
-      background-color: rgba(101, 200, 206, 0.13);
+    &[class*='selected'] {
+      background-color: rgba(101,  200, 206, 0.13);
     }
     &:hover {
-      background-color: rgba(101, 200, 206, 0.1);
+      background-color: rgba(101,  200, 206, 0.1);
     }
     font-size: 20px;
     font-weight: 300;
     padding-left: 25px;
     padding-right: 25px;
-    color: #4A4A4A;
+    color: #4a4a4a;
   }
 `;
 
@@ -105,11 +111,11 @@ class FilterSelect extends React.Component<Props, States> {
   state = {
     anchorEl: null,
     isFadeBottom: false,
-    isFadeTop: false
+    isFadeTop: false,
   };
 
   componentDidMount() {
-    const {items} = this.props;
+    const { items } = this.props;
     if (items.length < 8) {
       this.setState({ isFadeBottom: false });
     } else {
@@ -117,7 +123,7 @@ class FilterSelect extends React.Component<Props, States> {
     }
   }
 
-  handleChange = (item) => {
+  handleChange = item => {
     const { onChange } = this.props;
     onChange(item.name);
     this.setState({ anchorEl: null });
@@ -135,12 +141,12 @@ class FilterSelect extends React.Component<Props, States> {
     const { items } = this.props;
     const pos = event.target.scrollTop;
     const remainCount = items.length - 8;
-    if (pos === 0 ) {
-      this.setState({isFadeTop : false, isFadeBottom: true });
-    } else if (pos < remainCount*46) {
-      this.setState({isFadeTop : true, isFadeBottom: true });
+    if (pos === 0) {
+      this.setState({ isFadeTop: false, isFadeBottom: true });
+    } else if (pos < remainCount * 46) {
+      this.setState({ isFadeTop: true, isFadeBottom: true });
     } else {
-      this.setState({isFadeTop : true, isFadeBottom: false });
+      this.setState({ isFadeTop: true, isFadeBottom: false });
     }
   };
 
@@ -149,7 +155,7 @@ class FilterSelect extends React.Component<Props, States> {
     const { items, value, placeholder } = this.props;
 
     const selectedItem: any = items.find((item: any) => item.name === value);
-    const menuTitle = value? selectedItem.displayName : placeholder;
+    const menuTitle = value ? selectedItem.displayName : placeholder;
 
     return (
       <Container>
@@ -171,20 +177,20 @@ class FilterSelect extends React.Component<Props, States> {
             PaperProps={{
               style: {
                 position: 'relative',
-                width: 300
+                width: 300,
               },
             }}
           >
             <NestedTitle>{placeholder}</NestedTitle>
             <MenuContents onScroll={this.handleScroll}>
-              {isFadeTop && <FadeTop />} 
+              {isFadeTop && <FadeTop />}
               {items.map((item: any, index) => (
                 <MainMenuItem
                   onClick={() => this.handleChange(item)}
                   key={index}
                   selected={value === item.name}
                 >
-                  {item.displayName}
+                  {item.displayName ? item.displayName : item}
                 </MainMenuItem>
               ))}
             </MenuContents>

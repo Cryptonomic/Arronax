@@ -146,11 +146,11 @@ class FilterPanel extends React.Component<Props, States> {
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
-  generateFilter = filter => {
+  generateFilter = (filter, index) => {
     const { attributes } = this.props;
     const attr = attributes.map(attr => attr);
     const cards = attr.reduce((acc, current) => {
-      if (current.cardinality < 15) {
+      if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);
       }
       return acc;
@@ -182,12 +182,15 @@ class FilterPanel extends React.Component<Props, States> {
       filter.operator !== 'IN' &&
       cards.includes(filter.name)
     ) {
+      console.log(cards);
       return (
         <React.Fragment>
           <HR />
-          <FilterInput
-            placeholder={`Dropdown will go here`}
-            InputProps={{ disableUnderline: true }}
+          <FilterSelect
+            value={null}
+            placeholder={`Select Value`}
+            items={cards}
+            onChange={val => this.onFilterNameChange(val, index)}
           />
         </React.Fragment>
       );
@@ -242,7 +245,7 @@ class FilterPanel extends React.Component<Props, States> {
                     }
                   />
                 )}
-                {this.generateFilter(filter)}
+                {this.generateFilter(filter, index)}
               </FilterItemGr>
               <IconButton
                 aria-label="Delete"

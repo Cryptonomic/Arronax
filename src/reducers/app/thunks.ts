@@ -100,11 +100,9 @@ export const fetchAttributes = () => async (dispatch, state) => {
   dispatch(setLoadingAction(false));
 };
 
-// export const fetchValues = () => async (dispatch, state) => {
+// export const fetchValues = (attribute: string) => async (dispatch, state) => {
 //   const selectedEntity = state().app.selectedEntity;
 //   const network = state().app.network;
-//   const attributeState = state().app.attributes;
-//   const attributes = getAttributeNames(attributeState, selectedEntity);
 //   dispatch(setLoadingAction(true));
 //   const config = getConfig(network);
 //   const values = await getAttributeValues(
@@ -112,8 +110,8 @@ export const fetchAttributes = () => async (dispatch, state) => {
 //     config.key,
 //     'tezos',
 //     network,
-//     'operations',
-//     'nonce'
+//     selectedEntity,
+//     attribute
 //   );
 //   console.log(values);
 //   // dispatch(setAttributesAction(selectedEntity, attributes));
