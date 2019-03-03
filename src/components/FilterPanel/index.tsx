@@ -182,7 +182,6 @@ class FilterPanel extends React.Component<Props, States> {
       filter.operator !== 'IN' &&
       cards.includes(filter.name)
     ) {
-      console.log(cards);
       return (
         <React.Fragment>
           <HR />
