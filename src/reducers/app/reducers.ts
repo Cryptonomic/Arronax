@@ -10,6 +10,7 @@ import {
   ADD_FILTER,
   REMOVE_FILTER,
   CHANGE_FILTER,
+  SET_VALUE,
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -124,10 +125,10 @@ const appReducer = (state = initialState, action) => {
       selectedFilters[action.entity] = [...filters];
       return { ...state, selectedFilters };
     }
-    case ADD_VALUE: {
-      const selectedValues = state.selectedValues;
-      selectedValues[action.value] = values;
-      return { ...state, selectedValues };
+    case SET_VALUE: {
+      // const selectedValues = state.selectedValues;
+      // selectedValues[action.value] = values;
+      // return { ...state, selectedValues };
     }
   }
   return state;
