@@ -10,7 +10,7 @@ import {
   ADD_FILTER,
   REMOVE_FILTER,
   CHANGE_FILTER,
-  SET_VALUE,
+  SET_VALUES,
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -21,6 +21,7 @@ export interface AppState {
   filters: ConseilQuery;
   network: string;
   blocks: TezosBlock[];
+  values: Array<string>;
   columns: object;
   attributes: object;
   operators: object[];
@@ -63,6 +64,7 @@ const initialState: AppState = {
     operations: [],
     accounts: [],
   },
+  values: [],
   accounts: [],
   operations: [],
   isLoading: false,
@@ -76,6 +78,7 @@ const initEntities = {
 };
 
 const appReducer = (state = initialState, action) => {
+  console.log(action);
   switch (action.type) {
     case SET_FILTER:
       return { ...state, filters: action.filters };
@@ -125,10 +128,8 @@ const appReducer = (state = initialState, action) => {
       selectedFilters[action.entity] = [...filters];
       return { ...state, selectedFilters };
     }
-    case SET_VALUE: {
-      // const selectedValues = state.selectedValues;
-      // selectedValues[action.value] = values;
-      // return { ...state, selectedValues };
+    case SET_VALUES: {
+      return { ...state, values: action.values };
     }
   }
   return state;

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import PlusIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
+import { fetchValues } from '../../reducers/app/thunks';
 import {
   getEntity,
   getAttributes,
@@ -105,6 +106,7 @@ type Props = {
   attributes: any[];
   filters: object[];
   operators: object[];
+  fetchValues: (value: string) => void;
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
   changeFilter: (entity: string, filter: object, index: number) => void;
@@ -126,7 +128,23 @@ class FilterPanel extends React.Component<Props, States> {
   };
 
   onFilterNameChange = (val, index) => {
-    const { filters, selectedEntity, changeFilter } = this.props;
+    const {
+      filters,
+      selectedEntity,
+      changeFilter,
+      attributes,
+      fetchValues,
+    } = this.props;
+    const cards = attributes.reduce((acc, current) => {
+      if (current.cardinality < 15 && current.cardinality !== null) {
+        acc.push(current.name);
+      }
+      return acc;
+    }, []);
+    if (cards.includes(val)) {
+      console.log('yup');
+      fetchValues(val);
+    }
     const selectedFilter: any = filters[index];
     selectedFilter.name = val;
     changeFilter(selectedEntity, selectedFilter, index);
@@ -155,6 +173,9 @@ class FilterPanel extends React.Component<Props, States> {
       }
       return acc;
     }, []);
+    if (filter.operator === 'EQUALS' && cards.includes(filter.name)) {
+      fetchValues(filter.name);
+    }
     if (!filter.operator) {
       return;
     } else if (filter.operator === 'ISNULL') {
@@ -280,6 +301,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  fetchValues: (value: string) => dispatch(fetchValues(value)),
   addFilter: (entity: string) => dispatch(addFilterAction(entity)),
   removeFilter: (entity: string, index: number) =>
     dispatch(removeFilterAction(entity, index)),

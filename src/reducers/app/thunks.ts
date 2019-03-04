@@ -7,6 +7,7 @@ import {
 const { executeEntityQuery } = ConseilDataClient;
 const { blankQuery, addOrdering, addFields, setLimit } = ConseilQueryBuilder;
 import {
+  setValuesAction,
   setItemsAction,
   initDataAction,
   setLoadingAction,
@@ -100,23 +101,23 @@ export const fetchAttributes = () => async (dispatch, state) => {
   dispatch(setLoadingAction(false));
 };
 
-// export const fetchValues = (attribute: string) => async (dispatch, state) => {
-//   const selectedEntity = state().app.selectedEntity;
-//   const network = state().app.network;
-//   dispatch(setLoadingAction(true));
-//   const config = getConfig(network);
-//   const values = await getAttributeValues(
-//     config.url,
-//     config.key,
-//     'tezos',
-//     network,
-//     selectedEntity,
-//     attribute
-//   );
-//   console.log(values);
-//   // dispatch(setAttributesAction(selectedEntity, attributes));
-//   dispatch(setLoadingAction(false));
-// };
+export const fetchValues = (value: string) => async (dispatch, state) => {
+  const selectedEntity = state().app.selectedEntity;
+  const network = state().app.network;
+  dispatch(setLoadingAction(true));
+  const config = getConfig(network);
+  const values = await getAttributeValues(
+    config.url,
+    config.key,
+    'tezos',
+    network,
+    selectedEntity,
+    value
+  );
+  console.log(values);
+  dispatch(setValuesAction(values));
+  dispatch(setLoadingAction(false));
+};
 
 export const changeNetwork = (network: string) => async (dispatch, state) => {
   const oldNetwork = state().app.network;

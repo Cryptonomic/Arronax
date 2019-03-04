@@ -9,4 +9,4 @@ export const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
 export const ADD_FILTER = 'ADD_FILTER';
 export const REMOVE_FILTER = 'REMOVE_FILTER';
 export const CHANGE_FILTER = 'CHANGE_FILTER';
-export const SET_VALUE = 'SET_VALUE';
+export const SET_VALUES = 'SET_VALUES';
