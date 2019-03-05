@@ -11,6 +11,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DragIcon from '@material-ui/icons/DragHandle';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
+import LimitSelector from 'components/LimitSelector';
 
 const Container = styled.div`
   display: flex;
@@ -70,6 +71,23 @@ const MenuContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
+`;
+
+const LimitBlock = styled.div`
+  font-size: 18px;
+  background: #ecedef !important;
+  border-radius: 5px 0 0 5px;
+  border: 1px solid #ecedef;
+  height: 52px;
+  width: 80px;
+  color: #4a4a4a;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 300;
+  padding-right: 10px;
+  padding-left: 10px;
 `;
 
 const MenuContents = styled.div`
@@ -288,68 +306,74 @@ class ColumnDisplay extends React.Component<Props, States> {
     });
 
     return (
-      <Container>
-        <ButtonShell
-          aria-owns={anchorEl ? 'simple-menu' : undefined}
-          aria-haspopup="true"
-          onClick={this.handleClick}
-        >
-          Columns ({selected.length})
-          <ArrowIcon />
-        </ButtonShell>
-        <MenuContainer>
-          <Menu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={this.cancelChange}
+      <React.Fragment>
+        <Container>
+          <ButtonShell
+            aria-owns={anchorEl ? 'simple-menu' : undefined}
+            aria-haspopup="true"
+            onClick={this.handleClick}
           >
-            <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
-            <MenuContents onScroll={this.handleScroll}>
-              <FadeTop />
-              {attributes.map((name, index) => (
-                <MenuItem
-                  className={
-                    selected.length >= 6 &&
-                    selectedName.indexOf(name.name) === -1
-                      ? classes.removeSelector
-                      : null
-                  }
-                  classes={{ root: classes.menuItem }}
-                  onClick={this.handleChange(name)}
-                  key={index}
-                  value={name.name}
-                >
-                  <Checkbox
+            Columns ({selected.length})
+            <ArrowIcon />
+          </ButtonShell>
+          <MenuContainer>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={this.cancelChange}
+            >
+              <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
+              <MenuContents onScroll={this.handleScroll}>
+                <FadeTop />
+                {attributes.map((name, index) => (
+                  <MenuItem
                     className={
                       selected.length >= 6 &&
                       selectedName.indexOf(name.name) === -1
                         ? classes.removeSelector
                         : null
                     }
-                    classes={{
-                      root: classes.checkbox,
-                      checked: classes.checked,
-                    }}
-                    disableRipple={true}
-                    checked={selectedName.indexOf(name.name) > -1}
-                  />
-                  <ListItemText primary={name.displayName} />
-                  <DraggableIcon />
-                </MenuItem>
-              ))}
-            </MenuContents>
-            {fadeBottom && <FadeBottom />}
-            <HR />{' '}
-            <ButtonContainer>
-              <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
-              <SubmitButton onClick={this.handleSubmit} variant="contained">
-                Done
-              </SubmitButton>
-            </ButtonContainer>
-          </Menu>
-        </MenuContainer>
-      </Container>
+                    classes={{ root: classes.menuItem }}
+                    onClick={this.handleChange(name)}
+                    key={index}
+                    value={name.name}
+                  >
+                    <Checkbox
+                      className={
+                        selected.length >= 6 &&
+                        selectedName.indexOf(name.name) === -1
+                          ? classes.removeSelector
+                          : null
+                      }
+                      classes={{
+                        root: classes.checkbox,
+                        checked: classes.checked,
+                      }}
+                      disableRipple={true}
+                      checked={selectedName.indexOf(name.name) > -1}
+                    />
+                    <ListItemText primary={name.displayName} />
+                    <DraggableIcon />
+                  </MenuItem>
+                ))}
+              </MenuContents>
+              {fadeBottom && <FadeBottom />}
+              <HR />{' '}
+              <ButtonContainer>
+                <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
+                <SubmitButton onClick={this.handleSubmit} variant="contained">
+                  Done
+                </SubmitButton>
+              </ButtonContainer>
+            </Menu>
+          </MenuContainer>
+        </Container>
+        <Container>
+          <LimitBlock>Limit</LimitBlock>
+          <LimitSelector />
+        </Container>
+      </React.Fragment>
     );
   }
 }
