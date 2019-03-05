@@ -54,5 +54,5 @@ export const getValues = createSelector(
 
 export const getValue = createSelector(
   getAppState,
-  apps => apps.value
+  apps => apps.selectedValue
 );

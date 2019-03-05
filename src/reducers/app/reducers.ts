@@ -134,7 +134,7 @@ const appReducer = (state = initialState, action) => {
       return { ...state, values: action.values };
     }
     case SET_VALUE: {
-      return { ...state, value: action.value };
+      return { ...state, selectedValue: action.value };
     }
   }
   return state;

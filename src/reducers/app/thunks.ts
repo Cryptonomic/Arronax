@@ -65,6 +65,23 @@ export const setColumns = (type, items) => {
   };
 };
 
+// THIS WILL BE NECESSARY TO DESTRUCTURE selectedValues THAT MEET THESE CRITERIA WHEN SUBMITTING A QUERY
+// if (
+//   (selectedEntity === 'operations' && filter.name === 'kind') ||
+//   (selectedEntity === 'operations' && filter.name === 'status') ||
+//   (selectedEntity === 'operations' && filter.name === 'spendable') ||
+//   (selectedEntity === 'operations' && filter.name === 'delegatable') ||
+//   (selectedEntity === 'accounts' && filter.name === 'spendable') ||
+//   (selectedEntity === 'accounts' && filter.name === 'delegate_setable')
+// ) {
+//   if (val !== null) {
+//     const item = val.replace(/\s+/g, '_').toLowerCase();
+//     newVal = item;
+//   } else if (val === null) {
+//     newVal = 'null';
+//   }
+//   setValue(newVal);
+
 // WILL NEED UPDATE TO V2!
 // export const submitFilters = () => async (dispatch, state) => {
 //   dispatch(initDataAction());

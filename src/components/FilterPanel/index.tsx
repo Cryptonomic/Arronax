@@ -181,13 +181,13 @@ class FilterPanel extends React.Component<Props, States> {
     let newItems = [];
     items.map((item, index) => {
       if (item !== null) {
-        const foo = item.replace(/(^|_)./g, s =>
+        const items = item.replace(/(^|_)./g, s =>
           s
             .split('_')
             .map(s => s.charAt(0).toUpperCase() + s.substring(1))
             .join(' ')
         );
-        newItems.push(foo);
+        newItems.push(items);
       } else if (item === null) {
         newItems.push('Null');
       }
@@ -264,7 +264,13 @@ class FilterPanel extends React.Component<Props, States> {
   };
 
   render() {
-    const { selectedEntity, attributes, filters, operators } = this.props;
+    const {
+      selectedEntity,
+      attributes,
+      filters,
+      operators,
+      value,
+    } = this.props;
     const entityName = attrTabValue[selectedEntity];
     return (
       <Container>
