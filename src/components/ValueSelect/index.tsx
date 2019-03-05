@@ -107,7 +107,7 @@ type States = {
   isFadeTop: boolean;
 };
 
-class FilterSelect extends React.Component<Props, States> {
+class ValueSelect extends React.Component<Props, States> {
   state = {
     anchorEl: null,
     isFadeBottom: false,
@@ -125,7 +125,7 @@ class FilterSelect extends React.Component<Props, States> {
 
   handleChange = item => {
     const { onChange } = this.props;
-    onChange(item.name);
+    onChange(item);
     this.setState({ anchorEl: null });
   };
 
@@ -153,9 +153,8 @@ class FilterSelect extends React.Component<Props, States> {
   render() {
     const { anchorEl, isFadeBottom, isFadeTop } = this.state;
     const { items, value, placeholder } = this.props;
-
-    const selectedItem: any = items.find((item: any) => item.name === value);
-    const menuTitle = value ? selectedItem.displayName : placeholder;
+    const selectedItem: any = items.find((item: any) => item === value);
+    const menuTitle = value && value !== '' ? selectedItem : placeholder;
 
     return (
       <Container>
@@ -188,9 +187,9 @@ class FilterSelect extends React.Component<Props, States> {
                 <MainMenuItem
                   onClick={() => this.handleChange(item)}
                   key={index}
-                  selected={value === item.name}
+                  selected={value === item}
                 >
-                  {item.displayName}
+                  {item}
                 </MainMenuItem>
               ))}
             </MenuContents>
@@ -202,4 +201,4 @@ class FilterSelect extends React.Component<Props, States> {
   }
 }
 
-export default FilterSelect;
+export default ValueSelect;

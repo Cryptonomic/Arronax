@@ -51,3 +51,8 @@ export const getValues = createSelector(
   getAppState,
   apps => apps.values
 );
+
+export const getValue = createSelector(
+  getAppState,
+  apps => apps.value
+);

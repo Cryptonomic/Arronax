@@ -114,7 +114,6 @@ export const fetchValues = (value: string) => async (dispatch, state) => {
     selectedEntity,
     value
   );
-  console.log(values);
   dispatch(setValuesAction(values));
   dispatch(setLoadingAction(false));
 };

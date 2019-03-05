@@ -11,6 +11,7 @@ import {
   REMOVE_FILTER,
   CHANGE_FILTER,
   SET_VALUES,
+  SET_VALUE,
 } from './types';
 import actionCreator from '../../utils/reduxHelpers';
 
@@ -50,3 +51,4 @@ export const changeFilterAction = actionCreator(
 );
 
 export const setValuesAction = actionCreator(SET_VALUES, 'values');
+export const setValueAction = actionCreator(SET_VALUE, 'value');

@@ -11,13 +11,16 @@ import {
   getAttributes,
   getSelectedFilters,
   getOperators,
+  getValue,
 } from '../../reducers/app/selectors';
 import {
+  setValueAction,
   addFilterAction,
   removeFilterAction,
   changeFilterAction,
 } from '../../reducers/app/actions';
 import FilterSelect from '../FilterSelect';
+import ValueSelect from '../ValueSelect';
 import FilterInput from '../FilterInput';
 
 const Container = styled.div`
@@ -103,11 +106,13 @@ const attrTabValue = {
 };
 
 type Props = {
+  value: string;
   values: object[];
   selectedEntity: string;
   attributes: any[];
   filters: object[];
   operators: object[];
+  setValue: (value: string) => void;
   fetchValues: (value: string) => void;
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
@@ -136,6 +141,7 @@ class FilterPanel extends React.Component<Props, States> {
       changeFilter,
       attributes,
       fetchValues,
+      setValue,
     } = this.props;
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
@@ -148,6 +154,7 @@ class FilterPanel extends React.Component<Props, States> {
     }
     const selectedFilter: any = filters[index];
     selectedFilter.name = val;
+    setValue(null);
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
@@ -165,15 +172,19 @@ class FilterPanel extends React.Component<Props, States> {
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
+  onValueChange = val => {
+    const { setValue } = this.props;
+    setValue(val);
+  };
+
   generateFilter = (filter, index) => {
-    const { values, attributes } = this.props;
+    const { values, attributes, value } = this.props;
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);
       }
       return acc;
     }, []);
-    console.log(values);
     if (!filter.operator) {
       return;
     } else if (filter.operator === 'ISNULL') {
@@ -204,12 +215,11 @@ class FilterPanel extends React.Component<Props, States> {
       return (
         <React.Fragment>
           <HR />
-          <FilterSelect
-            value={null}
+          <ValueSelect
+            value={value}
             placeholder={`Select Value`}
             items={values}
-            // new onChange function here ** --- setSelected most likely
-            // onChange={val => this.onFilterNameChange(val, index)}
+            onChange={value => this.onValueChange(value)}
           />
         </React.Fragment>
       );
@@ -297,11 +307,13 @@ const mapStateToProps = state => ({
   attributes: getAttributes(state),
   filters: getSelectedFilters(state),
   values: getValues(state),
+  value: getValue(state),
   operators: getOperators(state),
 });
 
 const mapDispatchToProps = dispatch => ({
   fetchValues: (value: string) => dispatch(fetchValues(value)),
+  setValue: (value: string) => dispatch(setValueAction(value)),
   addFilter: (entity: string) => dispatch(addFilterAction(entity)),
   removeFilter: (entity: string, index: number) =>
     dispatch(removeFilterAction(entity, index)),
