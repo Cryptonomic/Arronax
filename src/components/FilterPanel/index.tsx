@@ -177,8 +177,24 @@ class FilterPanel extends React.Component<Props, States> {
     setValue(val);
   };
 
+  generateValues = items => {
+    let newItems = [];
+    items.map((item, index) => {
+      if (item !== null) {
+        const foo = item.split('_').join(' ');
+        newItems.push(foo);
+      }
+    });
+    console.log(newItems);
+  };
+
   generateFilter = (filter, index) => {
-    const { values, attributes, value } = this.props;
+    const { values, attributes, value, selectedEntity } = this.props;
+    const menuValues =
+      (selectedEntity === 'operations' && filter.name === 'kind') ||
+      (selectedEntity === 'operations' && filter.name === 'status')
+        ? this.generateValues(values)
+        : values;
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);
