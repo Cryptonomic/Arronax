@@ -6,6 +6,7 @@ import DeleteIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
 import { fetchValues } from '../../reducers/app/thunks';
 import {
+  getValues,
   getEntity,
   getAttributes,
   getSelectedFilters,
@@ -102,6 +103,7 @@ const attrTabValue = {
 };
 
 type Props = {
+  values: object[];
   selectedEntity: string;
   attributes: any[];
   filters: object[];
@@ -142,7 +144,6 @@ class FilterPanel extends React.Component<Props, States> {
       return acc;
     }, []);
     if (cards.includes(val)) {
-      console.log('yup');
       fetchValues(val);
     }
     const selectedFilter: any = filters[index];
@@ -165,17 +166,14 @@ class FilterPanel extends React.Component<Props, States> {
   };
 
   generateFilter = (filter, index) => {
-    const { attributes } = this.props;
-    const attr = attributes.map(attr => attr);
-    const cards = attr.reduce((acc, current) => {
+    const { values, attributes } = this.props;
+    const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);
       }
       return acc;
     }, []);
-    if (filter.operator === 'EQUALS' && cards.includes(filter.name)) {
-      fetchValues(filter.name);
-    }
+    console.log(values);
     if (!filter.operator) {
       return;
     } else if (filter.operator === 'ISNULL') {
@@ -209,8 +207,9 @@ class FilterPanel extends React.Component<Props, States> {
           <FilterSelect
             value={null}
             placeholder={`Select Value`}
-            items={cards}
-            onChange={val => this.onFilterNameChange(val, index)}
+            items={values}
+            // new onChange function here ** --- setSelected most likely
+            // onChange={val => this.onFilterNameChange(val, index)}
           />
         </React.Fragment>
       );
@@ -297,6 +296,7 @@ const mapStateToProps = state => ({
   selectedEntity: getEntity(state),
   attributes: getAttributes(state),
   filters: getSelectedFilters(state),
+  values: getValues(state),
   operators: getOperators(state),
 });
 
