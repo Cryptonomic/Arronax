@@ -60,24 +60,6 @@ const FadeOut = styled.span`
   pointer-events: none;
 `;
 
-const FadeTop = styled(FadeOut)`
-  top: 38px;
-  background-image: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.8) 50%
-  );
-  z-index: 10;
-`;
-
-const FadeBottom = styled(FadeOut)`
-  bottom: 8px;
-  background-image: linear-gradient(
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.8) 50%
-  );
-`;
-
 const MainMenuItem = styled(MenuItem)`
   &&& {
     &[class*='selected'] {
@@ -103,25 +85,12 @@ interface Props {
 
 type States = {
   anchorEl: boolean;
-  isFadeBottom: boolean;
-  isFadeTop: boolean;
 };
 
 class ValueSelect extends React.Component<Props, States> {
   state = {
     anchorEl: null,
-    isFadeBottom: false,
-    isFadeTop: false,
   };
-
-  componentDidMount() {
-    const { items } = this.props;
-    if (items.length < 8) {
-      this.setState({ isFadeBottom: false });
-    } else {
-      this.setState({ isFadeBottom: true });
-    }
-  }
 
   handleChange = item => {
     const { onChange } = this.props;
@@ -137,21 +106,8 @@ class ValueSelect extends React.Component<Props, States> {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  handleScroll = event => {
-    const { items } = this.props;
-    const pos = event.target.scrollTop;
-    const remainCount = items.length - 8;
-    if (pos === 0) {
-      this.setState({ isFadeTop: false, isFadeBottom: true });
-    } else if (pos < remainCount * 46) {
-      this.setState({ isFadeTop: true, isFadeBottom: true });
-    } else {
-      this.setState({ isFadeTop: true, isFadeBottom: false });
-    }
-  };
-
   render() {
-    const { anchorEl, isFadeBottom, isFadeTop } = this.state;
+    const { anchorEl } = this.state;
     const { items, value, placeholder } = this.props;
     const selectedItem: any = items.find((item: any) => item === value);
     const menuTitle = value && value !== '' ? selectedItem : placeholder;
@@ -181,8 +137,7 @@ class ValueSelect extends React.Component<Props, States> {
             }}
           >
             <NestedTitle>{placeholder}</NestedTitle>
-            <MenuContents onScroll={this.handleScroll}>
-              {isFadeTop && <FadeTop />}
+            <MenuContents>
               {items.map((item: any, index) => (
                 <MainMenuItem
                   onClick={() => this.handleChange(item)}
@@ -193,7 +148,6 @@ class ValueSelect extends React.Component<Props, States> {
                 </MainMenuItem>
               ))}
             </MenuContents>
-            {isFadeBottom && <FadeBottom />}
           </Menu>
         </MenuContainer>
       </Container>

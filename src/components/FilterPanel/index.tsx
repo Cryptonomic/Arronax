@@ -181,11 +181,16 @@ class FilterPanel extends React.Component<Props, States> {
     let newItems = [];
     items.map((item, index) => {
       if (item !== null) {
-        const foo = item.split('_').join(' ');
+        const foo = item.replace(/(^|_)./g, s =>
+          s
+            .split('_')
+            .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+            .join(' ')
+        );
         newItems.push(foo);
       }
     });
-    console.log(newItems);
+    return newItems;
   };
 
   generateFilter = (filter, index) => {
@@ -234,7 +239,7 @@ class FilterPanel extends React.Component<Props, States> {
           <ValueSelect
             value={value}
             placeholder={`Select Value`}
-            items={values}
+            items={menuValues}
             onChange={value => this.onValueChange(value)}
           />
         </React.Fragment>
