@@ -188,16 +188,22 @@ class FilterPanel extends React.Component<Props, States> {
             .join(' ')
         );
         newItems.push(foo);
+      } else if (item === null) {
+        newItems.push('Null');
       }
     });
     return newItems;
   };
 
-  generateFilter = (filter, index) => {
+  generateFilter = filter => {
     const { values, attributes, value, selectedEntity } = this.props;
     const menuValues =
       (selectedEntity === 'operations' && filter.name === 'kind') ||
-      (selectedEntity === 'operations' && filter.name === 'status')
+      (selectedEntity === 'operations' && filter.name === 'status') ||
+      (selectedEntity === 'operations' && filter.name === 'spendable') ||
+      (selectedEntity === 'operations' && filter.name === 'delegatable') ||
+      (selectedEntity === 'accounts' && filter.name === 'spendable') ||
+      (selectedEntity === 'accounts' && filter.name === 'delegate_setable')
         ? this.generateValues(values)
         : values;
     const cards = attributes.reduce((acc, current) => {
@@ -295,7 +301,7 @@ class FilterPanel extends React.Component<Props, States> {
                     }
                   />
                 )}
-                {this.generateFilter(filter, index)}
+                {this.generateFilter(filter)}
               </FilterItemGr>
               <IconButton
                 aria-label="Delete"
