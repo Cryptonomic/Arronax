@@ -12,6 +12,7 @@ import {
   CHANGE_FILTER,
   SET_VALUES,
   SET_VALUE,
+  SET_ROWS,
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -32,6 +33,7 @@ export interface AppState {
   isLoading: boolean;
   selectedEntity: string;
   selectedValue: string;
+  rowCount: number;
 }
 
 const initialState: AppState = {
@@ -72,6 +74,7 @@ const initialState: AppState = {
   isLoading: false,
   selectedEntity: 'blocks',
   selectedValue: null,
+  rowCount: 10,
 };
 
 const initEntities = {
@@ -135,6 +138,9 @@ const appReducer = (state = initialState, action) => {
     }
     case SET_VALUE: {
       return { ...state, selectedValue: action.value };
+    }
+    case SET_ROWS: {
+      return { ...state, rowCount: action.rows };
     }
   }
   return state;

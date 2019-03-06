@@ -74,18 +74,17 @@ const MenuContainer = styled.div`
 `;
 
 const LimitBlock = styled.div`
-  font-size: 18px;
-  background: #ecedef !important;
+  font-size: 14px;
+  font-family: Roboto;
+  background: #fbfbfb !important;
   border-radius: 5px 0 0 5px;
-  border: 1px solid #ecedef;
-  height: 52px;
   width: 80px;
   color: #4a4a4a;
   height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 300;
+  font-weight: 400;
   padding-right: 10px;
   padding-left: 10px;
 `;
@@ -130,7 +129,7 @@ const CancelButton = styled(Button)`
 
 const HR = styled.hr`
   border-color: #d8d8d8 !important;
-  border-style: solid;
+  border-style: solid !important;
   margin-top: 0px;
   outline: none;
 `;
@@ -369,8 +368,10 @@ class ColumnDisplay extends React.Component<Props, States> {
             </Menu>
           </MenuContainer>
         </Container>
+        {'asdfsdafs'}
         <Container>
-          <LimitBlock>Limit</LimitBlock>
+          <LimitBlock>LIMIT</LimitBlock>
+          <HR />
           <LimitSelector />
         </Container>
       </React.Fragment>

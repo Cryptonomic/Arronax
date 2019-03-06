@@ -1,9 +1,12 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
+import { getRows } from 'src/reducers/app/selectors';
+import { setRowsAction } from '../../reducers/app/actions';
 
 const Container = styled.div``;
 
@@ -20,21 +23,6 @@ const ButtonShell = styled(Button)`
   }
 `;
 
-const NestedTitle = styled.div`
-  cursor: default;
-  flex-shrink: 0;
-  line-height: 1.75;
-  font-weight: 500;
-  outline: none;
-  padding: 5px 25px 0 25px;
-  color: #9b9b9b;
-  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  font-size: 0.875rem;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-transform: capitalize;
-`;
-
 const ArrowIcon = styled(KeyboardArrowDown)`
   color: #56c2d9;
   margin-left: 7px;
@@ -48,11 +36,14 @@ const MenuContainer = styled.div`
 `;
 
 const MenuContents = styled.div`
-  max-height: 368px;
   flex: 1;
   outline: none;
   overflow: auto;
   min-height: 1.25em;
+`;
+
+const MainMenu = styled(Menu)`
+  width: 220px;
 `;
 
 const MainMenuItem = styled(MenuItem)`
@@ -71,23 +62,20 @@ const MainMenuItem = styled(MenuItem)`
   }
 `;
 
-// interface Props {
-//   value: string;
-//   items: Array<object>;
-//   placeholder?: string;
-//   onChange: (value: string) => void;
-// }
+interface Props {
+  rowCount: number;
+  setRowCount: (count: number) => void;
+}
 
-// type States = {
-//   anchorEl: boolean;
-// };
-
-class LimitSelector extends React.Component {
+class LimitSelector extends React.Component<Props> {
   state = {
     anchorEl: null,
   };
 
-  handleChange = item => {
+  handleChange = rows => {
+    const { setRowCount } = this.props;
+    console.log(rows);
+    setRowCount(rows);
     this.setState({ anchorEl: null });
   };
 
@@ -101,41 +89,54 @@ class LimitSelector extends React.Component {
 
   render() {
     const { anchorEl } = this.state;
+    const { rowCount } = this.props;
+    const limitOptions = [10, 25, 50, 100, 250, 1000];
 
     return (
       <Container>
         <ButtonShell
           aria-owns={anchorEl ? 'simple-menu' : undefined}
           aria-haspopup="true"
-          //   isactive={value}
+          isactive={rowCount}
           onClick={this.handleClick}
         >
+          {rowCount}
           <ArrowIcon />
         </ButtonShell>
         <MenuContainer>
-          <Menu
+          <MainMenu
             id="simple-menu"
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={this.cancelChange}
-            PaperProps={{
-              style: {
-                position: 'relative',
-                width: 300,
-              },
-            }}
           >
-            <NestedTitle>{'Limit'}</NestedTitle>
             <MenuContents>
-              <h1>10</h1>
-              <h1>25</h1>
-              <h1>50</h1>
+              {limitOptions.map((rowCount, index) => (
+                <MainMenuItem
+                  key={index}
+                  value={rowCount}
+                  onClick={event => this.handleChange(rowCount)}
+                >
+                  {rowCount}
+                </MainMenuItem>
+              ))}
             </MenuContents>
-          </Menu>
+          </MainMenu>
         </MenuContainer>
       </Container>
     );
   }
 }
 
-export default LimitSelector;
+const mapStateToProps = state => ({
+  rowCount: getRows(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+  setRowCount: (count: number) => dispatch(setRowsAction(count)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LimitSelector);

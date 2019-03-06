@@ -11,3 +11,4 @@ export const REMOVE_FILTER = 'REMOVE_FILTER';
 export const CHANGE_FILTER = 'CHANGE_FILTER';
 export const SET_VALUE = 'SET_VALUE';
 export const SET_VALUES = 'SET_VALUES';
+export const SET_ROWS = 'SET_ROWS';

@@ -5,7 +5,11 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
-import { getNetwork, getAttributes } from '../../reducers/app/selectors';
+import {
+  getNetwork,
+  getAttributes,
+  getRows,
+} from '../../reducers/app/selectors';
 import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
@@ -47,6 +51,7 @@ const getSorting = (order, orderBy) => {
 };
 
 interface Props {
+  rowsPerPage: number;
   attributes: any[];
   entity: string;
   items: any[];
@@ -56,7 +61,6 @@ interface Props {
 
 interface State {
   page: number;
-  rowsPerPage: number;
   order: 'asc' | 'desc';
   orderBy: string;
 }
@@ -66,7 +70,6 @@ class CustomTable extends React.Component<Props, State> {
     super(props);
     this.state = {
       page: 0,
-      rowsPerPage: 10,
       order: 'asc',
       orderBy: 'level',
     };
@@ -76,9 +79,9 @@ class CustomTable extends React.Component<Props, State> {
     this.setState({ page });
   };
 
-  handleChangeRowsPerPage = event => {
-    this.setState({ rowsPerPage: event.target.value });
-  };
+  // handleChangeRowsPerPage = event => {
+  //   this.setState({ rowsPerPage: event.target.value });
+  // };
 
   handleRequestSort = (property: string) => {
     const orderBy = property;
@@ -92,8 +95,8 @@ class CustomTable extends React.Component<Props, State> {
   };
 
   render() {
-    const { items, entity, network, selectedColumns } = this.props;
-    const { page, rowsPerPage, order, orderBy } = this.state;
+    const { items, entity, network, selectedColumns, rowsPerPage } = this.props;
+    const { page, order, orderBy } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
     const realRows = stableSort(items, getSorting(order, orderBy)).slice(
@@ -141,6 +144,7 @@ class CustomTable extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: any) => ({
+  rowsPerPage: getRows(state),
   attributes: getAttributes(state),
   network: getNetwork(state),
 });

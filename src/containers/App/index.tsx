@@ -153,7 +153,6 @@ class Arronax extends React.Component<Props, States> {
       selectedEntity,
       items,
       selectedColumns,
-      attributes,
     } = this.props;
     const { isFilterCollapse } = this.state;
     return (
