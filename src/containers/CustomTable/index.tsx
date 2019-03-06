@@ -134,6 +134,7 @@ class CustomTable extends React.Component<Props, State> {
           </TableContainer>
         </Overflow>
         <CustomPaginator
+          rowsPerPage={rowsPerPage}
           page={page}
           totalNumber={items.length}
           onChangePage={this.handleChangePage}

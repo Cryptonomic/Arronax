@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import styled from 'styled-components';
 import FormControl from '@material-ui/core/FormControl';
@@ -19,9 +18,9 @@ const Container = styled.div`
 `;
 
 const SelectContainer = styled(FormControl)`
- &&& {
-  margin-left: 12px;
- }
+  &&& {
+    margin-left: 12px;
+  }
 `;
 
 const SelectWrapper = styled(SelectField)`
@@ -38,13 +37,13 @@ const SelectWrapper = styled(SelectField)`
     font-size: 16px;
     font-weight: 400;
     letter-spacing: 1.95px;
-    color: #56C2D9;
-  }  
+    color: #56c2d9;
+  }
 `;
 
 const DownIcon = styled(ArrowDropDown)`
   &&& {
-    color: #65C8CE;
+    color: #65c8ce;
     font-size: 20px;
     top: calc(50% - 9px);
     right: 10px;
@@ -53,17 +52,17 @@ const DownIcon = styled(ArrowDropDown)`
 
 const MainMenuItem = styled(MenuItem)`
   &&& {
-    &[class*='selected'] {      
-      background-color: rgba(101, 200, 206, 0.13);
+    &[class*='selected'] {
+      background-color: rgba(101,  200, 206, 0.13);
     }
     &:hover {
-      background-color: rgba(101, 200, 206, 0.1);
+      background-color: rgba(101,  200, 206, 0.1);
     }
   }
 `;
 
 const MainTxtWrapper = styled.div`
-  color: #4A4A4A;
+  color: #4a4a4a;
   font-size: 16px;
   letter-spacing: 1.95px;
   margin: 0 13px 0 2px;
@@ -72,35 +71,35 @@ const MainTxtWrapper = styled.div`
 const ButtonWrapper = styled.div`
   height: 52px;
   width: 52px;
-  border: 1px solid #ECEDEF;
-  border-color: ${({ isActive }) => isActive ? '#DCDCDC' : '#ECEDEF'};
-  background: ${({ isActive }) => isActive ? '#FFFFFF' : '#FBFBFB'};
+  border: 1px solid #ecedef;
+  border-color: ${({ isActive }) => (isActive ? '#DCDCDC' : '#ECEDEF')};
+  background: ${({ isActive }) => (isActive ? '#FFFFFF' : '#FBFBFB')};
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: ${({ isActive }) => isActive ? 'pointer' : 'default'};
-  pointer-events: ${({ isActive }) => isActive ? 'auto' : 'none'};
-  border-radius: ${({ isNext }) => isNext ? '0 5px 5px 0' : '5px 0 0 5px'};
+  cursor: ${({ isActive }) => (isActive ? 'pointer' : 'default')};
+  pointer-events: ${({ isActive }) => (isActive ? 'auto' : 'none')};
+  border-radius: ${({ isNext }) => (isNext ? '0 5px 5px 0' : '5px 0 0 5px')};
 `;
 
 const LeftIconWrapper = styled(LeftChevronIcon)`
   &&& {
-    color: ${({ isactive }) => isactive ? '#65C8CE' : '#D3D3D3'};
+    color: ${({ isactive }) => (isactive ? '#65C8CE' : '#D3D3D3')};
   }
 `;
 
 const RightIconWrapper = styled(RightChevronIcon)`
   &&& {
-    color: ${({ isactive }) => isactive ? '#65C8CE' : '#D3D3D3'};
+    color: ${({ isactive }) => (isactive ? '#65C8CE' : '#D3D3D3')};
   }
 `;
 
-const getList = (pageCount, balance ) => {
+const getList = (pageCount, balance) => {
   let items = [];
   for (let i = 0; i < pageCount - 1; i++) {
     items.push(
       <MainMenuItem key={i} value={i}>
-        {i*10 + 1}-{(i+1)*10}
+        {i * 10 + 1}-{(i + 1) * 10}
       </MainMenuItem>
     );
   }
@@ -109,52 +108,58 @@ const getList = (pageCount, balance ) => {
     const newCount = pageCount - 1;
     items.push(
       <MainMenuItem key={newCount} value={newCount}>
-        {newCount*10 + 1}-{newCount*10 + balance}
+        {newCount * 10 + 1}-{newCount * 10 + balance}
       </MainMenuItem>
     );
   } else {
     const newCount = pageCount - 1;
     items.push(
       <MainMenuItem key={newCount} value={newCount}>
-        {newCount*10 + 1}-{(newCount+1)*10}
+        {newCount * 10 + 1}-{(newCount + 1) * 10}
       </MainMenuItem>
     );
   }
   return items;
-}
+};
 
 interface Props {
+  rowsPerPage: number;
   page: number;
   totalNumber: number;
   onChangePage(page: number): void;
 }
 
-const CustomPaginator: React.StatelessComponent<Props> = (props) => {
-  const {page, totalNumber, onChangePage} = props;
-  const pageCount = Math.ceil(totalNumber/10);
-  const balance = totalNumber % 10;
+const CustomPaginator: React.StatelessComponent<Props> = props => {
+  const { page, totalNumber, onChangePage, rowsPerPage } = props;
+  const pageCount = Math.ceil(totalNumber / rowsPerPage);
+  const balance = totalNumber % rowsPerPage;
   return (
     <Container>
       <SelectContainer>
         <SelectWrapper
           value={page}
-          onChange={(event) => onChangePage(event.target.value)}
+          onChange={event => onChangePage(event.target.value)}
           IconComponent={DownIcon}
         >
-          {
-            getList(pageCount, balance)
-          }
+          {getList(pageCount, balance)}
         </SelectWrapper>
       </SelectContainer>
       <MainTxtWrapper>of {totalNumber}</MainTxtWrapper>
-      <ButtonWrapper isActive={page !==0} onClick={() => onChangePage(page - 1)}>
-        <LeftIconWrapper isactive={page !==0? 1:0}/>
+      <ButtonWrapper
+        isActive={page !== 0}
+        onClick={() => onChangePage(page - 1)}
+      >
+        <LeftIconWrapper isactive={page !== 0 ? 1 : 0} />
       </ButtonWrapper>
-      <ButtonWrapper isActive={page !== pageCount} isNext onClick={() => onChangePage(page + 1)}>
-        <RightIconWrapper isactive={page !== pageCount? 1:0}/>
+      <ButtonWrapper
+        isActive={page !== pageCount}
+        isNext
+        onClick={() => onChangePage(page + 1)}
+      >
+        <RightIconWrapper isactive={page !== pageCount ? 1 : 0} />
       </ButtonWrapper>
     </Container>
   );
-}
+};
 
 export default CustomPaginator;
