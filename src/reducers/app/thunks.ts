@@ -134,7 +134,7 @@ export const fetchValues = (attribute: string) => async (dispatch, state) => {
   const newValues = values.map(newValue => {
     return { [attribute]: newValue };
   });
-  dispatch(setValuesAction(values));
+  dispatch(setValuesAction(newValues));
   dispatch(setLoadingAction(false));
 };
 

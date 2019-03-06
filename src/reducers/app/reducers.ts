@@ -131,8 +131,11 @@ const appReducer = (state = initialState, action) => {
       return { ...state, selectedFilters };
     }
     case SET_VALUES: {
-      return { ...state, values: action.values };
+      const values = state.values;
+      const newValues = [...values, action.values];
+      return { ...state, values: newValues };
     }
+    // case REMOVE_VALUES
     case SET_VALUE: {
       return { ...state, selectedValue: action.value };
     }
