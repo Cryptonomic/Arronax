@@ -118,7 +118,7 @@ export const fetchAttributes = () => async (dispatch, state) => {
   dispatch(setLoadingAction(false));
 };
 
-export const fetchValues = (value: string) => async (dispatch, state) => {
+export const fetchValues = (attribute: string) => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
   const network = state().app.network;
   dispatch(setLoadingAction(true));
@@ -129,8 +129,11 @@ export const fetchValues = (value: string) => async (dispatch, state) => {
     'tezos',
     network,
     selectedEntity,
-    value
+    attribute
   );
+  const newValues = values.map(newValue => {
+    return { [attribute]: newValue };
+  });
   dispatch(setValuesAction(values));
   dispatch(setLoadingAction(false));
 };

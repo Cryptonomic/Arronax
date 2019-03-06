@@ -154,7 +154,7 @@ class FilterPanel extends React.Component<Props, States> {
     }
     const selectedFilter: any = filters[index];
     selectedFilter.name = val;
-    setValue(null);
+    // setValue(null);
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
