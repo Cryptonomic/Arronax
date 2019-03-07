@@ -177,30 +177,14 @@ class FilterPanel extends React.Component<Props, States> {
     setValue(val);
   };
 
-  // componentDidUpdate(prevProps: Props) {
-  //   const { filters } = this.props;
-  //   if (prevProps.filters.length !== filters.length) {
-  //     this.generateFilter(filter, index);
-  // try using filters props in generateFilter function
-  //   }
-  // }
-  generateFilter = (filter, index) => {
-    const { values, attributes, value, selectedEntity } = this.props;
+  generateFilter = filter => {
+    const { values, attributes, value } = this.props;
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);
       }
       return acc;
     }, []);
-    // const menuValues =
-    //   (selectedEntity === 'operations' && filter.name === 'kind') ||
-    //   (selectedEntity === 'operations' && filter.name === 'status') ||
-    //   (selectedEntity === 'operations' && filter.name === 'spendable') ||
-    //   (selectedEntity === 'operations' && filter.name === 'delegatable') ||
-    //   (selectedEntity === 'accounts' && filter.name === 'spendable') ||
-    //   (selectedEntity === 'accounts' && filter.name === 'delegate_setable')
-    //     ? this.generateValues(values, filter, index)
-    //     : values;
     if (!filter.operator) {
       return;
     } else if (filter.operator === 'ISNULL') {
@@ -298,7 +282,7 @@ class FilterPanel extends React.Component<Props, States> {
                     }
                   />
                 )}
-                {this.generateFilter(filter, index)}
+                {this.generateFilter(filter)}
               </FilterItemGr>
               <IconButton
                 aria-label="Delete"
