@@ -177,41 +177,30 @@ class FilterPanel extends React.Component<Props, States> {
     setValue(val);
   };
 
-  generateValues = items => {
-    let newItems = [];
-    items.map((item, index) => {
-      if (item !== null) {
-        const items = item.replace(/(^|_)./g, s =>
-          s
-            .split('_')
-            .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-            .join(' ')
-        );
-        newItems.push(items);
-      } else if (item === null) {
-        newItems.push('Null');
-      }
-    });
-    return newItems;
-  };
-
-  generateFilter = filter => {
+  // componentDidUpdate(prevProps: Props) {
+  //   const { filters } = this.props;
+  //   if (prevProps.filters.length !== filters.length) {
+  //     this.generateFilter(filter, index);
+  // try using filters props in generateFilter function
+  //   }
+  // }
+  generateFilter = (filter, index) => {
     const { values, attributes, value, selectedEntity } = this.props;
-    const menuValues =
-      (selectedEntity === 'operations' && filter.name === 'kind') ||
-      (selectedEntity === 'operations' && filter.name === 'status') ||
-      (selectedEntity === 'operations' && filter.name === 'spendable') ||
-      (selectedEntity === 'operations' && filter.name === 'delegatable') ||
-      (selectedEntity === 'accounts' && filter.name === 'spendable') ||
-      (selectedEntity === 'accounts' && filter.name === 'delegate_setable')
-        ? this.generateValues(values)
-        : values;
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);
       }
       return acc;
     }, []);
+    // const menuValues =
+    //   (selectedEntity === 'operations' && filter.name === 'kind') ||
+    //   (selectedEntity === 'operations' && filter.name === 'status') ||
+    //   (selectedEntity === 'operations' && filter.name === 'spendable') ||
+    //   (selectedEntity === 'operations' && filter.name === 'delegatable') ||
+    //   (selectedEntity === 'accounts' && filter.name === 'spendable') ||
+    //   (selectedEntity === 'accounts' && filter.name === 'delegate_setable')
+    //     ? this.generateValues(values, filter, index)
+    //     : values;
     if (!filter.operator) {
       return;
     } else if (filter.operator === 'ISNULL') {
@@ -243,9 +232,10 @@ class FilterPanel extends React.Component<Props, States> {
         <React.Fragment>
           <HR />
           <ValueSelect
+            filter={filter.name}
             value={value}
             placeholder={`Select Value`}
-            items={menuValues}
+            items={values}
             onChange={value => this.onValueChange(value)}
           />
         </React.Fragment>
@@ -272,6 +262,7 @@ class FilterPanel extends React.Component<Props, States> {
       value,
     } = this.props;
     const entityName = attrTabValue[selectedEntity];
+    console.log(filters);
     return (
       <Container>
         {filters.map((filter: any, index) => {
@@ -307,7 +298,7 @@ class FilterPanel extends React.Component<Props, States> {
                     }
                   />
                 )}
-                {this.generateFilter(filter)}
+                {this.generateFilter(filter, index)}
               </FilterItemGr>
               <IconButton
                 aria-label="Delete"

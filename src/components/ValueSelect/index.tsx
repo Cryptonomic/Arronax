@@ -77,6 +77,7 @@ const MainMenuItem = styled(MenuItem)`
 `;
 
 interface Props {
+  filter: object;
   value: string;
   items: Array<object>;
   placeholder?: string;
@@ -106,9 +107,37 @@ class ValueSelect extends React.Component<Props, States> {
     this.setState({ anchorEl: event.currentTarget });
   };
 
+  // generateValues = (values, filter, index) => {
+  //   console.log(filter, index);
+  //   console.log(values);
+  //   let newItems = [];
+  //   values.forEach(item => {
+  //     if (item[filter.name] !== null) {
+  //       const items = item[filter.name].replace(/(^|_)./g, s =>
+  //         s
+  //           .split('_')
+  //           .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+  //           .join(' ')
+  //       );
+  //       newItems.push(items);
+  //     } else if (item[filter.name] === null) {
+  //       newItems.push('Null');
+  //     }
+  //   });
+  //   return newItems;
+  // };
+
   render() {
     const { anchorEl } = this.state;
-    const { items, value, placeholder } = this.props;
+    const { items, value, placeholder, filter } = this.props;
+    console.log(items);
+    console.log(filter);
+    let newItems = [];
+    items.forEach(item => {
+      if (Object.keys(item) == filter) {
+        newItems.push(item);
+      }
+    });
     const selectedItem: any = items.find((item: any) => item === value);
     const menuTitle = value && value !== '' ? selectedItem : placeholder;
 
@@ -138,13 +167,13 @@ class ValueSelect extends React.Component<Props, States> {
           >
             <NestedTitle>{placeholder}</NestedTitle>
             <MenuContents>
-              {items.map((item: any, index) => (
+              {newItems.map((item: any, index) => (
                 <MainMenuItem
                   onClick={() => this.handleChange(item)}
                   key={index}
                   selected={value === item}
                 >
-                  {item}
+                  {item[filter.toString()]}
                 </MainMenuItem>
               ))}
             </MenuContents>

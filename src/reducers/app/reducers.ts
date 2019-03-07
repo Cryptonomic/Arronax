@@ -132,7 +132,7 @@ const appReducer = (state = initialState, action) => {
     }
     case SET_VALUES: {
       const values = state.values;
-      const newValues = [...values, action.values];
+      const newValues = [...values, ...action.values];
       return { ...state, values: newValues };
     }
     // case REMOVE_VALUES
