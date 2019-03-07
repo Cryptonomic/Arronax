@@ -112,17 +112,7 @@ class ValueSelect extends React.Component<Props, States> {
   //   console.log(values);
   //   let newItems = [];
   //   values.forEach(item => {
-  //     if (item[filter.name] !== null) {
-  //       const items = item[filter.name].replace(/(^|_)./g, s =>
-  //         s
-  //           .split('_')
-  //           .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-  //           .join(' ')
-  //       );
-  //       newItems.push(items);
-  //     } else if (item[filter.name] === null) {
-  //       newItems.push('Null');
-  //     }
+
   //   });
   //   return newItems;
   // };
@@ -135,7 +125,18 @@ class ValueSelect extends React.Component<Props, States> {
     let newItems = [];
     items.forEach(item => {
       if (Object.keys(item) == filter) {
-        newItems.push(item);
+        if (item[filter.toString()] !== null) {
+          const items = item[filter.toString()].replace(/(^|_)./g, s =>
+            s
+              .split('_')
+              .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+              .join(' ')
+          );
+          console.log(items);
+          newItems.push(items);
+        } else if (item.toString() === null) {
+          newItems.push('Null');
+        }
       }
     });
     const selectedItem: any = items.find((item: any) => item === value);
@@ -173,7 +174,7 @@ class ValueSelect extends React.Component<Props, States> {
                   key={index}
                   selected={value === item}
                 >
-                  {item[filter.toString()]}
+                  {item}
                 </MainMenuItem>
               ))}
             </MenuContents>
