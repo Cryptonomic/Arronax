@@ -81,7 +81,7 @@ interface Props {
   value: string;
   items: Array<object>;
   placeholder?: string;
-  onChange: (value: string) => void;
+  onChange: (value: object) => void;
 }
 
 type States = {
@@ -94,8 +94,12 @@ class ValueSelect extends React.Component<Props, States> {
   };
 
   handleChange = item => {
-    const { onChange } = this.props;
-    onChange(item);
+    const { onChange, filter } = this.props;
+    // const newValue = item.map(newValue => {
+    //   return { [filter.toString()]: newValue };
+    // });
+    const newValue = { [filter.toString()]: item };
+    onChange(newValue);
     this.setState({ anchorEl: null });
   };
 
@@ -172,7 +176,7 @@ class ValueSelect extends React.Component<Props, States> {
                 <MainMenuItem
                   onClick={() => this.handleChange(item)}
                   key={index}
-                  selected={value === item}
+                  // selected={value === item}
                 >
                   {item}
                 </MainMenuItem>

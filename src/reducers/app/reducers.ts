@@ -31,7 +31,7 @@ export interface AppState {
   operations: TezosOperation[];
   isLoading: boolean;
   selectedEntity: string;
-  selectedValue: string;
+  selectedValue: Array<string>;
 }
 
 const initialState: AppState = {
@@ -71,7 +71,7 @@ const initialState: AppState = {
   operations: [],
   isLoading: false,
   selectedEntity: 'blocks',
-  selectedValue: null,
+  selectedValue: [],
 };
 
 const initEntities = {
@@ -137,7 +137,11 @@ const appReducer = (state = initialState, action) => {
     }
     // case REMOVE_VALUES
     case SET_VALUE: {
-      return { ...state, selectedValue: action.value };
+      console.log(action.value);
+      const value = state.selectedValue;
+      // check for key of same kind and slice it out
+      const newValue = [...value, action.value];
+      return { ...state, selectedValue: newValue };
     }
   }
   return state;
