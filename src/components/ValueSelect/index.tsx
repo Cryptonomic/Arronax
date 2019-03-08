@@ -108,27 +108,16 @@ class ValueSelect extends React.Component<Props, States> {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  // generateValues = (values, filter, index) => {
-  //   console.log(filter, index);
-  //   console.log(values);
-  //   let newItems = [];
-  //   values.forEach(item => {
-
-  //   });
-  //   return newItems;
-  // };
-
   render() {
     const { anchorEl } = this.state;
     const { items, value, placeholder, filter } = this.props;
-    console.log(value, filter); // {kind: "Seed Nonce Revelation"}
-    let newValz = [];
-    const newVal = value.forEach(val => {
+    console.log(value, filter);
+    let newValue = [];
+    value.forEach(val => {
       if (val[filter.toString()] !== undefined) {
-        newValz.push(val[filter.toString()]);
+        newValue.push(val[filter.toString()]);
       }
     });
-    console.log(newValz);
     let newItems = [];
     items.forEach(item => {
       if (Object.keys(item) == filter) {
@@ -145,7 +134,7 @@ class ValueSelect extends React.Component<Props, States> {
         }
       }
     });
-    const selectedItem: any = newItems.find((item: any) => item == newValz[0]);
+    const selectedItem: any = newItems.find((item: any) => item == newValue[0]);
     const menuTitle =
       value && selectedItem !== undefined ? selectedItem : placeholder;
 
@@ -179,7 +168,7 @@ class ValueSelect extends React.Component<Props, States> {
                 <MainMenuItem
                   onClick={() => this.handleChange(item)}
                   key={index}
-                  selected={item === newValz.toString()}
+                  selected={item === newValue[0]}
                 >
                   {item}
                 </MainMenuItem>

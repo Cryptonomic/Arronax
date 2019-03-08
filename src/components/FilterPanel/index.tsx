@@ -246,7 +246,6 @@ class FilterPanel extends React.Component<Props, States> {
       value,
     } = this.props;
     const entityName = attrTabValue[selectedEntity];
-    console.log(filters);
     return (
       <Container>
         {filters.map((filter: any, index) => {
