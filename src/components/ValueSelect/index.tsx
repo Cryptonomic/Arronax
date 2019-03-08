@@ -95,9 +95,6 @@ class ValueSelect extends React.Component<Props, States> {
 
   handleChange = item => {
     const { onChange, filter } = this.props;
-    // const newValue = item.map(newValue => {
-    //   return { [filter.toString()]: newValue };
-    // });
     const newValue = { [filter.toString()]: item };
     onChange(newValue);
     this.setState({ anchorEl: null });
@@ -124,6 +121,7 @@ class ValueSelect extends React.Component<Props, States> {
   render() {
     const { anchorEl } = this.state;
     const { items, value, placeholder, filter } = this.props;
+    console.log(value); // {kind: "Seed Nonce Revelation"}
     let newItems = [];
     items.forEach(item => {
       if (Object.keys(item) == filter) {
@@ -140,7 +138,9 @@ class ValueSelect extends React.Component<Props, States> {
         }
       }
     });
-    const selectedItem: any = items.find((item: any) => item === value);
+    const selectedItem: any = items.find(
+      (item: any) => item === Object.values(value)
+    );
     const menuTitle = value && value !== '' ? selectedItem : placeholder;
 
     return (
@@ -173,7 +173,7 @@ class ValueSelect extends React.Component<Props, States> {
                 <MainMenuItem
                   onClick={() => this.handleChange(item)}
                   key={index}
-                  // selected={value === item}
+                  selected={selectedItem}
                 >
                   {item}
                 </MainMenuItem>

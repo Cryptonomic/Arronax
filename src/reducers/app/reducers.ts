@@ -139,19 +139,16 @@ const appReducer = (state = initialState, action) => {
     // case REMOVE_VALUES
     case SET_VALUE: {
       const value = state.selectedValue;
-      const finalValue = [];
-      const oldVal = Object.keys(value).toString();
-      const newVal = Object.keys(action.value).toString();
-      value.forEach(value => {
-        if (oldVal === newVal) {
-          finalValue.push(action.value);
+      const incomingValue = Object.keys(action.value).toString();
+      const values = value.filter(val => {
+        if (Object.keys(val).toString() !== incomingValue) {
+          return val;
         } else {
-          finalValue.push(action.value);
+          return null;
         }
       });
-      console.log(finalValue);
-      const newValue = [...value, action.value];
-      return { ...state, selectedValue: newValue };
+      const finalValues = [...values, action.value];
+      return { ...state, selectedValue: finalValues };
     }
   }
   return state;
