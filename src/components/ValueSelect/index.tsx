@@ -146,7 +146,8 @@ class ValueSelect extends React.Component<Props, States> {
       }
     });
     const selectedItem: any = newItems.find((item: any) => item == newValz[0]);
-    const menuTitle = value && value.length !== 0 ? selectedItem : placeholder;
+    const menuTitle =
+      value && selectedItem !== undefined ? selectedItem : placeholder;
 
     return (
       <Container>
