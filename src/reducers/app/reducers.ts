@@ -16,6 +16,7 @@ import {
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
 import { TezosAccount, TezosBlock, TezosOperation } from '../../types';
+import ValueSelect from 'components/ValueSelect';
 const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
 
 export interface AppState {
@@ -137,9 +138,18 @@ const appReducer = (state = initialState, action) => {
     }
     // case REMOVE_VALUES
     case SET_VALUE: {
-      console.log(action.value);
       const value = state.selectedValue;
-      // check for key of same kind and slice it out
+      const finalValue = [];
+      const oldVal = Object.keys(value).toString();
+      const newVal = Object.keys(action.value).toString();
+      value.forEach(value => {
+        if (oldVal === newVal) {
+          finalValue.push(action.value);
+        } else {
+          finalValue.push(action.value);
+        }
+      });
+      console.log(finalValue);
       const newValue = [...value, action.value];
       return { ...state, selectedValue: newValue };
     }

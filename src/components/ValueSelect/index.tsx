@@ -124,8 +124,6 @@ class ValueSelect extends React.Component<Props, States> {
   render() {
     const { anchorEl } = this.state;
     const { items, value, placeholder, filter } = this.props;
-    console.log(items);
-    console.log(filter);
     let newItems = [];
     items.forEach(item => {
       if (Object.keys(item) == filter) {
@@ -136,7 +134,6 @@ class ValueSelect extends React.Component<Props, States> {
               .map(s => s.charAt(0).toUpperCase() + s.substring(1))
               .join(' ')
           );
-          console.log(items);
           newItems.push(items);
         } else if (item.toString() === null) {
           newItems.push('Null');
