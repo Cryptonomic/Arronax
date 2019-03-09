@@ -111,7 +111,6 @@ class ValueSelect extends React.Component<Props, States> {
   render() {
     const { anchorEl } = this.state;
     const { items, value, placeholder, filter } = this.props;
-    console.log(value, filter);
     let newValue = [];
     value.forEach(val => {
       if (val[filter.toString()] !== undefined) {

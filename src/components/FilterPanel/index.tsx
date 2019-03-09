@@ -133,7 +133,6 @@ class FilterPanel extends React.Component<Props, States> {
 
   onRemoveFilter = (index, filter) => {
     const { removeFilter, selectedEntity, removeValue, value } = this.props;
-    console.log(filter.name);
     value.forEach(val => {
       if (Object.keys(val).toString() === filter.name) {
         removeValue(val);
