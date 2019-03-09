@@ -12,6 +12,7 @@ import {
   CHANGE_FILTER,
   SET_VALUES,
   SET_VALUE,
+  REMOVE_VALUE,
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -136,7 +137,19 @@ const appReducer = (state = initialState, action) => {
       const newValues = [...values, ...action.values];
       return { ...state, values: newValues };
     }
-    // case REMOVE_VALUES
+    case REMOVE_VALUE: {
+      const value = state.selectedValue;
+      const incomingValue = Object.keys(action.value).toString();
+      const values = value.filter(val => {
+        if (Object.keys(val).toString() !== incomingValue) {
+          return val;
+        } else {
+          return null;
+        }
+      });
+      const finalValues = [...values];
+      return { ...state, selectedValue: finalValues };
+    }
     case SET_VALUE: {
       const value = state.selectedValue;
       const incomingValue = Object.keys(action.value).toString();

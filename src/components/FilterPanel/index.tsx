@@ -15,6 +15,7 @@ import {
 } from '../../reducers/app/selectors';
 import {
   setValueAction,
+  removeValueAction,
   addFilterAction,
   removeFilterAction,
   changeFilterAction,
@@ -106,13 +107,14 @@ const attrTabValue = {
 };
 
 type Props = {
-  value: string;
+  value: object[];
   values: object[];
   selectedEntity: string;
   attributes: any[];
   filters: object[];
   operators: object[];
-  setValue: (value: string) => void;
+  removeValue: (value: object) => void;
+  setValue: (value: object) => void;
   fetchValues: (value: string) => void;
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
@@ -129,8 +131,14 @@ class FilterPanel extends React.Component<Props, States> {
     addFilter(selectedEntity);
   };
 
-  onRemoveFilter = index => {
-    const { removeFilter, selectedEntity } = this.props;
+  onRemoveFilter = (index, filter) => {
+    const { removeFilter, selectedEntity, removeValue, value } = this.props;
+    console.log(filter.name);
+    value.forEach(val => {
+      if (Object.keys(val).toString() === filter.name) {
+        removeValue(val);
+      }
+    });
     removeFilter(selectedEntity, index);
   };
 
@@ -141,7 +149,6 @@ class FilterPanel extends React.Component<Props, States> {
       changeFilter,
       attributes,
       fetchValues,
-      setValue,
     } = this.props;
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
@@ -154,7 +161,6 @@ class FilterPanel extends React.Component<Props, States> {
     }
     const selectedFilter: any = filters[index];
     selectedFilter.name = val;
-    // setValue(null);
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
@@ -238,13 +244,7 @@ class FilterPanel extends React.Component<Props, States> {
   };
 
   render() {
-    const {
-      selectedEntity,
-      attributes,
-      filters,
-      operators,
-      value,
-    } = this.props;
+    const { selectedEntity, attributes, filters, operators } = this.props;
     const entityName = attrTabValue[selectedEntity];
     return (
       <Container>
@@ -285,7 +285,7 @@ class FilterPanel extends React.Component<Props, States> {
               </FilterItemGr>
               <IconButton
                 aria-label="Delete"
-                onClick={() => this.onRemoveFilter(index)}
+                onClick={() => this.onRemoveFilter(index, filter)}
               >
                 <DeleteIconWrapper />
               </IconButton>
@@ -320,7 +320,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   fetchValues: (value: string) => dispatch(fetchValues(value)),
-  setValue: (value: string) => dispatch(setValueAction(value)),
+  removeValue: (value: object) => dispatch(removeValueAction(value)),
+  setValue: (value: object) => dispatch(setValueAction(value)),
   addFilter: (entity: string) => dispatch(addFilterAction(entity)),
   removeFilter: (entity: string, index: number) =>
     dispatch(removeFilterAction(entity, index)),
