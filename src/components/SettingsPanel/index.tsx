@@ -11,6 +11,12 @@ const Container = styled.div`
   background: #ecedef;
 `;
 
+const QueryContainer = styled.div`
+  display: flex;
+`;
+
+const RunButton = styled.div``;
+
 const FilterTxt = styled.div`
   color: #4a4a4a;
   font-size: 20px;
@@ -24,9 +30,9 @@ const DisplayTxt = styled(FilterTxt)`
 const DisplayContainer = styled.div`
   align-items: center;
   padding-left: 24px;
-  width: 100%;
+  width: 50%;
   height: 93px;
-  background: #fbfbfb;
+  background: white;
   border: 1px solid #ededed;
   border-radius: 3px;
   display: flex;
@@ -65,9 +71,12 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
         <FilterTxt>Filter</FilterTxt>
         <FilterPanel />
         <DisplayTxt>Display</DisplayTxt>
-        <DisplayContainer>
-          <ColumnsDisplay selectedColumns={selectedColumns} />
-        </DisplayContainer>
+        <QueryContainer>
+          <DisplayContainer>
+            <ColumnsDisplay selectedColumns={selectedColumns} />
+          </DisplayContainer>
+          <RunButton>Yoooo!</RunButton>
+        </QueryContainer>
       </Container>
     </Collapse>
   );
