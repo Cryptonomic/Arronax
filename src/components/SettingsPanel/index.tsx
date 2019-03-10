@@ -20,10 +20,11 @@ const ButtonsContainer = styled.div`
   display: flex;
   width: 100%;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
 `;
 
 const RunButton = styled.div`
+  cursor: pointer;
   margin-left: 40px;
   color: white;
   background: #56c2d9;
