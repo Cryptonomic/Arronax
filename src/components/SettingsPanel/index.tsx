@@ -4,6 +4,7 @@ import Collapse from '@material-ui/core/Collapse';
 import CloseIcon from '@material-ui/icons/CloseOutlined';
 import ColumnsDisplay from '../ColumnsDisplay';
 import FilterPanel from '../FilterPanel';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 const Container = styled.div`
   position: relative;
@@ -15,7 +16,32 @@ const QueryContainer = styled.div`
   display: flex;
 `;
 
-const RunButton = styled.div``;
+const ButtonsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const RunButton = styled.div`
+  color: white;
+  background: #56c2d9;
+  border-radius: 9px 9px 9px 9px;
+  font-size: 18px;
+  height: 50px;
+  width: 108px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ResetButton = styled.div`
+  color: #56c2d9;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+`;
 
 const FilterTxt = styled.div`
   color: #4a4a4a;
@@ -75,7 +101,13 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
           <DisplayContainer>
             <ColumnsDisplay selectedColumns={selectedColumns} />
           </DisplayContainer>
-          <RunButton>Yoooo!</RunButton>
+          <ButtonsContainer>
+            <ResetButton>
+              <RefreshIcon />
+              {'  '}Reset
+            </ResetButton>
+            <RunButton>Run</RunButton>
+          </ButtonsContainer>
         </QueryContainer>
       </Container>
     </Collapse>
