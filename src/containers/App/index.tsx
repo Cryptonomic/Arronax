@@ -190,8 +190,8 @@ class Arronax extends React.Component<Props, States> {
           <FilterHeader isDark={isFilterCollapse}>
             <FilterTool value={2} onCollapse={this.onFilterCollapse} />
             <FilterExTxt>
-              e.g. What were blocks where baked by Foudation Baker 1 in the past
-              24 hours?
+              e.g. What blocks were baked by Foundation Baker 1 in the past 24
+              hours?
             </FilterExTxt>
           </FilterHeader>
           <TabContainer component="div">
