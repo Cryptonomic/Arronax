@@ -29,6 +29,7 @@ const ButtonShell = styled(Button)`
   align-items: center;
   justify-content: center;
   font-size: 18px;
+  font-weight: 400 !important;
   cursor: pointer;
 `;
 
@@ -74,9 +75,9 @@ const MenuContainer = styled.div`
 `;
 
 const LimitBlock = styled.div`
-  font-size: 14px;
+  font-size: 0.875rem;
   font-family: Roboto;
-  background: #ecedef !important;
+  background: rgb(245, 245, 245) !important;
   border-radius: 5px 0 0 5px;
   border-right: 1px solid #d8d8d8;
   width: 80px;
@@ -85,7 +86,7 @@ const LimitBlock = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 400;
+  font-weight: normal;
   padding-right: 10px;
   padding-left: 10px;
 `;
