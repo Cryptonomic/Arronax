@@ -107,9 +107,12 @@ export const fetchAttributes = () => async (dispatch, state) => {
   const network = state().app.network;
   dispatch(setLoadingAction(true));
   const config = getConfig(network);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
   const attributes = await getAttributes(
-    config.url,
-    config.key,
+    serverInfo,
     'tezos',
     network,
     selectedEntity
@@ -118,20 +121,26 @@ export const fetchAttributes = () => async (dispatch, state) => {
   dispatch(setLoadingAction(false));
 };
 
-export const fetchValues = (value: string) => async (dispatch, state) => {
+export const fetchValues = (attribute: string) => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
   const network = state().app.network;
   dispatch(setLoadingAction(true));
   const config = getConfig(network);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
   const values = await getAttributeValues(
-    config.url,
-    config.key,
+    serverInfo,
     'tezos',
     network,
     selectedEntity,
-    value
+    attribute
   );
-  dispatch(setValuesAction(values));
+  const newValues = values.map(newValue => {
+    return { [attribute]: newValue };
+  });
+  dispatch(setValuesAction(newValues));
   dispatch(setLoadingAction(false));
 };
 

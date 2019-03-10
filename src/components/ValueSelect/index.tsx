@@ -77,10 +77,11 @@ const MainMenuItem = styled(MenuItem)`
 `;
 
 interface Props {
-  value: string;
+  filter: object;
+  value: any;
   items: Array<object>;
   placeholder?: string;
-  onChange: (value: string) => void;
+  onChange: (value: object) => void;
 }
 
 type States = {
@@ -93,8 +94,9 @@ class ValueSelect extends React.Component<Props, States> {
   };
 
   handleChange = item => {
-    const { onChange } = this.props;
-    onChange(item);
+    const { onChange, filter } = this.props;
+    const newValue = { [filter.toString()]: item };
+    onChange(newValue);
     this.setState({ anchorEl: null });
   };
 
@@ -108,9 +110,32 @@ class ValueSelect extends React.Component<Props, States> {
 
   render() {
     const { anchorEl } = this.state;
-    const { items, value, placeholder } = this.props;
-    const selectedItem: any = items.find((item: any) => item === value);
-    const menuTitle = value && value !== '' ? selectedItem : placeholder;
+    const { items, value, placeholder, filter } = this.props;
+    let newValue = [];
+    value.forEach(val => {
+      if (val[filter.toString()] !== undefined) {
+        newValue.push(val[filter.toString()]);
+      }
+    });
+    let newItems = [];
+    items.forEach(item => {
+      if (Object.keys(item) == filter) {
+        if (item[filter.toString()] !== null) {
+          const items = item[filter.toString()].replace(/(^|_)./g, s =>
+            s
+              .split('_')
+              .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+              .join(' ')
+          );
+          newItems.push(items);
+        } else if (item.toString() === null) {
+          newItems.push('Null');
+        }
+      }
+    });
+    const selectedItem: any = newItems.find((item: any) => item == newValue[0]);
+    const menuTitle =
+      value && selectedItem !== undefined ? selectedItem : placeholder;
 
     return (
       <Container>
@@ -138,11 +163,11 @@ class ValueSelect extends React.Component<Props, States> {
           >
             <NestedTitle>{placeholder}</NestedTitle>
             <MenuContents>
-              {items.map((item: any, index) => (
+              {newItems.map((item: any, index) => (
                 <MainMenuItem
                   onClick={() => this.handleChange(item)}
                   key={index}
-                  selected={value === item}
+                  selected={item === newValue[0]}
                 >
                   {item}
                 </MainMenuItem>

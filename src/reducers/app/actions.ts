@@ -13,6 +13,7 @@ import {
   SET_VALUES,
   SET_VALUE,
   SET_ROWS,
+  REMOVE_VALUE,
 } from './types';
 import actionCreator from '../../utils/reduxHelpers';
 
@@ -54,3 +55,4 @@ export const changeFilterAction = actionCreator(
 export const setValuesAction = actionCreator(SET_VALUES, 'values');
 export const setValueAction = actionCreator(SET_VALUE, 'value');
 export const setRowsAction = actionCreator(SET_ROWS, 'rows');
+export const removeValueAction = actionCreator(REMOVE_VALUE, 'value');

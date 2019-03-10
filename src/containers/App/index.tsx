@@ -11,9 +11,10 @@ import {
   getEntity,
   getItems,
   getColumns,
+  getValue,
 } from '../../reducers/app/selectors';
 import { changeNetwork, fetchItemsAction } from '../../reducers/app/thunks';
-import { setTabAction } from '../../reducers/app/actions';
+import { setTabAction, removeValueAction } from '../../reducers/app/actions';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
 import SettingsPanel from 'components/SettingsPanel';
@@ -100,10 +101,12 @@ const tabsArray = [
 export interface Props {
   isLoading: boolean;
   network: string;
+  selectedValues: object[];
   selectedEntity: string;
   items: object[];
   attributes: object[];
   selectedColumns: any[];
+  removeValue: (value: object) => void;
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
@@ -132,7 +135,10 @@ class Arronax extends React.Component<Props, States> {
   };
 
   onChangeTab = async (value: string) => {
-    const { changeTab, fetchItems } = this.props;
+    const { changeTab, fetchItems, selectedValues, removeValue } = this.props;
+    selectedValues.forEach(value => {
+      removeValue(value);
+    });
     changeTab(value);
     fetchItems(value);
   };
@@ -208,6 +214,7 @@ class Arronax extends React.Component<Props, States> {
 }
 
 const mapStateToProps = (state: any) => ({
+  selectedValues: getValue(state),
   selectedColumns: getColumns(state),
   isLoading: getLoading(state),
   network: getNetwork(state),
@@ -217,6 +224,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  removeValue: (value: object) => dispatch(removeValueAction(value)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
   fetchItems: (type: string) => dispatch(fetchItemsAction(type)),

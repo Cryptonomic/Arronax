@@ -94,12 +94,12 @@ const RightIconWrapper = styled(RightChevronIcon)`
   }
 `;
 
-const getList = (pageCount, balance) => {
+const getList = (pageCount, balance, rowsPerPage) => {
   let items = [];
   for (let i = 0; i < pageCount - 1; i++) {
     items.push(
       <MainMenuItem key={i} value={i}>
-        {i * 10 + 1}-{(i + 1) * 10}
+        {i * rowsPerPage + 1}-{(i + 1) * rowsPerPage}
       </MainMenuItem>
     );
   }
@@ -108,14 +108,14 @@ const getList = (pageCount, balance) => {
     const newCount = pageCount - 1;
     items.push(
       <MainMenuItem key={newCount} value={newCount}>
-        {newCount * 10 + 1}-{newCount * 10 + balance}
+        {newCount * rowsPerPage + 1}-{newCount * rowsPerPage + balance}
       </MainMenuItem>
     );
   } else {
     const newCount = pageCount - 1;
     items.push(
       <MainMenuItem key={newCount} value={newCount}>
-        {newCount * 10 + 1}-{(newCount + 1) * 10}
+        {newCount * rowsPerPage + 1}-{(newCount + 1) * rowsPerPage}
       </MainMenuItem>
     );
   }
@@ -141,7 +141,7 @@ const CustomPaginator: React.StatelessComponent<Props> = props => {
           onChange={event => onChangePage(event.target.value)}
           IconComponent={DownIcon}
         >
-          {getList(pageCount, balance)}
+          {getList(pageCount, balance, rowsPerPage)}
         </SelectWrapper>
       </SelectContainer>
       <MainTxtWrapper>of {totalNumber}</MainTxtWrapper>
