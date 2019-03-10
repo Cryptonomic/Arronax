@@ -76,8 +76,9 @@ const MenuContainer = styled.div`
 const LimitBlock = styled.div`
   font-size: 14px;
   font-family: Roboto;
-  background: #fbfbfb !important;
+  background: #ecedef !important;
   border-radius: 5px 0 0 5px;
+  border-right: 1px solid #d8d8d8;
   width: 80px;
   color: #4a4a4a;
   height: 52px;
@@ -368,10 +369,9 @@ class ColumnDisplay extends React.Component<Props, States> {
             </Menu>
           </MenuContainer>
         </Container>
-        {'asdfsdafs'}
+        {/* {'asdfsdafs'} */}
         <Container>
           <LimitBlock>LIMIT</LimitBlock>
-          <HR />
           <LimitSelector />
         </Container>
       </React.Fragment>
