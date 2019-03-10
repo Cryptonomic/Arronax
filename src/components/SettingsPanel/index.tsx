@@ -18,17 +18,19 @@ const QueryContainer = styled.div`
 
 const ButtonsContainer = styled.div`
   display: flex;
+  width: 100%;
   align-items: center;
   justify-content: center;
 `;
 
 const RunButton = styled.div`
+  margin-left: 40px;
   color: white;
   background: #56c2d9;
   border-radius: 9px 9px 9px 9px;
   font-size: 18px;
-  height: 50px;
-  width: 108px;
+  height: 47px;
+  width: 125px;
   display: flex;
   align-items: center;
   justify-content: center;
