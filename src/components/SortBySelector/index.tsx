@@ -63,8 +63,10 @@ const MainMenuItem = styled(MenuItem)`
 `;
 
 interface Props {
-  rowCount: number;
-  setRowCount: (count: number) => void;
+  //   sortBy: string;
+  //   setSortBy: (sortBy: string) => void;
+  //   rowCount: number;
+  //   setRowCount: (count: number) => void;
 }
 
 class LimitSelector extends React.Component<Props> {
@@ -72,9 +74,10 @@ class LimitSelector extends React.Component<Props> {
     anchorEl: null,
   };
 
-  handleChange = rows => {
-    const { setRowCount } = this.props;
-    setRowCount(rows);
+  handleChange = sortBy => {
+    // setSortBy
+    // const { setRowCount } = this.props;
+    // setRowCount(rows);
     this.setState({ anchorEl: null });
   };
 
@@ -88,18 +91,19 @@ class LimitSelector extends React.Component<Props> {
 
   render() {
     const { anchorEl } = this.state;
-    const { rowCount } = this.props;
-    const limitOptions = [10, 25, 50, 100, 250, 1000];
+    // const { sortBy } = this.props;
+    const limitOptions = ['Ascending', 'Descending'];
 
     return (
       <Container>
         <ButtonShell
           aria-owns={anchorEl ? 'simple-menu' : undefined}
           aria-haspopup="true"
-          isactive={rowCount}
+          //   isactive={rowCount}
           onClick={this.handleClick}
         >
-          {rowCount}
+          {/* {sortBy ? sortBy : 'Ascending'} */}
+          Ascending
           <ArrowIcon />
         </ButtonShell>
         <MenuContainer>
@@ -110,13 +114,13 @@ class LimitSelector extends React.Component<Props> {
             onClose={this.cancelChange}
           >
             <MenuContents>
-              {limitOptions.map((rowCount, index) => (
+              {limitOptions.map((sortBy, index) => (
                 <MainMenuItem
                   key={index}
-                  value={rowCount}
-                  onClick={event => this.handleChange(rowCount)}
+                  value={sortBy}
+                  onClick={event => this.handleChange(sortBy)}
                 >
-                  {rowCount}
+                  {sortBy}
                 </MainMenuItem>
               ))}
             </MenuContents>
@@ -128,11 +132,13 @@ class LimitSelector extends React.Component<Props> {
 }
 
 const mapStateToProps = state => ({
-  rowCount: getRows(state),
+  // sortBy: getSort(state)
+  //   rowCount: getRows(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  setRowCount: (count: number) => dispatch(setRowsAction(count)),
+  // setSortBy: (sort: string) => dispatch(setSortBy(sort))
+  //   setRowCount: (count: number) => dispatch(setRowsAction(count)),
 });
 
 export default connect(

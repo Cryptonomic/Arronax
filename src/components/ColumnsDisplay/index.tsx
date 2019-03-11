@@ -12,6 +12,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import DragIcon from '@material-ui/icons/DragHandle';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import LimitSelector from 'components/LimitSelector';
+import SortBySelector from 'components/SortBySelector';
 
 const Container = styled.div`
   display: flex;
@@ -391,7 +392,7 @@ class ColumnDisplay extends React.Component<Props, States> {
         </Container>
         <Container>
           <SortByBlock>SORT BY</SortByBlock>
-          <LimitSelector />
+          <SortBySelector />
         </Container>
         <Container>
           <LimitBlock>LIMIT</LimitBlock>

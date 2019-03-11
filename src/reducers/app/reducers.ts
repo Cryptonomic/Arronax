@@ -19,7 +19,7 @@ import {
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
 import { TezosAccount, TezosBlock, TezosOperation } from '../../types';
-import ValueSelect from 'components/ValueSelect';
+
 const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
 
 export interface AppState {
@@ -35,7 +35,7 @@ export interface AppState {
   operations: TezosOperation[];
   isLoading: boolean;
   selectedEntity: string;
-  selectedValue: Array<string>;
+  selectedValue: Array<object>;
   rowCount: number;
 }
 

@@ -184,7 +184,6 @@ class FilterPanel extends React.Component<Props, States> {
 
   generateFilter = filter => {
     const { values, attributes, value } = this.props;
-    console.log(value);
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);
