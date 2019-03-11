@@ -59,6 +59,7 @@ const DisplayTxt = styled(FilterTxt)`
 const DisplayContainer = styled.div`
   align-items: center;
   padding-left: 24px;
+  padding-right: 24px;
   width: 50%;
   height: 93px;
   background: white;
