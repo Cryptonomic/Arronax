@@ -8,6 +8,7 @@ export const SET_NETWORK = 'SET_NETWORK';
 export const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
 export const ADD_FILTER = 'ADD_FILTER';
 export const REMOVE_FILTER = 'REMOVE_FILTER';
+export const REMOVE_ALL_FILTERS = 'REMOVE_ALL_FILTERS';
 export const CHANGE_FILTER = 'CHANGE_FILTER';
 export const SET_VALUE = 'SET_VALUE';
 export const REMOVE_VALUE = 'REMOVE_VALUE';

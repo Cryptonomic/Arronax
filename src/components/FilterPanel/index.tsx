@@ -184,6 +184,7 @@ class FilterPanel extends React.Component<Props, States> {
 
   generateFilter = filter => {
     const { values, attributes, value } = this.props;
+    console.log(value);
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);
@@ -199,6 +200,7 @@ class FilterPanel extends React.Component<Props, States> {
         <React.Fragment>
           <HR />
           <FilterInput
+            filter={filter.name}
             InputProps={{ disableUnderline: true }}
             placeholder={`e.g. 123456`}
           />
@@ -206,6 +208,7 @@ class FilterPanel extends React.Component<Props, States> {
           <AndBlock>and</AndBlock>
           <HR />
           <FilterInput
+            filter={filter.name}
             InputProps={{ disableUnderline: true }}
             placeholder={`e.g. 123456`}
           />
@@ -234,8 +237,9 @@ class FilterPanel extends React.Component<Props, States> {
         <React.Fragment>
           <HR />
           <FilterInput
-            placeholder={`Placeholder Here`}
+            filter={filter.name}
             InputProps={{ disableUnderline: true }}
+            placeholder={`Placeholder Here`}
           />
         </React.Fragment>
       );

@@ -9,6 +9,7 @@ import {
   SET_ATTRIBUTES,
   ADD_FILTER,
   REMOVE_FILTER,
+  REMOVE_ALL_FILTERS,
   CHANGE_FILTER,
   SET_VALUES,
   SET_VALUE,
@@ -43,6 +44,11 @@ export const removeFilterAction = actionCreator(
   REMOVE_FILTER,
   'entity',
   'index'
+);
+
+export const removeAllFiltersAction = actionCreator(
+  REMOVE_ALL_FILTERS,
+  'entity'
 );
 
 export const changeFilterAction = actionCreator(

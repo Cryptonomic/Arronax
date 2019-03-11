@@ -14,7 +14,11 @@ import {
   getValue,
 } from '../../reducers/app/selectors';
 import { changeNetwork, fetchItemsAction } from '../../reducers/app/thunks';
-import { setTabAction, removeValueAction } from '../../reducers/app/actions';
+import {
+  setTabAction,
+  removeValueAction,
+  removeAllFiltersAction,
+} from '../../reducers/app/actions';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
 import SettingsPanel from 'components/SettingsPanel';
@@ -107,6 +111,7 @@ export interface Props {
   attributes: object[];
   selectedColumns: any[];
   removeValue: (value: object) => void;
+  removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
@@ -152,6 +157,19 @@ class Arronax extends React.Component<Props, States> {
     this.setState({ isFilterCollapse: false });
   };
 
+  resetValues = () => {
+    const {
+      selectedValues,
+      removeValue,
+      removeAllFilters,
+      selectedEntity,
+    } = this.props;
+    removeAllFilters(selectedEntity);
+    selectedValues.forEach(value => {
+      removeValue(value);
+    });
+  };
+
   render() {
     const {
       isLoading,
@@ -182,6 +200,7 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
+            resetValues={this.resetValues}
             selectedColumns={selectedColumns}
             selectedEntity={selectedEntity}
             isCollapse={isFilterCollapse}
@@ -224,6 +243,8 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  removeAllFilters: (selectedEntity: string) =>
+    dispatch(removeAllFiltersAction(selectedEntity)),
   removeValue: (value: object) => dispatch(removeValueAction(value)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),

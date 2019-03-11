@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import TextField from '@material-ui/core/TextField';
+import { setValueAction } from '../../reducers/app/actions';
 
 const Container = styled.div``;
 const TextInput = styled(TextField)`
@@ -16,30 +18,48 @@ const TextInput = styled(TextField)`
 `;
 
 interface Props {
+  filter?: object;
   inputProps?: object;
   InputProps?: object;
   placeholder?: string;
+  setValue: (value: object) => void;
 }
 
 class FilterInput extends React.Component<Props> {
-  //   handleChange = item => {
-  //     const { onChange } = this.props;
-  //     onChange(item.name);
-  //     this.setState({ anchorEl: null });
-  //   };
+  state = {
+    value: '',
+  };
+
+  handleChange = (event, filter) => {
+    const { setValue } = this.props;
+    this.setState({ value: event.target.value });
+    if (event.target.value.length > 4) {
+      const value = { [filter]: event.target.value };
+      setValue(value);
+    }
+  };
 
   render() {
-    const { placeholder, InputProps, inputProps } = this.props;
+    const { placeholder, InputProps, inputProps, filter } = this.props;
     return (
       <Container>
         <TextInput
+          // value={value}
           inputProps={inputProps}
           InputProps={InputProps}
           placeholder={placeholder}
+          onChange={event => this.handleChange(event, filter)}
         />
       </Container>
     );
   }
 }
 
-export default FilterInput;
+const mapDispatchToProps = dispatch => ({
+  setValue: (value: object) => dispatch(setValueAction(value)),
+});
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(FilterInput);

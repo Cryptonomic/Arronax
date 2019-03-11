@@ -87,10 +87,11 @@ interface Props {
   selectedEntity: string;
   isCollapse: boolean;
   onClose: () => void;
+  resetValues: () => void;
 }
 
 const SettingsPanel: React.StatelessComponent<Props> = props => {
-  const { isCollapse, onClose, selectedColumns } = props;
+  const { isCollapse, onClose, selectedColumns, resetValues } = props;
   return (
     <Collapse in={isCollapse}>
       <Container>
@@ -105,7 +106,7 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
             <ColumnsDisplay selectedColumns={selectedColumns} />
           </DisplayContainer>
           <ButtonsContainer>
-            <ResetButton>
+            <ResetButton onClick={resetValues}>
               <RefreshIcon />
               {'  '}Reset
             </ResetButton>

@@ -17,6 +17,8 @@ const Container = styled.div`
   display: flex;
   border: 1px solid #d8d8d8;
   border-radius: 5px;
+  margin-right: 5px;
+  margin-left: 5px;
 `;
 
 const ButtonShell = styled(Button)`
@@ -75,6 +77,23 @@ const MenuContainer = styled.div`
 `;
 
 const LimitBlock = styled.div`
+  font-size: 0.875rem;
+  font-family: Roboto;
+  background: rgb(245, 245, 245) !important;
+  border-radius: 5px 0 0 5px;
+  border-right: 1px solid #d8d8d8;
+  width: 80px;
+  color: #4a4a4a;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: normal;
+  padding-right: 10px;
+  padding-left: 10px;
+`;
+
+const SortByBlock = styled.div`
   font-size: 0.875rem;
   font-family: Roboto;
   background: rgb(245, 245, 245) !important;
@@ -370,7 +389,10 @@ class ColumnDisplay extends React.Component<Props, States> {
             </Menu>
           </MenuContainer>
         </Container>
-        {/* {'asdfsdafs'} */}
+        <Container>
+          <SortByBlock>SORT BY</SortByBlock>
+          <LimitSelector />
+        </Container>
         <Container>
           <LimitBlock>LIMIT</LimitBlock>
           <LimitSelector />

@@ -9,6 +9,7 @@ import {
   SET_ATTRIBUTES,
   ADD_FILTER,
   REMOVE_FILTER,
+  REMOVE_ALL_FILTERS,
   CHANGE_FILTER,
   SET_ROWS,
   SET_VALUES,
@@ -127,6 +128,11 @@ const appReducer = (state = initialState, action) => {
       filters.splice(action.index, 1);
       selectedFilters[action.entity] = [...filters];
       return { ...state, selectedFilters };
+    }
+    case REMOVE_ALL_FILTERS: {
+      const selectedFilters = state.selectedFilters;
+      selectedFilters[action.entity] = [];
+      return { ...state, selectedFilters: selectedFilters };
     }
     case CHANGE_FILTER: {
       const selectedFilters = state.selectedFilters;

@@ -82,22 +82,42 @@ export const setColumns = (type, items) => {
 //   }
 //   setValue(newVal);
 
-// WILL NEED UPDATE TO V2!
-// export const submitFilters = () => async (dispatch, state) => {
-//   dispatch(initDataAction());
-//   const network = state().app.network;
-//   const filters = state().app.filters;
-//   const entity = state().app.selectedEntity;
-//   dispatch(setLoadingAction(true));
-//   const config = getConfig(network);
-//   const serverInfo = {
-//     url: config.url,
-//     apiKey: config.key,
-//   };
-//   const items = await ConseilOperations[entity](serverInfo, network, filters);
-//   dispatch(setItemsAction(entity, items));
-//   dispatch(setLoadingAction(false));
-// };
+export const submitQuery = () => async (dispatch, state) => {
+  dispatch(setLoadingAction(true));
+  const entity = state().app.selectedEntity;
+  const selectedFilters = state().app.selectedFilters[entity];
+  const network = state().app.network;
+  const attributes = state().app.columns;
+  const selectedValue = state().app.selectedValue;
+  const config = getConfig(network);
+  const limit = state().app.rowCount;
+  const attributeNames = getAttributeNames(attributes, entity);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
+  console.log(selectedFilters);
+  console.log(...attributeNames);
+  console.log(limit);
+  console.log(selectedValue);
+  // let query = blankQuery();
+  // query = addFields(query, ...attributeNames);
+  // query = setLimit(query, 100);
+  // query = addOrdering(
+  //   query,
+  //   attributeNames.includes('block_level') ? 'block_level' : 'level',
+  //   ConseilSortDirection.DESC
+  // );
+  // const items = await executeEntityQuery(
+  //   serverInfo,
+  //   'tezos',
+  //   network,
+  //   entity,
+  //   query
+  // );
+  // await dispatch(setItemsAction(entity, items));
+  dispatch(setLoadingAction(false));
+};
 
 export const fetchAttributes = () => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
