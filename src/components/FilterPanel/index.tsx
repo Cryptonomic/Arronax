@@ -116,6 +116,7 @@ type Props = {
   removeValue: (value: object) => void;
   setValue: (value: object) => void;
   fetchValues: (value: string) => void;
+
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
   changeFilter: (entity: string, filter: object, index: number) => void;

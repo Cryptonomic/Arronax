@@ -26,13 +26,8 @@ interface Props {
 }
 
 class FilterInput extends React.Component<Props> {
-  state = {
-    value: '',
-  };
-
   handleChange = (event, filter) => {
     const { setValue } = this.props;
-    this.setState({ value: event.target.value });
     if (event.target.value.length > 4) {
       const value = { [filter]: event.target.value };
       setValue(value);
@@ -44,7 +39,6 @@ class FilterInput extends React.Component<Props> {
     return (
       <Container>
         <TextInput
-          // value={value}
           inputProps={inputProps}
           InputProps={InputProps}
           placeholder={placeholder}

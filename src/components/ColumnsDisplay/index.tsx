@@ -80,7 +80,6 @@ const MenuContainer = styled.div`
 const LimitBlock = styled.div`
   font-size: 0.875rem;
   font-family: Roboto;
-  margin-right: 20px;
   background: rgb(248, 248, 248) !important;
   border-radius: 5px 0 0 5px;
   border-right: 1px solid #d8d8d8;

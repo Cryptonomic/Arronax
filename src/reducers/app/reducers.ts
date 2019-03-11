@@ -161,9 +161,19 @@ const appReducer = (state = initialState, action) => {
     }
     case SET_VALUE: {
       const value = state.selectedValue;
+      const entity = state.selectedEntity;
+      const filters = state.selectedFilters;
+      const operatorObjects = Object.values(filters[entity]);
+      const operators = operatorObjects.map(operator => operator['operator']);
       const incomingValue = Object.keys(action.value).toString();
+      console.log(operators.includes('BETWEEN'));
       const values = value.filter(val => {
         if (Object.keys(val).toString() !== incomingValue) {
+          return val;
+        } else if (
+          Object.keys(val).toString() === incomingValue &&
+          operators.includes('BETWEEN')
+        ) {
           return val;
         } else {
           return null;

@@ -87,12 +87,23 @@ interface Props {
   selectedColumns: any;
   selectedEntity: string;
   isCollapse: boolean;
+  filterInputVal: string;
+  submitValues: () => void;
+  setFilterInput: (val: string) => void;
   onClose: () => void;
   resetValues: () => void;
 }
 
 const SettingsPanel: React.StatelessComponent<Props> = props => {
-  const { isCollapse, onClose, selectedColumns, resetValues } = props;
+  const {
+    isCollapse,
+    onClose,
+    selectedColumns,
+    resetValues,
+    submitValues,
+    setFilterInput,
+    filterInputVal,
+  } = props;
   return (
     <Collapse in={isCollapse}>
       <Container>
@@ -111,7 +122,7 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
               <RefreshIcon />
               {'  '}Reset
             </ResetButton>
-            <RunButton>Run</RunButton>
+            <RunButton onClick={submitValues}>Run</RunButton>
           </ButtonsContainer>
         </QueryContainer>
       </Container>

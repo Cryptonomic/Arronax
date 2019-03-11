@@ -119,6 +119,7 @@ export interface Props {
 
 export interface States {
   isFilterCollapse: boolean;
+  filterInputVal: string;
 }
 
 class Arronax extends React.Component<Props, States> {
@@ -126,6 +127,7 @@ class Arronax extends React.Component<Props, States> {
     super(props);
     this.state = {
       isFilterCollapse: false,
+      filterInputVal: '',
     };
   }
 
@@ -170,6 +172,15 @@ class Arronax extends React.Component<Props, States> {
     });
   };
 
+  submitValues = () => {
+    const { filterInputVal } = this.state;
+    console.log(filterInputVal);
+  };
+
+  setFilterInput = val => {
+    this.setState({ filterInputVal: val });
+  };
+
   render() {
     const {
       isLoading,
@@ -178,7 +189,7 @@ class Arronax extends React.Component<Props, States> {
       items,
       selectedColumns,
     } = this.props;
-    const { isFilterCollapse } = this.state;
+    const { isFilterCollapse, filterInputVal } = this.state;
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
@@ -200,6 +211,9 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
+            filterInputVal={filterInputVal}
+            setFilterInput={this.setFilterInput}
+            submitValues={this.submitValues}
             resetValues={this.resetValues}
             selectedColumns={selectedColumns}
             selectedEntity={selectedEntity}
