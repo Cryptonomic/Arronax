@@ -87,9 +87,13 @@ interface Props {
   selectedColumns: any;
   selectedEntity: string;
   isCollapse: boolean;
-  filterInputVal: string;
+  filterInputVal: object[];
   submitValues: () => void;
-  setFilterInput: (val: string) => void;
+  setFilterInput: (
+    value: string,
+    filterName: string,
+    filterOperator: string
+  ) => void;
   onClose: () => void;
   resetValues: () => void;
 }
@@ -111,7 +115,10 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
           <CloseIconWrapper />
         </CloseIconContainer>
         <FilterTxt>Filter</FilterTxt>
-        <FilterPanel />
+        <FilterPanel
+          setFilterInput={setFilterInput}
+          filterInputVal={filterInputVal}
+        />
         <DisplayTxt>Display</DisplayTxt>
         <QueryContainer>
           <DisplayContainer>

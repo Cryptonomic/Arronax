@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import TextField from '@material-ui/core/TextField';
 import { setValueAction } from '../../reducers/app/actions';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 const Container = styled.div``;
 const TextInput = styled(TextField)`
@@ -22,28 +23,49 @@ interface Props {
   inputProps?: object;
   InputProps?: object;
   placeholder?: string;
+  filterInputVal: object[];
+  setFilterInput: (
+    val: string,
+    filterName: string,
+    filterOperator: string
+  ) => void;
   setValue: (value: object) => void;
 }
 
 class FilterInput extends React.Component<Props> {
-  handleChange = (event, filter) => {
-    const { setValue } = this.props;
-    if (event.target.value.length > 4) {
-      const value = { [filter]: event.target.value };
-      setValue(value);
-    }
+  // handleChange = (event, filter) => {
+  //   this.handleClick(event, filter);
+  // };
+
+  handleClick = (event, filter) => {
+    const { setFilterInput } = this.props;
+    const newFilter = filter.name.toString();
+    const filterOperator = filter.operator.toString();
+    const value = event.target.value;
+    setFilterInput(value, newFilter, filterOperator);
   };
 
   render() {
-    const { placeholder, InputProps, inputProps, filter } = this.props;
+    const {
+      placeholder,
+      InputProps,
+      inputProps,
+      filter,
+      filterInputVal,
+    } = this.props;
+    console.log(filterInputVal);
     return (
       <Container>
-        <TextInput
-          inputProps={inputProps}
-          InputProps={InputProps}
-          placeholder={placeholder}
-          onChange={event => this.handleChange(event, filter)}
-        />
+        <ClickAwayListener
+          onClickAway={event => this.handleClick(event, filter)}
+        >
+          <TextInput
+            inputProps={inputProps}
+            InputProps={InputProps}
+            placeholder={placeholder}
+            // onChange={event => this.handleChange(event, filter)}
+          />
+        </ClickAwayListener>
       </Container>
     );
   }

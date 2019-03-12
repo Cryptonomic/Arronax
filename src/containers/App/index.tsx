@@ -119,7 +119,7 @@ export interface Props {
 
 export interface States {
   isFilterCollapse: boolean;
-  filterInputVal: string;
+  filterInputVal: any[];
 }
 
 class Arronax extends React.Component<Props, States> {
@@ -127,7 +127,7 @@ class Arronax extends React.Component<Props, States> {
     super(props);
     this.state = {
       isFilterCollapse: false,
-      filterInputVal: '',
+      filterInputVal: [],
     };
   }
 
@@ -177,8 +177,24 @@ class Arronax extends React.Component<Props, States> {
     console.log(filterInputVal);
   };
 
-  setFilterInput = val => {
-    this.setState({ filterInputVal: val });
+  setFilterInput = (val, filterName, filterOperator) => {
+    const { filterInputVal } = this.state;
+    if (filterInputVal.length === 0) {
+      const newValue = { [filterName]: val };
+      this.setState({ filterInputVal: [newValue] });
+    } else if (filterInputVal.length > 0) {
+      const newValues = filterInputVal;
+      let valueNames = [];
+      filterInputVal.forEach(input => valueNames.push(...Object.keys(input)));
+      if (!valueNames.includes(filterName)) {
+        newValues.push({ [filterName]: val });
+      } else if (valueNames.includes(filterName)) {
+        const index = valueNames.indexOf(filterName);
+        newValues.splice(index, 1);
+        newValues.push({ [filterName]: val });
+      }
+      this.setState({ filterInputVal: newValues });
+    }
   };
 
   render() {
@@ -190,6 +206,7 @@ class Arronax extends React.Component<Props, States> {
       selectedColumns,
     } = this.props;
     const { isFilterCollapse, filterInputVal } = this.state;
+    console.log(filterInputVal);
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />

@@ -113,10 +113,15 @@ type Props = {
   attributes: any[];
   filters: object[];
   operators: object[];
+  filterInputVal: object[];
+  setFilterInput: (
+    value: string,
+    filterName: string,
+    filterOperator: string
+  ) => void;
   removeValue: (value: object) => void;
   setValue: (value: object) => void;
   fetchValues: (value: string) => void;
-
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
   changeFilter: (entity: string, filter: object, index: number) => void;
@@ -184,7 +189,13 @@ class FilterPanel extends React.Component<Props, States> {
   };
 
   generateFilter = filter => {
-    const { values, attributes, value } = this.props;
+    const {
+      values,
+      attributes,
+      value,
+      setFilterInput,
+      filterInputVal,
+    } = this.props;
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);
@@ -200,7 +211,9 @@ class FilterPanel extends React.Component<Props, States> {
         <React.Fragment>
           <HR />
           <FilterInput
-            filter={filter.name}
+            setFilterInput={setFilterInput}
+            filterInputVal={filterInputVal}
+            filter={filter}
             InputProps={{ disableUnderline: true }}
             placeholder={`e.g. 123456`}
           />
@@ -208,7 +221,9 @@ class FilterPanel extends React.Component<Props, States> {
           <AndBlock>and</AndBlock>
           <HR />
           <FilterInput
-            filter={filter.name}
+            setFilterInput={setFilterInput}
+            filterInputVal={filterInputVal}
+            filter={filter}
             InputProps={{ disableUnderline: true }}
             placeholder={`e.g. 123456`}
           />
@@ -237,7 +252,9 @@ class FilterPanel extends React.Component<Props, States> {
         <React.Fragment>
           <HR />
           <FilterInput
-            filter={filter.name}
+            setFilterInput={setFilterInput}
+            filterInputVal={filterInputVal}
+            filter={filter}
             InputProps={{ disableUnderline: true }}
             placeholder={`Placeholder Here`}
           />
