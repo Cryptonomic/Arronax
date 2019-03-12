@@ -33,16 +33,30 @@ interface Props {
 }
 
 class FilterInput extends React.Component<Props> {
-  // handleChange = (event, filter) => {
-  //   this.handleClick(event, filter);
-  // };
+  state = {
+    value: '',
+  };
+  handleChange = event => {
+    this.setState({ value: event.target.value });
+  };
 
   handleClick = (event, filter) => {
+    // handle case for clicking on trashcan
+    console.log(event.target.className);
+    const { value } = this.state;
     const { setFilterInput } = this.props;
     const newFilter = filter.name.toString();
     const filterOperator = filter.operator.toString();
-    const value = event.target.value;
-    setFilterInput(value, newFilter, filterOperator);
+    const className = event.target.className;
+    if (
+      className.includes('ResetButton') ||
+      className.includes('RunButton') ||
+      className.includes('MuiInputBase-input-35')
+    ) {
+      return;
+    } else {
+      setFilterInput(value, newFilter, filterOperator);
+    }
   };
 
   render() {
@@ -53,7 +67,6 @@ class FilterInput extends React.Component<Props> {
       filter,
       filterInputVal,
     } = this.props;
-    console.log(filterInputVal);
     return (
       <Container>
         <ClickAwayListener
@@ -63,7 +76,7 @@ class FilterInput extends React.Component<Props> {
             inputProps={inputProps}
             InputProps={InputProps}
             placeholder={placeholder}
-            // onChange={event => this.handleChange(event, filter)}
+            onChange={event => this.handleChange(event)}
           />
         </ClickAwayListener>
       </Container>

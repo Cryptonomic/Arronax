@@ -187,8 +187,19 @@ class Arronax extends React.Component<Props, States> {
       let valueNames = [];
       filterInputVal.forEach(input => valueNames.push(...Object.keys(input)));
       if (!valueNames.includes(filterName)) {
-        newValues.push({ [filterName]: val });
+        if (filterOperator === 'BETWEEN') {
+          newValues.push({ [filterName]: val + '-' });
+        } else {
+          newValues.push({ [filterName]: val });
+        }
       } else if (valueNames.includes(filterName)) {
+        if (filterOperator === 'BETWEEN') {
+          const newValue = newValues.find(
+            value => Object.keys(value).toString() === filterName
+          );
+          const value = { [filterName]: `${Object.keys(newValue) + val}` };
+        }
+        // add case for BETWEEN operator
         const index = valueNames.indexOf(filterName);
         newValues.splice(index, 1);
         newValues.push({ [filterName]: val });
