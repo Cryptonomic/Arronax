@@ -13,8 +13,13 @@ import {
   getColumns,
   getValue,
 } from '../../reducers/app/selectors';
-import { changeNetwork, fetchItemsAction } from '../../reducers/app/thunks';
 import {
+  changeNetwork,
+  fetchItemsAction,
+  submitQuery,
+} from '../../reducers/app/thunks';
+import {
+  setValueAction,
   setTabAction,
   removeValueAction,
   removeAllFiltersAction,
@@ -115,6 +120,8 @@ export interface Props {
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
+  setValue: (type: object[]) => void;
+  submitQuery: () => void;
 }
 
 export interface States {
@@ -173,8 +180,9 @@ class Arronax extends React.Component<Props, States> {
   };
 
   submitValues = () => {
+    const { setValue, submitQuery } = this.props;
     const { filterInputVal } = this.state;
-    console.log(filterInputVal);
+    submitQuery();
   };
 
   setFilterInput = (val, filterName, filterOperator) => {
@@ -188,7 +196,7 @@ class Arronax extends React.Component<Props, States> {
       filterInputVal.forEach(input => valueNames.push(...Object.keys(input)));
       if (!valueNames.includes(filterName)) {
         if (filterOperator === 'BETWEEN') {
-          newValues.push({ [filterName]: val + '-' });
+          newValues.push({ [filterName]: `${val}-` });
         } else {
           newValues.push({ [filterName]: val });
         }
@@ -197,12 +205,15 @@ class Arronax extends React.Component<Props, States> {
           const newValue = newValues.find(
             value => Object.keys(value).toString() === filterName
           );
-          const value = { [filterName]: `${Object.keys(newValue) + val}` };
+          const value = { [filterName]: `${Object.values(newValue) + val}` };
+          const index = valueNames.indexOf(filterName);
+          newValues.splice(index, 1);
+          newValues.push(value);
+        } else {
+          const index = valueNames.indexOf(filterName);
+          newValues.splice(index, 1);
+          newValues.push({ [filterName]: val });
         }
-        // add case for BETWEEN operator
-        const index = valueNames.indexOf(filterName);
-        newValues.splice(index, 1);
-        newValues.push({ [filterName]: val });
       }
       this.setState({ filterInputVal: newValues });
     }
@@ -285,12 +296,14 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  setValue: (value: object[]) => dispatch(setValueAction(value)),
   removeAllFilters: (selectedEntity: string) =>
     dispatch(removeAllFiltersAction(selectedEntity)),
   removeValue: (value: object) => dispatch(removeValueAction(value)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
   fetchItems: (type: string) => dispatch(fetchItemsAction(type)),
+  submitQuery: () => dispatch(submitQuery()),
 });
 
 export default connect(

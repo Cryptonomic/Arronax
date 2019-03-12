@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 import TextField from '@material-ui/core/TextField';
-import { setValueAction } from '../../reducers/app/actions';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 const Container = styled.div``;
@@ -23,13 +21,11 @@ interface Props {
   inputProps?: object;
   InputProps?: object;
   placeholder?: string;
-  filterInputVal: object[];
   setFilterInput: (
     val: string,
     filterName: string,
     filterOperator: string
   ) => void;
-  setValue: (value: object) => void;
 }
 
 class FilterInput extends React.Component<Props> {
@@ -41,8 +37,6 @@ class FilterInput extends React.Component<Props> {
   };
 
   handleClick = (event, filter) => {
-    // handle case for clicking on trashcan
-    console.log(event.target.className);
     const { value } = this.state;
     const { setFilterInput } = this.props;
     const newFilter = filter.name.toString();
@@ -50,7 +44,8 @@ class FilterInput extends React.Component<Props> {
     const className = event.target.className;
     if (
       className.includes('ResetButton') ||
-      className.includes('RunButton') ||
+      className.includes('DeleteIconWrapper') ||
+      // className.includes('RunButton') ||
       className.includes('MuiInputBase-input-35')
     ) {
       return;
@@ -60,13 +55,7 @@ class FilterInput extends React.Component<Props> {
   };
 
   render() {
-    const {
-      placeholder,
-      InputProps,
-      inputProps,
-      filter,
-      filterInputVal,
-    } = this.props;
+    const { placeholder, InputProps, inputProps, filter } = this.props;
     return (
       <Container>
         <ClickAwayListener
@@ -84,11 +73,4 @@ class FilterInput extends React.Component<Props> {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  setValue: (value: object) => dispatch(setValueAction(value)),
-});
-
-export default connect(
-  null,
-  mapDispatchToProps
-)(FilterInput);
+export default FilterInput;

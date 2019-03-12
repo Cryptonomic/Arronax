@@ -166,7 +166,6 @@ const appReducer = (state = initialState, action) => {
       const operatorObjects = Object.values(filters[entity]);
       const operators = operatorObjects.map(operator => operator['operator']);
       const incomingValue = Object.keys(action.value).toString();
-      console.log(operators.includes('BETWEEN'));
       const values = value.filter(val => {
         if (Object.keys(val).toString() !== incomingValue) {
           return val;

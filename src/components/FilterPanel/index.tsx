@@ -212,7 +212,6 @@ class FilterPanel extends React.Component<Props, States> {
           <HR />
           <FilterInput
             setFilterInput={setFilterInput}
-            filterInputVal={filterInputVal}
             filter={filter}
             InputProps={{ disableUnderline: true }}
             placeholder={`e.g. 123456`}
@@ -222,7 +221,6 @@ class FilterPanel extends React.Component<Props, States> {
           <HR />
           <FilterInput
             setFilterInput={setFilterInput}
-            filterInputVal={filterInputVal}
             filter={filter}
             InputProps={{ disableUnderline: true }}
             placeholder={`e.g. 123456`}
@@ -253,7 +251,6 @@ class FilterPanel extends React.Component<Props, States> {
           <HR />
           <FilterInput
             setFilterInput={setFilterInput}
-            filterInputVal={filterInputVal}
             filter={filter}
             InputProps={{ disableUnderline: true }}
             placeholder={`Placeholder Here`}

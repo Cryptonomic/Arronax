@@ -5,7 +5,13 @@ import {
   ConseilSortDirection,
 } from 'conseiljs';
 const { executeEntityQuery } = ConseilDataClient;
-const { blankQuery, addOrdering, addFields, setLimit } = ConseilQueryBuilder;
+const {
+  blankQuery,
+  addOrdering,
+  addFields,
+  setLimit,
+  addPredicate,
+} = ConseilQueryBuilder;
 import {
   setValuesAction,
   setItemsAction,
@@ -16,6 +22,7 @@ import {
   setAttributesAction,
 } from './actions';
 import getConfigs from '../../utils/getconfig';
+import { object } from 'prop-types';
 
 const configs = getConfigs();
 const { getAttributes, getAttributeValues } = ConseilMetadataClient;
@@ -74,13 +81,25 @@ export const setColumns = (type, items) => {
 //   (selectedEntity === 'accounts' && filter.name === 'spendable') ||
 //   (selectedEntity === 'accounts' && filter.name === 'delegate_setable')
 // ) {
-//   if (val !== null) {
-//     const item = val.replace(/\s+/g, '_').toLowerCase();
-//     newVal = item;
-//   } else if (val === null) {
-//     newVal = 'null';
-//   }
+// if (val !== null) {
+//   const item = val.replace(/\s+/g, '_').toLowerCase();
+//   newVal = item;
+// } else if (val === null) {
+//   newVal = 'null';
+// }
 //   setValue(newVal);
+const convertValues = val => {
+  let newVal = [];
+  val.forEach(val => {
+    if (val !== null) {
+      const item = val.replace(/\s+/g, '_').toLowerCase();
+      newVal.push(item);
+    } else if (val === null) {
+      newVal.push(null);
+    }
+  });
+  return newVal[0];
+};
 
 export const submitQuery = () => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
@@ -88,7 +107,7 @@ export const submitQuery = () => async (dispatch, state) => {
   const selectedFilters = state().app.selectedFilters[entity];
   const network = state().app.network;
   const attributes = state().app.columns;
-  const selectedValue = state().app.selectedValue;
+  const selectedValues = state().app.selectedValue;
   const config = getConfig(network);
   const limit = state().app.rowCount;
   const attributeNames = getAttributeNames(attributes, entity);
@@ -96,25 +115,49 @@ export const submitQuery = () => async (dispatch, state) => {
     url: config.url,
     apiKey: config.key,
   };
-  console.log(selectedFilters);
-  console.log(...attributeNames);
-  console.log(limit);
-  console.log(selectedValue);
-  // let query = blankQuery();
-  // query = addFields(query, ...attributeNames);
-  // query = setLimit(query, 100);
+  let valuesToConvert = [];
+  let finalValues = [];
+  selectedValues.forEach(value => {
+    if (entity !== 'blocks') {
+      valuesToConvert.push(...Object.values(value));
+      const newValues = convertValues(valuesToConvert);
+      const key = Object.keys(value).toString();
+      finalValues.push({ key: newValues });
+    } else {
+      finalValues.push(value);
+    }
+  });
+  let query = blankQuery();
+  query = addFields(query, ...attributeNames);
+  selectedFilters.forEach(filter => {
+    finalValues.forEach(value => {
+      if (filter.name === Object.keys(value).toString()) {
+        console.log(Object.values(value));
+        return (query = addPredicate(
+          query,
+          filter.name,
+          filter.operator.toLowerCase(),
+          Object.values(value),
+          false
+        ));
+      }
+    });
+  });
+  query = setLimit(query, limit);
   // query = addOrdering(
   //   query,
   //   attributeNames.includes('block_level') ? 'block_level' : 'level',
   //   ConseilSortDirection.DESC
   // );
-  // const items = await executeEntityQuery(
-  //   serverInfo,
-  //   'tezos',
-  //   network,
-  //   entity,
-  //   query
-  // );
+  console.log(query);
+  const items = await executeEntityQuery(
+    serverInfo,
+    'tezos',
+    network,
+    entity,
+    query
+  );
+  console.log(items);
   // await dispatch(setItemsAction(entity, items));
   dispatch(setLoadingAction(false));
 };
