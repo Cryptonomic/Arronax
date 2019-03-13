@@ -150,11 +150,12 @@ class Arronax extends React.Component<Props, States> {
 
   onChangeTab = async (value: string) => {
     const { changeTab, fetchItems, selectedValues, removeValue } = this.props;
-    selectedValues.forEach(value => {
+    await this.setState({ filterInputVal: [] });
+    await selectedValues.forEach(value => {
       removeValue(value);
     });
-    changeTab(value);
-    fetchItems(value);
+    await changeTab(value);
+    await fetchItems(value);
   };
 
   onFilterCollapse = () => {
@@ -173,6 +174,7 @@ class Arronax extends React.Component<Props, States> {
       removeAllFilters,
       selectedEntity,
     } = this.props;
+    this.setState({ filterInputVal: [] });
     removeAllFilters(selectedEntity);
     selectedValues.forEach(value => {
       removeValue(value);

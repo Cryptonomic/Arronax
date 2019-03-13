@@ -99,27 +99,41 @@ export const submitQuery = () => async (dispatch, state) => {
     url: config.url,
     apiKey: config.key,
   };
+  const lowCardinalities = [
+    'spendable',
+    'delegate_setable',
+    'kind',
+    'spendable',
+    'delegatable',
+    'status',
+  ];
   let valuesToConvert = [];
   let finalValues = [];
   console.log(selectedValues);
   selectedValues.forEach(value => {
     if (entity !== 'blocks') {
-      valuesToConvert.push(...Object.values(value));
-      const newValues = convertValues(valuesToConvert);
       const key = Object.keys(value).toString();
-      finalValues.push({ [key]: newValues });
+      if (lowCardinalities.includes(key)) {
+        valuesToConvert.push(Object.values(value).toString());
+        const newValues = convertValues(valuesToConvert);
+        finalValues.push({ [key]: newValues });
+      } else {
+        finalValues.push(value);
+      }
     } else {
       finalValues.push(value);
     }
   });
+  console.log(finalValues);
   let query = blankQuery();
   query = addFields(query, ...attributeNames);
   selectedFilters.forEach(filter => {
     finalValues.forEach(value => {
       const valueKeys = Object.keys(value).toString();
       const values = Object.values(value).toString();
-      console.log(values.indexOf('-'));
-      if (filter.name === valueKeys && values.indexOf('-') > -1) {
+      if (filter.name === valueKeys && values.indexOf('-') !== -1) {
+        console.log(values);
+        console.log(valueKeys);
         const newValues = values.split('-');
         return (query = addPredicate(
           query,
