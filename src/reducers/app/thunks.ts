@@ -109,7 +109,6 @@ export const submitQuery = () => async (dispatch, state) => {
   ];
   let valuesToConvert = [];
   let finalValues = [];
-  console.log(selectedValues);
   selectedValues.forEach(value => {
     if (entity !== 'blocks') {
       const key = Object.keys(value).toString();
@@ -124,7 +123,6 @@ export const submitQuery = () => async (dispatch, state) => {
       finalValues.push(value);
     }
   });
-  console.log(finalValues);
   let query = blankQuery();
   query = addFields(query, ...attributeNames);
   selectedFilters.forEach(filter => {

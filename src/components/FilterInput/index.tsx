@@ -45,17 +45,6 @@ class FilterInput extends React.Component<Props> {
     if (className.includes('RunButton')) {
       setFilterInput(value, newFilter, filterOperator);
     }
-    // if (
-    //   className.includes('ResetButton') ||
-    //   className.includes('DeleteIconWrapper')
-    //   // className.includes('RunButton') ||
-    // ) {
-    //   return;
-    // } else if (className.includes('MuiInputBase-input-35') && value === '') {
-    //   return;
-    // } else {
-    //   setFilterInput(value, newFilter, filterOperator);
-    // }
   };
 
   render() {
