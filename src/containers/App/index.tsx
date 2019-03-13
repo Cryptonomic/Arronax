@@ -182,19 +182,14 @@ class Arronax extends React.Component<Props, States> {
   submitValues = async () => {
     const { setValue, submitQuery } = this.props;
     const { filterInputVal } = this.state;
-    if (filterInputVal.length > 1) {
-      await filterInputVal.forEach(val => {
-        setValue(val);
-      });
-    } else {
-      await setValue(filterInputVal);
-    }
+    await filterInputVal.forEach(val => {
+      setValue(val);
+    });
     await submitQuery();
   };
 
   setFilterInput = (val, filterName, filterOperator) => {
     const { filterInputVal } = this.state;
-    // console.log(val, filterName, filterOperator);
     if (filterInputVal.length === 0 && filterOperator === 'BETWEEN') {
       const newValue = { [filterName]: `${val}-` };
       this.setState({ filterInputVal: [newValue] });

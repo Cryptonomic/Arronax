@@ -86,66 +86,75 @@ const convertValues = val => {
 };
 
 export const submitQuery = () => async (dispatch, state) => {
-  // dispatch(setLoadingAction(true));
-  // const entity = state().app.selectedEntity;
-  // const selectedFilters = state().app.selectedFilters[entity];
-  // const network = state().app.network;
-  // const attributes = state().app.columns;
-  // const selectedValues = state().app.selectedValue;
-  // const config = getConfig(network);
-  // const limit = state().app.rowCount;
-  // const attributeNames = getAttributeNames(attributes, entity);
-  // const serverInfo = {
-  //   url: config.url,
-  //   apiKey: config.key,
-  // };
-  // let valuesToConvert = [];
-  // let finalValues = [];
-  // selectedValues.forEach(value => {
-  //   console.log(Object.values(value));
-  //   console.log(typeof Object.values(value));
-  //   if (entity !== 'blocks') {
-  //     valuesToConvert.push(...Object.values(value));
-  //     const newValues = convertValues(valuesToConvert);
-  //     const key = Object.keys(value).toString();
-  //     finalValues.push({ [key]: newValues });
-  //   } else {
-  //     finalValues.push(value);
-  //   }
-  // });
-  // let query = blankQuery();
-  // query = addFields(query, ...attributeNames);
-  // selectedFilters.forEach(filter => {
-  //   console.log(filter.name);
-  //   finalValues.forEach(value => {
-  //     if (filter.name === Object.keys(value).toString()) {
-  //       return (query = addPredicate(
-  //         query,
-  //         filter.name,
-  //         filter.operator.toLowerCase(),
-  //         Object.values(value),
-  //         false
-  //       ));
-  //     }
-  //   });
-  // });
-  // query = setLimit(query, limit);
+  dispatch(setLoadingAction(true));
+  const entity = state().app.selectedEntity;
+  const selectedFilters = state().app.selectedFilters[entity];
+  const network = state().app.network;
+  const attributes = state().app.columns;
+  const selectedValues = state().app.selectedValue;
+  const config = getConfig(network);
+  const limit = state().app.rowCount;
+  const attributeNames = getAttributeNames(attributes, entity);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
+  let valuesToConvert = [];
+  let finalValues = [];
+  console.log(selectedValues);
+  selectedValues.forEach(value => {
+    if (entity !== 'blocks') {
+      valuesToConvert.push(...Object.values(value));
+      const newValues = convertValues(valuesToConvert);
+      const key = Object.keys(value).toString();
+      finalValues.push({ [key]: newValues });
+    } else {
+      finalValues.push(value);
+    }
+  });
+  let query = blankQuery();
+  query = addFields(query, ...attributeNames);
+  selectedFilters.forEach(filter => {
+    finalValues.forEach(value => {
+      const valueKeys = Object.keys(value).toString();
+      const values = Object.values(value).toString();
+      console.log(values.indexOf('-'));
+      if (filter.name === valueKeys && values.indexOf('-') > -1) {
+        const newValues = values.split('-');
+        return (query = addPredicate(
+          query,
+          filter.name,
+          filter.operator.toLowerCase(),
+          newValues,
+          false
+        ));
+      } else if (filter.name === valueKeys) {
+        return (query = addPredicate(
+          query,
+          filter.name,
+          filter.operator.toLowerCase(),
+          Object.values(value),
+          false
+        ));
+      }
+    });
+  });
+  query = setLimit(query, limit);
   // console.log(query);
   // // query = addOrdering(
   // //   query,
   // //   attributeNames.includes('block_level') ? 'block_level' : 'level',
   // //   ConseilSortDirection.DESC
   // // );
-  // const items = await executeEntityQuery(
-  //   serverInfo,
-  //   'tezos',
-  //   network,
-  //   entity,
-  //   query
-  // );
-  // console.log(items);
-  // await dispatch(setItemsAction(entity, items));
-  // dispatch(setLoadingAction(false));
+  const items = await executeEntityQuery(
+    serverInfo,
+    'tezos',
+    network,
+    entity,
+    query
+  );
+  await dispatch(setItemsAction(entity, items));
+  dispatch(setLoadingAction(false));
 };
 
 export const fetchAttributes = () => async (dispatch, state) => {
