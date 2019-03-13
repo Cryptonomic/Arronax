@@ -72,22 +72,6 @@ export const setColumns = (type, items) => {
   };
 };
 
-// THIS WILL BE NECESSARY TO DESTRUCTURE selectedValues THAT MEET THESE CRITERIA WHEN SUBMITTING A QUERY
-// if (
-//   (selectedEntity === 'operations' && filter.name === 'kind') ||
-//   (selectedEntity === 'operations' && filter.name === 'status') ||
-//   (selectedEntity === 'operations' && filter.name === 'spendable') ||
-//   (selectedEntity === 'operations' && filter.name === 'delegatable') ||
-//   (selectedEntity === 'accounts' && filter.name === 'spendable') ||
-//   (selectedEntity === 'accounts' && filter.name === 'delegate_setable')
-// ) {
-// if (val !== null) {
-//   const item = val.replace(/\s+/g, '_').toLowerCase();
-//   newVal = item;
-// } else if (val === null) {
-//   newVal = 'null';
-// }
-//   setValue(newVal);
 const convertValues = val => {
   let newVal = [];
   val.forEach(val => {
@@ -102,64 +86,66 @@ const convertValues = val => {
 };
 
 export const submitQuery = () => async (dispatch, state) => {
-  dispatch(setLoadingAction(true));
-  const entity = state().app.selectedEntity;
-  const selectedFilters = state().app.selectedFilters[entity];
-  const network = state().app.network;
-  const attributes = state().app.columns;
-  const selectedValues = state().app.selectedValue;
-  const config = getConfig(network);
-  const limit = state().app.rowCount;
-  const attributeNames = getAttributeNames(attributes, entity);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.key,
-  };
-  let valuesToConvert = [];
-  let finalValues = [];
-  selectedValues.forEach(value => {
-    if (entity !== 'blocks') {
-      valuesToConvert.push(...Object.values(value));
-      const newValues = convertValues(valuesToConvert);
-      const key = Object.keys(value).toString();
-      finalValues.push({ key: newValues });
-    } else {
-      finalValues.push(value);
-    }
-  });
-  let query = blankQuery();
-  query = addFields(query, ...attributeNames);
-  selectedFilters.forEach(filter => {
-    finalValues.forEach(value => {
-      if (filter.name === Object.keys(value).toString()) {
-        console.log(Object.values(value));
-        return (query = addPredicate(
-          query,
-          filter.name,
-          filter.operator.toLowerCase(),
-          Object.values(value),
-          false
-        ));
-      }
-    });
-  });
-  query = setLimit(query, limit);
-  // query = addOrdering(
-  //   query,
-  //   attributeNames.includes('block_level') ? 'block_level' : 'level',
-  //   ConseilSortDirection.DESC
+  // dispatch(setLoadingAction(true));
+  // const entity = state().app.selectedEntity;
+  // const selectedFilters = state().app.selectedFilters[entity];
+  // const network = state().app.network;
+  // const attributes = state().app.columns;
+  // const selectedValues = state().app.selectedValue;
+  // const config = getConfig(network);
+  // const limit = state().app.rowCount;
+  // const attributeNames = getAttributeNames(attributes, entity);
+  // const serverInfo = {
+  //   url: config.url,
+  //   apiKey: config.key,
+  // };
+  // let valuesToConvert = [];
+  // let finalValues = [];
+  // selectedValues.forEach(value => {
+  //   console.log(Object.values(value));
+  //   console.log(typeof Object.values(value));
+  //   if (entity !== 'blocks') {
+  //     valuesToConvert.push(...Object.values(value));
+  //     const newValues = convertValues(valuesToConvert);
+  //     const key = Object.keys(value).toString();
+  //     finalValues.push({ [key]: newValues });
+  //   } else {
+  //     finalValues.push(value);
+  //   }
+  // });
+  // let query = blankQuery();
+  // query = addFields(query, ...attributeNames);
+  // selectedFilters.forEach(filter => {
+  //   console.log(filter.name);
+  //   finalValues.forEach(value => {
+  //     if (filter.name === Object.keys(value).toString()) {
+  //       return (query = addPredicate(
+  //         query,
+  //         filter.name,
+  //         filter.operator.toLowerCase(),
+  //         Object.values(value),
+  //         false
+  //       ));
+  //     }
+  //   });
+  // });
+  // query = setLimit(query, limit);
+  // console.log(query);
+  // // query = addOrdering(
+  // //   query,
+  // //   attributeNames.includes('block_level') ? 'block_level' : 'level',
+  // //   ConseilSortDirection.DESC
+  // // );
+  // const items = await executeEntityQuery(
+  //   serverInfo,
+  //   'tezos',
+  //   network,
+  //   entity,
+  //   query
   // );
-  console.log(query);
-  const items = await executeEntityQuery(
-    serverInfo,
-    'tezos',
-    network,
-    entity,
-    query
-  );
-  console.log(items);
+  // console.log(items);
   // await dispatch(setItemsAction(entity, items));
-  dispatch(setLoadingAction(false));
+  // dispatch(setLoadingAction(false));
 };
 
 export const fetchAttributes = () => async (dispatch, state) => {

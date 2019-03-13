@@ -42,16 +42,20 @@ class FilterInput extends React.Component<Props> {
     const newFilter = filter.name.toString();
     const filterOperator = filter.operator.toString();
     const className = event.target.className;
-    if (
-      className.includes('ResetButton') ||
-      className.includes('DeleteIconWrapper') ||
-      // className.includes('RunButton') ||
-      className.includes('MuiInputBase-input-35')
-    ) {
-      return;
-    } else {
+    if (className.includes('RunButton')) {
       setFilterInput(value, newFilter, filterOperator);
     }
+    // if (
+    //   className.includes('ResetButton') ||
+    //   className.includes('DeleteIconWrapper')
+    //   // className.includes('RunButton') ||
+    // ) {
+    //   return;
+    // } else if (className.includes('MuiInputBase-input-35') && value === '') {
+    //   return;
+    // } else {
+    //   setFilterInput(value, newFilter, filterOperator);
+    // }
   };
 
   render() {
