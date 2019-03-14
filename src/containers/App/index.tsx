@@ -191,6 +191,8 @@ class Arronax extends React.Component<Props, States> {
   };
 
   setFilterInput = (val, filterName, filterOperator) => {
+    // develop BetweenFilterInput and add a - before the value it passes through to the state
+    // then you can know if the new value is before the - or after the - and change the state accordingly
     const { filterInputVal } = this.state;
     if (filterInputVal.length === 0 && filterOperator === 'BETWEEN') {
       const newValue = { [filterName]: `${val}-` };
@@ -199,9 +201,9 @@ class Arronax extends React.Component<Props, States> {
       const newValue = { [filterName]: `${val}` };
       this.setState({ filterInputVal: [newValue] });
     } else if (filterInputVal.length > 0) {
-      const newValues = filterInputVal;
       let valueNames = [];
       filterInputVal.forEach(input => valueNames.push(...Object.keys(input)));
+      const newValues = filterInputVal;
       if (!valueNames.includes(filterName)) {
         if (filterOperator === 'BETWEEN') {
           newValues.push({ [filterName]: `${val}-` });
@@ -210,6 +212,7 @@ class Arronax extends React.Component<Props, States> {
         }
       } else if (valueNames.includes(filterName)) {
         if (filterOperator === 'BETWEEN') {
+          console.log(val);
           const newValue = newValues.find(
             value => Object.keys(value).toString() === filterName
           );
@@ -220,6 +223,7 @@ class Arronax extends React.Component<Props, States> {
         } else {
           const index = valueNames.indexOf(filterName);
           newValues.splice(index, 1);
+          console.log(newValues);
           newValues.push({ [filterName]: val });
         }
       }
@@ -236,6 +240,7 @@ class Arronax extends React.Component<Props, States> {
       selectedColumns,
     } = this.props;
     const { isFilterCollapse, filterInputVal } = this.state;
+    console.log(filterInputVal);
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />

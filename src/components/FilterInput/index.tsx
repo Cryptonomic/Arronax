@@ -39,12 +39,12 @@ class FilterInput extends React.Component<Props> {
   handleClick = (event, filter) => {
     const { value } = this.state;
     const { setFilterInput } = this.props;
-    const newFilter = filter.name.toString();
+    const filterName = filter.name.toString();
     const filterOperator = filter.operator.toString();
     const className = event.target.className;
     if (!className.baseVal) {
       if (className.includes('RunButton')) {
-        setFilterInput(value, newFilter, filterOperator);
+        setFilterInput(value, filterName, filterOperator);
       }
     }
   };
