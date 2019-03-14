@@ -130,8 +130,6 @@ export const submitQuery = () => async (dispatch, state) => {
       const valueKeys = Object.keys(value).toString();
       const values = Object.values(value).toString();
       if (filter.name === valueKeys && values.indexOf('-') !== -1) {
-        console.log(values);
-        console.log(valueKeys);
         const newValues = values.split('-');
         return (query = addPredicate(
           query,

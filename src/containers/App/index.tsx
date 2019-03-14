@@ -236,7 +236,6 @@ class Arronax extends React.Component<Props, States> {
       selectedColumns,
     } = this.props;
     const { isFilterCollapse, filterInputVal } = this.state;
-    console.log(filterInputVal);
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
