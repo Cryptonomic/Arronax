@@ -4,18 +4,25 @@ import styled from 'styled-components';
 import PlusIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
+import { fetchValues } from '../../reducers/app/thunks';
 import {
+  getValues,
   getEntity,
   getAttributes,
   getSelectedFilters,
   getOperators,
+  getValue,
 } from '../../reducers/app/selectors';
 import {
+  setValueAction,
+  removeValueAction,
   addFilterAction,
   removeFilterAction,
   changeFilterAction,
 } from '../../reducers/app/actions';
 import FilterSelect from '../FilterSelect';
+import ValueSelect from '../ValueSelect';
+import FilterInput from '../FilterInput';
 
 const Container = styled.div`
   width: 100%;
@@ -81,6 +88,18 @@ const HR = styled.div`
   background-color: #ecedef;
 `;
 
+const AndBlock = styled.div`
+  color: #4a4a4a;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 400;
+  padding-right: 10px;
+  padding-left: 10px;
+`;
+
 const attrTabValue = {
   blocks: 'block',
   operations: 'operation',
@@ -88,10 +107,15 @@ const attrTabValue = {
 };
 
 type Props = {
+  value: object[];
+  values: object[];
   selectedEntity: string;
-  attributes: Array<object>;
+  attributes: any[];
   filters: object[];
   operators: object[];
+  removeValue: (value: object) => void;
+  setValue: (value: object) => void;
+  fetchValues: (value: string) => void;
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
   changeFilter: (entity: string, filter: object, index: number) => void;
@@ -107,13 +131,33 @@ class FilterPanel extends React.Component<Props, States> {
     addFilter(selectedEntity);
   };
 
-  onRemoveFilter = index => {
-    const { removeFilter, selectedEntity } = this.props;
+  onRemoveFilter = (index, filter) => {
+    const { removeFilter, selectedEntity, removeValue, value } = this.props;
+    value.forEach(val => {
+      if (Object.keys(val).toString() === filter.name) {
+        removeValue(val);
+      }
+    });
     removeFilter(selectedEntity, index);
   };
 
   onFilterNameChange = (val, index) => {
-    const { filters, selectedEntity, changeFilter } = this.props;
+    const {
+      filters,
+      selectedEntity,
+      changeFilter,
+      attributes,
+      fetchValues,
+    } = this.props;
+    const cards = attributes.reduce((acc, current) => {
+      if (current.cardinality < 15 && current.cardinality !== null) {
+        acc.push(current.name);
+      }
+      return acc;
+    }, []);
+    if (cards.includes(val)) {
+      fetchValues(val);
+    }
     const selectedFilter: any = filters[index];
     selectedFilter.name = val;
     changeFilter(selectedEntity, selectedFilter, index);
@@ -124,6 +168,78 @@ class FilterPanel extends React.Component<Props, States> {
     const selectedFilter: any = filters[index];
     selectedFilter.operator = val;
     changeFilter(selectedEntity, selectedFilter, index);
+  };
+
+  onFilterAttributeChange = (val, index) => {
+    const { filters, selectedEntity, changeFilter } = this.props;
+    const selectedFilter: any = filters[index];
+    selectedFilter.attribute = val;
+    changeFilter(selectedEntity, selectedFilter, index);
+  };
+
+  onValueChange = val => {
+    const { setValue } = this.props;
+    setValue(val);
+  };
+
+  generateFilter = filter => {
+    const { values, attributes, value } = this.props;
+    const cards = attributes.reduce((acc, current) => {
+      if (current.cardinality < 15 && current.cardinality !== null) {
+        acc.push(current.name);
+      }
+      return acc;
+    }, []);
+    if (!filter.operator) {
+      return;
+    } else if (filter.operator === 'ISNULL') {
+      return;
+    } else if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
+      return (
+        <React.Fragment>
+          <HR />
+          <FilterInput
+            InputProps={{ disableUnderline: true }}
+            placeholder={`e.g. 123456`}
+          />
+          <HR />
+          <AndBlock>and</AndBlock>
+          <HR />
+          <FilterInput
+            InputProps={{ disableUnderline: true }}
+            placeholder={`e.g. 123456`}
+          />
+        </React.Fragment>
+      );
+    } else if (
+      filter.operator !== 'ISNULL' &&
+      filter.operator !== 'BETWEEN' &&
+      filter.operator !== 'IN' &&
+      cards.includes(filter.name)
+    ) {
+      return (
+        <React.Fragment>
+          <HR />
+          <ValueSelect
+            filter={filter.name}
+            value={value}
+            placeholder={`Select Value`}
+            items={values}
+            onChange={value => this.onValueChange(value)}
+          />
+        </React.Fragment>
+      );
+    } else {
+      return (
+        <React.Fragment>
+          <HR />
+          <FilterInput
+            placeholder={`Placeholder Here`}
+            InputProps={{ disableUnderline: true }}
+          />
+        </React.Fragment>
+      );
+    }
   };
 
   render() {
@@ -164,10 +280,11 @@ class FilterPanel extends React.Component<Props, States> {
                     }
                   />
                 )}
+                {this.generateFilter(filter)}
               </FilterItemGr>
               <IconButton
                 aria-label="Delete"
-                onClick={() => this.onRemoveFilter(index)}
+                onClick={() => this.onRemoveFilter(index, filter)}
               >
                 <DeleteIconWrapper />
               </IconButton>
@@ -195,10 +312,15 @@ const mapStateToProps = state => ({
   selectedEntity: getEntity(state),
   attributes: getAttributes(state),
   filters: getSelectedFilters(state),
+  values: getValues(state),
+  value: getValue(state),
   operators: getOperators(state),
 });
 
 const mapDispatchToProps = dispatch => ({
+  fetchValues: (value: string) => dispatch(fetchValues(value)),
+  removeValue: (value: object) => dispatch(removeValueAction(value)),
+  setValue: (value: object) => dispatch(setValueAction(value)),
   addFilter: (entity: string) => dispatch(addFilterAction(entity)),
   removeFilter: (entity: string, index: number) =>
     dispatch(removeFilterAction(entity, index)),

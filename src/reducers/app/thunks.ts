@@ -7,6 +7,7 @@ import {
 const { executeEntityQuery } = ConseilDataClient;
 const { blankQuery, addOrdering, addFields, setLimit } = ConseilQueryBuilder;
 import {
+  setValuesAction,
   setItemsAction,
   initDataAction,
   setLoadingAction,
@@ -17,7 +18,7 @@ import {
 import getConfigs from '../../utils/getconfig';
 
 const configs = getConfigs();
-const { getAttributes } = ConseilMetadataClient;
+const { getAttributes, getAttributeValues } = ConseilMetadataClient;
 
 const getConfig = val => {
   return configs.find(conf => conf.value === val);
@@ -64,6 +65,23 @@ export const setColumns = (type, items) => {
   };
 };
 
+// THIS WILL BE NECESSARY TO DESTRUCTURE selectedValues THAT MEET THESE CRITERIA WHEN SUBMITTING A QUERY
+// if (
+//   (selectedEntity === 'operations' && filter.name === 'kind') ||
+//   (selectedEntity === 'operations' && filter.name === 'status') ||
+//   (selectedEntity === 'operations' && filter.name === 'spendable') ||
+//   (selectedEntity === 'operations' && filter.name === 'delegatable') ||
+//   (selectedEntity === 'accounts' && filter.name === 'spendable') ||
+//   (selectedEntity === 'accounts' && filter.name === 'delegate_setable')
+// ) {
+//   if (val !== null) {
+//     const item = val.replace(/\s+/g, '_').toLowerCase();
+//     newVal = item;
+//   } else if (val === null) {
+//     newVal = 'null';
+//   }
+//   setValue(newVal);
+
 // WILL NEED UPDATE TO V2!
 // export const submitFilters = () => async (dispatch, state) => {
 //   dispatch(initDataAction());
@@ -89,14 +107,40 @@ export const fetchAttributes = () => async (dispatch, state) => {
   const network = state().app.network;
   dispatch(setLoadingAction(true));
   const config = getConfig(network);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
   const attributes = await getAttributes(
-    config.url,
-    config.key,
+    serverInfo,
     'tezos',
     network,
     selectedEntity
   );
   dispatch(setAttributesAction(selectedEntity, attributes));
+  dispatch(setLoadingAction(false));
+};
+
+export const fetchValues = (attribute: string) => async (dispatch, state) => {
+  const selectedEntity = state().app.selectedEntity;
+  const network = state().app.network;
+  dispatch(setLoadingAction(true));
+  const config = getConfig(network);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
+  const values = await getAttributeValues(
+    serverInfo,
+    'tezos',
+    network,
+    selectedEntity,
+    attribute
+  );
+  const newValues = values.map(newValue => {
+    return { [attribute]: newValue };
+  });
+  dispatch(setValuesAction(newValues));
   dispatch(setLoadingAction(false));
 };
 

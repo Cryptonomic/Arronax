@@ -60,24 +60,6 @@ const FadeOut = styled.span`
   pointer-events: none;
 `;
 
-const FadeTop = styled(FadeOut)`
-  top: 38px;
-  background-image: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.8) 50%
-  );
-  z-index: 10;
-`;
-
-const FadeBottom = styled(FadeOut)`
-  bottom: 8px;
-  background-image: linear-gradient(
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.8) 50%
-  );
-`;
-
 const MainMenuItem = styled(MenuItem)`
   &&& {
     &[class*='selected'] {
@@ -95,37 +77,26 @@ const MainMenuItem = styled(MenuItem)`
 `;
 
 interface Props {
-  value: string;
+  filter: object;
+  value: any;
   items: Array<object>;
   placeholder?: string;
-  onChange: (value: string) => void;
+  onChange: (value: object) => void;
 }
 
 type States = {
   anchorEl: boolean;
-  isFadeBottom: boolean;
-  isFadeTop: boolean;
 };
 
-class FilterSelect extends React.Component<Props, States> {
+class ValueSelect extends React.Component<Props, States> {
   state = {
     anchorEl: null,
-    isFadeBottom: false,
-    isFadeTop: false,
   };
 
-  componentDidMount() {
-    const { items } = this.props;
-    if (items.length < 8) {
-      this.setState({ isFadeBottom: false });
-    } else {
-      this.setState({ isFadeBottom: true });
-    }
-  }
-
   handleChange = item => {
-    const { onChange } = this.props;
-    onChange(item.name);
+    const { onChange, filter } = this.props;
+    const newValue = { [filter.toString()]: item };
+    onChange(newValue);
     this.setState({ anchorEl: null });
   };
 
@@ -137,25 +108,34 @@ class FilterSelect extends React.Component<Props, States> {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  handleScroll = event => {
-    const { items } = this.props;
-    const pos = event.target.scrollTop;
-    const remainCount = items.length - 8;
-    if (pos === 0) {
-      this.setState({ isFadeTop: false, isFadeBottom: true });
-    } else if (pos < remainCount * 46) {
-      this.setState({ isFadeTop: true, isFadeBottom: true });
-    } else {
-      this.setState({ isFadeTop: true, isFadeBottom: false });
-    }
-  };
-
   render() {
-    const { anchorEl, isFadeBottom, isFadeTop } = this.state;
-    const { items, value, placeholder } = this.props;
-
-    const selectedItem: any = items.find((item: any) => item.name === value);
-    const menuTitle = value ? selectedItem.displayName : placeholder;
+    const { anchorEl } = this.state;
+    const { items, value, placeholder, filter } = this.props;
+    let newValue = [];
+    value.forEach(val => {
+      if (val[filter.toString()] !== undefined) {
+        newValue.push(val[filter.toString()]);
+      }
+    });
+    let newItems = [];
+    items.forEach(item => {
+      if (Object.keys(item) == filter) {
+        if (item[filter.toString()] !== null) {
+          const items = item[filter.toString()].replace(/(^|_)./g, s =>
+            s
+              .split('_')
+              .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+              .join(' ')
+          );
+          newItems.push(items);
+        } else if (item.toString() === null) {
+          newItems.push('Null');
+        }
+      }
+    });
+    const selectedItem: any = newItems.find((item: any) => item == newValue[0]);
+    const menuTitle =
+      value && selectedItem !== undefined ? selectedItem : placeholder;
 
     return (
       <Container>
@@ -182,19 +162,17 @@ class FilterSelect extends React.Component<Props, States> {
             }}
           >
             <NestedTitle>{placeholder}</NestedTitle>
-            <MenuContents onScroll={this.handleScroll}>
-              {isFadeTop && <FadeTop />}
-              {items.map((item: any, index) => (
+            <MenuContents>
+              {newItems.map((item: any, index) => (
                 <MainMenuItem
                   onClick={() => this.handleChange(item)}
                   key={index}
-                  selected={value === item.name}
+                  selected={item === newValue[0]}
                 >
-                  {item.displayName}
+                  {item}
                 </MainMenuItem>
               ))}
             </MenuContents>
-            {isFadeBottom && <FadeBottom />}
           </Menu>
         </MenuContainer>
       </Container>
@@ -202,4 +180,4 @@ class FilterSelect extends React.Component<Props, States> {
   }
 }
 
-export default FilterSelect;
+export default ValueSelect;

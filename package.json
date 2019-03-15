@@ -45,7 +45,7 @@
   "dependencies": {
     "@material-ui/core": "^3.8.3",
     "@material-ui/icons": "^3.0.1",
-    "conseiljs": "^0.2.0",
+    "conseiljs": "^0.2.1",
     "moment": "^2.23.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",

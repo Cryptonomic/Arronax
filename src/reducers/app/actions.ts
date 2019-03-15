@@ -9,7 +9,10 @@ import {
   SET_ATTRIBUTES,
   ADD_FILTER,
   REMOVE_FILTER,
-  CHANGE_FILTER
+  CHANGE_FILTER,
+  SET_VALUES,
+  SET_VALUE,
+  REMOVE_VALUE,
 } from './types';
 import actionCreator from '../../utils/reduxHelpers';
 
@@ -27,10 +30,27 @@ export const initDataAction = actionCreator(INIT_DATA);
 
 export const setNetworkAction = actionCreator(SET_NETWORK, 'network');
 
-export const setAttributesAction = actionCreator(SET_ATTRIBUTES, 'entity', 'attributes');
+export const setAttributesAction = actionCreator(
+  SET_ATTRIBUTES,
+  'entity',
+  'attributes'
+);
 
 export const addFilterAction = actionCreator(ADD_FILTER, 'entity');
 
-export const removeFilterAction = actionCreator(REMOVE_FILTER, 'entity', 'index');
+export const removeFilterAction = actionCreator(
+  REMOVE_FILTER,
+  'entity',
+  'index'
+);
 
-export const changeFilterAction = actionCreator(CHANGE_FILTER, 'entity', 'filter', 'index');
+export const changeFilterAction = actionCreator(
+  CHANGE_FILTER,
+  'entity',
+  'filter',
+  'index'
+);
+
+export const setValuesAction = actionCreator(SET_VALUES, 'values');
+export const setValueAction = actionCreator(SET_VALUE, 'value');
+export const removeValueAction = actionCreator(REMOVE_VALUE, 'value');

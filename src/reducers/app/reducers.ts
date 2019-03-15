@@ -10,16 +10,21 @@ import {
   ADD_FILTER,
   REMOVE_FILTER,
   CHANGE_FILTER,
+  SET_VALUES,
+  SET_VALUE,
+  REMOVE_VALUE,
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
 import { TezosAccount, TezosBlock, TezosOperation } from '../../types';
+import ValueSelect from 'components/ValueSelect';
 const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
 
 export interface AppState {
   filters: ConseilQuery;
   network: string;
   blocks: TezosBlock[];
+  values: Array<string>;
   columns: object;
   attributes: object;
   operators: object[];
@@ -28,6 +33,7 @@ export interface AppState {
   operations: TezosOperation[];
   isLoading: boolean;
   selectedEntity: string;
+  selectedValue: Array<string>;
 }
 
 const initialState: AppState = {
@@ -62,10 +68,12 @@ const initialState: AppState = {
     operations: [],
     accounts: [],
   },
+  values: [],
   accounts: [],
   operations: [],
   isLoading: false,
   selectedEntity: 'blocks',
+  selectedValue: [],
 };
 
 const initEntities = {
@@ -123,6 +131,37 @@ const appReducer = (state = initialState, action) => {
       filters[action.index] = action.filter;
       selectedFilters[action.entity] = [...filters];
       return { ...state, selectedFilters };
+    }
+    case SET_VALUES: {
+      const values = state.values;
+      const newValues = [...values, ...action.values];
+      return { ...state, values: newValues };
+    }
+    case REMOVE_VALUE: {
+      const value = state.selectedValue;
+      const incomingValue = Object.keys(action.value).toString();
+      const values = value.filter(val => {
+        if (Object.keys(val).toString() !== incomingValue) {
+          return val;
+        } else {
+          return null;
+        }
+      });
+      const finalValues = [...values];
+      return { ...state, selectedValue: finalValues };
+    }
+    case SET_VALUE: {
+      const value = state.selectedValue;
+      const incomingValue = Object.keys(action.value).toString();
+      const values = value.filter(val => {
+        if (Object.keys(val).toString() !== incomingValue) {
+          return val;
+        } else {
+          return null;
+        }
+      });
+      const finalValues = [...values, action.value];
+      return { ...state, selectedValue: finalValues };
     }
   }
   return state;
