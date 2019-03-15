@@ -12,6 +12,7 @@ import {
   getItems,
   getColumns,
   getValue,
+  getSelectedFilters,
 } from '../../reducers/app/selectors';
 import {
   changeNetwork,
@@ -115,6 +116,7 @@ export interface Props {
   items: object[];
   attributes: object[];
   selectedColumns: any[];
+  selectedFilters: object[];
   removeValue: (value: object) => void;
   removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
@@ -182,10 +184,18 @@ class Arronax extends React.Component<Props, States> {
   };
 
   submitValues = async () => {
-    const { setValue, submitQuery } = this.props;
+    const { setValue, submitQuery, selectedFilters, removeValue } = this.props;
     const { filterInputVal } = this.state;
-    await filterInputVal.forEach(val => {
-      setValue(val);
+    await filterInputVal.forEach((val, index) => {
+      selectedFilters.forEach(filter => {
+        if (Object.keys(val)[0] !== Object.values(filter)[0]) {
+          filterInputVal.splice(index, 1);
+          this.setState({ filterInputVal: filterInputVal });
+          removeValue(val);
+        } else {
+          setValue(val);
+        }
+      });
     });
     await submitQuery();
   };
@@ -194,7 +204,7 @@ class Arronax extends React.Component<Props, States> {
     console.log(val);
     const { filterInputVal } = this.state;
     if (filterInputVal.length === 0) {
-      const newValue = { [filterName]: `${val}` };
+      const newValue = { [filterName]: val };
       this.setState({ filterInputVal: [newValue] });
     } else if (filterInputVal.length > 0) {
       let valueNames = [];
@@ -301,6 +311,7 @@ class Arronax extends React.Component<Props, States> {
 }
 
 const mapStateToProps = (state: any) => ({
+  selectedFilters: getSelectedFilters(state),
   selectedValues: getValue(state),
   selectedColumns: getColumns(state),
   isLoading: getLoading(state),
