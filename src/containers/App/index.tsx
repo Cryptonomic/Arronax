@@ -206,12 +206,25 @@ class Arronax extends React.Component<Props, States> {
           const currentValue = filterInputVal.find(
             value => Object.keys(value).toString() === filterName
           );
-          const value = {
-            [filterName]: `${Object.values(currentValue) + val}`,
-          };
-          const index = valueNames.indexOf(filterName);
-          filterInputVal.splice(index, 1);
-          filterInputVal.push(value);
+          if (
+            Object.values(currentValue)
+              .toString()
+              .includes('-')
+          ) {
+            const index = valueNames.indexOf(filterName);
+            filterInputVal.splice(index, 1);
+            const value = {
+              [filterName]: val,
+            };
+            filterInputVal.push(value);
+          } else {
+            const value = {
+              [filterName]: `${Object.values(currentValue) + val}`,
+            };
+            const index = valueNames.indexOf(filterName);
+            filterInputVal.splice(index, 1);
+            filterInputVal.push(value);
+          }
         } else {
           const index = valueNames.indexOf(filterName);
           filterInputVal.splice(index, 1);
