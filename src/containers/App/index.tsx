@@ -187,47 +187,38 @@ class Arronax extends React.Component<Props, States> {
     await filterInputVal.forEach(val => {
       setValue(val);
     });
-    await submitQuery();
+    // await submitQuery();
   };
 
   setFilterInput = (val, filterName, filterOperator) => {
-    // develop BetweenFilterInput and add a - before the value it passes through to the state
-    // then you can know if the new value is before the - or after the - and change the state accordingly
+    console.log(val);
     const { filterInputVal } = this.state;
-    if (filterInputVal.length === 0 && filterOperator === 'BETWEEN') {
-      const newValue = { [filterName]: `${val}-` };
-      this.setState({ filterInputVal: [newValue] });
-    } else if (filterInputVal.length === 0 && filterOperator !== 'BETWEEN') {
+    if (filterInputVal.length === 0) {
       const newValue = { [filterName]: `${val}` };
       this.setState({ filterInputVal: [newValue] });
     } else if (filterInputVal.length > 0) {
       let valueNames = [];
       filterInputVal.forEach(input => valueNames.push(...Object.keys(input)));
-      const newValues = filterInputVal;
       if (!valueNames.includes(filterName)) {
-        if (filterOperator === 'BETWEEN') {
-          newValues.push({ [filterName]: `${val}-` });
-        } else {
-          newValues.push({ [filterName]: val });
-        }
+        filterInputVal.push({ [filterName]: val });
       } else if (valueNames.includes(filterName)) {
         if (filterOperator === 'BETWEEN') {
-          console.log(val);
-          const newValue = newValues.find(
+          const currentValue = filterInputVal.find(
             value => Object.keys(value).toString() === filterName
           );
-          const value = { [filterName]: `${Object.values(newValue) + val}` };
+          const value = {
+            [filterName]: `${Object.values(currentValue) + val}`,
+          };
           const index = valueNames.indexOf(filterName);
-          newValues.splice(index, 1);
-          newValues.push(value);
+          filterInputVal.splice(index, 1);
+          filterInputVal.push(value);
         } else {
           const index = valueNames.indexOf(filterName);
-          newValues.splice(index, 1);
-          console.log(newValues);
-          newValues.push({ [filterName]: val });
+          filterInputVal.splice(index, 1);
+          filterInputVal.push({ [filterName]: val });
         }
       }
-      this.setState({ filterInputVal: newValues });
+      this.setState({ filterInputVal: filterInputVal });
     }
   };
 

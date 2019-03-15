@@ -162,7 +162,6 @@ const appReducer = (state = initialState, action) => {
     case SET_VALUE: {
       const value = state.selectedValue;
       const incomingValue = Object.keys(action.value).toString();
-      console.log(incomingValue);
       const values = [];
       value.forEach(val => {
         if (Object.keys(val).toString() !== incomingValue) {

@@ -23,6 +23,8 @@ import {
 import FilterSelect from '../FilterSelect';
 import ValueSelect from '../ValueSelect';
 import FilterInput from '../FilterInput';
+import StartBetweenInput from '../StartBetweenInput';
+import EndBetweenInput from '../EndBetweenInput';
 
 const Container = styled.div`
   width: 100%;
@@ -210,7 +212,7 @@ class FilterPanel extends React.Component<Props, States> {
       return (
         <React.Fragment>
           <HR />
-          <FilterInput
+          <StartBetweenInput
             setFilterInput={setFilterInput}
             filter={filter}
             InputProps={{ disableUnderline: true }}
@@ -219,7 +221,7 @@ class FilterPanel extends React.Component<Props, States> {
           <HR />
           <AndBlock>and</AndBlock>
           <HR />
-          <FilterInput
+          <EndBetweenInput
             setFilterInput={setFilterInput}
             filter={filter}
             InputProps={{ disableUnderline: true }}
