@@ -196,7 +196,6 @@ class FilterPanel extends React.Component<Props, States> {
       attributes,
       value,
       setFilterInput,
-      filterInputVal,
     } = this.props;
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {

@@ -189,24 +189,25 @@ class Arronax extends React.Component<Props, States> {
     await filterInputVal.forEach((val, index) => {
       selectedFilters.forEach(filter => {
         if (Object.keys(val)[0] !== Object.values(filter)[0]) {
-          filterInputVal.splice(index, 1);
-          this.setState({ filterInputVal: filterInputVal });
+          // filterInputVal.splice(index, 1)
+          // this.setState({filterInputVal: filterInputVal})
           removeValue(val);
         } else {
           setValue(val);
         }
       });
     });
-    await submitQuery();
+    // await submitQuery();
   };
 
   setFilterInput = (val, filterName, filterOperator) => {
-    console.log(val);
     const { filterInputVal } = this.state;
+    const { selectedFilters } = this.props;
     if (filterInputVal.length === 0) {
       const newValue = { [filterName]: val };
       this.setState({ filterInputVal: [newValue] });
     } else if (filterInputVal.length > 0) {
+      console.log(selectedFilters);
       let valueNames = [];
       filterInputVal.forEach(input => valueNames.push(...Object.keys(input)));
       if (!valueNames.includes(filterName)) {
@@ -216,6 +217,7 @@ class Arronax extends React.Component<Props, States> {
           value => Object.keys(value).toString() === filterName
         );
         const currentValues = Object.values(currentValue).toString();
+        // check against selectedFilters instead of valueNames
         if (filterOperator === 'BETWEEN' && currentValues.includes('-')) {
           const index = valueNames.indexOf(filterName);
           filterInputVal.splice(index, 1);
@@ -240,6 +242,7 @@ class Arronax extends React.Component<Props, States> {
           filterInputVal.push(newValue);
         }
       }
+      console.log(filterInputVal);
       this.setState({ filterInputVal: filterInputVal });
     }
   };
