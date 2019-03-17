@@ -184,30 +184,40 @@ class Arronax extends React.Component<Props, States> {
   };
 
   submitValues = async () => {
-    const { setValue, submitQuery, selectedFilters, removeValue } = this.props;
+    const {
+      setValue,
+      submitQuery,
+      selectedFilters,
+      removeValue,
+      selectedValues,
+    } = this.props;
     const { filterInputVal } = this.state;
+    const filterNames = await selectedFilters.map(
+      filter => Object.values(filter)[0]
+    );
+    await selectedValues.forEach(value => {
+      if (!filterNames.includes(Object.keys(value)[0])) {
+        removeValue(value);
+      }
+    });
+    //compare selected filters to selected values and remove and value that's not there
     await filterInputVal.forEach((val, index) => {
-      selectedFilters.forEach(filter => {
-        if (Object.keys(val)[0] !== Object.values(filter)[0]) {
-          // filterInputVal.splice(index, 1)
-          // this.setState({filterInputVal: filterInputVal})
-          removeValue(val);
-        } else {
-          setValue(val);
-        }
-      });
+      setValue(val);
     });
     // await submitQuery();
   };
 
-  setFilterInput = (val, filterName, filterOperator) => {
+  setEmptyState = () => {
+    this.setState({ filterInputVal: [] });
+  };
+
+  setFilterInput = async (val, filterName, filterOperator) => {
     const { filterInputVal } = this.state;
     const { selectedFilters } = this.props;
     if (filterInputVal.length === 0) {
       const newValue = { [filterName]: val };
       this.setState({ filterInputVal: [newValue] });
     } else if (filterInputVal.length > 0) {
-      console.log(selectedFilters);
       let valueNames = [];
       filterInputVal.forEach(input => valueNames.push(...Object.keys(input)));
       if (!valueNames.includes(filterName)) {
@@ -217,7 +227,6 @@ class Arronax extends React.Component<Props, States> {
           value => Object.keys(value).toString() === filterName
         );
         const currentValues = Object.values(currentValue).toString();
-        // check against selectedFilters instead of valueNames
         if (filterOperator === 'BETWEEN' && currentValues.includes('-')) {
           const index = valueNames.indexOf(filterName);
           filterInputVal.splice(index, 1);
@@ -242,8 +251,16 @@ class Arronax extends React.Component<Props, States> {
           filterInputVal.push(newValue);
         }
       }
-      console.log(filterInputVal);
-      this.setState({ filterInputVal: filterInputVal });
+      const currentFilters = selectedFilters.map(filter =>
+        Object.values(filter)[0].toString()
+      );
+      const finalValues = [];
+      filterInputVal.forEach(val => {
+        if (currentFilters.includes(Object.keys(val).toString())) {
+          finalValues.push(val);
+        }
+      });
+      this.setState({ filterInputVal: finalValues });
     }
   };
 
