@@ -200,15 +200,10 @@ class Arronax extends React.Component<Props, States> {
         removeValue(value);
       }
     });
-    //compare selected filters to selected values and remove and value that's not there
     await filterInputVal.forEach((val, index) => {
       setValue(val);
     });
     // await submitQuery();
-  };
-
-  setEmptyState = () => {
-    this.setState({ filterInputVal: [] });
   };
 
   setFilterInput = async (val, filterName, filterOperator) => {
