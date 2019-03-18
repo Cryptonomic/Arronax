@@ -156,7 +156,7 @@ export const submitQuery = () => async (dispatch, state) => {
     });
   });
   query = setLimit(query, limit);
-  // Add this to set ordering
+  // Add this to set ordering, this will be another ticket
   // // query = addOrdering(
   // //   query,
   // //   attributeNames.includes('block_level') ? 'block_level' : 'level',
