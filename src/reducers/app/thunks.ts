@@ -159,7 +159,7 @@ export const submitQuery = () => async (dispatch, state) => {
   query = addOrdering(
     query,
     attributeNames.includes('block_level') ? 'block_level' : 'level',
-    ConseilSortDirection.DESC
+    ConseilSortDirection.ASC
   );
   const items = await executeEntityQuery(
     serverInfo,
