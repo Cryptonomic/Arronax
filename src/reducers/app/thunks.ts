@@ -155,12 +155,12 @@ export const submitQuery = () => async (dispatch, state) => {
     });
   });
   query = setLimit(query, limit);
-  // Add this to set ordering, this will be another ticket
-  // // query = addOrdering(
-  // //   query,
-  // //   attributeNames.includes('block_level') ? 'block_level' : 'level',
-  // //   ConseilSortDirection.DESC
-  // // );
+  // Add this to set ordering
+  query = addOrdering(
+    query,
+    attributeNames.includes('block_level') ? 'block_level' : 'level',
+    ConseilSortDirection.DESC
+  );
   const items = await executeEntityQuery(
     serverInfo,
     'tezos',
