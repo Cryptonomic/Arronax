@@ -85,7 +85,6 @@ const CloseIconWrapper = styled(CloseIcon)`
 
 interface Props {
   selectedColumns: any;
-  selectedEntity: string;
   isCollapse: boolean;
   filterInputVal: object[];
   submitValues: () => void;

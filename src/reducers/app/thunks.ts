@@ -60,18 +60,6 @@ const getInitialColumns = (entity, columns) => {
   }
 };
 
-export const setItems = (type, items) => {
-  return dispatch => {
-    dispatch(setItemsAction(type, items));
-  };
-};
-
-export const setColumns = (type, items) => {
-  return dispatch => {
-    dispatch(setColumnsAction(type, items));
-  };
-};
-
 const convertValues = val => {
   let newVal = [];
   val.forEach(val => {
@@ -83,6 +71,18 @@ const convertValues = val => {
     }
   });
   return newVal[0];
+};
+
+export const setItems = (type, items) => {
+  return dispatch => {
+    dispatch(setItemsAction(type, items));
+  };
+};
+
+export const setColumns = (type, items) => {
+  return dispatch => {
+    dispatch(setColumnsAction(type, items));
+  };
 };
 
 export const submitQuery = () => async (dispatch, state) => {
@@ -114,6 +114,8 @@ export const submitQuery = () => async (dispatch, state) => {
       const key = Object.keys(value).toString();
       if (lowCardinalities.includes(key)) {
         valuesToConvert.push(Object.values(value).toString());
+        // Convert values with low cardinalities from their display values (eg: Seed Nonce Revelation)
+        // into the required values for interacting with ConseilJS (eg: seed_nonce_revelation)
         const newValues = convertValues(valuesToConvert);
         finalValues.push({ [key]: newValues });
       } else {
@@ -130,6 +132,9 @@ export const submitQuery = () => async (dispatch, state) => {
       const valueKeys = Object.keys(value).toString();
       const values = Object.values(value).toString();
       if (filter.name === valueKeys && values.indexOf('-') !== -1) {
+        // Find corresponding filters and their values and add them to the query
+        // Find between values (eg: 12000-1400) and split them at the -
+        // This returns ["1200", "1400"] which is the correct way to interact with ConseilJS with between values
         const newValues = values.split('-');
         return (query = addPredicate(
           query,
@@ -139,6 +144,7 @@ export const submitQuery = () => async (dispatch, state) => {
           false
         ));
       } else if (filter.name === valueKeys) {
+        // Find corresponding filters and their values and add them to the query
         return (query = addPredicate(
           query,
           filter.name,
@@ -150,7 +156,7 @@ export const submitQuery = () => async (dispatch, state) => {
     });
   });
   query = setLimit(query, limit);
-  // console.log(query);
+  // Add this to set ordering
   // // query = addOrdering(
   // //   query,
   // //   attributeNames.includes('block_level') ? 'block_level' : 'level',

@@ -195,15 +195,18 @@ class Arronax extends React.Component<Props, States> {
     const filterNames = await selectedFilters.map(
       filter => Object.values(filter)[0]
     );
+    // Remove values from Redux state that are not represented in local state
     await selectedValues.forEach(value => {
       if (!filterNames.includes(Object.keys(value)[0])) {
         removeValue(value);
       }
     });
-    await filterInputVal.forEach((val, index) => {
+    // Loop through each value in state and set the value in Redux's state
+    await filterInputVal.forEach(val => {
       setValue(val);
     });
-    // await submitQuery();
+    // Submit the query to ConseilJS
+    await submitQuery();
   };
 
   setFilterInput = async (val, filterName, filterOperator) => {
@@ -223,6 +226,7 @@ class Arronax extends React.Component<Props, States> {
         );
         const currentValues = Object.values(currentValue).toString();
         if (filterOperator === 'BETWEEN' && currentValues.includes('-')) {
+          // Replace between value with new between value
           const index = valueNames.indexOf(filterName);
           filterInputVal.splice(index, 1);
           const value = {
@@ -233,6 +237,7 @@ class Arronax extends React.Component<Props, States> {
           filterOperator === 'BETWEEN' &&
           !currentValues.includes('-')
         ) {
+          // Add second part of between value to first part of foudn between value
           const value = {
             [filterName]: `${Object.values(currentValue) + val}`,
           };
@@ -268,7 +273,6 @@ class Arronax extends React.Component<Props, States> {
       selectedColumns,
     } = this.props;
     const { isFilterCollapse, filterInputVal } = this.state;
-    console.log(filterInputVal);
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
@@ -295,7 +299,6 @@ class Arronax extends React.Component<Props, States> {
             submitValues={this.submitValues}
             resetValues={this.resetValues}
             selectedColumns={selectedColumns}
-            selectedEntity={selectedEntity}
             isCollapse={isFilterCollapse}
             onClose={this.onCloseFilter}
           />

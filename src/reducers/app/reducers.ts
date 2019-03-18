@@ -167,9 +167,6 @@ const appReducer = (state = initialState, action) => {
         if (Object.keys(val).toString() !== incomingValue) {
           values.push(val);
         }
-        // else if (Object.keys(val).toString() === incomingValue) {
-        //   return null;
-        // }
       });
       const finalValues = [...values, action.value];
       return { ...state, selectedValue: finalValues };
