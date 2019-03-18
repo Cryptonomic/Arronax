@@ -212,7 +212,7 @@ class Arronax extends React.Component<Props, States> {
   setFilterInput = async (val, filterName, filterOperator) => {
     const { filterInputVal } = this.state;
     const { selectedFilters } = this.props;
-    // This takes all values from inputs and sets them to state for query submission
+    // This takes all values from inputs and sets them to local state for query submission
     if (filterInputVal.length === 0) {
       const newValue = { [filterName]: val };
       this.setState({ filterInputVal: [newValue] });
@@ -246,7 +246,7 @@ class Arronax extends React.Component<Props, States> {
           filterInputVal.splice(index, 1);
           filterInputVal.push(value);
         } else {
-          // Check for prior matching value and replace with new value
+          // Check for prior matching value and replace with new value (for all values that don't have between values)
           const index = valueNames.indexOf(filterName);
           filterInputVal.splice(index, 1);
           const newValue = { [filterName]: val };
