@@ -79,7 +79,7 @@ const MainMenuItem = styled(MenuItem)`
 interface Props {
   filter: object;
   value: any;
-  items: Array<object>;
+  availableValues: Array<object>;
   placeholder?: string;
   onChange: (value: object) => void;
 }
@@ -93,9 +93,9 @@ class ValueSelect extends React.Component<Props, States> {
     anchorEl: null,
   };
 
-  handleChange = item => {
+  handleChange = value => {
     const { onChange, filter } = this.props;
-    const newValue = { [filter.toString()]: item };
+    const newValue = { [filter.toString()]: value };
     onChange(newValue);
     this.setState({ anchorEl: null });
   };
@@ -110,15 +110,15 @@ class ValueSelect extends React.Component<Props, States> {
 
   render() {
     const { anchorEl } = this.state;
-    const { items, value, placeholder, filter } = this.props;
+    const { availableValues, value, placeholder, filter } = this.props;
     let newValue = [];
     value.forEach(val => {
       if (val[filter.toString()] !== undefined) {
         newValue.push(val[filter.toString()]);
       }
     });
-    let newItems = [];
-    items.forEach(item => {
+    let valuesAvailable = [];
+    availableValues.forEach(item => {
       if (Object.keys(item) == filter) {
         if (item[filter.toString()] !== null) {
           const items = item[filter.toString()].replace(/(^|_)./g, s =>
@@ -127,13 +127,15 @@ class ValueSelect extends React.Component<Props, States> {
               .map(s => s.charAt(0).toUpperCase() + s.substring(1))
               .join(' ')
           );
-          newItems.push(items);
+          valuesAvailable.push(items);
         } else if (item.toString() === null) {
-          newItems.push('Null');
+          valuesAvailable.push('Null');
         }
       }
     });
-    const selectedItem: any = newItems.find((item: any) => item == newValue[0]);
+    const selectedItem: any = valuesAvailable.find(
+      (item: any) => item == newValue[0]
+    );
     const menuTitle =
       value && selectedItem !== undefined ? selectedItem : placeholder;
 
@@ -163,13 +165,13 @@ class ValueSelect extends React.Component<Props, States> {
           >
             <NestedTitle>{placeholder}</NestedTitle>
             <MenuContents>
-              {newItems.map((item: any, index) => (
+              {valuesAvailable.map((value: any, index) => (
                 <MainMenuItem
-                  onClick={() => this.handleChange(item)}
+                  onClick={() => this.handleChange(value)}
                   key={index}
-                  selected={item === newValue[0]}
+                  selected={value === newValue[0]}
                 >
-                  {item}
+                  {value}
                 </MainMenuItem>
               ))}
             </MenuContents>

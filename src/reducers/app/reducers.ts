@@ -12,7 +12,7 @@ import {
   REMOVE_ALL_FILTERS,
   CHANGE_FILTER,
   SET_ROWS,
-  SET_VALUES,
+  SET_AVAILABLE_VALUES,
   SET_VALUE,
   REMOVE_VALUE,
 } from './types';
@@ -26,7 +26,7 @@ export interface AppState {
   filters: ConseilQuery;
   network: string;
   blocks: TezosBlock[];
-  values: Array<string>;
+  availableValues: Array<string>;
   columns: object;
   attributes: object;
   operators: object[];
@@ -71,7 +71,7 @@ const initialState: AppState = {
     operations: [],
     accounts: [],
   },
-  values: [],
+  availableValues: [],
   accounts: [],
   operations: [],
   isLoading: false,
@@ -141,8 +141,8 @@ const appReducer = (state = initialState, action) => {
       selectedFilters[action.entity] = [...filters];
       return { ...state, selectedFilters };
     }
-    case SET_VALUES: {
-      const values = state.values;
+    case SET_AVAILABLE_VALUES: {
+      const values = state.availableValues;
       const newValues = [...values, ...action.values];
       return { ...state, values: newValues };
     }

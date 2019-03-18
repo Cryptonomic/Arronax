@@ -13,7 +13,7 @@ const {
   addPredicate,
 } = ConseilQueryBuilder;
 import {
-  setValuesAction,
+  setAvailableValuesAction,
   setItemsAction,
   initDataAction,
   setLoadingAction,
@@ -214,7 +214,7 @@ export const fetchValues = (attribute: string) => async (dispatch, state) => {
   const newValues = values.map(newValue => {
     return { [attribute]: newValue };
   });
-  dispatch(setValuesAction(newValues));
+  dispatch(setAvailableValuesAction(newValues));
   dispatch(setLoadingAction(false));
 };
 

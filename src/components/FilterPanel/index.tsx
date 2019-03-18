@@ -6,7 +6,7 @@ import DeleteIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
 import { fetchValues } from '../../reducers/app/thunks';
 import {
-  getValues,
+  getAvailableValues,
   getEntity,
   getAttributes,
   getSelectedFilters,
@@ -110,7 +110,7 @@ const attrTabValue = {
 
 type Props = {
   value: object[];
-  values: object[];
+  availableValues: object[];
   selectedEntity: string;
   attributes: any[];
   filters: object[];
@@ -191,12 +191,7 @@ class FilterPanel extends React.Component<Props, States> {
   };
 
   generateFilter = filter => {
-    const {
-      values,
-      attributes,
-      value,
-      setFilterInput,
-    } = this.props;
+    const { availableValues, attributes, value, setFilterInput } = this.props;
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);
@@ -241,7 +236,7 @@ class FilterPanel extends React.Component<Props, States> {
             filter={filter.name}
             value={value}
             placeholder={`Select Value`}
-            items={values}
+            availableValues={availableValues}
             onChange={value => this.onValueChange(value)}
           />
         </React.Fragment>
@@ -331,7 +326,7 @@ const mapStateToProps = state => ({
   selectedEntity: getEntity(state),
   attributes: getAttributes(state),
   filters: getSelectedFilters(state),
-  values: getValues(state),
+  availableValues: getAvailableValues(state),
   value: getValue(state),
   operators: getOperators(state),
 });

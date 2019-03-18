@@ -47,9 +47,9 @@ export const getSelectedFilters = createSelector(
   apps => apps.selectedFilters[apps.selectedEntity]
 );
 
-export const getValues = createSelector(
+export const getAvailableValues = createSelector(
   getAppState,
-  apps => apps.values
+  apps => apps.availableValues
 );
 
 export const getValue = createSelector(

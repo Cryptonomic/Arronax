@@ -11,7 +11,7 @@ import {
   REMOVE_FILTER,
   REMOVE_ALL_FILTERS,
   CHANGE_FILTER,
-  SET_VALUES,
+  SET_AVAILABLE_VALUES,
   SET_VALUE,
   SET_ROWS,
   REMOVE_VALUE,
@@ -58,7 +58,10 @@ export const changeFilterAction = actionCreator(
   'index'
 );
 
-export const setValuesAction = actionCreator(SET_VALUES, 'values');
+export const setAvailableValuesAction = actionCreator(
+  SET_AVAILABLE_VALUES,
+  'availableValues'
+);
 export const setValueAction = actionCreator(SET_VALUE, 'value');
 export const setRowsAction = actionCreator(SET_ROWS, 'rows');
 export const removeValueAction = actionCreator(REMOVE_VALUE, 'value');
