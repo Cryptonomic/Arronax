@@ -22,7 +22,6 @@ import {
   setAttributesAction,
 } from './actions';
 import getConfigs from '../../utils/getconfig';
-import { object } from 'prop-types';
 
 const configs = getConfigs();
 const { getAttributes, getAttributeValues } = ConseilMetadataClient;
@@ -91,7 +90,7 @@ export const submitQuery = () => async (dispatch, state) => {
   const selectedFilters = state().app.selectedFilters[entity];
   const network = state().app.network;
   const attributes = state().app.columns;
-  const selectedValues = state().app.selectedValue;
+  const selectedValues = state().app.selectedValues;
   const config = getConfig(network);
   const limit = state().app.rowCount;
   const attributeNames = getAttributeNames(attributes, entity);

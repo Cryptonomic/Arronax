@@ -13,7 +13,7 @@ import {
   CHANGE_FILTER,
   SET_ROWS,
   SET_AVAILABLE_VALUES,
-  SET_VALUE,
+  SET_SELECTED_VALUES,
   REMOVE_VALUE,
 } from './types';
 
@@ -35,7 +35,7 @@ export interface AppState {
   operations: TezosOperation[];
   isLoading: boolean;
   selectedEntity: string;
-  selectedValue: Array<object>;
+  selectedValues: Array<object>;
   rowCount: number;
 }
 
@@ -76,7 +76,7 @@ const initialState: AppState = {
   operations: [],
   isLoading: false,
   selectedEntity: 'blocks',
-  selectedValue: [],
+  selectedValues: [],
   rowCount: 10,
 };
 
@@ -143,12 +143,12 @@ const appReducer = (state = initialState, action) => {
     }
     case SET_AVAILABLE_VALUES: {
       const values = state.availableValues;
-      const newValues = [...values, ...action.values];
-      return { ...state, values: newValues };
+      const newValues = [...values, ...action.availableValues];
+      return { ...state, availableValues: newValues };
     }
     case REMOVE_VALUE: {
-      const value = state.selectedValue;
-      const incomingValue = Object.keys(action.value).toString();
+      const value = state.selectedValues;
+      const incomingValue = Object.keys(action.selectedValue).toString();
       const values = value.filter(val => {
         if (Object.keys(val).toString() !== incomingValue) {
           return val;
@@ -157,19 +157,19 @@ const appReducer = (state = initialState, action) => {
         }
       });
       const finalValues = [...values];
-      return { ...state, selectedValue: finalValues };
+      return { ...state, selectedValues: finalValues };
     }
-    case SET_VALUE: {
-      const value = state.selectedValue;
-      const incomingValue = Object.keys(action.value).toString();
+    case SET_SELECTED_VALUES: {
+      const value = state.selectedValues;
+      const incomingValue = Object.keys(action.selectedValue).toString();
       const values = [];
       value.forEach(val => {
         if (Object.keys(val).toString() !== incomingValue) {
           values.push(val);
         }
       });
-      const finalValues = [...values, action.value];
-      return { ...state, selectedValue: finalValues };
+      const finalValues = [...values, action.selectedValue];
+      return { ...state, selectedValues: finalValues };
     }
     case SET_ROWS: {
       return { ...state, rowCount: action.rows };

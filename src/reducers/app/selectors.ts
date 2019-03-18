@@ -52,9 +52,9 @@ export const getAvailableValues = createSelector(
   apps => apps.availableValues
 );
 
-export const getValue = createSelector(
+export const getSelectedValues = createSelector(
   getAppState,
-  apps => apps.selectedValue
+  apps => apps.selectedValues
 );
 
 export const getRows = createSelector(

@@ -43,7 +43,7 @@ class StartBetweenInput extends React.Component<Props> {
     const filterName = filter.name.toString();
     const filterOperator = filter.operator.toString();
     const className = event.target.className;
-    if (!className.baseVal) {
+    if (!className.baseVal && className.baseVal !== '') {
       if (className.includes('RunButton')) {
         setFilterInput(value, filterName, filterOperator);
       }

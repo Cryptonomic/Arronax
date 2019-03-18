@@ -11,10 +11,10 @@ import {
   getAttributes,
   getSelectedFilters,
   getOperators,
-  getValue,
+  getSelectedValues,
 } from '../../reducers/app/selectors';
 import {
-  setValueAction,
+  setSelectedValuesAction,
   removeValueAction,
   addFilterAction,
   removeFilterAction,
@@ -109,7 +109,7 @@ const attrTabValue = {
 };
 
 type Props = {
-  value: object[];
+  selectedValues: object[];
   availableValues: object[];
   selectedEntity: string;
   attributes: any[];
@@ -122,7 +122,7 @@ type Props = {
     filterOperator: string
   ) => void;
   removeValue: (value: object) => void;
-  setValue: (value: object) => void;
+  setSelectedValues: (value: object) => void;
   fetchValues: (value: string) => void;
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
@@ -140,8 +140,13 @@ class FilterPanel extends React.Component<Props, States> {
   };
 
   onRemoveFilter = (index, filter) => {
-    const { removeFilter, selectedEntity, removeValue, value } = this.props;
-    value.forEach(val => {
+    const {
+      removeFilter,
+      selectedEntity,
+      removeValue,
+      selectedValues,
+    } = this.props;
+    selectedValues.forEach(val => {
       if (Object.keys(val).toString() === filter.name) {
         removeValue(val);
       }
@@ -186,12 +191,17 @@ class FilterPanel extends React.Component<Props, States> {
   };
 
   onValueChange = val => {
-    const { setValue } = this.props;
-    setValue(val);
+    const { setSelectedValues } = this.props;
+    setSelectedValues(val);
   };
 
   generateFilter = filter => {
-    const { availableValues, attributes, value, setFilterInput } = this.props;
+    const {
+      availableValues,
+      attributes,
+      selectedValues,
+      setFilterInput,
+    } = this.props;
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);
@@ -234,7 +244,7 @@ class FilterPanel extends React.Component<Props, States> {
           <HR />
           <ValueSelect
             filter={filter.name}
-            value={value}
+            selectedValues={selectedValues}
             placeholder={`Select Value`}
             availableValues={availableValues}
             onChange={value => this.onValueChange(value)}
@@ -327,14 +337,15 @@ const mapStateToProps = state => ({
   attributes: getAttributes(state),
   filters: getSelectedFilters(state),
   availableValues: getAvailableValues(state),
-  value: getValue(state),
+  selectedValues: getSelectedValues(state),
   operators: getOperators(state),
 });
 
 const mapDispatchToProps = dispatch => ({
   fetchValues: (value: string) => dispatch(fetchValues(value)),
   removeValue: (value: object) => dispatch(removeValueAction(value)),
-  setValue: (value: object) => dispatch(setValueAction(value)),
+  setSelectedValues: (value: object) =>
+    dispatch(setSelectedValuesAction(value)),
   addFilter: (entity: string) => dispatch(addFilterAction(entity)),
   removeFilter: (entity: string, index: number) =>
     dispatch(removeFilterAction(entity, index)),

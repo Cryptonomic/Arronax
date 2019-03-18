@@ -11,7 +11,7 @@ import {
   getEntity,
   getItems,
   getColumns,
-  getValue,
+  getSelectedValues,
   getSelectedFilters,
 } from '../../reducers/app/selectors';
 import {
@@ -20,7 +20,7 @@ import {
   submitQuery,
 } from '../../reducers/app/thunks';
 import {
-  setValueAction,
+  setSelectedValuesAction,
   setTabAction,
   removeValueAction,
   removeAllFiltersAction,
@@ -122,7 +122,7 @@ export interface Props {
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
-  setValue: (type: object[]) => void;
+  setSelectedValues: (type: object[]) => void;
   submitQuery: () => void;
 }
 
@@ -185,7 +185,7 @@ class Arronax extends React.Component<Props, States> {
 
   submitValues = async () => {
     const {
-      setValue,
+      setSelectedValues,
       submitQuery,
       selectedFilters,
       removeValue,
@@ -203,7 +203,7 @@ class Arronax extends React.Component<Props, States> {
     });
     // Loop through each value in state and set the value in Redux's state
     await filterInputVal.forEach(val => {
-      setValue(val);
+      setSelectedValues(val);
     });
     // Submit the query to ConseilJS
     await submitQuery();
@@ -333,7 +333,7 @@ class Arronax extends React.Component<Props, States> {
 
 const mapStateToProps = (state: any) => ({
   selectedFilters: getSelectedFilters(state),
-  selectedValues: getValue(state),
+  selectedValues: getSelectedValues(state),
   selectedColumns: getColumns(state),
   isLoading: getLoading(state),
   network: getNetwork(state),
@@ -343,7 +343,8 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setValue: (value: object[]) => dispatch(setValueAction(value)),
+  setSelectedValues: (value: object[]) =>
+    dispatch(setSelectedValuesAction(value)),
   removeAllFilters: (selectedEntity: string) =>
     dispatch(removeAllFiltersAction(selectedEntity)),
   removeValue: (value: object) => dispatch(removeValueAction(value)),

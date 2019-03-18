@@ -44,7 +44,7 @@ class EndBetweenInput extends React.Component<Props> {
     const filterOperator = filter.operator.toString();
     const className = event.target.className;
     const finalValue = '-' + value;
-    if (!className.baseVal) {
+    if (!className.baseVal && className.baseVal !== '') {
       if (className.includes('RunButton')) {
         setFilterInput(finalValue, filterName, filterOperator);
       }

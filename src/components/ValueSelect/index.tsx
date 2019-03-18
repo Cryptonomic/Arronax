@@ -78,7 +78,7 @@ const MainMenuItem = styled(MenuItem)`
 
 interface Props {
   filter: object;
-  value: any;
+  selectedValues: any;
   availableValues: Array<object>;
   placeholder?: string;
   onChange: (value: object) => void;
@@ -110,9 +110,9 @@ class ValueSelect extends React.Component<Props, States> {
 
   render() {
     const { anchorEl } = this.state;
-    const { availableValues, value, placeholder, filter } = this.props;
+    const { availableValues, selectedValues, placeholder, filter } = this.props;
     let newValue = [];
-    value.forEach(val => {
+    selectedValues.forEach(val => {
       if (val[filter.toString()] !== undefined) {
         newValue.push(val[filter.toString()]);
       }
@@ -137,14 +137,14 @@ class ValueSelect extends React.Component<Props, States> {
       (item: any) => item == newValue[0]
     );
     const menuTitle =
-      value && selectedItem !== undefined ? selectedItem : placeholder;
+      selectedValues && selectedItem !== undefined ? selectedItem : placeholder;
 
     return (
       <Container>
         <ButtonShell
           aria-owns={anchorEl ? 'simple-menu' : undefined}
           aria-haspopup="true"
-          isactive={value}
+          isactive={selectedValues}
           onClick={this.handleClick}
         >
           {menuTitle}

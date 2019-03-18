@@ -43,7 +43,7 @@ class FilterInput extends React.Component<Props> {
     const filterOperator = filter.operator.toString();
     const className = event.target.className;
     // Only fire function if user clicks Run button
-    if (!className.baseVal || className.baseVal !== '') {
+    if (!className.baseVal && className.baseVal !== '') {
       if (className.includes('RunButton')) {
         const newValue = value.replace(',', '');
         setFilterInput(newValue, filterName, filterOperator);
