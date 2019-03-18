@@ -212,7 +212,7 @@ class Arronax extends React.Component<Props, States> {
   setFilterInput = async (val, filterName, filterOperator) => {
     const { filterInputVal } = this.state;
     const { selectedFilters } = this.props;
-    // This takes all values from inputs and sets them to local state for query submission
+    // This takes all values from inputs, builds them into an object with their respective filter, and sets them to local state for query submission
     if (filterInputVal.length === 0) {
       const newValue = { [filterName]: val };
       this.setState({ filterInputVal: [newValue] });
@@ -227,7 +227,7 @@ class Arronax extends React.Component<Props, States> {
         );
         const currentValues = Object.values(currentValue).toString();
         if (filterOperator === 'BETWEEN' && currentValues.includes('-')) {
-          // Replace between value with new between value
+          // Replace between value object with new between value object
           const index = valueNames.indexOf(filterName);
           filterInputVal.splice(index, 1);
           const value = {
@@ -238,7 +238,7 @@ class Arronax extends React.Component<Props, States> {
           filterOperator === 'BETWEEN' &&
           !currentValues.includes('-')
         ) {
-          // Add second part of between value to first part of found between value
+          // Add second part of between value object to first part of found between value object
           const value = {
             [filterName]: `${Object.values(currentValue) + val}`,
           };
@@ -246,7 +246,7 @@ class Arronax extends React.Component<Props, States> {
           filterInputVal.splice(index, 1);
           filterInputVal.push(value);
         } else {
-          // Check for prior matching value and replace with new value (for all values that don't have between values)
+          // Check for prior matching value object and replace with new value object (for all values that don't have BETWEEN values)
           const index = valueNames.indexOf(filterName);
           filterInputVal.splice(index, 1);
           const newValue = { [filterName]: val };
@@ -257,7 +257,7 @@ class Arronax extends React.Component<Props, States> {
         Object.values(filter)[0].toString()
       );
       const finalValues = [];
-      // Make sure values match selected filters before pushing to state
+      // Make sure object values match selected filters before pushing to state
       filterInputVal.forEach(val => {
         if (currentFilters.includes(Object.keys(val).toString())) {
           finalValues.push(val);
