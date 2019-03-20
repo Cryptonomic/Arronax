@@ -18,7 +18,6 @@ import {
   changeNetwork,
   fetchItemsAction,
   submitQuery,
-  setItems,
 } from '../../reducers/app/thunks';
 import {
   setSelectedValuesAction,
@@ -118,7 +117,6 @@ export interface Props {
   attributes: object[];
   selectedColumns: any[];
   selectedFilters: object[];
-  setItems: (entity: string, items: object[]) => void;
   removeValue: (value: object) => void;
   removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
@@ -153,22 +151,12 @@ class Arronax extends React.Component<Props, States> {
   };
 
   onChangeTab = async (value: string) => {
-    const {
-      changeTab,
-      fetchItems,
-      selectedValues,
-      removeValue,
-      setItems,
-      selectedEntity,
-      removeAllFilters,
-    } = this.props;
+    const { changeTab, fetchItems, selectedValues, removeValue } = this.props;
     await this.setState({ filterInputVal: [] });
     await selectedValues.forEach(value => {
       removeValue(value);
     });
-    await removeAllFilters(selectedEntity);
     await changeTab(value);
-    await setItems(selectedEntity, []);
     await fetchItems(value);
   };
 
@@ -355,8 +343,6 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setItems: (entity: string, items: object[]) =>
-    dispatch(setItems(entity, items)),
   setSelectedValues: (value: object[]) =>
     dispatch(setSelectedValuesAction(value)),
   removeAllFilters: (selectedEntity: string) =>
