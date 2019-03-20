@@ -160,11 +160,13 @@ class Arronax extends React.Component<Props, States> {
       removeValue,
       setItems,
       selectedEntity,
+      removeAllFilters,
     } = this.props;
     await this.setState({ filterInputVal: [] });
     await selectedValues.forEach(value => {
       removeValue(value);
     });
+    await removeAllFilters(selectedEntity);
     await changeTab(value);
     await setItems(selectedEntity, []);
     await fetchItems(value);
