@@ -22,7 +22,7 @@ import {
 } from '../../reducers/app/actions';
 import FilterSelect from '../FilterSelect';
 import ValueSelect from '../ValueSelect';
-import FilterInput from '../FilterInput';
+import ValueInput from '../ValueInput';
 import StartBetweenInput from '../StartBetweenInput';
 import EndBetweenInput from '../EndBetweenInput';
 
@@ -255,7 +255,7 @@ class FilterPanel extends React.Component<Props, States> {
       return (
         <React.Fragment>
           <HR />
-          <FilterInput
+          <ValueInput
             setFilterInput={setFilterInput}
             filter={filter}
             InputProps={{ disableUnderline: true }}

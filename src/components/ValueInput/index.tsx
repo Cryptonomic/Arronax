@@ -28,7 +28,7 @@ interface Props {
   ) => void;
 }
 
-class FilterInput extends React.Component<Props> {
+class ValueInput extends React.Component<Props> {
   state = {
     value: '',
   };
@@ -70,4 +70,4 @@ class FilterInput extends React.Component<Props> {
   }
 }
 
-export default FilterInput;
+export default ValueInput;
