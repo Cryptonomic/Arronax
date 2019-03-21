@@ -17,7 +17,8 @@ const TextInput = styled(TextField)`
 `;
 
 interface Props {
-  filter?: object;
+  filterName: string;
+  filterOperator: string;
   inputProps?: object;
   InputProps?: object;
   placeholder?: string;
@@ -37,11 +38,9 @@ class StartBetweenInput extends React.Component<Props> {
     this.setState({ value: event.target.value });
   };
 
-  handleClick = (event, filter) => {
+  handleClick = event => {
     const { value } = this.state;
-    const { setFilterInput } = this.props;
-    const filterName = filter.name.toString();
-    const filterOperator = filter.operator.toString();
+    const { setFilterInput, filterName, filterOperator } = this.props;
     const className = event.target.className;
     if (!className.baseVal && className.baseVal !== '') {
       if (className.includes('RunButton')) {
@@ -51,13 +50,14 @@ class StartBetweenInput extends React.Component<Props> {
   };
 
   render() {
-    const { placeholder, InputProps, inputProps, filter } = this.props;
+    const { placeholder, InputProps, inputProps } = this.props;
+    const { value } = this.state;
     return (
       <Container>
-        <ClickAwayListener
-          onClickAway={event => this.handleClick(event, filter)}
-        >
+        <ClickAwayListener onClickAway={event => this.handleClick(event)}>
           <TextInput
+            key={value}
+            value={value}
             inputProps={inputProps}
             InputProps={InputProps}
             placeholder={placeholder}
