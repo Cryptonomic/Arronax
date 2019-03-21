@@ -22,7 +22,6 @@ import {
 } from '../../reducers/app/actions';
 import FilterSelect from '../FilterSelect';
 import ValueSelect from '../ValueSelect';
-import ValueInput from '../ValueInput';
 
 const Container = styled.div`
   width: 100%;
@@ -309,28 +308,19 @@ class FilterPanel extends React.Component<Props, States> {
                   />
                 )}
                 {filter.operator && <HR />}
-                {filter.operator &&
-                filter.operator === 'EQ' &&
-                cards.includes(filter.name) ? (
+                {filter.operator && (
                   <ValueSelect
+                    attributes={attributes}
                     placeholder={`Select Value`}
                     filter={filter.name}
                     selectedValues={selectedValues}
                     availableValues={availableValues}
                     onChange={value => this.onValueChange(value)}
-                  />
-                ) : null}
-                {filter.operator &&
-                filter.operator !== 'EQ' &&
-                !cards.includes(filter.name) ? (
-                  <ValueInput
                     setFilterInput={setFilterInput}
-                    filterName={filter.name}
                     filterOperator={filter.operator}
                     InputProps={{ disableUnderline: true }}
-                    placeholder={`Placeholder Here`}
                   />
-                ) : null}
+                )}
               </FilterItemGr>
               <IconButton
                 aria-label="Delete"

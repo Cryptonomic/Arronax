@@ -4,8 +4,41 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
+import TextField from '@material-ui/core/TextField';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import StartBetweenInput from '../StartBetweenInput';
+import EndBetweenInput from '../EndBetweenInput';
 
 const Container = styled.div``;
+
+const HR = styled.div`
+  width: 1px;
+  background-color: #ecedef;
+`;
+
+const AndBlock = styled.div`
+  color: #4a4a4a;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 400;
+  padding-right: 10px;
+  padding-left: 10px;
+`;
+
+const TextInput = styled(TextField)`
+  margin-top: 17px !important;
+  margin-left: 10px !important;
+  color: #9b9b9b;
+  font-size: 18px;
+  font-weight: normal;
+  height: 17px;
+  letter-spacing: 0;
+  line-height: 17px;
+  width: 150px;
+`;
 
 const ButtonShell = styled(Button)`
   &&& {
@@ -53,13 +86,6 @@ const MenuContents = styled.div`
   min-height: 1.25em;
 `;
 
-const FadeOut = styled.span`
-  position: absolute;
-  width: 100%;
-  height: 30px;
-  pointer-events: none;
-`;
-
 const MainMenuItem = styled(MenuItem)`
   &&& {
     &[class*='selected'] {
@@ -77,20 +103,31 @@ const MainMenuItem = styled(MenuItem)`
 `;
 
 interface Props {
-  filter: object;
+  attributes: any[];
+  filter: any;
   selectedValues: any;
   availableValues: Array<object>;
   placeholder?: string;
+  filterOperator: string;
+  inputProps?: object;
+  InputProps?: object;
   onChange: (value: object) => void;
+  setFilterInput: (
+    value: string,
+    filterName: string,
+    filterOperator: string
+  ) => void;
 }
 
 type States = {
   anchorEl: boolean;
+  value: string;
 };
 
 class ValueSelect extends React.Component<Props, States> {
   state = {
     anchorEl: null,
+    value: '',
   };
 
   handleChange = value => {
@@ -108,9 +145,43 @@ class ValueSelect extends React.Component<Props, States> {
     this.setState({ anchorEl: event.currentTarget });
   };
 
+  handleInputClick = event => {
+    const { value } = this.state;
+    const { setFilterInput, filter, filterOperator } = this.props;
+    const className = event.target.className;
+    // Only fire function if user clicks Run button
+    if (!className.baseVal && className.baseVal !== '') {
+      if (className.includes('RunButton')) {
+        const newValue = value.replace(',', '');
+        setFilterInput(newValue, filter, filterOperator);
+      }
+    }
+  };
+
+  handleInputChange = event => {
+    this.setState({ value: event.target.value });
+  };
+
   render() {
-    const { anchorEl } = this.state;
-    const { availableValues, selectedValues, placeholder, filter } = this.props;
+    const { anchorEl, value } = this.state;
+    const {
+      attributes,
+      availableValues,
+      selectedValues,
+      placeholder,
+      filter,
+      filterOperator,
+      inputProps,
+      InputProps,
+      setFilterInput,
+    } = this.props;
+    const cards = attributes.reduce((acc, current) => {
+      if (current.cardinality < 15 && current.cardinality !== null) {
+        acc.push(current.name);
+      }
+      return acc;
+    }, []);
+    console.log(cards);
     let newValue = [];
     selectedValues.forEach(val => {
       if (val[filter.toString()] !== undefined) {
@@ -138,47 +209,85 @@ class ValueSelect extends React.Component<Props, States> {
     );
     const menuTitle =
       selectedValues && selectedItem !== undefined ? selectedItem : placeholder;
-
-    return (
-      <Container>
-        <ButtonShell
-          aria-owns={anchorEl ? 'simple-menu' : undefined}
-          aria-haspopup="true"
-          isactive={selectedValues}
-          onClick={this.handleClick}
-        >
-          {menuTitle}
-          <ArrowIcon />
-        </ButtonShell>
-        <MenuContainer>
-          <Menu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={this.cancelChange}
-            PaperProps={{
-              style: {
-                position: 'relative',
-                width: 300,
-              },
-            }}
+    let input;
+    if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
+      input = (
+        <React.Fragment>
+          <Container>
+            <ClickAwayListener onClickAway={event => this.handleClick(event)}>
+              <TextInput
+                value={value}
+                inputProps={inputProps}
+                InputProps={InputProps}
+                placeholder={placeholder}
+                onChange={event => this.handleChange(event)}
+              />
+            </ClickAwayListener>
+          </Container>
+        </React.Fragment>
+      );
+    } else if (filter.operator === 'ISNULL') {
+      input = null;
+    } else if (filterOperator === 'EQ' && cards.includes(filter)) {
+      input = (
+        <Container>
+          <ButtonShell
+            aria-owns={anchorEl ? 'simple-menu' : undefined}
+            aria-haspopup="true"
+            isactive={selectedValues}
+            onClick={this.handleClick}
           >
-            <NestedTitle>{placeholder}</NestedTitle>
-            <MenuContents>
-              {valuesAvailable.map((value: any, index) => (
-                <MainMenuItem
-                  onClick={() => this.handleChange(value)}
-                  key={index}
-                  selected={value === newValue[0]}
-                >
-                  {value}
-                </MainMenuItem>
-              ))}
-            </MenuContents>
-          </Menu>
-        </MenuContainer>
-      </Container>
-    );
+            {menuTitle}
+            <ArrowIcon />
+          </ButtonShell>
+          <MenuContainer>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={this.cancelChange}
+              PaperProps={{
+                style: {
+                  position: 'relative',
+                  width: 300,
+                },
+              }}
+            >
+              <NestedTitle>{placeholder}</NestedTitle>
+              <MenuContents>
+                {valuesAvailable.map((value: any, index) => (
+                  <MainMenuItem
+                    onClick={() => this.handleChange(value)}
+                    key={index}
+                    selected={value === newValue[0]}
+                  >
+                    {value}
+                  </MainMenuItem>
+                ))}
+              </MenuContents>
+            </Menu>
+          </MenuContainer>
+        </Container>
+      );
+    } else {
+      input = (
+        <Container>
+          <ClickAwayListener
+            onClickAway={event => this.handleInputClick(event)}
+          >
+            <TextInput
+              value={value}
+              inputProps={inputProps}
+              InputProps={InputProps}
+              placeholder={`input`}
+              onChange={event => this.handleInputChange(event)}
+            />
+          </ClickAwayListener>
+        </Container>
+      );
+    }
+
+    return <React.Fragment>{input}</React.Fragment>;
   }
 }
 
