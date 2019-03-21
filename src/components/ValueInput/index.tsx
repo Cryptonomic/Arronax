@@ -112,7 +112,6 @@ class ValueInput extends React.Component<Props> {
         <Container>
           <ClickAwayListener onClickAway={event => this.handleClick(event)}>
             <TextInput
-              key={value}
               value={value}
               inputProps={inputProps}
               InputProps={InputProps}
