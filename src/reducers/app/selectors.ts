@@ -56,3 +56,8 @@ export const getValue = createSelector(
   getAppState,
   apps => apps.selectedValue
 );
+
+export const getIsFullLoaded = createSelector(
+  getAppState,
+  apps => apps.isFullLoaded
+);

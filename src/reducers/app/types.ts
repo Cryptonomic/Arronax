@@ -12,3 +12,4 @@ export const CHANGE_FILTER = 'CHANGE_FILTER';
 export const SET_VALUE = 'SET_VALUE';
 export const REMOVE_VALUE = 'REMOVE_VALUE';
 export const SET_VALUES = 'SET_VALUES';
+export const COMPLETE_FULL_LOAD = 'COMPLETE_FULL_LOAD';

@@ -12,8 +12,9 @@ import {
   getItems,
   getColumns,
   getValue,
+  getIsFullLoaded
 } from '../../reducers/app/selectors';
-import { changeNetwork, fetchItemsAction } from '../../reducers/app/thunks';
+import { changeNetwork, initLoad } from '../../reducers/app/thunks';
 import { setTabAction, removeValueAction } from '../../reducers/app/actions';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
@@ -106,10 +107,11 @@ export interface Props {
   items: object[];
   attributes: object[];
   selectedColumns: any[];
+  isFullLoaded: boolean;
   removeValue: (value: object) => void;
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
-  fetchItems: (type: string) => void;
+  initLoad: () => void;
 }
 
 export interface States {
@@ -125,8 +127,8 @@ class Arronax extends React.Component<Props, States> {
   }
 
   componentDidMount() {
-    const { fetchItems, selectedEntity } = this.props;
-    fetchItems(selectedEntity);
+    const { initLoad } = this.props;
+    initLoad();
   }
 
   onChangeNetwork = event => {
@@ -135,12 +137,11 @@ class Arronax extends React.Component<Props, States> {
   };
 
   onChangeTab = async (value: string) => {
-    const { changeTab, fetchItems, selectedValues, removeValue } = this.props;
+    const { changeTab, selectedValues, removeValue } = this.props;
     selectedValues.forEach(value => {
       removeValue(value);
     });
     changeTab(value);
-    fetchItems(value);
   };
 
   onFilterCollapse = () => {
@@ -159,9 +160,10 @@ class Arronax extends React.Component<Props, States> {
       selectedEntity,
       items,
       selectedColumns,
-      attributes,
+      isFullLoaded
     } = this.props;
     const { isFilterCollapse } = this.state;
+    const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
@@ -204,7 +206,7 @@ class Arronax extends React.Component<Props, States> {
           </TabContainer>
         </Container>
         <Footer />
-        {isLoading && (
+        {isRealLoading && (
           <LoadingContainer>
             <CircularProgress />
           </LoadingContainer>
@@ -222,13 +224,14 @@ const mapStateToProps = (state: any) => ({
   selectedEntity: getEntity(state),
   items: getItems(state),
   attributes: getAttributes(state),
+  isFullLoaded: getIsFullLoaded(state)
 });
 
 const mapDispatchToProps = dispatch => ({
   removeValue: (value: object) => dispatch(removeValueAction(value)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
-  fetchItems: (type: string) => dispatch(fetchItemsAction(type)),
+  initLoad: () => dispatch(initLoad()),
 });
 
 export default connect(

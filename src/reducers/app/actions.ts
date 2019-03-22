@@ -13,6 +13,7 @@ import {
   SET_VALUES,
   SET_VALUE,
   REMOVE_VALUE,
+  COMPLETE_FULL_LOAD
 } from './types';
 import actionCreator from '../../utils/reduxHelpers';
 
@@ -54,3 +55,4 @@ export const changeFilterAction = actionCreator(
 export const setValuesAction = actionCreator(SET_VALUES, 'values');
 export const setValueAction = actionCreator(SET_VALUE, 'value');
 export const removeValueAction = actionCreator(REMOVE_VALUE, 'value');
+export const completeFullLoadAction = actionCreator(COMPLETE_FULL_LOAD, 'isFullLoaded');

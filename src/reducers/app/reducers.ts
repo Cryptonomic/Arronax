@@ -13,6 +13,7 @@ import {
   SET_VALUES,
   SET_VALUE,
   REMOVE_VALUE,
+  COMPLETE_FULL_LOAD
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -34,6 +35,7 @@ export interface AppState {
   isLoading: boolean;
   selectedEntity: string;
   selectedValue: Array<string>;
+  isFullLoaded: boolean;
 }
 
 const initialState: AppState = {
@@ -74,12 +76,7 @@ const initialState: AppState = {
   isLoading: false,
   selectedEntity: 'blocks',
   selectedValue: [],
-};
-
-const initEntities = {
-  blocks: [],
-  accounts: [],
-  operations: [],
+  isFullLoaded: false
 };
 
 const appReducer = (state = initialState, action) => {
@@ -101,7 +98,7 @@ const appReducer = (state = initialState, action) => {
     case SET_NETWORK:
       return { ...state, network: action.network };
     case INIT_DATA:
-      return { ...state, ...initEntities };
+      return { ...state, ...initialState };
     case SET_ATTRIBUTES: {
       const attributes = state.attributes;
       attributes[action.entity] = action.attributes;
@@ -163,6 +160,8 @@ const appReducer = (state = initialState, action) => {
       const finalValues = [...values, action.value];
       return { ...state, selectedValue: finalValues };
     }
+    case COMPLETE_FULL_LOAD:
+      return { ...state, isFullLoaded: action.isFullLoaded };
   }
   return state;
 };

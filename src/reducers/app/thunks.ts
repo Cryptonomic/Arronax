@@ -14,6 +14,7 @@ import {
   setNetworkAction,
   setColumnsAction,
   setAttributesAction,
+  completeFullLoadAction
 } from './actions';
 import getConfigs from '../../utils/getconfig';
 
@@ -24,9 +25,9 @@ const getConfig = val => {
   return configs.find(conf => conf.value === val);
 };
 
-const getAttributeNames = (attributes, entity) => {
+const getAttributeNames = (attributes) => {
   let attr = [];
-  attributes[entity].forEach(attribs => {
+  attributes.forEach(attribs => {
     attr.push(attribs.name);
   });
   return attr;
@@ -147,32 +148,12 @@ export const fetchValues = (attribute: string) => async (dispatch, state) => {
 export const changeNetwork = (network: string) => async (dispatch, state) => {
   const oldNetwork = state().app.network;
   if (oldNetwork === network) return;
-  dispatch(setLoadingAction(true));
   dispatch(initDataAction());
   dispatch(setNetworkAction(network));
-  await dispatch(fetchAttributes());
-  const entity = state().app.selectedEntity;
-  const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.key,
-  };
-  const attributes = state().app.attributes;
-  const attributeNames = getAttributeNames(attributes, entity);
-  let query = blankQuery();
-  query = addFields(query, ...attributeNames);
-  const items = await executeEntityQuery(
-    serverInfo,
-    'tezos',
-    network,
-    entity,
-    query
-  );
-  dispatch(setItemsAction(entity, items));
-  dispatch(setLoadingAction(false));
+  await dispatch(initLoad());
 };
 
-export const fetchColumns = columns => async (dispatch, state) => {
+export const fetchColumns = (columns, entity) => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
   const newColumns = await getInitialColumns(selectedEntity, columns);
   columns[selectedEntity] = newColumns;
@@ -180,21 +161,22 @@ export const fetchColumns = columns => async (dispatch, state) => {
 };
 
 export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
-  const originItems = state().app[entity];
-  if (originItems.length > 0) return;
-  dispatch(setLoadingAction(true));
   const network = state().app.network;
   const config = getConfig(network);
-  const attributes = state().app.attributes;
   const serverInfo = {
     url: config.url,
     apiKey: config.key,
   };
-  await dispatch(fetchAttributes());
-  const attributeNames = getAttributeNames(attributes, entity);
-  const columns = state().app.columns;
-  columns[entity] = attributes[entity];
-  await dispatch(fetchColumns(columns[entity]));
+  const attributes = await getAttributes(
+    serverInfo,
+    'tezos',
+    network,
+    entity
+  );
+  await dispatch(setAttributesAction(entity, attributes));
+  const attributeNames = getAttributeNames(attributes);
+  const columns = await getInitialColumns(entity, attributes);
+  await dispatch(setColumns(entity, columns));
   let query = blankQuery();
   query = addFields(query, ...attributeNames);
   query = setLimit(query, 100);
@@ -211,5 +193,11 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
     query
   );
   await dispatch(setItemsAction(entity, items));
-  await dispatch(setLoadingAction(false));
 };
+
+export const initLoad = () => async (dispatch) => {
+  await dispatch(fetchItemsAction('blocks'));
+  await dispatch(fetchItemsAction('operations'));
+  await dispatch(fetchItemsAction('accounts'));
+  dispatch(completeFullLoadAction(true));
+}
