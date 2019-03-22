@@ -15,6 +15,7 @@ import {
   SET_AVAILABLE_VALUES,
   SET_SELECTED_VALUES,
   REMOVE_VALUE,
+  COMPLETE_FULL_LOAD
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -35,6 +36,7 @@ export interface AppState {
   operations: TezosOperation[];
   isLoading: boolean;
   selectedEntity: string;
+  isFullLoaded: boolean;
   selectedValues: Array<object>;
   rowCount: number;
 }
@@ -76,6 +78,7 @@ const initialState: AppState = {
   operations: [],
   isLoading: false,
   selectedEntity: 'blocks',
+  isFullLoaded: false,
   selectedValues: [],
   rowCount: 10,
 };
@@ -105,7 +108,7 @@ const appReducer = (state = initialState, action) => {
     case SET_NETWORK:
       return { ...state, network: action.network };
     case INIT_DATA:
-      return { ...state, ...initEntities };
+      return { ...state, ...initialState };
     case SET_ATTRIBUTES: {
       const attributes = state.attributes;
       attributes[action.entity] = action.attributes;
@@ -174,6 +177,8 @@ const appReducer = (state = initialState, action) => {
     case SET_ROWS: {
       return { ...state, rowCount: action.rows };
     }
+    case COMPLETE_FULL_LOAD:
+      return { ...state, isFullLoaded: action.isFullLoaded };
   }
   return state;
 };

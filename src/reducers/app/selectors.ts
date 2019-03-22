@@ -61,3 +61,8 @@ export const getRows = createSelector(
   getAppState,
   apps => apps.rowCount
 );
+
+export const getIsFullLoaded = createSelector(
+  getAppState,
+  apps => apps.isFullLoaded
+);

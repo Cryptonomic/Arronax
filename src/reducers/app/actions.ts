@@ -15,6 +15,7 @@ import {
   SET_SELECTED_VALUES,
   SET_ROWS,
   REMOVE_VALUE,
+  COMPLETE_FULL_LOAD
 } from './types';
 import actionCreator from '../../utils/reduxHelpers';
 
@@ -57,7 +58,7 @@ export const changeFilterAction = actionCreator(
   'filter',
   'index'
 );
-
+export const completeFullLoadAction = actionCreator(COMPLETE_FULL_LOAD, 'isFullLoaded');
 export const setAvailableValuesAction = actionCreator(
   SET_AVAILABLE_VALUES,
   'availableValues'

@@ -11,12 +11,13 @@ import {
   getEntity,
   getItems,
   getColumns,
+  getIsFullLoaded,
   getSelectedValues,
   getSelectedFilters,
 } from '../../reducers/app/selectors';
 import {
   changeNetwork,
-  fetchItemsAction,
+  initLoad,
   submitQuery,
 } from '../../reducers/app/thunks';
 import {
@@ -116,11 +117,13 @@ export interface Props {
   items: object[];
   attributes: object[];
   selectedColumns: any[];
+  isFullLoaded: boolean;
   selectedFilters: object[];
   removeValue: (value: object) => void;
   removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
+  initLoad: () => void;
   fetchItems: (type: string) => void;
   setSelectedValues: (type: object[]) => void;
   submitQuery: () => void;
@@ -143,8 +146,8 @@ class Arronax extends React.Component<Props, States> {
   }
 
   componentDidMount() {
-    const { fetchItems, selectedEntity } = this.props;
-    fetchItems(selectedEntity);
+    const { initLoad } = this.props;
+    initLoad();
   }
 
   onChangeNetwork = event => {
@@ -153,13 +156,16 @@ class Arronax extends React.Component<Props, States> {
   };
 
   onChangeTab = async (value: string) => {
-    const { changeTab, fetchItems, selectedValues, removeValue } = this.props;
+    const { changeTab, selectedValues, removeValue } = this.props;
+    selectedValues.forEach(value => {
+      removeValue(value);
+    });
+    changeTab(value);
     await this.setState({ filterInputVal: [] });
     await selectedValues.forEach(value => {
       removeValue(value);
     });
     await changeTab(value);
-    await fetchItems(value);
   };
 
   onFilterCollapse = () => {
@@ -295,8 +301,10 @@ class Arronax extends React.Component<Props, States> {
       selectedEntity,
       items,
       selectedColumns,
+      isFullLoaded
     } = this.props;
-    const { isFilterCollapse, filterInputState } = this.state;
+    const { isFilterCollapse,filterInputState } = this.state;
+    const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
 
     return (
       <MainContainer>
@@ -343,7 +351,7 @@ class Arronax extends React.Component<Props, States> {
           </TabContainer>
         </Container>
         <Footer />
-        {isLoading && (
+        {isRealLoading && (
           <LoadingContainer>
             <CircularProgress />
           </LoadingContainer>
@@ -362,6 +370,7 @@ const mapStateToProps = (state: any) => ({
   selectedEntity: getEntity(state),
   items: getItems(state),
   attributes: getAttributes(state),
+  isFullLoaded: getIsFullLoaded(state)
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -372,7 +381,7 @@ const mapDispatchToProps = dispatch => ({
   removeValue: (value: object) => dispatch(removeValueAction(value)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
-  fetchItems: (type: string) => dispatch(fetchItemsAction(type)),
+  initLoad: () => dispatch(initLoad()),
   submitQuery: () => dispatch(submitQuery()),
 });
 
