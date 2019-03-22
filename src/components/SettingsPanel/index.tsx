@@ -86,15 +86,9 @@ const CloseIconWrapper = styled(CloseIcon)`
 interface Props {
   selectedColumns: any;
   isCollapse: boolean;
-  filterInputVal: object[];
   filterInputState: object[];
   submitValues: () => void;
   setFilterInputState: (
-    value: string,
-    filterName: string,
-    filterOperator: string
-  ) => void;
-  setFilterInput: (
     value: string,
     filterName: string,
     filterOperator: string
@@ -110,8 +104,6 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
     selectedColumns,
     resetValues,
     submitValues,
-    setFilterInput,
-    filterInputVal,
     filterInputState,
     setFilterInputState,
   } = props;
@@ -124,8 +116,6 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
         <FilterTxt>Filter</FilterTxt>
         <FilterPanel
           setFilterInputState={setFilterInputState}
-          setFilterInput={setFilterInput}
-          filterInputVal={filterInputVal}
           filterInputState={filterInputState}
         />
         <DisplayTxt>Display</DisplayTxt>

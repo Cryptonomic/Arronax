@@ -109,14 +109,8 @@ interface Props {
   inputProps?: object;
   InputProps?: object;
   filterInputState: any[];
-  filterInputVal: any;
   onChange: (value: object) => void;
   setFilterInputState: (
-    value: string,
-    filterName: string,
-    filterOperator: string
-  ) => void;
-  setFilterInput: (
     value: string,
     filterName: string,
     filterOperator: string
@@ -125,7 +119,6 @@ interface Props {
 
 type States = {
   anchorEl: boolean;
-  // value: string;
 };
 
 class ValueSelect extends React.Component<Props, States> {
@@ -151,7 +144,6 @@ class ValueSelect extends React.Component<Props, States> {
   handleInputChange = event => {
     const { filter, setFilterInputState, filterOperator } = this.props;
     setFilterInputState(event.target.value, filter, filterOperator);
-    // setFilterInput(event.target.value, filter, filterOperator);
   };
 
   handleBetweenChange = event => {
@@ -171,9 +163,7 @@ class ValueSelect extends React.Component<Props, States> {
       inputProps,
       InputProps,
       filterInputState,
-      filterInputVal,
     } = this.props;
-    console.log(filterInputState);
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);

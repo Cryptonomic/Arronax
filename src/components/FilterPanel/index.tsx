@@ -100,13 +100,7 @@ type Props = {
   attributes: any[];
   filters: object[];
   operators: object[];
-  filterInputVal: object[];
   filterInputState: object[];
-  setFilterInput: (
-    value: string,
-    filterName: string,
-    filterOperator: string
-  ) => void;
   setFilterInputState: (
     value: string,
     filterName: string,
@@ -197,91 +191,16 @@ class FilterPanel extends React.Component<Props, States> {
     setSelectedValues(val);
   };
 
-  // generateFilter = filter => {
-  //   // Remove this function and build a single input down below similar to ValueSelect
-  //   // Where you check what the filter.operator is and then pass down all the necessary data to a single component
-  //   const {
-  //     availableValues,
-  //     attributes,
-  //     selectedValues,
-  //     setFilterInput,
-  //   } = this.props;
-  //   const cards = attributes.reduce((acc, current) => {
-  //     if (current.cardinality < 15 && current.cardinality !== null) {
-  //       acc.push(current.name);
-  //     }
-  //     return acc;
-  //   }, []);
-  //   if (!filter.operator) {
-  //     return;
-  //   } else if (filter.operator === 'ISNULL') {
-  //     return;
-  //   } else if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
-  //     return (
-  //       <React.Fragment>
-  //         <HR />
-  //         <StartBetweenInput
-  //           setFilterInput={setFilterInput}
-  //           filter={filter}
-  //           InputProps={{ disableUnderline: true }}
-  //           placeholder={`e.g. 123456`}
-  //         />
-  //         <HR />
-  //         <AndBlock>and</AndBlock>
-  //         <HR />
-  //         <EndBetweenInput
-  //           setFilterInput={setFilterInput}
-  //           filter={filter}
-  //           InputProps={{ disableUnderline: true }}
-  //           placeholder={`e.g. 123456`}
-  //         />
-  //       </React.Fragment>
-  //     );
-  //   } else if (
-  //     filter.operator !== 'ISNULL' &&
-  //     filter.operator !== 'BETWEEN' &&
-  //     filter.operator !== 'IN' &&
-  //     cards.includes(filter.name)
-  //   ) {
-  //     return (
-  //       <React.Fragment>
-  //         <HR />
-  // <ValueSelect
-  //   filter={filter.name}
-  //   selectedValues={selectedValues}
-  //   placeholder={`Select Value`}
-  //   availableValues={availableValues}
-  //   onChange={value => this.onValueChange(value)}
-  // />
-  //       </React.Fragment>
-  //     );
-  //   } else {
-  //     return (
-  //       <React.Fragment>
-  //         <HR />
-  // <ValueInput
-  // setFilterInput={setFilterInput}
-  // filter={filter}
-  // InputProps={{ disableUnderline: true }}
-  // placeholder={`Placeholder Here`}
-  // />
-  //       </React.Fragment>
-  //     );
-  //   }
-  // };
-
   render() {
     const {
       selectedEntity,
       attributes,
       filters,
       operators,
-      setFilterInput,
       selectedValues,
       availableValues,
       filterInputState,
       setFilterInputState,
-      filterInputVal,
     } = this.props;
     const entityName = attrTabValue[selectedEntity];
     const cards = attributes.reduce((acc, current) => {
@@ -329,7 +248,6 @@ class FilterPanel extends React.Component<Props, States> {
                 {filter.operator && <HR />}
                 {filter.operator && (
                   <ValueSelect
-                    filterInputVal={filterInputVal}
                     setFilterInputState={setFilterInputState}
                     filterInputState={filterInputState}
                     attributes={attributes}
@@ -338,7 +256,6 @@ class FilterPanel extends React.Component<Props, States> {
                     selectedValues={selectedValues}
                     availableValues={availableValues}
                     onChange={value => this.onValueChange(value)}
-                    setFilterInput={setFilterInput}
                     filterOperator={filter.operator}
                     InputProps={{ disableUnderline: true }}
                   />

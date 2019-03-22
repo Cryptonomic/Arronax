@@ -178,7 +178,7 @@ class Arronax extends React.Component<Props, States> {
       removeAllFilters,
       selectedEntity,
     } = this.props;
-    this.setState({ filterInputVal: [] });
+    this.setState({ filterInputState: [] });
     removeAllFilters(selectedEntity);
     selectedValues.forEach(value => {
       removeValue(value);
@@ -186,23 +186,8 @@ class Arronax extends React.Component<Props, States> {
   };
 
   submitValues = async () => {
-    const {
-      setSelectedValues,
-      submitQuery,
-      selectedFilters,
-      removeValue,
-      selectedValues,
-    } = this.props;
+    const { setSelectedValues, submitQuery } = this.props;
     const { filterInputState } = this.state;
-    // const filterNames = await selectedFilters.map(
-    //   filter => Object.values(filter)[0]
-    // );
-    // // Remove values from Redux state that are not represented in local state
-    // await selectedValues.forEach(value => {
-    //   if (!filterNames.includes(Object.keys(value)[0])) {
-    //     removeValue(value);
-    //   }
-    // });
     // Loop through each value in state and set the value in Redux's state
     await filterInputState.forEach(val => {
       setSelectedValues(val);
@@ -287,64 +272,6 @@ class Arronax extends React.Component<Props, States> {
     }
   };
 
-  setFilterInput = async (val, filterName, filterOperator) => {
-    const { filterInputVal } = this.state;
-    const { selectedFilters } = this.props;
-    // This takes all values from inputs, builds them into an object with their respective filter, and sets them to local state for query submission
-    if (filterInputVal.length === 0) {
-      const newValue = { [filterName]: val };
-      this.setState({ filterInputVal: [newValue] });
-    } else if (filterInputVal.length > 0) {
-      let valueNames = [];
-      filterInputVal.forEach(input => valueNames.push(...Object.keys(input)));
-      if (!valueNames.includes(filterName)) {
-        filterInputVal.push({ [filterName]: val });
-      } else if (valueNames.includes(filterName)) {
-        const currentValue = filterInputVal.find(
-          value => Object.keys(value).toString() === filterName
-        );
-        const currentValues = Object.values(currentValue).toString();
-        if (filterOperator === 'BETWEEN' && currentValues.includes('-')) {
-          // Replace between value object with new between value object
-          const index = valueNames.indexOf(filterName);
-          filterInputVal.splice(index, 1);
-          const value = {
-            [filterName]: val,
-          };
-          filterInputVal.push(value);
-        } else if (
-          filterOperator === 'BETWEEN' &&
-          !currentValues.includes('-')
-        ) {
-          // Add second part of between value object to first part of found between value object
-          const value = {
-            [filterName]: `${Object.values(currentValue) + val}`,
-          };
-          const index = valueNames.indexOf(filterName);
-          filterInputVal.splice(index, 1);
-          filterInputVal.push(value);
-        } else {
-          // Check for prior matching value object and replace with new value object (for all values that don't have BETWEEN values)
-          const index = valueNames.indexOf(filterName);
-          filterInputVal.splice(index, 1);
-          const newValue = { [filterName]: val };
-          filterInputVal.push(newValue);
-        }
-      }
-      const currentFilters = selectedFilters.map(filter =>
-        Object.values(filter)[0].toString()
-      );
-      const finalValues = [];
-      // Make sure object values match selected filters before pushing to state
-      filterInputVal.forEach(val => {
-        if (currentFilters.includes(Object.keys(val).toString())) {
-          finalValues.push(val);
-        }
-      });
-      this.setState({ filterInputVal: finalValues });
-    }
-  };
-
   render() {
     const {
       isLoading,
@@ -353,8 +280,8 @@ class Arronax extends React.Component<Props, States> {
       items,
       selectedColumns,
     } = this.props;
-    const { isFilterCollapse, filterInputVal, filterInputState } = this.state;
-    console.log(filterInputState);
+    const { isFilterCollapse, filterInputState } = this.state;
+
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
@@ -378,8 +305,6 @@ class Arronax extends React.Component<Props, States> {
           <SettingsPanel
             setFilterInputState={this.setFilterInputState}
             filterInputState={filterInputState}
-            filterInputVal={filterInputVal}
-            setFilterInput={this.setFilterInput}
             submitValues={this.submitValues}
             resetValues={this.resetValues}
             selectedColumns={selectedColumns}
