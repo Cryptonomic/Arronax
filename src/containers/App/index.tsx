@@ -11,10 +11,20 @@ import {
   getEntity,
   getItems,
   getColumns,
-  getValue,
+  getSelectedValues,
+  getSelectedFilters,
 } from '../../reducers/app/selectors';
-import { changeNetwork, fetchItemsAction } from '../../reducers/app/thunks';
-import { setTabAction, removeValueAction } from '../../reducers/app/actions';
+import {
+  changeNetwork,
+  fetchItemsAction,
+  submitQuery,
+} from '../../reducers/app/thunks';
+import {
+  setSelectedValuesAction,
+  setTabAction,
+  removeValueAction,
+  removeAllFiltersAction,
+} from '../../reducers/app/actions';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
 import SettingsPanel from 'components/SettingsPanel';
@@ -106,14 +116,20 @@ export interface Props {
   items: object[];
   attributes: object[];
   selectedColumns: any[];
+  selectedFilters: object[];
   removeValue: (value: object) => void;
+  removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   fetchItems: (type: string) => void;
+  setSelectedValues: (type: object[]) => void;
+  submitQuery: () => void;
 }
 
 export interface States {
   isFilterCollapse: boolean;
+  filterInputVal: any[];
+  filterInputState: any;
 }
 
 class Arronax extends React.Component<Props, States> {
@@ -121,6 +137,8 @@ class Arronax extends React.Component<Props, States> {
     super(props);
     this.state = {
       isFilterCollapse: false,
+      filterInputVal: [],
+      filterInputState: [],
     };
   }
 
@@ -136,11 +154,12 @@ class Arronax extends React.Component<Props, States> {
 
   onChangeTab = async (value: string) => {
     const { changeTab, fetchItems, selectedValues, removeValue } = this.props;
-    selectedValues.forEach(value => {
+    await this.setState({ filterInputVal: [] });
+    await selectedValues.forEach(value => {
       removeValue(value);
     });
-    changeTab(value);
-    fetchItems(value);
+    await changeTab(value);
+    await fetchItems(value);
   };
 
   onFilterCollapse = () => {
@@ -152,6 +171,123 @@ class Arronax extends React.Component<Props, States> {
     this.setState({ isFilterCollapse: false });
   };
 
+  resetValues = () => {
+    const {
+      selectedValues,
+      removeValue,
+      removeAllFilters,
+      selectedEntity,
+    } = this.props;
+    this.setState({ filterInputState: [] });
+    removeAllFilters(selectedEntity);
+    selectedValues.forEach(value => {
+      removeValue(value);
+    });
+  };
+
+  submitValues = async () => {
+    const {
+      setSelectedValues,
+      submitQuery,
+      selectedFilters,
+      selectedValues,
+      removeValue,
+    } = this.props;
+    const { filterInputState } = this.state;
+    const filterNames = await selectedFilters.map(
+      filter => Object.values(filter)[0]
+    );
+    // Remove values from Redux state that are not represented in local state
+    await selectedValues.forEach(value => {
+      if (!filterNames.includes(Object.keys(value)[0])) {
+        removeValue(value);
+      }
+    });
+    // Loop through each value in state and set the value in Redux's state
+    await filterInputState.forEach(val => {
+      setSelectedValues(val);
+    });
+    // Submit the query to ConseilJS
+    await submitQuery();
+  };
+
+  setFilterInputState = (val, filterName, filterOperator) => {
+    const { filterInputState } = this.state;
+    const filterState = [...filterInputState];
+    let filterCheck = [];
+    filterInputState.forEach(filter => {
+      filterCheck.push(Object.keys(filter).toString());
+    });
+    // Remove the value from state by sending in a NULL value
+    if (val === null) {
+      const itemToRemove = filterState.find(
+        val => Object.keys(val).toString() === filterName
+      );
+      const index = filterState.indexOf(itemToRemove);
+      filterState.splice(index, 1);
+      this.setState({ filterInputState: filterState });
+    } else if (
+      filterCheck.includes(filterName) &&
+      filterOperator !== 'BETWEEN'
+    ) {
+      const index = filterCheck.indexOf(filterName);
+      filterState.splice(index, 1);
+      const newState = [...filterState, { [filterName]: val }];
+      this.setState({ filterInputState: newState });
+    } else if (
+      filterCheck.includes(filterName) &&
+      filterOperator === 'BETWEEN'
+    ) {
+      const currentValueObject = filterState.find(
+        val => Object.keys(val).toString() === filterName
+      );
+      const currentValue = Object.values(currentValueObject).toString();
+      if (!currentValue.includes('-')) {
+        if (val.includes('-')) {
+          const index = filterCheck.indexOf(filterName);
+          filterState.splice(index, 1);
+          const newState = [
+            ...filterState,
+            { [filterName]: `${currentValue}${val}` },
+          ];
+          this.setState({ filterInputState: newState });
+        } else if (!val.includes('-')) {
+          const index = filterCheck.indexOf(filterName);
+          filterState.splice(index, 1);
+          const newState = [...filterState, { [filterName]: val }];
+          this.setState({ filterInputState: newState });
+        }
+      } else if (currentValue.includes('-')) {
+        if (val.includes('-')) {
+          const value = Object.values(currentValue);
+          const dashIndex = value.indexOf('-');
+          const firstHalf = value.slice(0, dashIndex).join('');
+          const secondHalf = val;
+          const finalValue = firstHalf + secondHalf;
+          const index = filterCheck.indexOf(filterName);
+          filterState.splice(index, 1);
+          const newState = [...filterState, { [filterName]: finalValue }];
+          this.setState({ filterInputState: newState });
+        } else if (!val.includes('-')) {
+          const value = Object.values(currentValue);
+          const dashIndex = value.indexOf('-');
+          const secondHalf = value.slice(dashIndex).join('');
+          const firstHalf = val;
+          const finalValue = firstHalf + secondHalf;
+          const index = filterCheck.indexOf(filterName);
+          filterState.splice(index, 1);
+          const newState = [...filterState, { [filterName]: finalValue }];
+          this.setState({ filterInputState: newState });
+        }
+      }
+    } else {
+      const newValues = [...filterInputState, { [filterName]: val }];
+      this.setState({
+        filterInputState: newValues,
+      });
+    }
+  };
+
   render() {
     const {
       isLoading,
@@ -159,9 +295,9 @@ class Arronax extends React.Component<Props, States> {
       selectedEntity,
       items,
       selectedColumns,
-      attributes,
     } = this.props;
-    const { isFilterCollapse } = this.state;
+    const { isFilterCollapse, filterInputState } = this.state;
+
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
@@ -183,16 +319,19 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
+            setFilterInputState={this.setFilterInputState}
+            filterInputState={filterInputState}
+            submitValues={this.submitValues}
+            resetValues={this.resetValues}
             selectedColumns={selectedColumns}
-            selectedEntity={selectedEntity}
             isCollapse={isFilterCollapse}
             onClose={this.onCloseFilter}
           />
           <FilterHeader isDark={isFilterCollapse}>
             <FilterTool value={2} onCollapse={this.onFilterCollapse} />
             <FilterExTxt>
-              e.g. What were blocks where baked by Foudation Baker 1 in the past
-              24 hours?
+              e.g. What blocks were baked by Foundation Baker 1 in the past 24
+              hours?
             </FilterExTxt>
           </FilterHeader>
           <TabContainer component="div">
@@ -215,7 +354,8 @@ class Arronax extends React.Component<Props, States> {
 }
 
 const mapStateToProps = (state: any) => ({
-  selectedValues: getValue(state),
+  selectedFilters: getSelectedFilters(state),
+  selectedValues: getSelectedValues(state),
   selectedColumns: getColumns(state),
   isLoading: getLoading(state),
   network: getNetwork(state),
@@ -225,10 +365,15 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  setSelectedValues: (value: object[]) =>
+    dispatch(setSelectedValuesAction(value)),
+  removeAllFilters: (selectedEntity: string) =>
+    dispatch(removeAllFiltersAction(selectedEntity)),
   removeValue: (value: object) => dispatch(removeValueAction(value)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
   fetchItems: (type: string) => dispatch(fetchItemsAction(type)),
+  submitQuery: () => dispatch(submitQuery()),
 });
 
 export default connect(

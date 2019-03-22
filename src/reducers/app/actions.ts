@@ -9,9 +9,11 @@ import {
   SET_ATTRIBUTES,
   ADD_FILTER,
   REMOVE_FILTER,
+  REMOVE_ALL_FILTERS,
   CHANGE_FILTER,
-  SET_VALUES,
-  SET_VALUE,
+  SET_AVAILABLE_VALUES,
+  SET_SELECTED_VALUES,
+  SET_ROWS,
   REMOVE_VALUE,
 } from './types';
 import actionCreator from '../../utils/reduxHelpers';
@@ -44,6 +46,11 @@ export const removeFilterAction = actionCreator(
   'index'
 );
 
+export const removeAllFiltersAction = actionCreator(
+  REMOVE_ALL_FILTERS,
+  'entity'
+);
+
 export const changeFilterAction = actionCreator(
   CHANGE_FILTER,
   'entity',
@@ -51,6 +58,13 @@ export const changeFilterAction = actionCreator(
   'index'
 );
 
-export const setValuesAction = actionCreator(SET_VALUES, 'values');
-export const setValueAction = actionCreator(SET_VALUE, 'value');
-export const removeValueAction = actionCreator(REMOVE_VALUE, 'value');
+export const setAvailableValuesAction = actionCreator(
+  SET_AVAILABLE_VALUES,
+  'availableValues'
+);
+export const setSelectedValuesAction = actionCreator(
+  SET_SELECTED_VALUES,
+  'selectedValue'
+);
+export const setRowsAction = actionCreator(SET_ROWS, 'rows');
+export const removeValueAction = actionCreator(REMOVE_VALUE, 'selectedValue');

@@ -9,22 +9,24 @@ import {
   SET_ATTRIBUTES,
   ADD_FILTER,
   REMOVE_FILTER,
+  REMOVE_ALL_FILTERS,
   CHANGE_FILTER,
-  SET_VALUES,
-  SET_VALUE,
+  SET_ROWS,
+  SET_AVAILABLE_VALUES,
+  SET_SELECTED_VALUES,
   REMOVE_VALUE,
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
 import { TezosAccount, TezosBlock, TezosOperation } from '../../types';
-import ValueSelect from 'components/ValueSelect';
+
 const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
 
 export interface AppState {
   filters: ConseilQuery;
   network: string;
   blocks: TezosBlock[];
-  values: Array<string>;
+  availableValues: Array<string>;
   columns: object;
   attributes: object;
   operators: object[];
@@ -33,7 +35,8 @@ export interface AppState {
   operations: TezosOperation[];
   isLoading: boolean;
   selectedEntity: string;
-  selectedValue: Array<string>;
+  selectedValues: Array<object>;
+  rowCount: number;
 }
 
 const initialState: AppState = {
@@ -68,12 +71,13 @@ const initialState: AppState = {
     operations: [],
     accounts: [],
   },
-  values: [],
+  availableValues: [],
   accounts: [],
   operations: [],
   isLoading: false,
   selectedEntity: 'blocks',
-  selectedValue: [],
+  selectedValues: [],
+  rowCount: 10,
 };
 
 const initEntities = {
@@ -125,6 +129,11 @@ const appReducer = (state = initialState, action) => {
       selectedFilters[action.entity] = [...filters];
       return { ...state, selectedFilters };
     }
+    case REMOVE_ALL_FILTERS: {
+      const selectedFilters = state.selectedFilters;
+      selectedFilters[action.entity] = [];
+      return { ...state, selectedFilters: selectedFilters };
+    }
     case CHANGE_FILTER: {
       const selectedFilters = state.selectedFilters;
       let filters = selectedFilters[action.entity];
@@ -132,14 +141,14 @@ const appReducer = (state = initialState, action) => {
       selectedFilters[action.entity] = [...filters];
       return { ...state, selectedFilters };
     }
-    case SET_VALUES: {
-      const values = state.values;
-      const newValues = [...values, ...action.values];
-      return { ...state, values: newValues };
+    case SET_AVAILABLE_VALUES: {
+      const values = state.availableValues;
+      const newValues = [...values, ...action.availableValues];
+      return { ...state, availableValues: newValues };
     }
     case REMOVE_VALUE: {
-      const value = state.selectedValue;
-      const incomingValue = Object.keys(action.value).toString();
+      const value = state.selectedValues;
+      const incomingValue = Object.keys(action.selectedValue).toString();
       const values = value.filter(val => {
         if (Object.keys(val).toString() !== incomingValue) {
           return val;
@@ -148,20 +157,22 @@ const appReducer = (state = initialState, action) => {
         }
       });
       const finalValues = [...values];
-      return { ...state, selectedValue: finalValues };
+      return { ...state, selectedValues: finalValues };
     }
-    case SET_VALUE: {
-      const value = state.selectedValue;
-      const incomingValue = Object.keys(action.value).toString();
-      const values = value.filter(val => {
+    case SET_SELECTED_VALUES: {
+      const value = state.selectedValues;
+      const incomingValue = Object.keys(action.selectedValue).toString();
+      const values = [];
+      value.forEach(val => {
         if (Object.keys(val).toString() !== incomingValue) {
-          return val;
-        } else {
-          return null;
+          values.push(val);
         }
       });
-      const finalValues = [...values, action.value];
-      return { ...state, selectedValue: finalValues };
+      const finalValues = [...values, action.selectedValue];
+      return { ...state, selectedValues: finalValues };
+    }
+    case SET_ROWS: {
+      return { ...state, rowCount: action.rows };
     }
   }
   return state;

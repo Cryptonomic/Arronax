@@ -47,12 +47,17 @@ export const getSelectedFilters = createSelector(
   apps => apps.selectedFilters[apps.selectedEntity]
 );
 
-export const getValues = createSelector(
+export const getAvailableValues = createSelector(
   getAppState,
-  apps => apps.values
+  apps => apps.availableValues
 );
 
-export const getValue = createSelector(
+export const getSelectedValues = createSelector(
   getAppState,
-  apps => apps.selectedValue
+  apps => apps.selectedValues
+);
+
+export const getRows = createSelector(
+  getAppState,
+  apps => apps.rowCount
 );
