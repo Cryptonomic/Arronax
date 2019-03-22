@@ -89,7 +89,11 @@ interface Props {
   filterInputVal: object[];
   filterInputState: object[];
   submitValues: () => void;
-  setFilterInputState: (value: string, filterName: string) => void;
+  setFilterInputState: (
+    value: string,
+    filterName: string,
+    filterOperator: string
+  ) => void;
   setFilterInput: (
     value: string,
     filterName: string,

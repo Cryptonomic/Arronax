@@ -193,25 +193,25 @@ class Arronax extends React.Component<Props, States> {
       removeValue,
       selectedValues,
     } = this.props;
-    const { filterInputVal } = this.state;
-    const filterNames = await selectedFilters.map(
-      filter => Object.values(filter)[0]
-    );
-    // Remove values from Redux state that are not represented in local state
-    await selectedValues.forEach(value => {
-      if (!filterNames.includes(Object.keys(value)[0])) {
-        removeValue(value);
-      }
-    });
+    const { filterInputState } = this.state;
+    // const filterNames = await selectedFilters.map(
+    //   filter => Object.values(filter)[0]
+    // );
+    // // Remove values from Redux state that are not represented in local state
+    // await selectedValues.forEach(value => {
+    //   if (!filterNames.includes(Object.keys(value)[0])) {
+    //     removeValue(value);
+    //   }
+    // });
     // Loop through each value in state and set the value in Redux's state
-    await filterInputVal.forEach(val => {
+    await filterInputState.forEach(val => {
       setSelectedValues(val);
     });
     // Submit the query to ConseilJS
     await submitQuery();
   };
 
-  setFilterInputState = (val, filterName) => {
+  setFilterInputState = (val, filterName, filterOperator) => {
     const { filterInputState } = this.state;
     const filterState = [...filterInputState];
     let filterCheck = [];
@@ -225,11 +225,60 @@ class Arronax extends React.Component<Props, States> {
       const index = filterState.indexOf(itemToRemove);
       filterState.splice(index, 1);
       this.setState({ filterInputState: filterState });
-    } else if (filterCheck.includes(filterName)) {
+    } else if (
+      filterCheck.includes(filterName) &&
+      filterOperator !== 'BETWEEN'
+    ) {
       const index = filterCheck.indexOf(filterName);
       filterState.splice(index, 1);
       const newState = [...filterState, { [filterName]: val }];
       this.setState({ filterInputState: newState });
+    } else if (
+      filterCheck.includes(filterName) &&
+      filterOperator === 'BETWEEN'
+    ) {
+      const currentValueObject = filterState.find(
+        val => Object.keys(val).toString() === filterName
+      );
+      const currentValue = Object.values(currentValueObject).toString();
+      if (!currentValue.includes('-')) {
+        if (val.includes('-')) {
+          const index = filterCheck.indexOf(filterName);
+          filterState.splice(index, 1);
+          const newState = [
+            ...filterState,
+            { [filterName]: `${currentValue}${val}` },
+          ];
+          this.setState({ filterInputState: newState });
+        } else if (!val.includes('-')) {
+          const index = filterCheck.indexOf(filterName);
+          filterState.splice(index, 1);
+          const newState = [...filterState, { [filterName]: val }];
+          this.setState({ filterInputState: newState });
+        }
+      } else if (currentValue.includes('-')) {
+        if (val.includes('-')) {
+          const value = Object.values(currentValue);
+          const dashIndex = value.indexOf('-');
+          const firstHalf = value.slice(0, dashIndex).join('');
+          const secondHalf = val;
+          const finalValue = firstHalf + secondHalf;
+          const index = filterCheck.indexOf(filterName);
+          filterState.splice(index, 1);
+          const newState = [...filterState, { [filterName]: finalValue }];
+          this.setState({ filterInputState: newState });
+        } else if (!val.includes('-')) {
+          const value = Object.values(currentValue);
+          const dashIndex = value.indexOf('-');
+          const secondHalf = value.slice(dashIndex).join('');
+          const firstHalf = val;
+          const finalValue = firstHalf + secondHalf;
+          const index = filterCheck.indexOf(filterName);
+          filterState.splice(index, 1);
+          const newState = [...filterState, { [filterName]: finalValue }];
+          this.setState({ filterInputState: newState });
+        }
+      }
     } else {
       const newValues = [...filterInputState, { [filterName]: val }];
       this.setState({

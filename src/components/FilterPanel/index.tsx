@@ -107,7 +107,11 @@ type Props = {
     filterName: string,
     filterOperator: string
   ) => void;
-  setFilterInputState: (value: string, filterName: string) => void;
+  setFilterInputState: (
+    value: string,
+    filterName: string,
+    filterOperator: string
+  ) => void;
   removeValue: (value: object) => void;
   setSelectedValues: (value: object) => void;
   fetchValues: (value: string) => void;
@@ -138,8 +142,11 @@ class FilterPanel extends React.Component<Props, States> {
     const itemToRemove = filterInputState.find(
       value => Object.keys(value).toString() === filter.name
     );
-    console.log(itemToRemove);
-    setFilterInputState(null, Object.keys(itemToRemove).toString());
+    setFilterInputState(
+      null,
+      Object.keys(itemToRemove).toString(),
+      filter.operator
+    );
     selectedValues.forEach(val => {
       const valueToRemove = Object.keys(val).toString();
       if (valueToRemove === filter.name) {

@@ -5,9 +5,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import TextField from '@material-ui/core/TextField';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import StartBetweenInput from '../StartBetweenInput';
-import EndBetweenInput from '../EndBetweenInput';
 
 const Container = styled.div``;
 
@@ -114,7 +111,11 @@ interface Props {
   filterInputState: any[];
   filterInputVal: any;
   onChange: (value: object) => void;
-  setFilterInputState: (value: string, filterName: string) => void;
+  setFilterInputState: (
+    value: string,
+    filterName: string,
+    filterOperator: string
+  ) => void;
   setFilterInput: (
     value: string,
     filterName: string,
@@ -149,13 +150,13 @@ class ValueSelect extends React.Component<Props, States> {
 
   handleInputChange = event => {
     const { filter, setFilterInputState, filterOperator } = this.props;
-    setFilterInputState(event.target.value, filter);
+    setFilterInputState(event.target.value, filter, filterOperator);
     // setFilterInput(event.target.value, filter, filterOperator);
   };
 
   handleBetweenChange = event => {
-    const { filter, setFilterInput, filterOperator } = this.props;
-    // setFilterInput(event.target.value, filter, filterOperator);
+    const { filter, setFilterInputState, filterOperator } = this.props;
+    setFilterInputState(`-${event.target.value}`, filter, filterOperator);
   };
 
   render() {
@@ -210,22 +211,30 @@ class ValueSelect extends React.Component<Props, States> {
       value => Object.keys(value).toString() === filter
     );
     const currentValue = findValue ? Object.values(findValue).toString() : null;
+    const betweenValue = findValue ? Object.values(findValue).toString() : null;
+    const split = findValue ? betweenValue.split('-') : null;
+    const firstBetweenValue = split ? split[0] : null;
+    const secondBetweenValue = split ? split[1] : null;
     let input;
-    if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
+    if (filterOperator === 'BETWEEN' || filterOperator === 'IN') {
       input = (
         <React.Fragment>
           <Container>
             <TextInput
-              // value={value}
+              value={firstBetweenValue ? firstBetweenValue : ''}
               inputProps={inputProps}
               InputProps={InputProps}
               placeholder={placeholder}
               onChange={event => this.handleInputChange(event)}
             />
           </Container>
+          <HR />
+          <AndBlock>and</AndBlock>
+          <HR />
+          {/* DISABLE THIS FIELD UNLESS 1st ONE HAS DATA */}
           <Container>
             <TextInput
-              // value={value}
+              value={secondBetweenValue ? secondBetweenValue : ''}
               inputProps={inputProps}
               InputProps={InputProps}
               placeholder={placeholder}
@@ -234,7 +243,7 @@ class ValueSelect extends React.Component<Props, States> {
           </Container>
         </React.Fragment>
       );
-    } else if (filter.operator === 'ISNULL') {
+    } else if (filterOperator === 'ISNULL') {
       input = null;
     } else if (filterOperator === 'EQ' && cards.includes(filter)) {
       input = (
