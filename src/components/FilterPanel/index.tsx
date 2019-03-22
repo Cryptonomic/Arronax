@@ -132,7 +132,14 @@ class FilterPanel extends React.Component<Props, States> {
       selectedEntity,
       removeValue,
       selectedValues,
+      filterInputState,
+      setFilterInputState,
     } = this.props;
+    const itemToRemove = filterInputState.find(
+      value => Object.keys(value).toString() === filter.name
+    );
+    console.log(itemToRemove);
+    setFilterInputState(null, Object.keys(itemToRemove).toString());
     selectedValues.forEach(val => {
       const valueToRemove = Object.keys(val).toString();
       if (valueToRemove === filter.name) {
@@ -267,6 +274,7 @@ class FilterPanel extends React.Component<Props, States> {
       availableValues,
       filterInputState,
       setFilterInputState,
+      filterInputVal,
     } = this.props;
     const entityName = attrTabValue[selectedEntity];
     const cards = attributes.reduce((acc, current) => {
@@ -314,6 +322,7 @@ class FilterPanel extends React.Component<Props, States> {
                 {filter.operator && <HR />}
                 {filter.operator && (
                   <ValueSelect
+                    filterInputVal={filterInputVal}
                     setFilterInputState={setFilterInputState}
                     filterInputState={filterInputState}
                     attributes={attributes}

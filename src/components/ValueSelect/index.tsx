@@ -112,6 +112,7 @@ interface Props {
   inputProps?: object;
   InputProps?: object;
   filterInputState: any[];
+  filterInputVal: any;
   onChange: (value: object) => void;
   setFilterInputState: (value: string, filterName: string) => void;
   setFilterInput: (
@@ -146,28 +147,15 @@ class ValueSelect extends React.Component<Props, States> {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  handleInputClick = event => {
-    const {
-      setFilterInput,
-      filter,
-      filterOperator,
-      filterInputState,
-    } = this.props;
-    const className = event.target.className;
-    // Only fire function if user clicks Run button
-    if (!className.baseVal && className.baseVal !== '') {
-      if (className.includes('RunButton')) {
-        // const newValue = Object.values(value)
-        //   .toString()
-        //   .replace(',', '');
-        // setFilterInput(newValue, filter, filterOperator);
-      }
-    }
+  handleInputChange = event => {
+    const { filter, setFilterInputState, filterOperator } = this.props;
+    setFilterInputState(event.target.value, filter);
+    // setFilterInput(event.target.value, filter, filterOperator);
   };
 
-  handleInputChange = event => {
-    const { filter, setFilterInputState } = this.props;
-    setFilterInputState(event.target.value, filter);
+  handleBetweenChange = event => {
+    const { filter, setFilterInput, filterOperator } = this.props;
+    // setFilterInput(event.target.value, filter, filterOperator);
   };
 
   render() {
@@ -182,6 +170,7 @@ class ValueSelect extends React.Component<Props, States> {
       inputProps,
       InputProps,
       filterInputState,
+      filterInputVal,
     } = this.props;
     console.log(filterInputState);
     const cards = attributes.reduce((acc, current) => {
@@ -217,23 +206,31 @@ class ValueSelect extends React.Component<Props, States> {
     );
     const menuTitle =
       selectedValues && selectedItem !== undefined ? selectedItem : placeholder;
-    // const currentValues = filterInputState.map(value => {
-    //   return Object.
-    // })
+    const findValue = filterInputState.find(
+      value => Object.keys(value).toString() === filter
+    );
+    const currentValue = findValue ? Object.values(findValue).toString() : null;
     let input;
     if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
       input = (
         <React.Fragment>
           <Container>
-            <ClickAwayListener onClickAway={event => this.handleClick(event)}>
-              <TextInput
-                // value={value}
-                inputProps={inputProps}
-                InputProps={InputProps}
-                placeholder={placeholder}
-                onChange={event => this.handleChange(event)}
-              />
-            </ClickAwayListener>
+            <TextInput
+              // value={value}
+              inputProps={inputProps}
+              InputProps={InputProps}
+              placeholder={placeholder}
+              onChange={event => this.handleInputChange(event)}
+            />
+          </Container>
+          <Container>
+            <TextInput
+              // value={value}
+              inputProps={inputProps}
+              InputProps={InputProps}
+              placeholder={placeholder}
+              onChange={event => this.handleBetweenChange(event)}
+            />
           </Container>
         </React.Fragment>
       );
@@ -283,17 +280,13 @@ class ValueSelect extends React.Component<Props, States> {
     } else {
       input = (
         <Container>
-          <ClickAwayListener
-            onClickAway={event => this.handleInputClick(event)}
-          >
-            <TextInput
-              // value={value}
-              inputProps={inputProps}
-              InputProps={InputProps}
-              placeholder={`input`}
-              onChange={event => this.handleInputChange(event)}
-            />
-          </ClickAwayListener>
+          <TextInput
+            value={currentValue ? currentValue : ''}
+            inputProps={inputProps}
+            InputProps={InputProps}
+            placeholder={`input`}
+            onChange={event => this.handleInputChange(event)}
+          />
         </Container>
       );
     }

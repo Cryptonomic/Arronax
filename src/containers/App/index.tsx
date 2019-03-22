@@ -218,7 +218,14 @@ class Arronax extends React.Component<Props, States> {
     filterInputState.forEach(filter => {
       filterCheck.push(Object.keys(filter).toString());
     });
-    if (filterCheck.includes(filterName)) {
+    if (val === null) {
+      const itemToRemove = filterState.find(
+        val => Object.keys(val).toString() === filterName
+      );
+      const index = filterState.indexOf(itemToRemove);
+      filterState.splice(index, 1);
+      this.setState({ filterInputState: filterState });
+    } else if (filterCheck.includes(filterName)) {
       const index = filterCheck.indexOf(filterName);
       filterState.splice(index, 1);
       const newState = [...filterState, { [filterName]: val }];
@@ -298,6 +305,7 @@ class Arronax extends React.Component<Props, States> {
       selectedColumns,
     } = this.props;
     const { isFilterCollapse, filterInputVal, filterInputState } = this.state;
+    console.log(filterInputState);
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
