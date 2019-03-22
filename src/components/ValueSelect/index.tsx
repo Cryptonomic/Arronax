@@ -111,7 +111,9 @@ interface Props {
   filterOperator: string;
   inputProps?: object;
   InputProps?: object;
+  filterInputState: any[];
   onChange: (value: object) => void;
+  setFilterInputState: (value: string, filterName: string) => void;
   setFilterInput: (
     value: string,
     filterName: string,
@@ -121,13 +123,12 @@ interface Props {
 
 type States = {
   anchorEl: boolean;
-  value: string;
+  // value: string;
 };
 
 class ValueSelect extends React.Component<Props, States> {
   state = {
     anchorEl: null,
-    value: '',
   };
 
   handleChange = value => {
@@ -146,24 +147,31 @@ class ValueSelect extends React.Component<Props, States> {
   };
 
   handleInputClick = event => {
-    const { value } = this.state;
-    const { setFilterInput, filter, filterOperator } = this.props;
+    const {
+      setFilterInput,
+      filter,
+      filterOperator,
+      filterInputState,
+    } = this.props;
     const className = event.target.className;
     // Only fire function if user clicks Run button
     if (!className.baseVal && className.baseVal !== '') {
       if (className.includes('RunButton')) {
-        const newValue = value.replace(',', '');
-        setFilterInput(newValue, filter, filterOperator);
+        // const newValue = Object.values(value)
+        //   .toString()
+        //   .replace(',', '');
+        // setFilterInput(newValue, filter, filterOperator);
       }
     }
   };
 
   handleInputChange = event => {
-    this.setState({ value: event.target.value });
+    const { filter, setFilterInputState } = this.props;
+    setFilterInputState(event.target.value, filter);
   };
 
   render() {
-    const { anchorEl, value } = this.state;
+    const { anchorEl } = this.state;
     const {
       attributes,
       availableValues,
@@ -173,15 +181,15 @@ class ValueSelect extends React.Component<Props, States> {
       filterOperator,
       inputProps,
       InputProps,
-      setFilterInput,
+      filterInputState,
     } = this.props;
+    console.log(filterInputState);
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);
       }
       return acc;
     }, []);
-    console.log(cards);
     let newValue = [];
     selectedValues.forEach(val => {
       if (val[filter.toString()] !== undefined) {
@@ -209,6 +217,9 @@ class ValueSelect extends React.Component<Props, States> {
     );
     const menuTitle =
       selectedValues && selectedItem !== undefined ? selectedItem : placeholder;
+    // const currentValues = filterInputState.map(value => {
+    //   return Object.
+    // })
     let input;
     if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
       input = (
@@ -216,7 +227,7 @@ class ValueSelect extends React.Component<Props, States> {
           <Container>
             <ClickAwayListener onClickAway={event => this.handleClick(event)}>
               <TextInput
-                value={value}
+                // value={value}
                 inputProps={inputProps}
                 InputProps={InputProps}
                 placeholder={placeholder}
@@ -276,7 +287,7 @@ class ValueSelect extends React.Component<Props, States> {
             onClickAway={event => this.handleInputClick(event)}
           >
             <TextInput
-              value={value}
+              // value={value}
               inputProps={inputProps}
               InputProps={InputProps}
               placeholder={`input`}

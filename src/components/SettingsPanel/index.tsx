@@ -87,7 +87,9 @@ interface Props {
   selectedColumns: any;
   isCollapse: boolean;
   filterInputVal: object[];
+  filterInputState: object[];
   submitValues: () => void;
+  setFilterInputState: (value: string, filterName: string) => void;
   setFilterInput: (
     value: string,
     filterName: string,
@@ -106,6 +108,8 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
     submitValues,
     setFilterInput,
     filterInputVal,
+    filterInputState,
+    setFilterInputState,
   } = props;
   return (
     <Collapse in={isCollapse}>
@@ -115,8 +119,10 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
         </CloseIconContainer>
         <FilterTxt>Filter</FilterTxt>
         <FilterPanel
+          setFilterInputState={setFilterInputState}
           setFilterInput={setFilterInput}
           filterInputVal={filterInputVal}
+          filterInputState={filterInputState}
         />
         <DisplayTxt>Display</DisplayTxt>
         <QueryContainer>

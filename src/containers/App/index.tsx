@@ -129,6 +129,7 @@ export interface Props {
 export interface States {
   isFilterCollapse: boolean;
   filterInputVal: any[];
+  filterInputState: any;
 }
 
 class Arronax extends React.Component<Props, States> {
@@ -137,6 +138,7 @@ class Arronax extends React.Component<Props, States> {
     this.state = {
       isFilterCollapse: false,
       filterInputVal: [],
+      filterInputState: [],
     };
   }
 
@@ -209,6 +211,26 @@ class Arronax extends React.Component<Props, States> {
     await submitQuery();
   };
 
+  setFilterInputState = (val, filterName) => {
+    const { filterInputState } = this.state;
+    const filterState = [...filterInputState];
+    let filterCheck = [];
+    filterInputState.forEach(filter => {
+      filterCheck.push(Object.keys(filter).toString());
+    });
+    if (filterCheck.includes(filterName)) {
+      const index = filterCheck.indexOf(filterName);
+      filterState.splice(index, 1);
+      const newState = [...filterState, { [filterName]: val }];
+      this.setState({ filterInputState: newState });
+    } else {
+      const newValues = [...filterInputState, { [filterName]: val }];
+      this.setState({
+        filterInputState: newValues,
+      });
+    }
+  };
+
   setFilterInput = async (val, filterName, filterOperator) => {
     const { filterInputVal } = this.state;
     const { selectedFilters } = this.props;
@@ -275,7 +297,7 @@ class Arronax extends React.Component<Props, States> {
       items,
       selectedColumns,
     } = this.props;
-    const { isFilterCollapse, filterInputVal } = this.state;
+    const { isFilterCollapse, filterInputVal, filterInputState } = this.state;
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
@@ -297,6 +319,8 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
+            setFilterInputState={this.setFilterInputState}
+            filterInputState={filterInputState}
             filterInputVal={filterInputVal}
             setFilterInput={this.setFilterInput}
             submitValues={this.submitValues}

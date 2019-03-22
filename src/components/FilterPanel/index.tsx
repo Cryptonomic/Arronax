@@ -101,11 +101,13 @@ type Props = {
   filters: object[];
   operators: object[];
   filterInputVal: object[];
+  filterInputState: object[];
   setFilterInput: (
     value: string,
     filterName: string,
     filterOperator: string
   ) => void;
+  setFilterInputState: (value: string, filterName: string) => void;
   removeValue: (value: object) => void;
   setSelectedValues: (value: object) => void;
   fetchValues: (value: string) => void;
@@ -263,6 +265,8 @@ class FilterPanel extends React.Component<Props, States> {
       setFilterInput,
       selectedValues,
       availableValues,
+      filterInputState,
+      setFilterInputState,
     } = this.props;
     const entityName = attrTabValue[selectedEntity];
     const cards = attributes.reduce((acc, current) => {
@@ -310,6 +314,8 @@ class FilterPanel extends React.Component<Props, States> {
                 {filter.operator && <HR />}
                 {filter.operator && (
                   <ValueSelect
+                    setFilterInputState={setFilterInputState}
+                    filterInputState={filterInputState}
                     attributes={attributes}
                     placeholder={`Select Value`}
                     filter={filter.name}
