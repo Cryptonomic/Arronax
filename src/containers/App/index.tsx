@@ -186,8 +186,23 @@ class Arronax extends React.Component<Props, States> {
   };
 
   submitValues = async () => {
-    const { setSelectedValues, submitQuery } = this.props;
+    const {
+      setSelectedValues,
+      submitQuery,
+      selectedFilters,
+      selectedValues,
+      removeValue,
+    } = this.props;
     const { filterInputState } = this.state;
+    const filterNames = await selectedFilters.map(
+      filter => Object.values(filter)[0]
+    );
+    // Remove values from Redux state that are not represented in local state
+    await selectedValues.forEach(value => {
+      if (!filterNames.includes(Object.keys(value)[0])) {
+        removeValue(value);
+      }
+    });
     // Loop through each value in state and set the value in Redux's state
     await filterInputState.forEach(val => {
       setSelectedValues(val);
@@ -203,6 +218,7 @@ class Arronax extends React.Component<Props, States> {
     filterInputState.forEach(filter => {
       filterCheck.push(Object.keys(filter).toString());
     });
+    // Remove the value from state by sending in a NULL value
     if (val === null) {
       const itemToRemove = filterState.find(
         val => Object.keys(val).toString() === filterName

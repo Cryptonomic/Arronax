@@ -22,6 +22,7 @@ import {
 } from '../../reducers/app/actions';
 import FilterSelect from '../FilterSelect';
 import ValueSelect from '../ValueSelect';
+import ValueInput from '../ValueInput';
 
 const Container = styled.div`
   width: 100%;
@@ -136,11 +137,13 @@ class FilterPanel extends React.Component<Props, States> {
     const itemToRemove = filterInputState.find(
       value => Object.keys(value).toString() === filter.name
     );
-    setFilterInputState(
-      null,
-      Object.keys(itemToRemove).toString(),
-      filter.operator
-    );
+    if (itemToRemove) {
+      setFilterInputState(
+        null,
+        Object.keys(itemToRemove).toString(),
+        filter.operator
+      );
+    }
     selectedValues.forEach(val => {
       const valueToRemove = Object.keys(val).toString();
       if (valueToRemove === filter.name) {
@@ -246,18 +249,24 @@ class FilterPanel extends React.Component<Props, States> {
                   />
                 )}
                 {filter.operator && <HR />}
-                {filter.operator && (
-                  <ValueSelect
+                {filter.operator &&
+                  filter.operator === 'EQ' &&
+                  cards.includes(filter.name) && (
+                    <ValueSelect
+                      placeholder={`Select Value`}
+                      filter={filter.name}
+                      selectedValues={selectedValues}
+                      availableValues={availableValues}
+                      onChange={value => this.onValueChange(value)}
+                    />
+                  )}
+                {filter.operator && !cards.includes(filter.name) && (
+                  <ValueInput
                     setFilterInputState={setFilterInputState}
                     filterInputState={filterInputState}
-                    attributes={attributes}
-                    placeholder={`Select Value`}
-                    filter={filter.name}
-                    selectedValues={selectedValues}
-                    availableValues={availableValues}
-                    onChange={value => this.onValueChange(value)}
                     filterOperator={filter.operator}
                     InputProps={{ disableUnderline: true }}
+                    filter={filter.name}
                   />
                 )}
               </FilterItemGr>

@@ -13,30 +13,6 @@ const HR = styled.div`
   background-color: #ecedef;
 `;
 
-const AndBlock = styled.div`
-  color: #4a4a4a;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: 400;
-  padding-right: 10px;
-  padding-left: 10px;
-`;
-
-const TextInput = styled(TextField)`
-  margin-top: 17px !important;
-  margin-left: 10px !important;
-  color: #9b9b9b;
-  font-size: 18px;
-  font-weight: normal;
-  height: 17px;
-  letter-spacing: 0;
-  line-height: 17px;
-  width: 150px;
-`;
-
 const ButtonShell = styled(Button)`
   &&& {
     height: 52px;
@@ -100,21 +76,11 @@ const MainMenuItem = styled(MenuItem)`
 `;
 
 interface Props {
-  attributes: any[];
   filter: any;
   selectedValues: any;
   availableValues: Array<object>;
   placeholder?: string;
-  filterOperator: string;
-  inputProps?: object;
-  InputProps?: object;
-  filterInputState: any[];
   onChange: (value: object) => void;
-  setFilterInputState: (
-    value: string,
-    filterName: string,
-    filterOperator: string
-  ) => void;
 }
 
 type States = {
@@ -141,35 +107,9 @@ class ValueSelect extends React.Component<Props, States> {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  handleInputChange = event => {
-    const { filter, setFilterInputState, filterOperator } = this.props;
-    setFilterInputState(event.target.value, filter, filterOperator);
-  };
-
-  handleBetweenChange = event => {
-    const { filter, setFilterInputState, filterOperator } = this.props;
-    setFilterInputState(`-${event.target.value}`, filter, filterOperator);
-  };
-
   render() {
     const { anchorEl } = this.state;
-    const {
-      attributes,
-      availableValues,
-      selectedValues,
-      placeholder,
-      filter,
-      filterOperator,
-      inputProps,
-      InputProps,
-      filterInputState,
-    } = this.props;
-    const cards = attributes.reduce((acc, current) => {
-      if (current.cardinality < 15 && current.cardinality !== null) {
-        acc.push(current.name);
-      }
-      return acc;
-    }, []);
+    const { availableValues, selectedValues, placeholder, filter } = this.props;
     let newValue = [];
     selectedValues.forEach(val => {
       if (val[filter.toString()] !== undefined) {
@@ -197,100 +137,47 @@ class ValueSelect extends React.Component<Props, States> {
     );
     const menuTitle =
       selectedValues && selectedItem !== undefined ? selectedItem : placeholder;
-    const findValue = filterInputState.find(
-      value => Object.keys(value).toString() === filter
-    );
-    const currentValue = findValue ? Object.values(findValue).toString() : null;
-    const betweenValue = findValue ? Object.values(findValue).toString() : null;
-    const split = findValue ? betweenValue.split('-') : null;
-    const firstBetweenValue = split ? split[0] : null;
-    const secondBetweenValue = split ? split[1] : null;
-    let input;
-    if (filterOperator === 'BETWEEN' || filterOperator === 'IN') {
-      input = (
-        <React.Fragment>
-          <Container>
-            <TextInput
-              value={firstBetweenValue ? firstBetweenValue : ''}
-              inputProps={inputProps}
-              InputProps={InputProps}
-              placeholder={placeholder}
-              onChange={event => this.handleInputChange(event)}
-            />
-          </Container>
-          <HR />
-          <AndBlock>and</AndBlock>
-          <HR />
-          {/* DISABLE THIS FIELD UNLESS 1st ONE HAS DATA */}
-          <Container>
-            <TextInput
-              value={secondBetweenValue ? secondBetweenValue : ''}
-              inputProps={inputProps}
-              InputProps={InputProps}
-              placeholder={placeholder}
-              onChange={event => this.handleBetweenChange(event)}
-            />
-          </Container>
-        </React.Fragment>
-      );
-    } else if (filterOperator === 'ISNULL') {
-      input = null;
-    } else if (filterOperator === 'EQ' && cards.includes(filter)) {
-      input = (
-        <Container>
-          <ButtonShell
-            aria-owns={anchorEl ? 'simple-menu' : undefined}
-            aria-haspopup="true"
-            isactive={selectedValues}
-            onClick={this.handleClick}
-          >
-            {menuTitle}
-            <ArrowIcon />
-          </ButtonShell>
-          <MenuContainer>
-            <Menu
-              id="simple-menu"
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={this.cancelChange}
-              PaperProps={{
-                style: {
-                  position: 'relative',
-                  width: 300,
-                },
-              }}
-            >
-              <NestedTitle>{placeholder}</NestedTitle>
-              <MenuContents>
-                {valuesAvailable.map((value: any, index) => (
-                  <MainMenuItem
-                    onClick={() => this.handleChange(value)}
-                    key={index}
-                    selected={value === newValue[0]}
-                  >
-                    {value}
-                  </MainMenuItem>
-                ))}
-              </MenuContents>
-            </Menu>
-          </MenuContainer>
-        </Container>
-      );
-    } else {
-      input = (
-        <Container>
-          <TextInput
-            value={currentValue ? currentValue : ''}
-            inputProps={inputProps}
-            InputProps={InputProps}
-            placeholder={`input`}
-            onChange={event => this.handleInputChange(event)}
-          />
-        </Container>
-      );
-    }
 
-    return <React.Fragment>{input}</React.Fragment>;
+    return (
+      <Container>
+        <ButtonShell
+          aria-owns={anchorEl ? 'simple-menu' : undefined}
+          aria-haspopup="true"
+          isactive={selectedValues}
+          onClick={this.handleClick}
+        >
+          {menuTitle}
+          <ArrowIcon />
+        </ButtonShell>
+        <MenuContainer>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={this.cancelChange}
+            PaperProps={{
+              style: {
+                position: 'relative',
+                width: 300,
+              },
+            }}
+          >
+            <NestedTitle>{placeholder}</NestedTitle>
+            <MenuContents>
+              {valuesAvailable.map((value: any, index) => (
+                <MainMenuItem
+                  onClick={() => this.handleChange(value)}
+                  key={index}
+                  selected={value === newValue[0]}
+                >
+                  {value}
+                </MainMenuItem>
+              ))}
+            </MenuContents>
+          </Menu>
+        </MenuContainer>
+      </Container>
+    );
   }
 }
 
