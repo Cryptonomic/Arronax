@@ -6,15 +6,15 @@ import DeleteIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
 import { fetchValues } from '../../reducers/app/thunks';
 import {
-  getValues,
+  getAvailableValues,
   getEntity,
   getAttributes,
   getSelectedFilters,
   getOperators,
-  getValue,
+  getSelectedValues,
 } from '../../reducers/app/selectors';
 import {
-  setValueAction,
+  setSelectedValuesAction,
   removeValueAction,
   addFilterAction,
   removeFilterAction,
@@ -22,7 +22,7 @@ import {
 } from '../../reducers/app/actions';
 import FilterSelect from '../FilterSelect';
 import ValueSelect from '../ValueSelect';
-import FilterInput from '../FilterInput';
+import ValueInput from '../ValueInput';
 
 const Container = styled.div`
   width: 100%;
@@ -88,18 +88,6 @@ const HR = styled.div`
   background-color: #ecedef;
 `;
 
-const AndBlock = styled.div`
-  color: #4a4a4a;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: 400;
-  padding-right: 10px;
-  padding-left: 10px;
-`;
-
 const attrTabValue = {
   blocks: 'block',
   operations: 'operation',
@@ -107,14 +95,20 @@ const attrTabValue = {
 };
 
 type Props = {
-  value: object[];
-  values: object[];
+  selectedValues: object[];
+  availableValues: object[];
   selectedEntity: string;
   attributes: any[];
   filters: object[];
   operators: object[];
+  filterInputState: object[];
+  setFilterInputState: (
+    value: string,
+    filterName: string,
+    filterOperator: string
+  ) => void;
   removeValue: (value: object) => void;
-  setValue: (value: object) => void;
+  setSelectedValues: (value: object) => void;
   fetchValues: (value: string) => void;
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
@@ -132,9 +126,27 @@ class FilterPanel extends React.Component<Props, States> {
   };
 
   onRemoveFilter = (index, filter) => {
-    const { removeFilter, selectedEntity, removeValue, value } = this.props;
-    value.forEach(val => {
-      if (Object.keys(val).toString() === filter.name) {
+    const {
+      removeFilter,
+      selectedEntity,
+      removeValue,
+      selectedValues,
+      filterInputState,
+      setFilterInputState,
+    } = this.props;
+    const itemToRemove = filterInputState.find(
+      value => Object.keys(value).toString() === filter.name
+    );
+    if (itemToRemove) {
+      setFilterInputState(
+        null,
+        Object.keys(itemToRemove).toString(),
+        filter.operator
+      );
+    }
+    selectedValues.forEach(val => {
+      const valueToRemove = Object.keys(val).toString();
+      if (valueToRemove === filter.name) {
         removeValue(val);
       }
     });
@@ -178,73 +190,29 @@ class FilterPanel extends React.Component<Props, States> {
   };
 
   onValueChange = val => {
-    const { setValue } = this.props;
-    setValue(val);
+    const { setSelectedValues } = this.props;
+    setSelectedValues(val);
   };
 
-  generateFilter = filter => {
-    const { values, attributes, value } = this.props;
+  render() {
+    const {
+      selectedEntity,
+      attributes,
+      filters,
+      operators,
+      selectedValues,
+      availableValues,
+      filterInputState,
+      setFilterInputState,
+    } = this.props;
+    const entityName = attrTabValue[selectedEntity];
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
         acc.push(current.name);
       }
       return acc;
     }, []);
-    if (!filter.operator) {
-      return;
-    } else if (filter.operator === 'ISNULL') {
-      return;
-    } else if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
-      return (
-        <React.Fragment>
-          <HR />
-          <FilterInput
-            InputProps={{ disableUnderline: true }}
-            placeholder={`e.g. 123456`}
-          />
-          <HR />
-          <AndBlock>and</AndBlock>
-          <HR />
-          <FilterInput
-            InputProps={{ disableUnderline: true }}
-            placeholder={`e.g. 123456`}
-          />
-        </React.Fragment>
-      );
-    } else if (
-      filter.operator !== 'ISNULL' &&
-      filter.operator !== 'BETWEEN' &&
-      filter.operator !== 'IN' &&
-      cards.includes(filter.name)
-    ) {
-      return (
-        <React.Fragment>
-          <HR />
-          <ValueSelect
-            filter={filter.name}
-            value={value}
-            placeholder={`Select Value`}
-            items={values}
-            onChange={value => this.onValueChange(value)}
-          />
-        </React.Fragment>
-      );
-    } else {
-      return (
-        <React.Fragment>
-          <HR />
-          <FilterInput
-            placeholder={`Placeholder Here`}
-            InputProps={{ disableUnderline: true }}
-          />
-        </React.Fragment>
-      );
-    }
-  };
 
-  render() {
-    const { selectedEntity, attributes, filters, operators } = this.props;
-    const entityName = attrTabValue[selectedEntity];
     return (
       <Container>
         {filters.map((filter: any, index) => {
@@ -280,7 +248,27 @@ class FilterPanel extends React.Component<Props, States> {
                     }
                   />
                 )}
-                {this.generateFilter(filter)}
+                {filter.operator && <HR />}
+                {filter.operator &&
+                  filter.operator === 'EQ' &&
+                  cards.includes(filter.name) && (
+                    <ValueSelect
+                      placeholder={`Select Value`}
+                      filter={filter.name}
+                      selectedValues={selectedValues}
+                      availableValues={availableValues}
+                      onChange={value => this.onValueChange(value)}
+                    />
+                  )}
+                {filter.operator && !cards.includes(filter.name) && (
+                  <ValueInput
+                    setFilterInputState={setFilterInputState}
+                    filterInputState={filterInputState}
+                    filterOperator={filter.operator}
+                    InputProps={{ disableUnderline: true }}
+                    filter={filter.name}
+                  />
+                )}
               </FilterItemGr>
               <IconButton
                 aria-label="Delete"
@@ -312,15 +300,16 @@ const mapStateToProps = state => ({
   selectedEntity: getEntity(state),
   attributes: getAttributes(state),
   filters: getSelectedFilters(state),
-  values: getValues(state),
-  value: getValue(state),
+  availableValues: getAvailableValues(state),
+  selectedValues: getSelectedValues(state),
   operators: getOperators(state),
 });
 
 const mapDispatchToProps = dispatch => ({
   fetchValues: (value: string) => dispatch(fetchValues(value)),
   removeValue: (value: object) => dispatch(removeValueAction(value)),
-  setValue: (value: object) => dispatch(setValueAction(value)),
+  setSelectedValues: (value: object) =>
+    dispatch(setSelectedValuesAction(value)),
   addFilter: (entity: string) => dispatch(addFilterAction(entity)),
   removeFilter: (entity: string, index: number) =>
     dispatch(removeFilterAction(entity, index)),

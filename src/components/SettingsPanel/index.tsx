@@ -4,11 +4,46 @@ import Collapse from '@material-ui/core/Collapse';
 import CloseIcon from '@material-ui/icons/CloseOutlined';
 import ColumnsDisplay from '../ColumnsDisplay';
 import FilterPanel from '../FilterPanel';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 const Container = styled.div`
   position: relative;
   padding: 50px 77px 50px 50px;
   background: #ecedef;
+`;
+
+const QueryContainer = styled.div`
+  display: flex;
+`;
+
+const ButtonsContainer = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+const RunButton = styled.div`
+  cursor: pointer;
+  margin-left: 40px;
+  color: white;
+  background: #56c2d9;
+  border-radius: 9px 9px 9px 9px;
+  font-size: 18px;
+  height: 47px;
+  width: 125px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ResetButton = styled.div`
+  color: #56c2d9;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 `;
 
 const FilterTxt = styled.div`
@@ -24,9 +59,10 @@ const DisplayTxt = styled(FilterTxt)`
 const DisplayContainer = styled.div`
   align-items: center;
   padding-left: 24px;
-  width: 100%;
+  padding-right: 24px;
+  width: 50%;
   height: 93px;
-  background: #fbfbfb;
+  background: white;
   border: 1px solid #ededed;
   border-radius: 3px;
   display: flex;
@@ -49,13 +85,28 @@ const CloseIconWrapper = styled(CloseIcon)`
 
 interface Props {
   selectedColumns: any;
-  selectedEntity: string;
   isCollapse: boolean;
+  filterInputState: object[];
+  submitValues: () => void;
+  setFilterInputState: (
+    value: string,
+    filterName: string,
+    filterOperator: string
+  ) => void;
   onClose: () => void;
+  resetValues: () => void;
 }
 
 const SettingsPanel: React.StatelessComponent<Props> = props => {
-  const { isCollapse, onClose, selectedColumns } = props;
+  const {
+    isCollapse,
+    onClose,
+    selectedColumns,
+    resetValues,
+    submitValues,
+    filterInputState,
+    setFilterInputState,
+  } = props;
   return (
     <Collapse in={isCollapse}>
       <Container>
@@ -63,11 +114,23 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
           <CloseIconWrapper />
         </CloseIconContainer>
         <FilterTxt>Filter</FilterTxt>
-        <FilterPanel />
+        <FilterPanel
+          setFilterInputState={setFilterInputState}
+          filterInputState={filterInputState}
+        />
         <DisplayTxt>Display</DisplayTxt>
-        <DisplayContainer>
-          <ColumnsDisplay selectedColumns={selectedColumns} />
-        </DisplayContainer>
+        <QueryContainer>
+          <DisplayContainer>
+            <ColumnsDisplay selectedColumns={selectedColumns} />
+          </DisplayContainer>
+          <ButtonsContainer>
+            <ResetButton onClick={resetValues}>
+              <RefreshIcon />
+              {'  '}Reset
+            </ResetButton>
+            <RunButton onClick={submitValues}>Run</RunButton>
+          </ButtonsContainer>
+        </QueryContainer>
       </Container>
     </Collapse>
   );
