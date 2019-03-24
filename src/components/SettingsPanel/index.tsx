@@ -88,6 +88,9 @@ interface Props {
   selectedColumns: any;
   isCollapse: boolean;
   filterInputState: object[];
+  selectedEntity: string;
+  attributes: object[];
+  setColumns: (columns: object[]) => void;
   setRowCount: (count: number) => void;
   submitValues: () => void;
   setFilterInputState: (
@@ -110,6 +113,9 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
     setFilterInputState,
     rowCount,
     setRowCount,
+    selectedEntity,
+    attributes,
+    setColumns,
   } = props;
   return (
     <Collapse in={isCollapse}>
@@ -126,6 +132,9 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
         <QueryContainer>
           <DisplayContainer>
             <ColumnsDisplay
+              setColumns={setColumns}
+              selectedEntity={selectedEntity}
+              attributes={attributes}
               rowCount={rowCount}
               setRowCount={setRowCount}
               selectedColumns={selectedColumns}

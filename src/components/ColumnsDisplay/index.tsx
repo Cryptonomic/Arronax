@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { getEntity, getAttributes } from '../../reducers/app/selectors';
-import { setColumns } from '../../reducers/app/thunks';
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -224,7 +221,7 @@ type Props = {
   classes: any;
   rowCount: number;
   setRowCount: (count: number) => void;
-  setColumns: (entity: string, items: object[]) => void;
+  setColumns: (columns: object[]) => void;
 };
 
 type States = {
@@ -242,6 +239,7 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   componentDidMount() {
     const { selectedColumns, selectedEntity } = this.props;
+    console.log(selectedColumns);
     this.setState({
       selected: [...selectedColumns[selectedEntity]],
     });
@@ -262,11 +260,10 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   handleSubmit = event => {
     const { selected } = this.state;
-    const { selectedEntity, setColumns, selectedColumns } = this.props;
+    const { setColumns } = this.props;
     event.preventDefault();
     this.setState({ anchorEl: null });
-    this.setState({ selected: [...selectedColumns[selectedEntity]] });
-    setColumns(selectedEntity, selected);
+    setColumns(selected);
   };
 
   handleChange = (name: SelectedColumnsData) => event => {
@@ -318,6 +315,7 @@ class ColumnDisplay extends React.Component<Props, States> {
       setRowCount,
     } = this.props;
     const { anchorEl, fadeBottom, selected } = this.state;
+    console.log(selected);
     let tab;
     switch (selectedEntity) {
       case 'blocks':
@@ -411,17 +409,4 @@ class ColumnDisplay extends React.Component<Props, States> {
   }
 }
 
-const mapStateToProps = state => ({
-  selectedEntity: getEntity(state),
-  attributes: getAttributes(state),
-});
-
-const mapDispatchToProps = dispatch => ({
-  setColumns: (entity: string, items: object[]) =>
-    dispatch(setColumns(entity, items)),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(ColumnDisplay));
+export default withStyles(styles)(ColumnDisplay);

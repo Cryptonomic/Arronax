@@ -55,7 +55,7 @@ interface Props {
   attributes: any[];
   entity: string;
   items: any[];
-  selectedColumns: object[];
+  selectedColumns: object;
   network: string;
 }
 

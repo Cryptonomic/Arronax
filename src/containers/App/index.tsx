@@ -23,6 +23,7 @@ import {
 } from '../../reducers/app/thunks';
 import {
   setSelectedValuesAction,
+  setColumnsAction,
   setTabAction,
   removeValueAction,
   removeAllFiltersAction,
@@ -123,6 +124,7 @@ export interface Props {
   isFullLoaded: boolean;
   selectedFilters: object[];
   rowCount: number;
+  setColumns: (entity: string, columns: object[]) => void;
   setRowCount: (count: number) => void;
   removeValue: (value: object) => void;
   removeAllFilters: (entity: string) => void;
@@ -138,6 +140,7 @@ export interface States {
   isFilterCollapse: boolean;
   filterInputState: any;
   numberOfRows: number;
+  selectedDisplayColumns: object[];
 }
 
 class Arronax extends React.Component<Props, States> {
@@ -147,12 +150,13 @@ class Arronax extends React.Component<Props, States> {
       isFilterCollapse: false,
       filterInputState: [],
       numberOfRows: 10,
+      selectedDisplayColumns: [],
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { initLoad } = this.props;
-    initLoad();
+    await initLoad();
   }
 
   onChangeNetwork = event => {
@@ -204,11 +208,19 @@ class Arronax extends React.Component<Props, States> {
       selectedValues,
       removeValue,
       setRowCount,
+      selectedEntity,
+      setColumns,
     } = this.props;
-    const { filterInputState, numberOfRows } = this.state;
+    const {
+      filterInputState,
+      numberOfRows,
+      selectedDisplayColumns,
+    } = this.state;
     const filterNames = await selectedFilters.map(
       filter => Object.values(filter)[0]
     );
+    // Set columns in Redux state
+    await setColumns(selectedEntity, selectedDisplayColumns);
     // Set the amount of rows shown
     await setRowCount(numberOfRows);
     // Remove values from Redux state that are not represented in local state
@@ -306,6 +318,10 @@ class Arronax extends React.Component<Props, States> {
     this.setState({ numberOfRows: rowCount });
   };
 
+  setSelectedColumns = (columns: object[]) => {
+    this.setState({ selectedDisplayColumns: columns });
+  };
+
   render() {
     const {
       isLoading,
@@ -314,6 +330,7 @@ class Arronax extends React.Component<Props, States> {
       items,
       selectedColumns,
       isFullLoaded,
+      attributes,
     } = this.props;
     const { isFilterCollapse, filterInputState, numberOfRows } = this.state;
     const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
@@ -338,6 +355,9 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
+            setColumns={this.setSelectedColumns}
+            selectedEntity={selectedEntity}
+            attributes={attributes}
             rowCount={numberOfRows}
             setRowCount={this.setAmountOfRows}
             setFilterInputState={this.setFilterInputState}
@@ -388,6 +408,8 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  setColumns: (entity: string, columns: object[]) =>
+    dispatch(setColumnsAction(entity, columns)),
   setRowCount: (count: number) => dispatch(setRowCountAction(count)),
   setSelectedValues: (value: object[]) =>
     dispatch(setSelectedValuesAction(value)),
