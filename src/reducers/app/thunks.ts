@@ -157,12 +157,12 @@ export const submitQuery = () => async (dispatch, state) => {
   });
   // query = setLimit(query, limit);
   // Add this to set ordering
+  alert(attributeNames);
   query = addOrdering(
     query,
-    attributeNames.includes('block_level') ? 'block_level' : 'level',
+    !attributeNames.includes('level') ? 'block_level' : 'level',
     ConseilSortDirection.DESC
   );
-  console.log(query);
   const items = await executeEntityQuery(
     serverInfo,
     'tezos',
