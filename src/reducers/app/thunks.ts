@@ -157,7 +157,6 @@ export const submitQuery = () => async (dispatch, state) => {
   });
   // query = setLimit(query, limit);
   // Add this to set ordering
-  alert(attributeNames);
   query = addOrdering(
     query,
     !attributeNames.includes('level') ? 'block_level' : 'level',
