@@ -40,10 +40,32 @@ const getAttributeNames = attributes => {
 };
 
 const getInitialColumns = (entity, columns) => {
-  if (entity !== 'blocks') {
-    const newColumns = columns.slice(0, 6);
-    return newColumns;
-  } else {
+  const sorted = columns.sort((a, b) => a.displayName.localeCompare(b.displayName));
+
+  if (entity === 'operations') {
+    let operationColumns: string[] = [];
+
+    operationColumns.push(sorted.filter(c => c.name === 'timestamp')[0]);
+    operationColumns.push(sorted.filter(c => c.name === 'block_level')[0]);
+    operationColumns.push(sorted.filter(c => c.name === 'source')[0]);
+    operationColumns.push(sorted.filter(c => c.name === 'destination')[0]);
+    operationColumns.push(sorted.filter(c => c.name === 'amount')[0]);
+    operationColumns.push(sorted.filter(c => c.name === 'kind')[0]);
+    operationColumns.push(sorted.filter(c => c.name === 'fee')[0]);
+
+    return operationColumns;
+  } else if (entity === 'accounts') {
+    let accountColumns: string[] = [];
+
+    accountColumns.push(sorted.filter(c => c.name === 'account_id')[0]);
+    accountColumns.push(sorted.filter(c => c.name === 'manager')[0]);
+    accountColumns.push(sorted.filter(c => c.name === 'delegate_value')[0]);
+    accountColumns.push(sorted.filter(c => c.name === 'balance')[0]);
+    accountColumns.push(sorted.filter(c => c.name === 'block_level')[0]);
+    accountColumns.push(sorted.filter(c => c.name === 'counter')[0]);
+
+    return accountColumns;
+  } else if (entity === 'blocks') {
     const newColumns = columns.reduce((acc, element) => {
       if (element.name === 'level') {
         acc[0] = element;
@@ -162,6 +184,7 @@ export const submitQuery = () => async (dispatch, state) => {
     !attributeNames.includes('level') ? 'block_level' : 'level',
     ConseilSortDirection.DESC
   );
+  console.log(query);
   const items = await executeEntityQuery(
     serverInfo,
     'tezos',
