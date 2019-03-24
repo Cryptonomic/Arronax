@@ -34,7 +34,6 @@ import FilterTool from 'components/FilterTool';
 import SettingsPanel from 'components/SettingsPanel';
 import Footer from 'components/Footer';
 import CustomTable from '../CustomTable';
-import { number } from 'prop-types';
 
 const Container = styled.div`
   padding: 50px 0;
