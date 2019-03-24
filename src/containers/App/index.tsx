@@ -346,6 +346,7 @@ class Arronax extends React.Component<Props, States> {
       isFullLoaded,
       attributes,
       filterCount,
+      selectedValues,
     } = this.props;
     const { isFilterCollapse, filterInputState, numberOfRows } = this.state;
     const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
@@ -371,6 +372,7 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
+            selectedValues={selectedValues}
             setColumns={this.setSelectedColumns}
             selectedEntity={selectedEntity}
             attributes={attributes}

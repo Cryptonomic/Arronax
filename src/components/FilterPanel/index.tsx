@@ -297,11 +297,8 @@ class FilterPanel extends React.Component<Props, States> {
 }
 
 const mapStateToProps = state => ({
-  selectedEntity: getEntity(state),
-  attributes: getAttributes(state),
   filters: getSelectedFilters(state),
   availableValues: getAvailableValues(state),
-  selectedValues: getSelectedValues(state),
   operators: getOperators(state),
 });
 
