@@ -21,6 +21,7 @@ import {
   setColumnsAction,
   setAttributesAction,
   completeFullLoadAction,
+  setFilterCountAction,
 } from './actions';
 import getConfigs from '../../utils/getconfig';
 
@@ -169,6 +170,7 @@ export const submitQuery = () => async (dispatch, state) => {
     entity,
     query
   );
+  await dispatch(setFilterCountAction(selectedFilters.length));
   await dispatch(setItemsAction(entity, items));
   dispatch(setLoadingAction(false));
 };

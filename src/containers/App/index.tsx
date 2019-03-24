@@ -15,6 +15,7 @@ import {
   getSelectedValues,
   getSelectedFilters,
   getRows,
+  getFilterCount,
 } from '../../reducers/app/selectors';
 import {
   changeNetwork,
@@ -123,6 +124,7 @@ export interface Props {
   isFullLoaded: boolean;
   selectedFilters: object[];
   rowCount: number;
+  filterCount: number;
   setColumns: (entity: string, columns: object[]) => void;
   setRowCount: (count: number) => void;
   removeValue: (value: object) => void;
@@ -343,9 +345,11 @@ class Arronax extends React.Component<Props, States> {
       selectedColumns,
       isFullLoaded,
       attributes,
+      filterCount,
     } = this.props;
     const { isFilterCollapse, filterInputState, numberOfRows } = this.state;
     const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
+
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
@@ -381,7 +385,10 @@ class Arronax extends React.Component<Props, States> {
             onClose={this.onCloseFilter}
           />
           <FilterHeader isDark={isFilterCollapse}>
-            <FilterTool value={2} onCollapse={this.onFilterCollapse} />
+            <FilterTool
+              value={filterCount}
+              onCollapse={this.onFilterCollapse}
+            />
             <FilterExTxt>
               e.g. What blocks were baked by Foundation Baker 1 in the past 24
               hours?
@@ -407,6 +414,7 @@ class Arronax extends React.Component<Props, States> {
 }
 
 const mapStateToProps = (state: any) => ({
+  filterCount: getFilterCount(state),
   rowCount: getRows(state),
   selectedFilters: getSelectedFilters(state),
   selectedValues: getSelectedValues(state),

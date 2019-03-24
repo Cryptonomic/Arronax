@@ -16,6 +16,7 @@ import {
   SET_SELECTED_VALUES,
   REMOVE_VALUE,
   COMPLETE_FULL_LOAD,
+  SET_FILTER_COUNT,
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -39,6 +40,7 @@ export interface AppState {
   isFullLoaded: boolean;
   selectedValues: Array<object>;
   rowCount: number;
+  filterCount: object;
 }
 
 const initialState: AppState = {
@@ -81,6 +83,11 @@ const initialState: AppState = {
   isFullLoaded: false,
   selectedValues: [],
   rowCount: null,
+  filterCount: {
+    blocks: 0,
+    operations: 0,
+    accounts: 0,
+  },
 };
 
 const initEntities = {
@@ -173,6 +180,12 @@ const appReducer = (state = initialState, action) => {
       });
       const finalValues = [...values, action.selectedValue];
       return { ...state, selectedValues: finalValues };
+    }
+    case SET_FILTER_COUNT: {
+      const selectedEntity = state.selectedEntity;
+      const filterCount = state.filterCount;
+      filterCount[selectedEntity] = action.count;
+      return { ...state, filterCount: filterCount };
     }
     case SET_ROW_COUNT: {
       return { ...state, rowCount: action.rows };
