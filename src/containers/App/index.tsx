@@ -179,15 +179,9 @@ class Arronax extends React.Component<Props, States> {
   };
 
   onChangeTab = async (value: string) => {
-    const { changeTab, selectedValues, removeValue } = this.props;
-    selectedValues.forEach(value => {
-      removeValue(value);
-    });
+    const { changeTab } = this.props;
     changeTab(value);
     await this.setState({ filterInputState: [] });
-    await selectedValues.forEach(value => {
-      removeValue(value);
-    });
     await changeTab(value);
   };
 
@@ -238,11 +232,11 @@ class Arronax extends React.Component<Props, States> {
     // Set the amount of rows shown
     await setRowCount(numberOfRows);
     // Remove values from Redux state that are not represented in local state
-    await selectedValues.forEach(value => {
-      if (!filterNames.includes(Object.keys(value)[0])) {
-        removeValue(value);
-      }
-    });
+    // await selectedValues.forEach(value => {
+    //   if (!filterNames.includes(Object.keys(value)[0])) {
+    //     removeValue(value);
+    //   }
+    // });
     // Loop through each value in state and set the value in Redux's state
     await filterInputState.forEach(val => {
       setSelectedValues(val);

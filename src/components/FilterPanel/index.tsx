@@ -262,6 +262,7 @@ class FilterPanel extends React.Component<Props, States> {
                   )}
                 {filter.operator && !cards.includes(filter.name) && (
                   <ValueInput
+                    selectedValues={selectedValues}
                     setFilterInputState={setFilterInputState}
                     filterInputState={filterInputState}
                     filterOperator={filter.operator}
