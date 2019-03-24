@@ -153,9 +153,22 @@ class Arronax extends React.Component<Props, States> {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const { initLoad } = this.props;
-    await initLoad();
+    initLoad();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { selectedColumns, selectedEntity } = this.props;
+    if (
+      prevProps.selectedColumns[selectedEntity] !==
+        selectedColumns[selectedEntity] ||
+      selectedEntity !== prevProps.selectedEntity
+    ) {
+      this.setState({
+        selectedDisplayColumns: [...selectedColumns[selectedEntity]],
+      });
+    }
   }
 
   onChangeNetwork = event => {

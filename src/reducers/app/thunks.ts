@@ -160,8 +160,9 @@ export const submitQuery = () => async (dispatch, state) => {
   query = addOrdering(
     query,
     attributeNames.includes('block_level') ? 'block_level' : 'level',
-    ConseilSortDirection.ASC
+    ConseilSortDirection.DESC
   );
+  console.log(query);
   const items = await executeEntityQuery(
     serverInfo,
     'tezos',
