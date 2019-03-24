@@ -239,7 +239,6 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   componentDidMount() {
     const { selectedColumns, selectedEntity } = this.props;
-    console.log(selectedColumns);
     this.setState({
       selected: [...selectedColumns[selectedEntity]],
     });
@@ -315,7 +314,6 @@ class ColumnDisplay extends React.Component<Props, States> {
       setRowCount,
     } = this.props;
     const { anchorEl, fadeBottom, selected } = this.state;
-    console.log(selected);
     let tab;
     switch (selectedEntity) {
       case 'blocks':

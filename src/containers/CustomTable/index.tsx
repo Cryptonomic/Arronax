@@ -79,18 +79,12 @@ class CustomTable extends React.Component<Props, State> {
     this.setState({ page });
   };
 
-  // handleChangeRowsPerPage = event => {
-  //   this.setState({ rowsPerPage: event.target.value });
-  // };
-
   handleRequestSort = (property: string) => {
     const orderBy = property;
     let order: 'asc' | 'desc' = 'desc';
-
     if (this.state.orderBy === property && this.state.order === 'desc') {
       order = 'asc';
     }
-
     this.setState({ order, orderBy });
   };
 
