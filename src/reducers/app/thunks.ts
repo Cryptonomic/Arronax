@@ -20,7 +20,7 @@ import {
   setNetworkAction,
   setColumnsAction,
   setAttributesAction,
-  completeFullLoadAction
+  completeFullLoadAction,
 } from './actions';
 import getConfigs from '../../utils/getconfig';
 
@@ -31,7 +31,7 @@ const getConfig = val => {
   return configs.find(conf => conf.value === val);
 };
 
-const getAttributeNames = (attributes) => {
+const getAttributeNames = attributes => {
   let attr = [];
   attributes.forEach(attribs => {
     attr.push(attribs.name);
@@ -155,7 +155,7 @@ export const submitQuery = () => async (dispatch, state) => {
       }
     });
   });
-  query = setLimit(query, limit);
+  // query = setLimit(query, limit);
   // Add this to set ordering
   query = addOrdering(
     query,
@@ -240,12 +240,7 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
     url: config.url,
     apiKey: config.key,
   };
-  const attributes = await getAttributes(
-    serverInfo,
-    'tezos',
-    network,
-    entity
-  );
+  const attributes = await getAttributes(serverInfo, 'tezos', network, entity);
   await dispatch(setAttributesAction(entity, attributes));
   const attributeNames = getAttributeNames(attributes);
   const columns = await getInitialColumns(entity, attributes);
@@ -268,9 +263,9 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
   await dispatch(setItemsAction(entity, items));
 };
 
-export const initLoad = () => async (dispatch) => {
+export const initLoad = () => async dispatch => {
   await dispatch(fetchItemsAction('blocks'));
   await dispatch(fetchItemsAction('operations'));
   await dispatch(fetchItemsAction('accounts'));
   dispatch(completeFullLoadAction(true));
-}
+};

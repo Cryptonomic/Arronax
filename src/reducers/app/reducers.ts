@@ -11,11 +11,11 @@ import {
   REMOVE_FILTER,
   REMOVE_ALL_FILTERS,
   CHANGE_FILTER,
-  SET_ROWS,
+  SET_ROW_COUNT,
   SET_AVAILABLE_VALUES,
   SET_SELECTED_VALUES,
   REMOVE_VALUE,
-  COMPLETE_FULL_LOAD
+  COMPLETE_FULL_LOAD,
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -80,7 +80,7 @@ const initialState: AppState = {
   selectedEntity: 'blocks',
   isFullLoaded: false,
   selectedValues: [],
-  rowCount: 10,
+  rowCount: null,
 };
 
 const initEntities = {
@@ -174,7 +174,7 @@ const appReducer = (state = initialState, action) => {
       const finalValues = [...values, action.selectedValue];
       return { ...state, selectedValues: finalValues };
     }
-    case SET_ROWS: {
+    case SET_ROW_COUNT: {
       return { ...state, rowCount: action.rows };
     }
     case COMPLETE_FULL_LOAD:

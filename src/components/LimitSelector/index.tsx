@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
-import { getRows } from 'src/reducers/app/selectors';
-import { setRowsAction } from '../../reducers/app/actions';
+import { number } from 'prop-types';
 
 const Container = styled.div``;
 
@@ -90,7 +88,7 @@ class LimitSelector extends React.Component<Props> {
     const { anchorEl } = this.state;
     const { rowCount } = this.props;
     const limitOptions = [10, 25, 50, 100, 250, 1000];
-
+    const numberOfRows = rowCount !== null ? rowCount : 10;
     return (
       <Container>
         <ButtonShell
@@ -99,7 +97,7 @@ class LimitSelector extends React.Component<Props> {
           isactive={rowCount}
           onClick={this.handleClick}
         >
-          {rowCount}
+          {numberOfRows}
           <ArrowIcon />
         </ButtonShell>
         <MenuContainer>
@@ -127,15 +125,4 @@ class LimitSelector extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = state => ({
-  rowCount: getRows(state),
-});
-
-const mapDispatchToProps = dispatch => ({
-  setRowCount: (count: number) => dispatch(setRowsAction(count)),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LimitSelector);
+export default LimitSelector;

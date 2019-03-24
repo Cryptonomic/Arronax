@@ -97,11 +97,12 @@ class CustomTable extends React.Component<Props, State> {
   render() {
     const { items, entity, network, selectedColumns, rowsPerPage } = this.props;
     const { page, order, orderBy } = this.state;
+    const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
     const emptyRows =
-      rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
+      rowCount - Math.min(rowCount, items.length - page * rowCount);
     const realRows = stableSort(items, getSorting(order, orderBy)).slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage
+      page * rowCount,
+      page * rowCount + rowCount
     );
     return (
       <React.Fragment>
@@ -134,7 +135,7 @@ class CustomTable extends React.Component<Props, State> {
           </TableContainer>
         </Overflow>
         <CustomPaginator
-          rowsPerPage={rowsPerPage}
+          rowsPerPage={rowCount}
           page={page}
           totalNumber={items.length}
           onChangePage={this.handleChangePage}

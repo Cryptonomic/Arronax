@@ -13,9 +13,9 @@ import {
   CHANGE_FILTER,
   SET_AVAILABLE_VALUES,
   SET_SELECTED_VALUES,
-  SET_ROWS,
+  SET_ROW_COUNT,
   REMOVE_VALUE,
-  COMPLETE_FULL_LOAD
+  COMPLETE_FULL_LOAD,
 } from './types';
 import actionCreator from '../../utils/reduxHelpers';
 
@@ -58,7 +58,10 @@ export const changeFilterAction = actionCreator(
   'filter',
   'index'
 );
-export const completeFullLoadAction = actionCreator(COMPLETE_FULL_LOAD, 'isFullLoaded');
+export const completeFullLoadAction = actionCreator(
+  COMPLETE_FULL_LOAD,
+  'isFullLoaded'
+);
 export const setAvailableValuesAction = actionCreator(
   SET_AVAILABLE_VALUES,
   'availableValues'
@@ -67,5 +70,5 @@ export const setSelectedValuesAction = actionCreator(
   SET_SELECTED_VALUES,
   'selectedValue'
 );
-export const setRowsAction = actionCreator(SET_ROWS, 'rows');
+export const setRowCountAction = actionCreator(SET_ROW_COUNT, 'rows');
 export const removeValueAction = actionCreator(REMOVE_VALUE, 'selectedValue');

@@ -14,6 +14,7 @@ import {
   getIsFullLoaded,
   getSelectedValues,
   getSelectedFilters,
+  getRows,
 } from '../../reducers/app/selectors';
 import {
   changeNetwork,
@@ -25,12 +26,14 @@ import {
   setTabAction,
   removeValueAction,
   removeAllFiltersAction,
+  setRowCountAction,
 } from '../../reducers/app/actions';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
 import SettingsPanel from 'components/SettingsPanel';
 import Footer from 'components/Footer';
 import CustomTable from '../CustomTable';
+import { number } from 'prop-types';
 
 const Container = styled.div`
   padding: 50px 0;
@@ -119,6 +122,8 @@ export interface Props {
   selectedColumns: any[];
   isFullLoaded: boolean;
   selectedFilters: object[];
+  rowCount: number;
+  setRowCount: (count: number) => void;
   removeValue: (value: object) => void;
   removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
@@ -131,8 +136,8 @@ export interface Props {
 
 export interface States {
   isFilterCollapse: boolean;
-  filterInputVal: any[];
   filterInputState: any;
+  numberOfRows: number;
 }
 
 class Arronax extends React.Component<Props, States> {
@@ -140,8 +145,8 @@ class Arronax extends React.Component<Props, States> {
     super(props);
     this.state = {
       isFilterCollapse: false,
-      filterInputVal: [],
       filterInputState: [],
+      numberOfRows: 10,
     };
   }
 
@@ -161,7 +166,7 @@ class Arronax extends React.Component<Props, States> {
       removeValue(value);
     });
     changeTab(value);
-    await this.setState({ filterInputVal: [] });
+    await this.setState({ filterInputState: [] });
     await selectedValues.forEach(value => {
       removeValue(value);
     });
@@ -198,11 +203,14 @@ class Arronax extends React.Component<Props, States> {
       selectedFilters,
       selectedValues,
       removeValue,
+      setRowCount,
     } = this.props;
-    const { filterInputState } = this.state;
+    const { filterInputState, numberOfRows } = this.state;
     const filterNames = await selectedFilters.map(
       filter => Object.values(filter)[0]
     );
+    // Set the amount of rows shown
+    await setRowCount(numberOfRows);
     // Remove values from Redux state that are not represented in local state
     await selectedValues.forEach(value => {
       if (!filterNames.includes(Object.keys(value)[0])) {
@@ -294,6 +302,10 @@ class Arronax extends React.Component<Props, States> {
     }
   };
 
+  setAmountOfRows = (rowCount: number) => {
+    this.setState({ numberOfRows: rowCount });
+  };
+
   render() {
     const {
       isLoading,
@@ -301,11 +313,10 @@ class Arronax extends React.Component<Props, States> {
       selectedEntity,
       items,
       selectedColumns,
-      isFullLoaded
+      isFullLoaded,
     } = this.props;
-    const { isFilterCollapse,filterInputState } = this.state;
+    const { isFilterCollapse, filterInputState, numberOfRows } = this.state;
     const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
-
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
@@ -327,6 +338,8 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
+            rowCount={numberOfRows}
+            setRowCount={this.setAmountOfRows}
             setFilterInputState={this.setFilterInputState}
             filterInputState={filterInputState}
             submitValues={this.submitValues}
@@ -362,6 +375,7 @@ class Arronax extends React.Component<Props, States> {
 }
 
 const mapStateToProps = (state: any) => ({
+  rowCount: getRows(state),
   selectedFilters: getSelectedFilters(state),
   selectedValues: getSelectedValues(state),
   selectedColumns: getColumns(state),
@@ -370,10 +384,11 @@ const mapStateToProps = (state: any) => ({
   selectedEntity: getEntity(state),
   items: getItems(state),
   attributes: getAttributes(state),
-  isFullLoaded: getIsFullLoaded(state)
+  isFullLoaded: getIsFullLoaded(state),
 });
 
 const mapDispatchToProps = dispatch => ({
+  setRowCount: (count: number) => dispatch(setRowCountAction(count)),
   setSelectedValues: (value: object[]) =>
     dispatch(setSelectedValuesAction(value)),
   removeAllFilters: (selectedEntity: string) =>
