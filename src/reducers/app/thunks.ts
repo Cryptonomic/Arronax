@@ -3,6 +3,7 @@ import {
   ConseilDataClient,
   ConseilQueryBuilder,
   ConseilSortDirection,
+  TezosNodeReader
 } from 'conseiljs';
 const { executeEntityQuery } = ConseilDataClient;
 const {
@@ -23,6 +24,12 @@ import {
   completeFullLoadAction
 } from './actions';
 import getConfigs from '../../utils/getconfig';
+
+import { getBlockHeadFromLocal, saveAttributes } from '../../utils/attributes';
+
+let currentAttributesRefreshInterval = null;
+const SYNC_LEVEL = 57600;
+const SYNC_TIME = 10;
 
 const configs = getConfigs();
 const { getAttributes, getAttributeValues } = ConseilMetadataClient;
@@ -173,28 +180,6 @@ export const submitQuery = () => async (dispatch, state) => {
   dispatch(setLoadingAction(false));
 };
 
-export const fetchAttributes = () => async (dispatch, state) => {
-  const selectedEntity = state().app.selectedEntity;
-  if (state().app.attributes[selectedEntity].length > 0) {
-    return;
-  }
-  const network = state().app.network;
-  dispatch(setLoadingAction(true));
-  const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.key,
-  };
-  const attributes = await getAttributes(
-    serverInfo,
-    'tezos',
-    network,
-    selectedEntity
-  );
-  dispatch(setAttributesAction(selectedEntity, attributes));
-  dispatch(setLoadingAction(false));
-};
-
 export const fetchValues = (attribute: string) => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
   const network = state().app.network;
@@ -233,22 +218,10 @@ export const fetchColumns = (columns, entity) => async (dispatch, state) => {
   await dispatch(setColumns(selectedEntity, newColumns));
 };
 
-export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
-  const network = state().app.network;
-  const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.key,
-  };
-  const attributes = await getAttributes(
-    serverInfo,
-    'tezos',
-    network,
-    entity
-  );
-  await dispatch(setAttributesAction(entity, attributes));
-  const attributeNames = getAttributeNames(attributes);
-  const columns = await getInitialColumns(entity, attributes);
+export const fetchItemsAction = (entity: string, network: string, serverInfo: any) => async (dispatch, state) => {
+  const attributes = state().app.attributes;
+  const attributeNames = getAttributeNames(attributes[entity]);
+  const columns = await getInitialColumns(entity, attributes[entity]);
   await dispatch(setColumns(entity, columns));
   let query = blankQuery();
   query = addFields(query, ...attributeNames);
@@ -268,9 +241,73 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
   await dispatch(setItemsAction(entity, items));
 };
 
-export const initLoad = () => async (dispatch) => {
-  await dispatch(fetchItemsAction('blocks'));
-  await dispatch(fetchItemsAction('operations'));
-  await dispatch(fetchItemsAction('accounts'));
+export const initLoad = () => async (dispatch, state) => {
+  const network = state().app.network;
+  const config = getConfig(network);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
+  const attributes = state().app.attributes;
+  if (attributes['blocks'].length === 0) {
+    const blockHead: any = await TezosNodeReader.getBlockHead(config.tezosUrl);
+    await dispatch(loadAttributes(network, serverInfo));
+    saveAttributes(attributes, blockHead.header.level);
+  }
+  dispatch(automaticAttributesRefresh());
+  await dispatch(fetchItemsAction('blocks', network, serverInfo));
+  await dispatch(fetchItemsAction('operations', network, serverInfo));
+  await dispatch(fetchItemsAction('accounts', network, serverInfo));
   dispatch(completeFullLoadAction(true));
+}
+
+export const clearAutomaticAttributesRefresh = () => {
+  clearInterval(currentAttributesRefreshInterval);
+}
+
+export const automaticAttributesRefresh = () => (dispatch) =>{
+  const oneSecond = 1000; // milliseconds
+  const oneMinute = 60 * oneSecond;
+  const REFRESH_INTERVAL = SYNC_TIME * oneMinute;
+
+  if (currentAttributesRefreshInterval) {
+    clearAutomaticAttributesRefresh();
+  }
+
+  currentAttributesRefreshInterval = setInterval(
+    () => dispatch(syncAttributes()),
+    REFRESH_INTERVAL
+  );
+}
+
+export const fetchAttributes = (entity, network, serverInfo) => async (dispatch) => {
+  const attributes = await getAttributes(
+    serverInfo,
+    'tezos',
+    network,
+    entity
+  );
+  dispatch(setAttributesAction(entity, attributes));
+};
+
+export const loadAttributes = (network, serverInfo) => async (dispatch) => {
+  await dispatch(fetchAttributes('blocks', network, serverInfo));
+  await dispatch(fetchAttributes('operations', network, serverInfo));
+  await dispatch(fetchAttributes('accounts', network, serverInfo));
+}
+
+export const syncAttributes = () => async (dispatch, state) => {
+  const network = state().app.network;
+  const config = getConfig(network);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
+  const blockHead: any = await TezosNodeReader.getBlockHead(config.tezosUrl);
+  const localHead = getBlockHeadFromLocal();
+  if (blockHead.header.level - localHead > SYNC_LEVEL) {
+    await dispatch(loadAttributes(network, serverInfo));
+    const attributes = state().app.attributes;
+    saveAttributes(attributes, blockHead.header.level);
+  }
 }
