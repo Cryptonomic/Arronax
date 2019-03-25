@@ -3,7 +3,7 @@ import {
   ConseilDataClient,
   ConseilQueryBuilder,
   ConseilSortDirection,
-  TezosNodeReader
+  TezosConseilClient
 } from 'conseiljs';
 const { executeEntityQuery } = ConseilDataClient;
 const {
@@ -250,9 +250,9 @@ export const initLoad = () => async (dispatch, state) => {
   };
   const attributes = state().app.attributes;
   if (attributes['blocks'].length === 0) {
-    const blockHead: any = await TezosNodeReader.getBlockHead(config.tezosUrl);
+    const blockHead: any = await TezosConseilClient.getBlockHead(serverInfo, network);
     await dispatch(loadAttributes(network, serverInfo));
-    saveAttributes(attributes, blockHead.header.level);
+    saveAttributes(attributes, blockHead[0].level);
   }
   dispatch(automaticAttributesRefresh());
   await dispatch(fetchItemsAction('blocks', network, serverInfo));
@@ -303,11 +303,11 @@ export const syncAttributes = () => async (dispatch, state) => {
     url: config.url,
     apiKey: config.key,
   };
-  const blockHead: any = await TezosNodeReader.getBlockHead(config.tezosUrl);
+  const blockHead: any = await TezosConseilClient.getBlockHead(serverInfo, network);
   const localHead = getBlockHeadFromLocal();
-  if (blockHead.header.level - localHead > SYNC_LEVEL) {
+  if (blockHead[0].level - localHead > SYNC_LEVEL) {
     await dispatch(loadAttributes(network, serverInfo));
     const attributes = state().app.attributes;
-    saveAttributes(attributes, blockHead.header.level);
+    saveAttributes(attributes, blockHead[0].level);
   }
 }
