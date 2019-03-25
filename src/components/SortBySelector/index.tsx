@@ -5,8 +5,6 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
-// import { getRows } from 'src/reducers/app/selectors';
-// import { setRowCountAction } from '../../reducers/app/actions';
 
 const Container = styled.div``;
 
@@ -75,9 +73,6 @@ class LimitSelector extends React.Component<Props> {
   };
 
   handleChange = sortBy => {
-    // setSortBy
-    // const { setRowCount } = this.props;
-    // setRowCount(rows);
     this.setState({ anchorEl: null });
   };
 
@@ -91,7 +86,6 @@ class LimitSelector extends React.Component<Props> {
 
   render() {
     const { anchorEl } = this.state;
-    // const { sortBy } = this.props;
     const limitOptions = ['Ascending', 'Descending'];
 
     return (
@@ -99,7 +93,6 @@ class LimitSelector extends React.Component<Props> {
         <ButtonShell
           aria-owns={anchorEl ? 'simple-menu' : undefined}
           aria-haspopup="true"
-          //   isactive={rowCount}
           onClick={this.handleClick}
         >
           {/* {sortBy ? sortBy : 'Ascending'} */}
@@ -131,17 +124,4 @@ class LimitSelector extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = state => ({
-  // sortBy: getSort(state)
-  //   rowCount: getRows(state),
-});
-
-const mapDispatchToProps = dispatch => ({
-  // setSortBy: (sort: string) => dispatch(setSortBy(sort))
-  //   setRowCount: (count: number) => dispatch(setRowsAction(count)),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LimitSelector);
+export default LimitSelector;

@@ -219,9 +219,7 @@ type Props = {
   selectedEntity: string;
   attributes: any;
   classes: any;
-  rowCount: number;
   submitValues: () => void;
-  setRowCount: (count: number) => void;
   setColumns: (columns: object[]) => void;
 };
 
@@ -308,13 +306,7 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   render() {
-    const {
-      selectedEntity,
-      classes,
-      attributes,
-      rowCount,
-      setRowCount,
-    } = this.props;
+    const { selectedEntity, classes, attributes } = this.props;
     const { anchorEl, fadeBottom, selected } = this.state;
     let tab;
     switch (selectedEntity) {
@@ -399,10 +391,6 @@ class ColumnDisplay extends React.Component<Props, States> {
         <Container>
           <SortByBlock>SORT BY</SortByBlock>
           <SortBySelector />
-        </Container>
-        <Container>
-          <LimitBlock>LIMIT</LimitBlock>
-          <LimitSelector setRowCount={setRowCount} rowCount={rowCount} />
         </Container>
       </React.Fragment>
     );
