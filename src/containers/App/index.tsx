@@ -200,11 +200,19 @@ class Arronax extends React.Component<Props, States> {
       removeValue,
       removeAllFilters,
       selectedEntity,
+      selectedFilters,
     } = this.props;
     this.setState({ filterInputState: [] });
     removeAllFilters(selectedEntity);
+    // Remove selected values for this particular entity
     selectedValues.forEach(value => {
-      removeValue(value);
+      selectedFilters.forEach(filter => {
+        const currentValue = Object.keys(value).toString();
+        const currentFilter = Object.values(filter)[0].toString();
+        if (currentValue === currentFilter) {
+          removeValue(value);
+        }
+      });
     });
   };
 
@@ -212,9 +220,6 @@ class Arronax extends React.Component<Props, States> {
     const {
       setSelectedValues,
       submitQuery,
-      selectedFilters,
-      selectedValues,
-      removeValue,
       setRowCount,
       selectedEntity,
       setColumns,
@@ -224,19 +229,10 @@ class Arronax extends React.Component<Props, States> {
       numberOfRows,
       selectedDisplayColumns,
     } = this.state;
-    const filterNames = await selectedFilters.map(
-      filter => Object.values(filter)[0]
-    );
     // Set columns in Redux state
     await setColumns(selectedEntity, selectedDisplayColumns);
     // Set the amount of rows shown
     await setRowCount(numberOfRows);
-    // Remove values from Redux state that are not represented in local state
-    // await selectedValues.forEach(value => {
-    //   if (!filterNames.includes(Object.keys(value)[0])) {
-    //     removeValue(value);
-    //   }
-    // });
     // Loop through each value in state and set the value in Redux's state
     await filterInputState.forEach(val => {
       setSelectedValues(val);
