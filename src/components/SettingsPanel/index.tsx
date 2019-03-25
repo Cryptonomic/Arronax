@@ -132,6 +132,7 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
         <QueryContainer>
           <DisplayContainer>
             <ColumnsDisplay
+              submitValues={submitValues}
               setColumns={setColumns}
               selectedEntity={selectedEntity}
               attributes={attributes}

@@ -220,6 +220,7 @@ type Props = {
   attributes: any;
   classes: any;
   rowCount: number;
+  submitValues: () => void;
   setRowCount: (count: number) => void;
   setColumns: (columns: object[]) => void;
 };
@@ -257,12 +258,13 @@ class ColumnDisplay extends React.Component<Props, States> {
     }
   }
 
-  handleSubmit = event => {
+  handleSubmit = async event => {
     const { selected } = this.state;
-    const { setColumns } = this.props;
+    const { setColumns, submitValues } = this.props;
     event.preventDefault();
-    this.setState({ anchorEl: null });
-    setColumns(selected);
+    await this.setState({ anchorEl: null });
+    await setColumns(selected);
+    await submitValues();
   };
 
   handleChange = (name: SelectedColumnsData) => event => {

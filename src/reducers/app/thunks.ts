@@ -40,7 +40,9 @@ const getAttributeNames = attributes => {
 };
 
 const getInitialColumns = (entity, columns) => {
-  const sorted = columns.sort((a, b) => a.displayName.localeCompare(b.displayName));
+  const sorted = columns.sort((a, b) =>
+    a.displayName.localeCompare(b.displayName)
+  );
 
   if (entity === 'operations') {
     let operationColumns: string[] = [];
@@ -157,27 +159,28 @@ export const submitQuery = () => async (dispatch, state) => {
         // Find corresponding filters and their values and add them to the query
         // Find between values (eg: 12000-1400) and split them at the -
         // This returns ["1200", "1400"] which is the correct way to interact with ConseilJS with between values
-        const newValues = values.split('-');
+        const queryValues = values.split('-');
         return (query = addPredicate(
           query,
           filter.name,
           filter.operator.toLowerCase(),
-          newValues,
+          queryValues,
           false
         ));
       } else if (filter.name === valueKeys) {
+        const queryValue = Object.values(value);
         // Find corresponding filters and their values and add them to the query
         return (query = addPredicate(
           query,
           filter.name,
           filter.operator.toLowerCase(),
-          Object.values(value),
+          queryValue,
           false
         ));
       }
     });
   });
-  // query = setLimit(query, limit);
+  query = setLimit(query, 5000);
   // Add this to set ordering
   query = addOrdering(
     query,
@@ -270,7 +273,7 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
   await dispatch(setColumns(entity, columns));
   let query = blankQuery();
   query = addFields(query, ...attributeNames);
-  query = setLimit(query, 100);
+  query = setLimit(query, 5000);
   query = addOrdering(
     query,
     attributeNames.includes('block_level') ? 'block_level' : 'level',

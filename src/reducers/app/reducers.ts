@@ -80,7 +80,7 @@ const initialState: AppState = {
   selectedEntity: 'blocks',
   isFullLoaded: false,
   selectedValues: [],
-  rowCount: null,
+  rowCount: 50,
 };
 
 const initEntities = {
