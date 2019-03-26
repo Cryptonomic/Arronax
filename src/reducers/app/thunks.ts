@@ -53,7 +53,6 @@ const getInitialColumns = (entity, columns) => {
     operationColumns.push(sorted.filter(c => c.name === 'destination')[0]);
     operationColumns.push(sorted.filter(c => c.name === 'amount')[0]);
     operationColumns.push(sorted.filter(c => c.name === 'kind')[0]);
-    operationColumns.push(sorted.filter(c => c.name === 'fee')[0]);
 
     return operationColumns;
   } else if (entity === 'accounts') {
