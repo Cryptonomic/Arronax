@@ -186,7 +186,6 @@ export const submitQuery = () => async (dispatch, state) => {
     !attributeNames.includes('level') ? 'block_level' : 'level',
     ConseilSortDirection.DESC
   );
-  console.log(query);
   const items = await executeEntityQuery(
     serverInfo,
     'tezos',
