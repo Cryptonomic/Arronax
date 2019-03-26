@@ -183,6 +183,7 @@ export const submitQuery = () => async (dispatch, state) => {
 export const fetchValues = (attribute: string) => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
   const network = state().app.network;
+  dispatch(setLoadingAction(true));
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
@@ -199,6 +200,7 @@ export const fetchValues = (attribute: string) => async (dispatch, state) => {
     return { [attribute]: newValue };
   });
   dispatch(setAvailableValuesAction(newValues));
+  dispatch(setLoadingAction(false));
 };
 
 export const changeNetwork = (network: string) => async (dispatch, state) => {
