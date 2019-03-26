@@ -8,7 +8,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DragIcon from '@material-ui/icons/DragHandle';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
-import LimitSelector from 'components/LimitSelector';
 
 const Container = styled.div`
   display: flex;
