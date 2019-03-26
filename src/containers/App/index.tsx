@@ -340,7 +340,6 @@ class Arronax extends React.Component<Props, States> {
     } = this.props;
     const { isFilterCollapse, filterInputState, numberOfRows } = this.state;
     const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
-
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />

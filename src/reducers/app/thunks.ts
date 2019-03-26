@@ -110,7 +110,7 @@ export const submitQuery = () => async (dispatch, state) => {
   ];
   let valuesToConvert = [];
   let finalValues = [];
-  selectedValues.forEach(value => {
+  selectedValues[entity].forEach(value => {
     if (entity !== 'blocks') {
       const key = Object.keys(value).toString();
       if (lowCardinalities.includes(key)) {
