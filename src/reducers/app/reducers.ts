@@ -20,10 +20,10 @@ import {
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
 import { TezosAccount, TezosBlock, TezosOperation } from '../../types';
-import { getAttributess } from '../../utils/attributes';
+import { getLocalAttributes } from '../../utils/attributes';
 
 const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
-const attributes = getAttributess();
+const attributes = getLocalAttributes();
 
 export interface AppState {
   filters: ConseilQuery;

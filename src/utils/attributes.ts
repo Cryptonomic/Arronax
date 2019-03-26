@@ -1,6 +1,6 @@
 
 
-export const getAttributess = () => {
+export const getLocalAttributes = () => {
   const attributes = localStorage.getItem('attributes');
   if (attributes) {
     return JSON.parse(attributes);
