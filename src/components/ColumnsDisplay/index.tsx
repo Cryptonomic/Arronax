@@ -9,7 +9,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import DragIcon from '@material-ui/icons/DragHandle';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import LimitSelector from 'components/LimitSelector';
-import SortBySelector from 'components/SortBySelector';
 
 const Container = styled.div`
   display: flex;
@@ -78,23 +77,6 @@ const LimitBlock = styled.div`
   font-size: 0.875rem;
   font-family: Roboto;
   background: rgb(248, 248, 248);
-  border-radius: 5px 0 0 5px;
-  border-right: 1px solid #d8d8d8;
-  width: 80px;
-  color: #4a4a4a;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: normal;
-  padding-right: 10px;
-  padding-left: 10px;
-`;
-
-const SortByBlock = styled.div`
-  font-size: 0.875rem;
-  font-family: Roboto;
-  background: rgb(248, 248, 248) !important;
   border-radius: 5px 0 0 5px;
   border-right: 1px solid #d8d8d8;
   width: 80px;
@@ -387,10 +369,6 @@ class ColumnDisplay extends React.Component<Props, States> {
               </ButtonContainer>
             </Menu>
           </MenuContainer>
-        </Container>
-        <Container>
-          <SortByBlock>SORT BY</SortByBlock>
-          <SortBySelector />
         </Container>
       </React.Fragment>
     );

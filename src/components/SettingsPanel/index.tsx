@@ -60,7 +60,6 @@ const DisplayContainer = styled.div`
   align-items: center;
   padding-left: 24px;
   padding-right: 24px;
-  width: 35%;
   height: 93px;
   background: white;
   border: 1px solid #ededed;
