@@ -15,6 +15,7 @@ export const saveAttributes = (attributes, blockHead) => {
   localStorage.setItem('blockHead', blockHead);
 };
 
+
 export const getBlockHeadFromLocal = () => {
   const blockHead = localStorage.getItem('blockHead');
   if (blockHead) {
