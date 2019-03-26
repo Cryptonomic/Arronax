@@ -20,8 +20,10 @@ import {
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
 import { TezosAccount, TezosBlock, TezosOperation } from '../../types';
+import { getLocalAttributes } from '../../utils/attributes';
 
 const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
+const attributes = getLocalAttributes();
 
 export interface AppState {
   filters: ConseilQuery;
@@ -45,11 +47,7 @@ const initialState: AppState = {
   filters: emptyFilters,
   network: 'alphanet',
   blocks: [],
-  attributes: {
-    blocks: [],
-    operations: [],
-    accounts: [],
-  },
+  attributes: attributes,
   selectedFilters: {
     blocks: [],
     operations: [],
