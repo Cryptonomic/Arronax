@@ -82,12 +82,12 @@ const initialState: AppState = {
   selectedEntity: 'blocks',
   isFullLoaded: false,
   selectedValues: [],
-  rowCount: null,
+  rowCount: 50,
   filterCount: {
     blocks: 0,
     operations: 0,
     accounts: 0,
-  },
+  }
 };
 
 const initEntities = {

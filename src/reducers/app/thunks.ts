@@ -41,10 +41,33 @@ const getAttributeNames = attributes => {
 };
 
 const getInitialColumns = (entity, columns) => {
-  if (entity !== 'blocks') {
-    const newColumns = columns.slice(0, 6);
-    return newColumns;
-  } else {
+  const sorted = columns.sort((a, b) =>
+    a.displayName.localeCompare(b.displayName)
+  );
+
+  if (entity === 'operations') {
+    let operationColumns: string[] = [];
+
+    operationColumns.push(sorted.filter(c => c.name === 'timestamp')[0]);
+    operationColumns.push(sorted.filter(c => c.name === 'block_level')[0]);
+    operationColumns.push(sorted.filter(c => c.name === 'source')[0]);
+    operationColumns.push(sorted.filter(c => c.name === 'destination')[0]);
+    operationColumns.push(sorted.filter(c => c.name === 'amount')[0]);
+    operationColumns.push(sorted.filter(c => c.name === 'kind')[0]);
+
+    return operationColumns;
+  } else if (entity === 'accounts') {
+    let accountColumns: string[] = [];
+
+    accountColumns.push(sorted.filter(c => c.name === 'account_id')[0]);
+    accountColumns.push(sorted.filter(c => c.name === 'manager')[0]);
+    accountColumns.push(sorted.filter(c => c.name === 'delegate_value')[0]);
+    accountColumns.push(sorted.filter(c => c.name === 'balance')[0]);
+    accountColumns.push(sorted.filter(c => c.name === 'block_level')[0]);
+    accountColumns.push(sorted.filter(c => c.name === 'counter')[0]);
+
+    return accountColumns;
+  } else if (entity === 'blocks') {
     const newColumns = columns.reduce((acc, element) => {
       if (element.name === 'level') {
         acc[0] = element;
@@ -136,33 +159,35 @@ export const submitQuery = () => async (dispatch, state) => {
         // Find corresponding filters and their values and add them to the query
         // Find between values (eg: 12000-1400) and split them at the -
         // This returns ["1200", "1400"] which is the correct way to interact with ConseilJS with between values
-        const newValues = values.split('-');
+        const queryValues = values.split('-');
         return (query = addPredicate(
           query,
           filter.name,
           filter.operator.toLowerCase(),
-          newValues,
+          queryValues,
           false
         ));
       } else if (filter.name === valueKeys) {
+        const queryValue = Object.values(value);
         // Find corresponding filters and their values and add them to the query
         return (query = addPredicate(
           query,
           filter.name,
           filter.operator.toLowerCase(),
-          Object.values(value),
+          queryValue,
           false
         ));
       }
     });
   });
-  // query = setLimit(query, limit);
+  query = setLimit(query, 5000);
   // Add this to set ordering
   query = addOrdering(
     query,
     !attributeNames.includes('level') ? 'block_level' : 'level',
     ConseilSortDirection.DESC
   );
+  console.log(query);
   const items = await executeEntityQuery(
     serverInfo,
     'tezos',
@@ -249,7 +274,7 @@ export const fetchItemsAction = (entity: string) => async (dispatch, state) => {
   await dispatch(setColumns(entity, columns));
   let query = blankQuery();
   query = addFields(query, ...attributeNames);
-  query = setLimit(query, 100);
+  query = setLimit(query, 5000);
   query = addOrdering(
     query,
     attributeNames.includes('block_level') ? 'block_level' : 'level',
