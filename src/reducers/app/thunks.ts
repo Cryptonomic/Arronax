@@ -46,61 +46,17 @@ const getAttributeNames = attributes => {
   return attr;
 };
 
+const nameList = {
+  operations: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind'],
+  accounts: ['account_id', 'manager', 'delegate_value', 'balance', 'block_level', 'counter'],
+  blocks: ['level', 'timestamp', 'hash', 'predecessor']
+};
+
 const getInitialColumns = (entity, columns) => {
   const sorted = columns.sort((a, b) =>
     a.displayName.localeCompare(b.displayName)
   );
-  if (entity === 'operations') {
-    const operationColumns: string[] = sorted.reduce((acc, element) => {
-      if (element.name === 'timestamp') {
-        acc[0] = element;
-      } else if (element.name === 'block_level') {
-        acc[1] = element;
-      } else if (element.name === 'source') {
-        acc[2] = element;
-      } else if (element.name === 'destination') {
-        acc[3] = element;
-      } else if (element.name === 'amount') {
-        acc[4] = element;
-      } else if (element.name === 'kind') {
-        acc[5] = element;
-      }
-      return [...acc];
-    }, []);
-    return operationColumns;
-  } else if (entity === 'accounts') {
-    const accountColumns: string[] = sorted.reduce((acc, element) => {
-      if (element.name === 'account_id') {
-        acc[0] = element;
-      } else if (element.name === 'manager') {
-        acc[1] = element;
-      } else if (element.name === 'delegate_value') {
-        acc[2] = element;
-      } else if (element.name === 'balance') {
-        acc[3] = element;
-      } else if (element.name === 'block_level') {
-        acc[4] = element;
-      } else if (element.name === 'counter') {
-        acc[5] = element;
-      }
-      return [...acc];
-    }, []);
-    return accountColumns;
-  } else if (entity === 'blocks') {
-    const newColumns = sorted.reduce((acc, element) => {
-      if (element.name === 'level') {
-        acc[0] = element;
-      } else if (element.name === 'timestamp') {
-        acc[1] = element;
-      } else if (element.name === 'hash') {
-        acc[2] = element;
-      } else if (element.name === 'predecessor') {
-        acc[3] = element;
-      }
-      return [...acc];
-    }, []);
-    return newColumns;
-  }
+  return sorted.filter(c => nameList[entity].indexOf(c.name) >= 0);
 };
 
 const convertValues = val => {
