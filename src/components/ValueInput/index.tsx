@@ -52,9 +52,7 @@ class ValueInput extends React.Component<Props> {
   state = {
     value: '',
   };
-  componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
-  }
+
   handleInputChange = event => {
     const { filter, setFilterInputState, filterOperator } = this.props;
     this.setState({ value: event.target.value });

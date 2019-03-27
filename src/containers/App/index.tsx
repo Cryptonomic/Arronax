@@ -161,7 +161,19 @@ class Arronax extends React.Component<Props, States> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { selectedColumns, selectedEntity } = this.props;
+    const { filterInputState } = this.state;
+    const { selectedColumns, selectedEntity, selectedFilters } = this.props;
+    const currentFilters = selectedFilters.map(filter =>
+      Object.values(filter)[0].toString()
+    );
+    filterInputState[selectedEntity].forEach(filter => {
+      const stateFilter = Object.keys(filter).toString();
+      if (!currentFilters.includes(stateFilter)) {
+        const index = filterInputState[selectedEntity].indexOf(stateFilter);
+        filterInputState[selectedEntity].splice(index, 1);
+        this.setState({ filterInputState: filterInputState });
+      }
+    });
     if (
       prevProps.selectedColumns[selectedEntity] !==
         selectedColumns[selectedEntity] ||
@@ -201,7 +213,9 @@ class Arronax extends React.Component<Props, States> {
       selectedEntity,
       selectedFilters,
     } = this.props;
-    this.setState({ filterInputState: [] });
+    const { filterInputState } = this.state;
+    filterInputState[selectedEntity] = [];
+    this.setState({ filterInputState: filterInputState });
     removeAllFilters(selectedEntity);
     // Remove selected values for this particular entity
     selectedValues.forEach(value => {
