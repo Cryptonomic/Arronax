@@ -83,7 +83,6 @@ class ValueInput extends React.Component<Props> {
     const currentStateValue = findStateValue
       ? Object.values(findStateValue).toString()
       : null;
-    console.log(findStateValue, currentStateValue);
     const betweenStateValue = findStateValue
       ? Object.values(findStateValue).toString()
       : null;
