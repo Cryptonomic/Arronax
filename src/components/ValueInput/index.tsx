@@ -40,7 +40,6 @@ interface Props {
   InputProps?: object;
   placeholder?: string;
   filterInputState: object;
-  selectedValues: object[];
   selectedEntity: string;
   setFilterInputState: (
     value: string,
@@ -53,6 +52,9 @@ class ValueInput extends React.Component<Props> {
   state = {
     value: '',
   };
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
+  }
   handleInputChange = event => {
     const { filter, setFilterInputState, filterOperator } = this.props;
     this.setState({ value: event.target.value });
@@ -72,11 +74,8 @@ class ValueInput extends React.Component<Props> {
       filterOperator,
       filter,
       filterInputState,
-      selectedValues,
       selectedEntity,
     } = this.props;
-    const { value } = this.state;
-    console.log(filterInputState);
     // Find state/redux value that matches this filter
     const findStateValue = filterInputState[selectedEntity].find(
       value => Object.keys(value).toString() === filter
@@ -126,7 +125,7 @@ class ValueInput extends React.Component<Props> {
       input = (
         <Container>
           <TextInput
-            value={value}
+            value={currentStateValue ? currentStateValue : ''}
             inputProps={inputProps}
             InputProps={InputProps}
             placeholder={`Insert Value`}
