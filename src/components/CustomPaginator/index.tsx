@@ -132,6 +132,8 @@ interface Props {
 const CustomPaginator: React.StatelessComponent<Props> = props => {
   const { page, totalNumber, onChangePage, rowsPerPage } = props;
   const pageCount = Math.ceil(totalNumber / rowsPerPage);
+  console.log(page);
+  console.log(pageCount);
   const balance = totalNumber % rowsPerPage;
   return (
     <Container>
@@ -152,11 +154,11 @@ const CustomPaginator: React.StatelessComponent<Props> = props => {
         <LeftIconWrapper isactive={page !== 0 ? 1 : 0} />
       </ButtonWrapper>
       <ButtonWrapper
-        isActive={page !== pageCount}
+        isActive={page !== pageCount - 1 ? 1 : 0}
         isNext
         onClick={() => onChangePage(page + 1)}
       >
-        <RightIconWrapper isactive={page !== pageCount ? 1 : 0} />
+        <RightIconWrapper isactive={page !== pageCount - 1 ? 1 : 0} />
       </ButtonWrapper>
     </Container>
   );
