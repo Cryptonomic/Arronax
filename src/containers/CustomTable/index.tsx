@@ -120,11 +120,6 @@ class CustomTable extends React.Component<Props, State> {
                   />
                 );
               })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 48 / emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
             </TableBody>
           </TableContainer>
         </Overflow>
