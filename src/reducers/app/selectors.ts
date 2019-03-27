@@ -54,7 +54,7 @@ export const getAvailableValues = createSelector(
 
 export const getSelectedValues = createSelector(
   getAppState,
-  apps => apps.selectedValues[apps.selectedEntity]
+  apps => apps.selectedValues
 );
 
 export const getRows = createSelector(

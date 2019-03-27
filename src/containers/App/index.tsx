@@ -139,7 +139,7 @@ export interface Props {
 
 export interface States {
   isFilterCollapse: boolean;
-  filterInputState: any;
+  filterInputState: object;
   numberOfRows: number;
   selectedDisplayColumns: object[];
 }
@@ -149,7 +149,7 @@ class Arronax extends React.Component<Props, States> {
     super(props);
     this.state = {
       isFilterCollapse: false,
-      filterInputState: [],
+      filterInputState: { blocks: [], operations: [], accounts: [] },
       numberOfRows: 10,
       selectedDisplayColumns: [],
     };
@@ -181,7 +181,6 @@ class Arronax extends React.Component<Props, States> {
   onChangeTab = async (value: string) => {
     const { changeTab } = this.props;
     changeTab(value);
-    await this.setState({ filterInputState: [] });
     await changeTab(value);
   };
 
@@ -234,7 +233,7 @@ class Arronax extends React.Component<Props, States> {
     // Set the amount of rows shown
     await setRowCount(numberOfRows);
     // Loop through each value in state and set the value in Redux's state
-    await filterInputState.forEach(val => {
+    await filterInputState[selectedEntity].forEach(val => {
       setSelectedValues(val);
     });
     // Submit the query to ConseilJS
@@ -243,9 +242,10 @@ class Arronax extends React.Component<Props, States> {
 
   setFilterInputState = (val, filterName, filterOperator) => {
     const { filterInputState } = this.state;
-    const filterState = [...filterInputState];
+    const { selectedEntity } = this.props;
+    const filterState = [...filterInputState[selectedEntity]];
     let filterCheck = [];
-    filterInputState.forEach(filter => {
+    filterInputState[selectedEntity].forEach(filter => {
       filterCheck.push(Object.keys(filter).toString());
     });
     // Remove the value from state by sending in a NULL value
@@ -255,7 +255,8 @@ class Arronax extends React.Component<Props, States> {
       );
       const index = filterState.indexOf(itemToRemove);
       filterState.splice(index, 1);
-      this.setState({ filterInputState: filterState });
+      filterInputState[selectedEntity] = filterState;
+      this.setState({ filterInputState: filterInputState });
     } else if (
       filterCheck.includes(filterName) &&
       filterOperator !== 'BETWEEN'
@@ -263,7 +264,8 @@ class Arronax extends React.Component<Props, States> {
       const index = filterCheck.indexOf(filterName);
       filterState.splice(index, 1);
       const newState = [...filterState, { [filterName]: val }];
-      this.setState({ filterInputState: newState });
+      filterInputState[selectedEntity] = newState;
+      this.setState({ filterInputState: filterInputState });
     } else if (
       filterCheck.includes(filterName) &&
       filterOperator === 'BETWEEN'
@@ -280,12 +282,14 @@ class Arronax extends React.Component<Props, States> {
             ...filterState,
             { [filterName]: `${currentValue}${val}` },
           ];
-          this.setState({ filterInputState: newState });
+          filterInputState[selectedEntity] = newState;
+          this.setState({ filterInputState: filterInputState });
         } else if (!val.includes('-')) {
           const index = filterCheck.indexOf(filterName);
           filterState.splice(index, 1);
           const newState = [...filterState, { [filterName]: val }];
-          this.setState({ filterInputState: newState });
+          filterInputState[selectedEntity] = newState;
+          this.setState({ filterInputState: filterInputState });
         }
       } else if (currentValue.includes('-')) {
         if (val.includes('-')) {
@@ -297,7 +301,8 @@ class Arronax extends React.Component<Props, States> {
           const index = filterCheck.indexOf(filterName);
           filterState.splice(index, 1);
           const newState = [...filterState, { [filterName]: finalValue }];
-          this.setState({ filterInputState: newState });
+          filterInputState[selectedEntity] = newState;
+          this.setState({ filterInputState: filterInputState });
         } else if (!val.includes('-')) {
           const value = Object.values(currentValue);
           const dashIndex = value.indexOf('-');
@@ -307,14 +312,17 @@ class Arronax extends React.Component<Props, States> {
           const index = filterCheck.indexOf(filterName);
           filterState.splice(index, 1);
           const newState = [...filterState, { [filterName]: finalValue }];
-          this.setState({ filterInputState: newState });
+          filterInputState[selectedEntity] = newState;
+          this.setState({ filterInputState: filterInputState });
         }
       }
     } else {
-      const newValues = [...filterInputState, { [filterName]: val }];
-      this.setState({
-        filterInputState: newValues,
-      });
+      const newValues = [
+        ...filterInputState[selectedEntity],
+        { [filterName]: val },
+      ];
+      filterInputState[selectedEntity] = newValues;
+      this.setState({ filterInputState: filterInputState });
     }
   };
 

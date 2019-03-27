@@ -39,8 +39,9 @@ interface Props {
   inputProps?: object;
   InputProps?: object;
   placeholder?: string;
-  filterInputState: any[];
+  filterInputState: object;
   selectedValues: object[];
+  selectedEntity: string;
   setFilterInputState: (
     value: string,
     filterName: string,
@@ -49,13 +50,18 @@ interface Props {
 }
 
 class ValueInput extends React.Component<Props> {
+  state = {
+    value: '',
+  };
   handleInputChange = event => {
     const { filter, setFilterInputState, filterOperator } = this.props;
+    this.setState({ value: event.target.value });
     setFilterInputState(event.target.value, filter, filterOperator);
   };
 
   handleBetweenChange = event => {
     const { filter, setFilterInputState, filterOperator } = this.props;
+    this.setState({ value: event.target.value });
     setFilterInputState(`-${event.target.value}`, filter, filterOperator);
   };
 
@@ -67,22 +73,18 @@ class ValueInput extends React.Component<Props> {
       filter,
       filterInputState,
       selectedValues,
+      selectedEntity,
     } = this.props;
-
+    const { value } = this.state;
+    console.log(filterInputState);
     // Find state/redux value that matches this filter
-    const findStateValue = filterInputState.find(
+    const findStateValue = filterInputState[selectedEntity].find(
       value => Object.keys(value).toString() === filter
     );
-    const findReduxValue = selectedValues.find(
-      value => Object.keys(value).toString() === filter
-    );
-    // Get the value of this state/redux value for this filter
     const currentStateValue = findStateValue
       ? Object.values(findStateValue).toString()
       : null;
-    const currentReduxValue = findReduxValue
-      ? Object.values(findReduxValue).toString()
-      : null;
+    console.log(findStateValue, currentStateValue);
     const betweenStateValue = findStateValue
       ? Object.values(findStateValue).toString()
       : null;
@@ -90,26 +92,13 @@ class ValueInput extends React.Component<Props> {
     const split = findStateValue ? betweenStateValue.split('-') : null;
     const firstStateBetweenValue = split ? split[0] : null;
     const secondStateBetweenValue = split ? split[1] : null;
-    const betweenReduxValue = findReduxValue
-      ? Object.values(findReduxValue).toString()
-      : null;
-    const betweenSplit = findReduxValue ? betweenReduxValue.split('-') : null;
-    const firstReduxBetweenValue = betweenSplit ? betweenSplit[0] : null;
-    const secondReduxBetweenValue = betweenSplit ? betweenSplit[1] : null;
-
     let input;
     if (filterOperator === 'BETWEEN' || filterOperator === 'IN') {
       input = (
         <React.Fragment>
           <Container>
             <TextInput
-              value={
-                firstStateBetweenValue
-                  ? firstStateBetweenValue
-                  : firstReduxBetweenValue
-                  ? firstReduxBetweenValue
-                  : ''
-              }
+              value={firstStateBetweenValue ? firstStateBetweenValue : ''}
               inputProps={inputProps}
               InputProps={InputProps}
               placeholder={`Insert Value`}
@@ -121,16 +110,8 @@ class ValueInput extends React.Component<Props> {
           <HR />
           <Container>
             <TextInput
-              disabled={
-                firstStateBetweenValue || firstReduxBetweenValue ? false : true
-              }
-              value={
-                secondStateBetweenValue
-                  ? secondStateBetweenValue
-                  : secondReduxBetweenValue
-                  ? secondReduxBetweenValue
-                  : ''
-              }
+              disabled={firstStateBetweenValue ? false : true}
+              value={secondStateBetweenValue ? secondStateBetweenValue : ''}
               inputProps={inputProps}
               InputProps={InputProps}
               placeholder={`Insert Value`}
@@ -145,13 +126,7 @@ class ValueInput extends React.Component<Props> {
       input = (
         <Container>
           <TextInput
-            value={
-              currentStateValue
-                ? currentStateValue
-                : currentReduxValue
-                ? currentReduxValue
-                : ''
-            }
+            value={value}
             inputProps={inputProps}
             InputProps={InputProps}
             placeholder={`Insert Value`}

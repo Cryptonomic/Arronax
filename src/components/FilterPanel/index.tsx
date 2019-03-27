@@ -101,7 +101,7 @@ type Props = {
   attributes: any[];
   filters: object[];
   operators: object[];
-  filterInputState: object[];
+  filterInputState: object;
   setFilterInputState: (
     value: string,
     filterName: string,
@@ -134,7 +134,7 @@ class FilterPanel extends React.Component<Props, States> {
       filterInputState,
       setFilterInputState,
     } = this.props;
-    const itemToRemove = filterInputState.find(
+    const itemToRemove = filterInputState[selectedEntity].find(
       value => Object.keys(value).toString() === filter.name
     );
     if (itemToRemove) {
@@ -262,6 +262,7 @@ class FilterPanel extends React.Component<Props, States> {
                   )}
                 {filter.operator && !cards.includes(filter.name) && (
                   <ValueInput
+                    selectedEntity={selectedEntity}
                     selectedValues={selectedValues}
                     setFilterInputState={setFilterInputState}
                     filterInputState={filterInputState}

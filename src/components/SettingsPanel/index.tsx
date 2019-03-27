@@ -87,7 +87,7 @@ interface Props {
   rowCount: number;
   selectedColumns: any;
   isCollapse: boolean;
-  filterInputState: object[];
+  filterInputState: object;
   selectedEntity: string;
   attributes: object[];
   selectedValues: object[];
