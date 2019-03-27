@@ -3,7 +3,7 @@ import {
   ConseilDataClient,
   ConseilQueryBuilder,
   ConseilSortDirection,
-  TezosConseilClient
+  TezosConseilClient,
 } from 'conseiljs';
 const { executeEntityQuery } = ConseilDataClient;
 const {
@@ -50,31 +50,44 @@ const getInitialColumns = (entity, columns) => {
   const sorted = columns.sort((a, b) =>
     a.displayName.localeCompare(b.displayName)
   );
-
   if (entity === 'operations') {
-    let operationColumns: string[] = [];
-
-    operationColumns.push(sorted.filter(c => c.name === 'timestamp')[0]);
-    operationColumns.push(sorted.filter(c => c.name === 'block_level')[0]);
-    operationColumns.push(sorted.filter(c => c.name === 'source')[0]);
-    operationColumns.push(sorted.filter(c => c.name === 'destination')[0]);
-    operationColumns.push(sorted.filter(c => c.name === 'amount')[0]);
-    operationColumns.push(sorted.filter(c => c.name === 'kind')[0]);
-
+    const operationColumns: string[] = sorted.reduce((acc, element) => {
+      if (element.name === 'timestamp') {
+        acc[0] = element;
+      } else if (element.name === 'block_level') {
+        acc[1] = element;
+      } else if (element.name === 'source') {
+        acc[2] = element;
+      } else if (element.name === 'destination') {
+        acc[3] = element;
+      } else if (element.name === 'amount') {
+        acc[4] = element;
+      } else if (element.name === 'kind') {
+        acc[5] = element;
+      }
+      return [...acc];
+    }, []);
     return operationColumns;
   } else if (entity === 'accounts') {
-    let accountColumns: string[] = [];
-
-    accountColumns.push(sorted.filter(c => c.name === 'account_id')[0]);
-    accountColumns.push(sorted.filter(c => c.name === 'manager')[0]);
-    accountColumns.push(sorted.filter(c => c.name === 'delegate_value')[0]);
-    accountColumns.push(sorted.filter(c => c.name === 'balance')[0]);
-    accountColumns.push(sorted.filter(c => c.name === 'block_level')[0]);
-    accountColumns.push(sorted.filter(c => c.name === 'counter')[0]);
-
+    const accountColumns: string[] = sorted.reduce((acc, element) => {
+      if (element.name === 'account_id') {
+        acc[0] = element;
+      } else if (element.name === 'manager') {
+        acc[1] = element;
+      } else if (element.name === 'delegate_value') {
+        acc[2] = element;
+      } else if (element.name === 'balance') {
+        acc[3] = element;
+      } else if (element.name === 'block_level') {
+        acc[4] = element;
+      } else if (element.name === 'counter') {
+        acc[5] = element;
+      }
+      return [...acc];
+    }, []);
     return accountColumns;
   } else if (entity === 'blocks') {
-    const newColumns = columns.reduce((acc, element) => {
+    const newColumns = sorted.reduce((acc, element) => {
       if (element.name === 'level') {
         acc[0] = element;
       } else if (element.name === 'timestamp') {
@@ -242,8 +255,11 @@ export const fetchColumns = (columns, entity) => async (dispatch, state) => {
   await dispatch(setColumns(selectedEntity, newColumns));
 };
 
-
-export const fetchItemsAction = (entity: string, network: string, serverInfo: any) => async (dispatch, state) => {
+export const fetchItemsAction = (
+  entity: string,
+  network: string,
+  serverInfo: any
+) => async (dispatch, state) => {
   const attributes = state().app.attributes;
   const attributeNames = getAttributeNames(attributes[entity]);
   const columns = await getInitialColumns(entity, attributes[entity]);
@@ -275,7 +291,10 @@ export const initLoad = () => async (dispatch, state) => {
   };
   const attributes = state().app.attributes;
   if (attributes['blocks'].length === 0) {
-    const blockHead: any = await TezosConseilClient.getBlockHead(serverInfo, network);
+    const blockHead: any = await TezosConseilClient.getBlockHead(
+      serverInfo,
+      network
+    );
     await dispatch(loadAttributes(network, serverInfo));
     saveAttributes(attributes, blockHead[0].level);
   }
@@ -288,9 +307,9 @@ export const initLoad = () => async (dispatch, state) => {
 
 export const clearAutomaticAttributesRefresh = () => {
   clearInterval(currentAttributesRefreshInterval);
-}
+};
 
-export const automaticAttributesRefresh = () => (dispatch) =>{
+export const automaticAttributesRefresh = () => dispatch => {
   const oneSecond = 1000; // milliseconds
   const oneMinute = 60 * oneSecond;
   const REFRESH_INTERVAL = SYNC_TIME * oneMinute;
@@ -303,24 +322,22 @@ export const automaticAttributesRefresh = () => (dispatch) =>{
     () => dispatch(syncAttributes()),
     REFRESH_INTERVAL
   );
-}
+};
 
-export const fetchAttributes = (entity, network, serverInfo) => async (dispatch) => {
-  const attributes = await getAttributes(
-    serverInfo,
-    'tezos',
-    network,
-    entity
-  );
+export const fetchAttributes = (
+  entity,
+  network,
+  serverInfo
+) => async dispatch => {
+  const attributes = await getAttributes(serverInfo, 'tezos', network, entity);
   dispatch(setAttributesAction(entity, attributes));
 };
 
-export const loadAttributes = (network, serverInfo) => async (dispatch) => {
+export const loadAttributes = (network, serverInfo) => async dispatch => {
   await dispatch(fetchAttributes('blocks', network, serverInfo));
   await dispatch(fetchAttributes('operations', network, serverInfo));
   await dispatch(fetchAttributes('accounts', network, serverInfo));
-}
-
+};
 
 export const syncAttributes = () => async (dispatch, state) => {
   const network = state().app.network;
@@ -329,12 +346,15 @@ export const syncAttributes = () => async (dispatch, state) => {
     url: config.url,
     apiKey: config.key,
   };
-  
-  const blockHead: any = await TezosConseilClient.getBlockHead(serverInfo, network);
+
+  const blockHead: any = await TezosConseilClient.getBlockHead(
+    serverInfo,
+    network
+  );
   const localHead = getBlockHeadFromLocal();
   if (blockHead[0].level - localHead > SYNC_LEVEL) {
     await dispatch(loadAttributes(network, serverInfo));
     const attributes = state().app.attributes;
     saveAttributes(attributes, blockHead[0].level);
   }
-}
+};
