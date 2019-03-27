@@ -22,7 +22,7 @@ const AndBlock = styled.div`
 `;
 
 const TextInput = styled(TextField)`
-  margin-top: 17px !important;
+  margin-top: 10px !important;
   margin-left: 10px !important;
   color: #9b9b9b;
   font-size: 18px;

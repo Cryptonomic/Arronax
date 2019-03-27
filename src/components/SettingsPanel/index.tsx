@@ -60,7 +60,6 @@ const DisplayContainer = styled.div`
   align-items: center;
   padding-left: 24px;
   padding-right: 24px;
-  width: 50%;
   height: 93px;
   background: white;
   border: 1px solid #ededed;
@@ -92,7 +91,6 @@ interface Props {
   attributes: object[];
   selectedValues: object[];
   setColumns: (columns: object[]) => void;
-  setRowCount: (count: number) => void;
   submitValues: () => void;
   setFilterInputState: (
     value: string,
@@ -113,7 +111,6 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
     filterInputState,
     setFilterInputState,
     rowCount,
-    setRowCount,
     selectedEntity,
     attributes,
     setColumns,
@@ -137,11 +134,10 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
         <QueryContainer>
           <DisplayContainer>
             <ColumnsDisplay
+              submitValues={submitValues}
               setColumns={setColumns}
               selectedEntity={selectedEntity}
               attributes={attributes}
-              rowCount={rowCount}
-              setRowCount={setRowCount}
               selectedColumns={selectedColumns}
             />
           </DisplayContainer>
