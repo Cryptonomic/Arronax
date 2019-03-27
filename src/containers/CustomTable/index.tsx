@@ -92,8 +92,6 @@ class CustomTable extends React.Component<Props, State> {
     const { items, entity, network, selectedColumns, rowsPerPage } = this.props;
     const { page, order, orderBy } = this.state;
     const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
-    const emptyRows =
-      rowCount - Math.min(rowCount, items.length - page * rowCount);
     const realRows = stableSort(items, getSorting(order, orderBy)).slice(
       page * rowCount,
       page * rowCount + rowCount
