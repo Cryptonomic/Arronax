@@ -233,8 +233,6 @@ class Arronax extends React.Component<Props, States> {
     const { filterInputState, selectedDisplayColumns } = this.state;
     // Set columns in Redux state
     await setColumns(selectedEntity, selectedDisplayColumns);
-    // Set columns in Redux state
-    await setColumns(selectedEntity, selectedDisplayColumns);
     // Loop through each value in state and set the value in Redux's state
     await filterInputState[selectedEntity].forEach(val => {
       setSelectedValues(val);
