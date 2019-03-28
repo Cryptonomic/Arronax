@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { getEntity, getAttributes } from '../../reducers/app/selectors';
-import { setColumns } from '../../reducers/app/thunks';
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -11,8 +8,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DragIcon from '@material-ui/icons/DragHandle';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
-import LimitSelector from 'components/LimitSelector';
-import SortBySelector from 'components/SortBySelector';
 
 const Container = styled.div`
   display: flex;
@@ -81,23 +76,6 @@ const LimitBlock = styled.div`
   font-size: 0.875rem;
   font-family: Roboto;
   background: rgb(248, 248, 248);
-  border-radius: 5px 0 0 5px;
-  border-right: 1px solid #d8d8d8;
-  width: 80px;
-  color: #4a4a4a;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: normal;
-  padding-right: 10px;
-  padding-left: 10px;
-`;
-
-const SortByBlock = styled.div`
-  font-size: 0.875rem;
-  font-family: Roboto;
-  background: rgb(248, 248, 248) !important;
   border-radius: 5px 0 0 5px;
   border-right: 1px solid #d8d8d8;
   width: 80px;
@@ -221,8 +199,9 @@ type Props = {
   selectedColumns: any;
   selectedEntity: string;
   attributes: any;
-  setColumns: (entity: string, items: object[]) => void;
   classes: any;
+  submitValues: () => void;
+  setColumns: (columns: object[]) => void;
 };
 
 type States = {
@@ -258,13 +237,13 @@ class ColumnDisplay extends React.Component<Props, States> {
     }
   }
 
-  handleSubmit = event => {
+  handleSubmit = async event => {
     const { selected } = this.state;
-    const { selectedEntity, setColumns, selectedColumns } = this.props;
+    const { setColumns, submitValues } = this.props;
     event.preventDefault();
-    this.setState({ anchorEl: null });
-    this.setState({ selected: [...selectedColumns[selectedEntity]] });
-    setColumns(selectedEntity, selected);
+    await this.setState({ anchorEl: null });
+    await setColumns(selected);
+    await submitValues();
   };
 
   handleChange = (name: SelectedColumnsData) => event => {
@@ -390,30 +369,9 @@ class ColumnDisplay extends React.Component<Props, States> {
             </Menu>
           </MenuContainer>
         </Container>
-        <Container>
-          <SortByBlock>SORT BY</SortByBlock>
-          <SortBySelector />
-        </Container>
-        <Container>
-          <LimitBlock>LIMIT</LimitBlock>
-          <LimitSelector />
-        </Container>
       </React.Fragment>
     );
   }
 }
 
-const mapStateToProps = state => ({
-  selectedEntity: getEntity(state),
-  attributes: getAttributes(state),
-});
-
-const mapDispatchToProps = dispatch => ({
-  setColumns: (entity: string, items: object[]) =>
-    dispatch(setColumns(entity, items)),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(ColumnDisplay));
+export default withStyles(styles)(ColumnDisplay);

@@ -14,6 +14,7 @@ import {
   getIsFullLoaded,
   getSelectedValues,
   getSelectedFilters,
+  getRows,
 } from '../../reducers/app/selectors';
 import {
   changeNetwork,
@@ -22,9 +23,11 @@ import {
 } from '../../reducers/app/thunks';
 import {
   setSelectedValuesAction,
+  setColumnsAction,
   setTabAction,
   removeValueAction,
   removeAllFiltersAction,
+  setRowCountAction,
 } from '../../reducers/app/actions';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
@@ -119,6 +122,8 @@ export interface Props {
   selectedColumns: any[];
   isFullLoaded: boolean;
   selectedFilters: object[];
+  rowCount: number;
+  setColumns: (entity: string, columns: object[]) => void;
   removeValue: (value: object) => void;
   removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
@@ -131,8 +136,8 @@ export interface Props {
 
 export interface States {
   isFilterCollapse: boolean;
-  filterInputVal: any[];
   filterInputState: any;
+  selectedDisplayColumns: object[];
 }
 
 class Arronax extends React.Component<Props, States> {
@@ -140,14 +145,27 @@ class Arronax extends React.Component<Props, States> {
     super(props);
     this.state = {
       isFilterCollapse: false,
-      filterInputVal: [],
       filterInputState: [],
+      selectedDisplayColumns: [],
     };
   }
 
   componentDidMount() {
     const { initLoad } = this.props;
     initLoad();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { selectedColumns, selectedEntity } = this.props;
+    if (
+      prevProps.selectedColumns[selectedEntity] !==
+        selectedColumns[selectedEntity] ||
+      selectedEntity !== prevProps.selectedEntity
+    ) {
+      this.setState({
+        selectedDisplayColumns: [...selectedColumns[selectedEntity]],
+      });
+    }
   }
 
   onChangeNetwork = event => {
@@ -161,7 +179,7 @@ class Arronax extends React.Component<Props, States> {
       removeValue(value);
     });
     changeTab(value);
-    await this.setState({ filterInputVal: [] });
+    await this.setState({ filterInputState: [] });
     await selectedValues.forEach(value => {
       removeValue(value);
     });
@@ -198,11 +216,15 @@ class Arronax extends React.Component<Props, States> {
       selectedFilters,
       selectedValues,
       removeValue,
+      selectedEntity,
+      setColumns,
     } = this.props;
-    const { filterInputState } = this.state;
+    const { filterInputState, selectedDisplayColumns } = this.state;
     const filterNames = await selectedFilters.map(
       filter => Object.values(filter)[0]
     );
+    // Set columns in Redux state
+    await setColumns(selectedEntity, selectedDisplayColumns);
     // Remove values from Redux state that are not represented in local state
     await selectedValues.forEach(value => {
       if (!filterNames.includes(Object.keys(value)[0])) {
@@ -294,6 +316,10 @@ class Arronax extends React.Component<Props, States> {
     }
   };
 
+  setSelectedColumns = (columns: object[]) => {
+    this.setState({ selectedDisplayColumns: columns });
+  };
+
   render() {
     const {
       isLoading,
@@ -301,11 +327,12 @@ class Arronax extends React.Component<Props, States> {
       selectedEntity,
       items,
       selectedColumns,
-      isFullLoaded
+      isFullLoaded,
+      attributes,
+      rowCount,
     } = this.props;
-    const { isFilterCollapse,filterInputState } = this.state;
+    const { isFilterCollapse, filterInputState } = this.state;
     const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
-
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
@@ -327,6 +354,10 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
+            setColumns={this.setSelectedColumns}
+            selectedEntity={selectedEntity}
+            attributes={attributes}
+            rowCount={rowCount}
             setFilterInputState={this.setFilterInputState}
             filterInputState={filterInputState}
             submitValues={this.submitValues}
@@ -362,6 +393,7 @@ class Arronax extends React.Component<Props, States> {
 }
 
 const mapStateToProps = (state: any) => ({
+  rowCount: getRows(state),
   selectedFilters: getSelectedFilters(state),
   selectedValues: getSelectedValues(state),
   selectedColumns: getColumns(state),
@@ -370,10 +402,12 @@ const mapStateToProps = (state: any) => ({
   selectedEntity: getEntity(state),
   items: getItems(state),
   attributes: getAttributes(state),
-  isFullLoaded: getIsFullLoaded(state)
+  isFullLoaded: getIsFullLoaded(state),
 });
 
 const mapDispatchToProps = dispatch => ({
+  setColumns: (entity: string, columns: object[]) =>
+    dispatch(setColumnsAction(entity, columns)),
   setSelectedValues: (value: object[]) =>
     dispatch(setSelectedValuesAction(value)),
   removeAllFilters: (selectedEntity: string) =>

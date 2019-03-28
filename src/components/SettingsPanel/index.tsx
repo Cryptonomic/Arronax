@@ -60,7 +60,6 @@ const DisplayContainer = styled.div`
   align-items: center;
   padding-left: 24px;
   padding-right: 24px;
-  width: 50%;
   height: 93px;
   background: white;
   border: 1px solid #ededed;
@@ -84,9 +83,13 @@ const CloseIconWrapper = styled(CloseIcon)`
 `;
 
 interface Props {
+  rowCount: number;
   selectedColumns: any;
   isCollapse: boolean;
   filterInputState: object[];
+  selectedEntity: string;
+  attributes: object[];
+  setColumns: (columns: object[]) => void;
   submitValues: () => void;
   setFilterInputState: (
     value: string,
@@ -106,6 +109,10 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
     submitValues,
     filterInputState,
     setFilterInputState,
+    rowCount,
+    selectedEntity,
+    attributes,
+    setColumns,
   } = props;
   return (
     <Collapse in={isCollapse}>
@@ -121,7 +128,13 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
         <DisplayTxt>Display</DisplayTxt>
         <QueryContainer>
           <DisplayContainer>
-            <ColumnsDisplay selectedColumns={selectedColumns} />
+            <ColumnsDisplay
+              submitValues={submitValues}
+              setColumns={setColumns}
+              selectedEntity={selectedEntity}
+              attributes={attributes}
+              selectedColumns={selectedColumns}
+            />
           </DisplayContainer>
           <ButtonsContainer>
             <ResetButton onClick={resetValues}>

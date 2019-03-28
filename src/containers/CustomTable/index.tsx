@@ -55,7 +55,7 @@ interface Props {
   attributes: any[];
   entity: string;
   items: any[];
-  selectedColumns: object[];
+  selectedColumns: object;
   network: string;
 }
 
@@ -79,29 +79,22 @@ class CustomTable extends React.Component<Props, State> {
     this.setState({ page });
   };
 
-  // handleChangeRowsPerPage = event => {
-  //   this.setState({ rowsPerPage: event.target.value });
-  // };
-
   handleRequestSort = (property: string) => {
     const orderBy = property;
     let order: 'asc' | 'desc' = 'desc';
-
     if (this.state.orderBy === property && this.state.order === 'desc') {
       order = 'asc';
     }
-
     this.setState({ order, orderBy });
   };
 
   render() {
     const { items, entity, network, selectedColumns, rowsPerPage } = this.props;
     const { page, order, orderBy } = this.state;
-    const emptyRows =
-      rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
+    const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
     const realRows = stableSort(items, getSorting(order, orderBy)).slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage
+      page * rowCount,
+      page * rowCount + rowCount
     );
     return (
       <React.Fragment>
@@ -125,16 +118,11 @@ class CustomTable extends React.Component<Props, State> {
                   />
                 );
               })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 48 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
             </TableBody>
           </TableContainer>
         </Overflow>
         <CustomPaginator
-          rowsPerPage={rowsPerPage}
+          rowsPerPage={rowCount}
           page={page}
           totalNumber={items.length}
           onChangePage={this.handleChangePage}
