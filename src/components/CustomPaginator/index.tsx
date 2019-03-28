@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import FormControl from '@material-ui/core/FormControl';
 import SelectField from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import Button from '@material-ui/core/Button';
 import ArrowDropDown from '@material-ui/icons/KeyboardArrowDown';
 import LeftChevronIcon from '@material-ui/icons/ChevronLeft';
 import RightChevronIcon from '@material-ui/icons/ChevronRight';
@@ -132,8 +131,6 @@ interface Props {
 const CustomPaginator: React.StatelessComponent<Props> = props => {
   const { page, totalNumber, onChangePage, rowsPerPage } = props;
   const pageCount = Math.ceil(totalNumber / rowsPerPage);
-  console.log(page);
-  console.log(pageCount);
   const balance = totalNumber % rowsPerPage;
   return (
     <Container>

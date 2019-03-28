@@ -28,7 +28,6 @@ import {
   setTabAction,
   removeValueAction,
   removeAllFiltersAction,
-  setRowCountAction,
 } from '../../reducers/app/actions';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
@@ -376,7 +375,6 @@ class Arronax extends React.Component<Props, States> {
             setColumns={this.setSelectedColumns}
             selectedEntity={selectedEntity}
             attributes={attributes}
-            rowCount={rowCount}
             setFilterInputState={this.setFilterInputState}
             filterInputState={filterInputState}
             submitValues={this.submitValues}

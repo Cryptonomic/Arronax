@@ -83,7 +83,6 @@ const CloseIconWrapper = styled(CloseIcon)`
 `;
 
 interface Props {
-  rowCount: number;
   selectedColumns: any;
   isCollapse: boolean;
   filterInputState: object;
@@ -110,7 +109,6 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
     submitValues,
     filterInputState,
     setFilterInputState,
-    rowCount,
     selectedEntity,
     attributes,
     setColumns,

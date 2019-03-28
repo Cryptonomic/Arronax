@@ -7,11 +7,8 @@ import IconButton from '@material-ui/core/IconButton';
 import { fetchValues } from '../../reducers/app/thunks';
 import {
   getAvailableValues,
-  getEntity,
-  getAttributes,
   getSelectedFilters,
   getOperators,
-  getSelectedValues,
 } from '../../reducers/app/selectors';
 import {
   setSelectedValuesAction,
