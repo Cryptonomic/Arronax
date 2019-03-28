@@ -53,10 +53,14 @@ const nameList = {
 };
 
 const getInitialColumns = (entity, columns) => {
-  const sorted = columns.sort((a, b) =>
-    a.displayName.localeCompare(b.displayName)
-  );
-  return sorted.filter(c => nameList[entity].indexOf(c.name) >= 0);
+  let newColumns = [];
+  columns.forEach(c => {
+    const index = nameList[entity].indexOf(c.name);
+    if (index >= 0) {
+      newColumns[index] = c;
+    }
+  });
+  return newColumns;
 };
 
 const convertValues = val => {
