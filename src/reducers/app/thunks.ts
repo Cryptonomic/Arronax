@@ -48,9 +48,23 @@ const getAttributeNames = attributes => {
 };
 
 const nameList = {
-  operations: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind'],
-  accounts: ['account_id', 'manager', 'delegate_value', 'balance', 'block_level', 'counter'],
-  blocks: ['level', 'timestamp', 'hash', 'predecessor']
+  operations: [
+    'timestamp',
+    'block_level',
+    'source',
+    'destination',
+    'amount',
+    'kind',
+  ],
+  accounts: [
+    'account_id',
+    'manager',
+    'delegate_value',
+    'balance',
+    'block_level',
+    'counter',
+  ],
+  blocks: ['level', 'timestamp', 'hash', 'predecessor'],
 };
 
 const getInitialColumns = (entity, columns) => {
@@ -93,7 +107,6 @@ export const submitQuery = () => async (dispatch, state) => {
   const attributes = state().app.columns;
   const selectedValues = state().app.selectedValues;
   const config = getConfig(network);
-  const limit = state().app.rowCount;
   const attributeNames = getAttributeNames(attributes[entity]);
   const serverInfo = {
     url: config.url,

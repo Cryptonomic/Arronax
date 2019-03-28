@@ -14,7 +14,6 @@ import {
   getIsFullLoaded,
   getSelectedValues,
   getSelectedFilters,
-  getRows,
   getFilterCount,
 } from '../../reducers/app/selectors';
 import {
@@ -122,7 +121,6 @@ export interface Props {
   selectedColumns: any[];
   isFullLoaded: boolean;
   selectedFilters: object[];
-  rowCount: number;
   filterCount: number;
   setColumns: (entity: string, columns: object[]) => void;
   removeValue: (value: object) => void;
@@ -346,7 +344,6 @@ class Arronax extends React.Component<Props, States> {
       attributes,
       filterCount,
       selectedValues,
-      rowCount,
     } = this.props;
     const { isFilterCollapse, filterInputState } = this.state;
     const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
@@ -414,7 +411,6 @@ class Arronax extends React.Component<Props, States> {
 
 const mapStateToProps = (state: any) => ({
   filterCount: getFilterCount(state),
-  rowCount: getRows(state),
   selectedFilters: getSelectedFilters(state),
   selectedValues: getSelectedValues(state),
   selectedColumns: getColumns(state),
