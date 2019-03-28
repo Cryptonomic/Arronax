@@ -50,10 +50,11 @@ interface Props {
 
 export const displayType = (network, shortenedItem, item, name) => {
   if (name === 'account_id' || name === 'manager') {
+    let colors = Buffer.from(Buffer.from(item[name].substring(3, 6) + item[name].slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255)/74)).toString('hex');
     return (
       <React.Fragment>
-        <StyledCircle1 />
-        <StyledCircle2 />
+        <StyledCircle1 style={{color: `#${colors.substring(0, 6)}`}} />
+        <StyledCircle2 style={{color: `#${colors.slice(-6)}`}} />
         <ExplorerLink
           href={`https://${network}.tzscan.io/${item[name]}`}
           target="_blank"
@@ -114,10 +115,7 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
     ) {
       const hashRepresentation = item[hash];
       const firstHalf = hashRepresentation.substring(0, 6);
-      const secondHalf = hashRepresentation.substring(
-        hashRepresentation.length - 6,
-        hashRepresentation.length
-      );
+      const secondHalf = hashRepresentation.slice(-6);
       const newHash = `${firstHalf}...${secondHalf}`;
       shortenedItem[hash] = newHash;
     }
