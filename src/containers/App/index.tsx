@@ -160,6 +160,7 @@ class Arronax extends React.Component<Props, States> {
     const currentFilters = selectedFilters.map(filter =>
       Object.values(filter)[0].toString()
     );
+    // Remove any value from state that doesn't match Redux's selected filters state
     filterInputState[selectedEntity].forEach(filter => {
       const stateFilter = Object.keys(filter).toString();
       if (!currentFilters.includes(stateFilter)) {
