@@ -39,7 +39,8 @@ interface Props {
   inputProps?: object;
   InputProps?: object;
   placeholder?: string;
-  filterInputState: any[];
+  filterInputState: object;
+  selectedEntity: string;
   setFilterInputState: (
     value: string,
     filterName: string,
@@ -48,13 +49,19 @@ interface Props {
 }
 
 class ValueInput extends React.Component<Props> {
+  state = {
+    value: '',
+  };
+
   handleInputChange = event => {
     const { filter, setFilterInputState, filterOperator } = this.props;
+    this.setState({ value: event.target.value });
     setFilterInputState(event.target.value, filter, filterOperator);
   };
 
   handleBetweenChange = event => {
     const { filter, setFilterInputState, filterOperator } = this.props;
+    this.setState({ value: event.target.value });
     setFilterInputState(`-${event.target.value}`, filter, filterOperator);
   };
 
@@ -65,23 +72,29 @@ class ValueInput extends React.Component<Props> {
       filterOperator,
       filter,
       filterInputState,
+      selectedEntity,
     } = this.props;
-
-    const findValue = filterInputState.find(
+    // Find state/redux value that matches this filter
+    const findStateValue = filterInputState[selectedEntity].find(
       value => Object.keys(value).toString() === filter
     );
-    const currentValue = findValue ? Object.values(findValue).toString() : null;
-    const betweenValue = findValue ? Object.values(findValue).toString() : null;
-    const split = findValue ? betweenValue.split('-') : null;
-    const firstBetweenValue = split ? split[0] : null;
-    const secondBetweenValue = split ? split[1] : null;
+    const currentStateValue = findStateValue
+      ? Object.values(findStateValue).toString()
+      : null;
+    const betweenStateValue = findStateValue
+      ? Object.values(findStateValue).toString()
+      : null;
+    // Split the state/redux value for between values (ex: 12000-15000 represents between 12000 and 15000)
+    const split = findStateValue ? betweenStateValue.split('-') : null;
+    const firstStateBetweenValue = split ? split[0] : null;
+    const secondStateBetweenValue = split ? split[1] : null;
     let input;
     if (filterOperator === 'BETWEEN' || filterOperator === 'IN') {
       input = (
         <React.Fragment>
           <Container>
             <TextInput
-              value={firstBetweenValue ? firstBetweenValue : ''}
+              value={firstStateBetweenValue ? firstStateBetweenValue : ''}
               inputProps={inputProps}
               InputProps={InputProps}
               placeholder={`Insert Value`}
@@ -93,8 +106,8 @@ class ValueInput extends React.Component<Props> {
           <HR />
           <Container>
             <TextInput
-              disabled={firstBetweenValue ? false : true}
-              value={secondBetweenValue ? secondBetweenValue : ''}
+              disabled={firstStateBetweenValue ? false : true}
+              value={secondStateBetweenValue ? secondStateBetweenValue : ''}
               inputProps={inputProps}
               InputProps={InputProps}
               placeholder={`Insert Value`}
@@ -109,7 +122,7 @@ class ValueInput extends React.Component<Props> {
       input = (
         <Container>
           <TextInput
-            value={currentValue ? currentValue : ''}
+            value={currentStateValue ? currentStateValue : ''}
             inputProps={inputProps}
             InputProps={InputProps}
             placeholder={`Insert Value`}

@@ -16,6 +16,7 @@ import {
   SET_ROW_COUNT,
   REMOVE_VALUE,
   COMPLETE_FULL_LOAD,
+  SET_FILTER_COUNT,
 } from './types';
 import actionCreator from '../../utils/reduxHelpers';
 
@@ -71,4 +72,5 @@ export const setSelectedValuesAction = actionCreator(
   'selectedValue'
 );
 export const setRowCountAction = actionCreator(SET_ROW_COUNT, 'rows');
+export const setFilterCountAction = actionCreator(SET_FILTER_COUNT, 'count');
 export const removeValueAction = actionCreator(REMOVE_VALUE, 'selectedValue');

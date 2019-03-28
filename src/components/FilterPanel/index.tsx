@@ -7,11 +7,8 @@ import IconButton from '@material-ui/core/IconButton';
 import { fetchValues } from '../../reducers/app/thunks';
 import {
   getAvailableValues,
-  getEntity,
-  getAttributes,
   getSelectedFilters,
   getOperators,
-  getSelectedValues,
 } from '../../reducers/app/selectors';
 import {
   setSelectedValuesAction,
@@ -101,7 +98,7 @@ type Props = {
   attributes: any[];
   filters: object[];
   operators: object[];
-  filterInputState: object[];
+  filterInputState: object;
   setFilterInputState: (
     value: string,
     filterName: string,
@@ -134,7 +131,7 @@ class FilterPanel extends React.Component<Props, States> {
       filterInputState,
       setFilterInputState,
     } = this.props;
-    const itemToRemove = filterInputState.find(
+    const itemToRemove = filterInputState[selectedEntity].find(
       value => Object.keys(value).toString() === filter.name
     );
     if (itemToRemove) {
@@ -262,6 +259,7 @@ class FilterPanel extends React.Component<Props, States> {
                   )}
                 {filter.operator && !cards.includes(filter.name) && (
                   <ValueInput
+                    selectedEntity={selectedEntity}
                     setFilterInputState={setFilterInputState}
                     filterInputState={filterInputState}
                     filterOperator={filter.operator}
@@ -297,11 +295,8 @@ class FilterPanel extends React.Component<Props, States> {
 }
 
 const mapStateToProps = state => ({
-  selectedEntity: getEntity(state),
-  attributes: getAttributes(state),
   filters: getSelectedFilters(state),
   availableValues: getAvailableValues(state),
-  selectedValues: getSelectedValues(state),
   operators: getOperators(state),
 });
 
