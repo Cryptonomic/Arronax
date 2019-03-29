@@ -248,16 +248,6 @@ class FilterPanel extends React.Component<Props, States> {
       }
       return acc;
     }, []);
-    const currentValue = [];
-    filterInputState[selectedEntity].forEach(value => {
-      filters.forEach(filter => {
-        if (
-          Object.keys(value).toString() === Object.values(filter)[0].toString()
-        ) {
-          currentValue.push(Object.keys(value).toString());
-        }
-      });
-    });
     return (
       <Container>
         {filters.map((filter: any, index) => {
