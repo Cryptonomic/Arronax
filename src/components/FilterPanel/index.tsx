@@ -113,10 +113,14 @@ type Props = {
 };
 
 type States = {
-  filters: object[];
+  value: string;
 };
 
 class FilterPanel extends React.Component<Props, States> {
+  state = {
+    value: '',
+  };
+
   onAddFilter = () => {
     const { addFilter, selectedEntity } = this.props;
     addFilter(selectedEntity);
@@ -190,7 +194,11 @@ class FilterPanel extends React.Component<Props, States> {
     const { setSelectedValues } = this.props;
     setSelectedValues(val);
   };
-
+  handleInputChange = (values, filter, filterOperator) => {
+    const { setFilterInputState } = this.props;
+    this.setState({ value: values });
+    setFilterInputState(values, filter, filterOperator);
+  };
   render() {
     const {
       selectedEntity,
@@ -202,6 +210,7 @@ class FilterPanel extends React.Component<Props, States> {
       filterInputState,
       setFilterInputState,
     } = this.props;
+    const { value } = this.state;
     const entityName = attrTabValue[selectedEntity];
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
@@ -209,7 +218,16 @@ class FilterPanel extends React.Component<Props, States> {
       }
       return acc;
     }, []);
-
+    const currentValue = [];
+    filterInputState[selectedEntity].forEach(value => {
+      filters.forEach(filter => {
+        if (
+          Object.keys(value).toString() === Object.values(filter)[0].toString()
+        ) {
+          currentValue.push(Object.keys(value).toString());
+        }
+      });
+    });
     return (
       <Container>
         {filters.map((filter: any, index) => {
@@ -259,12 +277,19 @@ class FilterPanel extends React.Component<Props, States> {
                   )}
                 {filter.operator && !cards.includes(filter.name) && (
                   <ValueInput
+                    value={value}
                     selectedEntity={selectedEntity}
-                    setFilterInputState={setFilterInputState}
                     filterInputState={filterInputState}
                     filterOperator={filter.operator}
                     InputProps={{ disableUnderline: true }}
                     filter={filter.name}
+                    onChange={value =>
+                      this.handleInputChange(
+                        value,
+                        filter.name,
+                        filter.operator
+                      )
+                    }
                   />
                 )}
               </FilterItemGr>

@@ -39,30 +39,20 @@ interface Props {
   inputProps?: object;
   InputProps?: object;
   placeholder?: string;
+  value: string;
   filterInputState: object;
   selectedEntity: string;
-  setFilterInputState: (
-    value: string,
-    filterName: string,
-    filterOperator: string
-  ) => void;
+  onChange: (value: string) => void;
 }
 
 class ValueInput extends React.Component<Props> {
-  state = {
-    value: '',
+  handleInputChange = value => {
+    const { onChange } = this.props;
+    onChange(value);
   };
-
-  handleInputChange = event => {
-    const { filter, setFilterInputState, filterOperator } = this.props;
-    this.setState({ value: event.target.value });
-    setFilterInputState(event.target.value, filter, filterOperator);
-  };
-
-  handleBetweenChange = event => {
-    const { filter, setFilterInputState, filterOperator } = this.props;
-    this.setState({ value: event.target.value });
-    setFilterInputState(`-${event.target.value}`, filter, filterOperator);
+  handleBetweenChange = value => {
+    const { onChange } = this.props;
+    onChange(`-${value}`);
   };
 
   render() {
@@ -70,35 +60,31 @@ class ValueInput extends React.Component<Props> {
       InputProps,
       inputProps,
       filterOperator,
-      filter,
       filterInputState,
       selectedEntity,
+      filter,
     } = this.props;
-    // Find state/redux value that matches this filter
+    let input;
+
+    // // Find state/redux value that matches this filter
     const findStateValue = filterInputState[selectedEntity].find(
       value => Object.keys(value).toString() === filter
     );
     const currentStateValue = findStateValue
       ? Object.values(findStateValue).toString()
-      : null;
-    const betweenStateValue = findStateValue
-      ? Object.values(findStateValue).toString()
-      : null;
-    // Split the state/redux value for between values (ex: 12000-15000 represents between 12000 and 15000)
-    const split = findStateValue ? betweenStateValue.split('-') : null;
-    const firstStateBetweenValue = split ? split[0] : null;
-    const secondStateBetweenValue = split ? split[1] : null;
-    let input;
+      : '';
+
     if (filterOperator === 'BETWEEN' || filterOperator === 'IN') {
+      const splitValues = currentStateValue.split('-');
       input = (
         <React.Fragment>
           <Container>
             <TextInput
-              value={firstStateBetweenValue ? firstStateBetweenValue : ''}
+              value={splitValues[0] ? splitValues[0] : ''}
               inputProps={inputProps}
               InputProps={InputProps}
               placeholder={`Insert Value`}
-              onChange={event => this.handleInputChange(event)}
+              onChange={event => this.handleInputChange(event.target.value)}
             />
           </Container>
           <HR />
@@ -106,12 +92,12 @@ class ValueInput extends React.Component<Props> {
           <HR />
           <Container>
             <TextInput
-              disabled={firstStateBetweenValue ? false : true}
-              value={secondStateBetweenValue ? secondStateBetweenValue : ''}
+              disabled={splitValues[0] ? false : true}
+              value={splitValues[1] ? splitValues[1] : ''}
               inputProps={inputProps}
               InputProps={InputProps}
               placeholder={`Insert Value`}
-              onChange={event => this.handleBetweenChange(event)}
+              onChange={event => this.handleBetweenChange(event.target.value)}
             />
           </Container>
         </React.Fragment>
@@ -126,7 +112,7 @@ class ValueInput extends React.Component<Props> {
             inputProps={inputProps}
             InputProps={InputProps}
             placeholder={`Insert Value`}
-            onChange={event => this.handleInputChange(event)}
+            onChange={event => this.handleInputChange(event.target.value)}
           />
         </Container>
       );
