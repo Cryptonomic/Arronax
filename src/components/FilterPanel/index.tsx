@@ -7,11 +7,8 @@ import IconButton from '@material-ui/core/IconButton';
 import { fetchValues } from '../../reducers/app/thunks';
 import {
   getAvailableValues,
-  getEntity,
-  getAttributes,
   getSelectedFilters,
   getOperators,
-  getSelectedValues,
 } from '../../reducers/app/selectors';
 import {
   setSelectedValuesAction,
@@ -94,14 +91,19 @@ const attrTabValue = {
   accounts: 'account',
 };
 
+interface Filter {
+  name: string;
+  operator: string;
+}
+
 type Props = {
   selectedValues: object[];
   availableValues: object[];
   selectedEntity: string;
   attributes: any[];
-  filters: object[];
+  filters: Array<Filter>;
   operators: object[];
-  filterInputState: object[];
+  filterInputState: object;
   setFilterInputState: (
     value: string,
     filterName: string,
@@ -116,10 +118,14 @@ type Props = {
 };
 
 type States = {
-  filters: object[];
+  value: string;
 };
 
 class FilterPanel extends React.Component<Props, States> {
+  state = {
+    value: '',
+  };
+
   onAddFilter = () => {
     const { addFilter, selectedEntity } = this.props;
     addFilter(selectedEntity);
@@ -134,7 +140,7 @@ class FilterPanel extends React.Component<Props, States> {
       filterInputState,
       setFilterInputState,
     } = this.props;
-    const itemToRemove = filterInputState.find(
+    const itemToRemove = filterInputState[selectedEntity].find(
       value => Object.keys(value).toString() === filter.name
     );
     if (itemToRemove) {
@@ -176,8 +182,25 @@ class FilterPanel extends React.Component<Props, States> {
   };
 
   onFilterOperatorChange = (val, index) => {
-    const { filters, selectedEntity, changeFilter } = this.props;
+    const {
+      filters,
+      selectedEntity,
+      changeFilter,
+      filterInputState,
+      setFilterInputState,
+    } = this.props;
     const selectedFilter: any = filters[index];
+    const findInput = filterInputState[selectedEntity].find(
+      filter => Object.keys(filter).toString() === selectedFilter.name
+    );
+    // Check to see if input value for this attribute is populated and clear if so
+    if (findInput) {
+      setFilterInputState(
+        null,
+        Object.keys(findInput).toString(),
+        selectedFilter.operator
+      );
+    }
     selectedFilter.operator = val;
     changeFilter(selectedEntity, selectedFilter, index);
   };
@@ -194,6 +217,19 @@ class FilterPanel extends React.Component<Props, States> {
     setSelectedValues(val);
   };
 
+  handleInputChange = (value, filter, filterOperator) => {
+    const { setFilterInputState } = this.props;
+    this.setState({ value: value });
+    setFilterInputState(value, filter, filterOperator);
+  };
+
+  handleBetweenInputChange = (value, filter, filterOperator) => {
+    const { setFilterInputState } = this.props;
+    this.setState({ value: value });
+    const betweenValue = `-${value}`;
+    setFilterInputState(betweenValue, filter, filterOperator);
+  };
+
   render() {
     const {
       selectedEntity,
@@ -203,8 +239,8 @@ class FilterPanel extends React.Component<Props, States> {
       selectedValues,
       availableValues,
       filterInputState,
-      setFilterInputState,
     } = this.props;
+    const { value } = this.state;
     const entityName = attrTabValue[selectedEntity];
     const cards = attributes.reduce((acc, current) => {
       if (current.cardinality < 15 && current.cardinality !== null) {
@@ -212,7 +248,6 @@ class FilterPanel extends React.Component<Props, States> {
       }
       return acc;
     }, []);
-
     return (
       <Container>
         {filters.map((filter: any, index) => {
@@ -262,11 +297,25 @@ class FilterPanel extends React.Component<Props, States> {
                   )}
                 {filter.operator && !cards.includes(filter.name) && (
                   <ValueInput
-                    setFilterInputState={setFilterInputState}
+                    value={value}
+                    selectedEntity={selectedEntity}
                     filterInputState={filterInputState}
-                    filterOperator={filter.operator}
                     InputProps={{ disableUnderline: true }}
-                    filter={filter.name}
+                    filter={filter}
+                    onInputChange={value =>
+                      this.handleInputChange(
+                        value,
+                        filter.name,
+                        filter.operator
+                      )
+                    }
+                    onBetweenInputChange={value =>
+                      this.handleBetweenInputChange(
+                        value,
+                        filter.name,
+                        filter.operator
+                      )
+                    }
                   />
                 )}
               </FilterItemGr>
@@ -297,11 +346,8 @@ class FilterPanel extends React.Component<Props, States> {
 }
 
 const mapStateToProps = state => ({
-  selectedEntity: getEntity(state),
-  attributes: getAttributes(state),
   filters: getSelectedFilters(state),
   availableValues: getAvailableValues(state),
-  selectedValues: getSelectedValues(state),
   operators: getOperators(state),
 });
 

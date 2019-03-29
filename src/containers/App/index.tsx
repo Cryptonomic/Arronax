@@ -14,7 +14,7 @@ import {
   getIsFullLoaded,
   getSelectedValues,
   getSelectedFilters,
-  getRows,
+  getFilterCount,
 } from '../../reducers/app/selectors';
 import {
   changeNetwork,
@@ -27,7 +27,6 @@ import {
   setTabAction,
   removeValueAction,
   removeAllFiltersAction,
-  setRowCountAction,
 } from '../../reducers/app/actions';
 import Header from 'components/Header';
 import FilterTool from 'components/FilterTool';
@@ -122,7 +121,7 @@ export interface Props {
   selectedColumns: any[];
   isFullLoaded: boolean;
   selectedFilters: object[];
-  rowCount: number;
+  filterCount: number;
   setColumns: (entity: string, columns: object[]) => void;
   removeValue: (value: object) => void;
   removeAllFilters: (entity: string) => void;
@@ -145,7 +144,7 @@ class Arronax extends React.Component<Props, States> {
     super(props);
     this.state = {
       isFilterCollapse: false,
-      filterInputState: [],
+      filterInputState: { blocks: [], operations: [], accounts: [] },
       selectedDisplayColumns: [],
     };
   }
@@ -156,7 +155,20 @@ class Arronax extends React.Component<Props, States> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { selectedColumns, selectedEntity } = this.props;
+    const { filterInputState } = this.state;
+    const { selectedColumns, selectedEntity, selectedFilters } = this.props;
+    const currentFilters = selectedFilters.map(filter =>
+      Object.values(filter)[0].toString()
+    );
+    // Remove any value from state that doesn't match Redux's selected filters state
+    filterInputState[selectedEntity].forEach(filter => {
+      const stateFilter = Object.keys(filter).toString();
+      if (!currentFilters.includes(stateFilter)) {
+        const index = filterInputState[selectedEntity].indexOf(stateFilter);
+        filterInputState[selectedEntity].splice(index, 1);
+        this.setState({ filterInputState: filterInputState });
+      }
+    });
     if (
       prevProps.selectedColumns[selectedEntity] !==
         selectedColumns[selectedEntity] ||
@@ -174,15 +186,8 @@ class Arronax extends React.Component<Props, States> {
   };
 
   onChangeTab = async (value: string) => {
-    const { changeTab, selectedValues, removeValue } = this.props;
-    selectedValues.forEach(value => {
-      removeValue(value);
-    });
+    const { changeTab } = this.props;
     changeTab(value);
-    await this.setState({ filterInputState: [] });
-    await selectedValues.forEach(value => {
-      removeValue(value);
-    });
     await changeTab(value);
   };
 
@@ -201,11 +206,21 @@ class Arronax extends React.Component<Props, States> {
       removeValue,
       removeAllFilters,
       selectedEntity,
+      selectedFilters,
     } = this.props;
-    this.setState({ filterInputState: [] });
+    const { filterInputState } = this.state;
+    filterInputState[selectedEntity] = [];
+    this.setState({ filterInputState: filterInputState });
     removeAllFilters(selectedEntity);
+    // Remove selected values for this particular entity
     selectedValues.forEach(value => {
-      removeValue(value);
+      selectedFilters.forEach(filter => {
+        const currentValue = Object.keys(value).toString();
+        const currentFilter = Object.values(filter)[0].toString();
+        if (currentValue === currentFilter) {
+          removeValue(value);
+        }
+      });
     });
   };
 
@@ -213,26 +228,14 @@ class Arronax extends React.Component<Props, States> {
     const {
       setSelectedValues,
       submitQuery,
-      selectedFilters,
-      selectedValues,
-      removeValue,
       selectedEntity,
       setColumns,
     } = this.props;
     const { filterInputState, selectedDisplayColumns } = this.state;
-    const filterNames = await selectedFilters.map(
-      filter => Object.values(filter)[0]
-    );
     // Set columns in Redux state
     await setColumns(selectedEntity, selectedDisplayColumns);
-    // Remove values from Redux state that are not represented in local state
-    await selectedValues.forEach(value => {
-      if (!filterNames.includes(Object.keys(value)[0])) {
-        removeValue(value);
-      }
-    });
     // Loop through each value in state and set the value in Redux's state
-    await filterInputState.forEach(val => {
+    await filterInputState[selectedEntity].forEach(val => {
       setSelectedValues(val);
     });
     // Submit the query to ConseilJS
@@ -241,9 +244,10 @@ class Arronax extends React.Component<Props, States> {
 
   setFilterInputState = (val, filterName, filterOperator) => {
     const { filterInputState } = this.state;
-    const filterState = [...filterInputState];
+    const { selectedEntity } = this.props;
+    const filterState = [...filterInputState[selectedEntity]];
     let filterCheck = [];
-    filterInputState.forEach(filter => {
+    filterInputState[selectedEntity].forEach(filter => {
       filterCheck.push(Object.keys(filter).toString());
     });
     // Remove the value from state by sending in a NULL value
@@ -253,7 +257,8 @@ class Arronax extends React.Component<Props, States> {
       );
       const index = filterState.indexOf(itemToRemove);
       filterState.splice(index, 1);
-      this.setState({ filterInputState: filterState });
+      filterInputState[selectedEntity] = filterState;
+      this.setState({ filterInputState: filterInputState });
     } else if (
       filterCheck.includes(filterName) &&
       filterOperator !== 'BETWEEN'
@@ -261,7 +266,8 @@ class Arronax extends React.Component<Props, States> {
       const index = filterCheck.indexOf(filterName);
       filterState.splice(index, 1);
       const newState = [...filterState, { [filterName]: val }];
-      this.setState({ filterInputState: newState });
+      filterInputState[selectedEntity] = newState;
+      this.setState({ filterInputState: filterInputState });
     } else if (
       filterCheck.includes(filterName) &&
       filterOperator === 'BETWEEN'
@@ -278,12 +284,14 @@ class Arronax extends React.Component<Props, States> {
             ...filterState,
             { [filterName]: `${currentValue}${val}` },
           ];
-          this.setState({ filterInputState: newState });
+          filterInputState[selectedEntity] = newState;
+          this.setState({ filterInputState: filterInputState });
         } else if (!val.includes('-')) {
           const index = filterCheck.indexOf(filterName);
           filterState.splice(index, 1);
           const newState = [...filterState, { [filterName]: val }];
-          this.setState({ filterInputState: newState });
+          filterInputState[selectedEntity] = newState;
+          this.setState({ filterInputState: filterInputState });
         }
       } else if (currentValue.includes('-')) {
         if (val.includes('-')) {
@@ -295,7 +303,8 @@ class Arronax extends React.Component<Props, States> {
           const index = filterCheck.indexOf(filterName);
           filterState.splice(index, 1);
           const newState = [...filterState, { [filterName]: finalValue }];
-          this.setState({ filterInputState: newState });
+          filterInputState[selectedEntity] = newState;
+          this.setState({ filterInputState: filterInputState });
         } else if (!val.includes('-')) {
           const value = Object.values(currentValue);
           const dashIndex = value.indexOf('-');
@@ -305,14 +314,17 @@ class Arronax extends React.Component<Props, States> {
           const index = filterCheck.indexOf(filterName);
           filterState.splice(index, 1);
           const newState = [...filterState, { [filterName]: finalValue }];
-          this.setState({ filterInputState: newState });
+          filterInputState[selectedEntity] = newState;
+          this.setState({ filterInputState: filterInputState });
         }
       }
     } else {
-      const newValues = [...filterInputState, { [filterName]: val }];
-      this.setState({
-        filterInputState: newValues,
-      });
+      const newValues = [
+        ...filterInputState[selectedEntity],
+        { [filterName]: val },
+      ];
+      filterInputState[selectedEntity] = newValues;
+      this.setState({ filterInputState: filterInputState });
     }
   };
 
@@ -329,7 +341,8 @@ class Arronax extends React.Component<Props, States> {
       selectedColumns,
       isFullLoaded,
       attributes,
-      rowCount,
+      filterCount,
+      selectedValues,
     } = this.props;
     const { isFilterCollapse, filterInputState } = this.state;
     const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
@@ -354,10 +367,10 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
+            selectedValues={selectedValues}
             setColumns={this.setSelectedColumns}
             selectedEntity={selectedEntity}
             attributes={attributes}
-            rowCount={rowCount}
             setFilterInputState={this.setFilterInputState}
             filterInputState={filterInputState}
             submitValues={this.submitValues}
@@ -367,7 +380,10 @@ class Arronax extends React.Component<Props, States> {
             onClose={this.onCloseFilter}
           />
           <FilterHeader isDark={isFilterCollapse}>
-            <FilterTool value={2} onCollapse={this.onFilterCollapse} />
+            <FilterTool
+              value={filterCount}
+              onCollapse={this.onFilterCollapse}
+            />
             <FilterExTxt>
               e.g. What blocks were baked by Foundation Baker 1 in the past 24
               hours?
@@ -393,7 +409,7 @@ class Arronax extends React.Component<Props, States> {
 }
 
 const mapStateToProps = (state: any) => ({
-  rowCount: getRows(state),
+  filterCount: getFilterCount(state),
   selectedFilters: getSelectedFilters(state),
   selectedValues: getSelectedValues(state),
   selectedColumns: getColumns(state),

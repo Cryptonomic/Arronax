@@ -22,6 +22,7 @@ import {
   setColumnsAction,
   setAttributesAction,
   completeFullLoadAction,
+  setFilterCountAction,
 } from './actions';
 import getConfigs from '../../utils/getconfig';
 
@@ -47,16 +48,34 @@ const getAttributeNames = attributes => {
 };
 
 const nameList = {
-  operations: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind'],
-  accounts: ['account_id', 'manager', 'delegate_value', 'balance', 'block_level', 'counter'],
-  blocks: ['level', 'timestamp', 'hash', 'predecessor']
+  operations: [
+    'timestamp',
+    'block_level',
+    'source',
+    'destination',
+    'amount',
+    'kind',
+  ],
+  accounts: [
+    'account_id',
+    'manager',
+    'delegate_value',
+    'balance',
+    'block_level',
+    'counter',
+  ],
+  blocks: ['level', 'timestamp', 'hash', 'predecessor'],
 };
 
 const getInitialColumns = (entity, columns) => {
-  const sorted = columns.sort((a, b) =>
-    a.displayName.localeCompare(b.displayName)
-  );
-  return sorted.filter(c => nameList[entity].indexOf(c.name) >= 0);
+  let newColumns = [];
+  columns.forEach(c => {
+    const index = nameList[entity].indexOf(c.name);
+    if (index >= 0) {
+      newColumns[index] = c;
+    }
+  });
+  return newColumns;
 };
 
 const convertValues = val => {
@@ -92,7 +111,6 @@ export const submitQuery = () => async (dispatch, state) => {
   const attributes = state().app.columns;
   const selectedValues = state().app.selectedValues;
   const config = getConfig(network);
-  const limit = state().app.rowCount;
   const attributeNames = getAttributeNames(attributes[entity]);
   const serverInfo = {
     url: config.url,
@@ -108,7 +126,7 @@ export const submitQuery = () => async (dispatch, state) => {
   ];
   let valuesToConvert = [];
   let finalValues = [];
-  selectedValues.forEach(value => {
+  selectedValues[entity].forEach(value => {
     if (entity !== 'blocks') {
       const key = Object.keys(value).toString();
       if (lowCardinalities.includes(key)) {
@@ -169,6 +187,7 @@ export const submitQuery = () => async (dispatch, state) => {
     entity,
     query
   );
+  await dispatch(setFilterCountAction(selectedFilters.length));
   await dispatch(setItemsAction(entity, items));
   dispatch(setLoadingAction(false));
 };

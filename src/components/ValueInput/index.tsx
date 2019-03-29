@@ -33,59 +33,62 @@ const TextInput = styled(TextField)`
   width: 150px;
 `;
 
+interface Filter {
+  name: string;
+  operator: string;
+}
+
 interface Props {
-  filter: string;
-  filterOperator: string;
+  filter: Filter;
   inputProps?: object;
   InputProps?: object;
-  placeholder?: string;
-  filterInputState: any[];
-  setFilterInputState: (
-    value: string,
-    filterName: string,
-    filterOperator: string
-  ) => void;
+  value: string;
+  filterInputState: object;
+  selectedEntity: string;
+  onInputChange: (value: string) => void;
+  onBetweenInputChange: (value: string) => void;
 }
 
 class ValueInput extends React.Component<Props> {
-  handleInputChange = event => {
-    const { filter, setFilterInputState, filterOperator } = this.props;
-    setFilterInputState(event.target.value, filter, filterOperator);
+  handleInputChange = value => {
+    const { onInputChange } = this.props;
+    onInputChange(value);
   };
 
-  handleBetweenChange = event => {
-    const { filter, setFilterInputState, filterOperator } = this.props;
-    setFilterInputState(`-${event.target.value}`, filter, filterOperator);
+  handleBetweenChange = value => {
+    const { onBetweenInputChange } = this.props;
+    onBetweenInputChange(value);
   };
 
   render() {
     const {
       InputProps,
       inputProps,
-      filterOperator,
       filter,
       filterInputState,
+      selectedEntity,
     } = this.props;
-
-    const findValue = filterInputState.find(
-      value => Object.keys(value).toString() === filter
-    );
-    const currentValue = findValue ? Object.values(findValue).toString() : null;
-    const betweenValue = findValue ? Object.values(findValue).toString() : null;
-    const split = findValue ? betweenValue.split('-') : null;
-    const firstBetweenValue = split ? split[0] : null;
-    const secondBetweenValue = split ? split[1] : null;
     let input;
-    if (filterOperator === 'BETWEEN' || filterOperator === 'IN') {
+
+    // Find state value that matches this filter
+    const findStateValue = filterInputState[selectedEntity].find(
+      value => Object.keys(value).toString() === filter.name
+    );
+    const currentStateValue = findStateValue
+      ? Object.values(findStateValue).toString()
+      : '';
+    // Render specific input type based on operators
+    if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
+      const splitValues = currentStateValue.split('-');
       input = (
         <React.Fragment>
           <Container>
             <TextInput
-              value={firstBetweenValue ? firstBetweenValue : ''}
+              value={splitValues[0] ? splitValues[0] : ''}
               inputProps={inputProps}
               InputProps={InputProps}
               placeholder={`Insert Value`}
-              onChange={event => this.handleInputChange(event)}
+              onChange={event => this.handleInputChange(event.target.value)}
             />
           </Container>
           <HR />
@@ -93,27 +96,27 @@ class ValueInput extends React.Component<Props> {
           <HR />
           <Container>
             <TextInput
-              disabled={firstBetweenValue ? false : true}
-              value={secondBetweenValue ? secondBetweenValue : ''}
+              disabled={splitValues[0] ? false : true}
+              value={splitValues[1] ? splitValues[1] : ''}
               inputProps={inputProps}
               InputProps={InputProps}
               placeholder={`Insert Value`}
-              onChange={event => this.handleBetweenChange(event)}
+              onChange={event => this.handleBetweenChange(event.target.value)}
             />
           </Container>
         </React.Fragment>
       );
-    } else if (filterOperator === 'ISNULL') {
+    } else if (filter.operator === 'ISNULL') {
       input = null;
     } else {
       input = (
         <Container>
           <TextInput
-            value={currentValue ? currentValue : ''}
+            value={currentStateValue ? currentStateValue : ''}
             inputProps={inputProps}
             InputProps={InputProps}
             placeholder={`Insert Value`}
-            onChange={event => this.handleInputChange(event)}
+            onChange={event => this.handleInputChange(event.target.value)}
           />
         </Container>
       );

@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import FormControl from '@material-ui/core/FormControl';
 import SelectField from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import Button from '@material-ui/core/Button';
 import ArrowDropDown from '@material-ui/icons/KeyboardArrowDown';
 import LeftChevronIcon from '@material-ui/icons/ChevronLeft';
 import RightChevronIcon from '@material-ui/icons/ChevronRight';
@@ -152,11 +151,11 @@ const CustomPaginator: React.StatelessComponent<Props> = props => {
         <LeftIconWrapper isactive={page !== 0 ? 1 : 0} />
       </ButtonWrapper>
       <ButtonWrapper
-        isActive={page !== pageCount}
+        isActive={page !== pageCount - 1 ? 1 : 0}
         isNext
         onClick={() => onChangePage(page + 1)}
       >
-        <RightIconWrapper isactive={page !== pageCount ? 1 : 0} />
+        <RightIconWrapper isactive={page !== pageCount - 1 ? 1 : 0} />
       </ButtonWrapper>
     </Container>
   );
