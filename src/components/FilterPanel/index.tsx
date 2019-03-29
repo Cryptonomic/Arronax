@@ -91,12 +91,17 @@ const attrTabValue = {
   accounts: 'account',
 };
 
+interface Filter {
+  name: string;
+  operator: string;
+}
+
 type Props = {
   selectedValues: object[];
   availableValues: object[];
   selectedEntity: string;
   attributes: any[];
-  filters: object[];
+  filters: Array<Filter>;
   operators: object[];
   filterInputState: object;
   setFilterInputState: (
@@ -177,8 +182,25 @@ class FilterPanel extends React.Component<Props, States> {
   };
 
   onFilterOperatorChange = (val, index) => {
-    const { filters, selectedEntity, changeFilter } = this.props;
+    const {
+      filters,
+      selectedEntity,
+      changeFilter,
+      filterInputState,
+      setFilterInputState,
+    } = this.props;
     const selectedFilter: any = filters[index];
+    const findInput = filterInputState[selectedEntity].find(
+      filter => Object.keys(filter).toString() === selectedFilter.name
+    );
+    // Check to see if input value for this attribute is populated and clear if so
+    if (findInput) {
+      setFilterInputState(
+        null,
+        Object.keys(findInput).toString(),
+        selectedFilter.operator
+      );
+    }
     selectedFilter.operator = val;
     changeFilter(selectedEntity, selectedFilter, index);
   };
@@ -194,11 +216,20 @@ class FilterPanel extends React.Component<Props, States> {
     const { setSelectedValues } = this.props;
     setSelectedValues(val);
   };
-  handleInputChange = (values, filter, filterOperator) => {
+
+  handleInputChange = (value, filter, filterOperator) => {
     const { setFilterInputState } = this.props;
-    this.setState({ value: values });
-    setFilterInputState(values, filter, filterOperator);
+    this.setState({ value: value });
+    setFilterInputState(value, filter, filterOperator);
   };
+
+  handleBetweenInputChange = (value, filter, filterOperator) => {
+    const { setFilterInputState } = this.props;
+    this.setState({ value: value });
+    const betweenValue = `-${value}`;
+    setFilterInputState(betweenValue, filter, filterOperator);
+  };
+
   render() {
     const {
       selectedEntity,
@@ -208,7 +239,6 @@ class FilterPanel extends React.Component<Props, States> {
       selectedValues,
       availableValues,
       filterInputState,
-      setFilterInputState,
     } = this.props;
     const { value } = this.state;
     const entityName = attrTabValue[selectedEntity];
@@ -280,11 +310,17 @@ class FilterPanel extends React.Component<Props, States> {
                     value={value}
                     selectedEntity={selectedEntity}
                     filterInputState={filterInputState}
-                    filterOperator={filter.operator}
                     InputProps={{ disableUnderline: true }}
-                    filter={filter.name}
-                    onChange={value =>
+                    filter={filter}
+                    onInputChange={value =>
                       this.handleInputChange(
+                        value,
+                        filter.name,
+                        filter.operator
+                      )
+                    }
+                    onBetweenInputChange={value =>
+                      this.handleBetweenInputChange(
                         value,
                         filter.name,
                         filter.operator

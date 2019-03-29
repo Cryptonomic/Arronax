@@ -33,48 +33,52 @@ const TextInput = styled(TextField)`
   width: 150px;
 `;
 
+interface Filter {
+  name: string;
+  operator: string;
+}
+
 interface Props {
-  filter: string;
-  filterOperator: string;
+  filter: Filter;
   inputProps?: object;
   InputProps?: object;
-  placeholder?: string;
   value: string;
   filterInputState: object;
   selectedEntity: string;
-  onChange: (value: string) => void;
+  onInputChange: (value: string) => void;
+  onBetweenInputChange: (value: string) => void;
 }
 
 class ValueInput extends React.Component<Props> {
   handleInputChange = value => {
-    const { onChange } = this.props;
-    onChange(value);
+    const { onInputChange } = this.props;
+    onInputChange(value);
   };
+
   handleBetweenChange = value => {
-    const { onChange } = this.props;
-    onChange(`-${value}`);
+    const { onBetweenInputChange } = this.props;
+    onBetweenInputChange(value);
   };
 
   render() {
     const {
       InputProps,
       inputProps,
-      filterOperator,
+      filter,
       filterInputState,
       selectedEntity,
-      filter,
     } = this.props;
     let input;
 
-    // // Find state/redux value that matches this filter
+    // Find state value that matches this filter
     const findStateValue = filterInputState[selectedEntity].find(
-      value => Object.keys(value).toString() === filter
+      value => Object.keys(value).toString() === filter.name
     );
     const currentStateValue = findStateValue
       ? Object.values(findStateValue).toString()
       : '';
-
-    if (filterOperator === 'BETWEEN' || filterOperator === 'IN') {
+    // Render specific input type based on operators
+    if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
       const splitValues = currentStateValue.split('-');
       input = (
         <React.Fragment>
@@ -102,7 +106,7 @@ class ValueInput extends React.Component<Props> {
           </Container>
         </React.Fragment>
       );
-    } else if (filterOperator === 'ISNULL') {
+    } else if (filter.operator === 'ISNULL') {
       input = null;
     } else {
       input = (
