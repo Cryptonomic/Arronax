@@ -153,7 +153,6 @@ class FilterSelect extends React.Component<Props, States> {
   render() {
     const { anchorEl, isFadeBottom, isFadeTop } = this.state;
     const { items, value, placeholder } = this.props;
-    console.log(items);
 
     const selectedItem: any = items.find((item: any) => item.name === value);
     const menuTitle = value ? selectedItem.displayName : placeholder;
