@@ -102,7 +102,7 @@ type Props = {
   selectedEntity: string;
   attributes: any[];
   filters: Array<Filter>;
-  operators: object[];
+  operators: any;
   filterInputState: object;
   setFilterInputState: (
     value: string,
@@ -248,6 +248,22 @@ class FilterPanel extends React.Component<Props, States> {
       }
       return acc;
     }, []);
+    const numericDataTypes = attributes.map(attr => {
+      if (attr.dataType === 'Int' || attr.dataType === 'Decimal') {
+        attr.name;
+      }
+    });
+    const stringDataTypes = attributes.map(attr => {
+      if (attr.dataType === 'String') {
+        attr.name;
+      }
+    });
+    const booleanDataTypes = attributes.map(attr => {
+      if (attr.dataType === 'Boolean') {
+        attr.name;
+      }
+    });
+    console.log(attributes);
     return (
       <Container>
         {filters.map((filter: any, index) => {
@@ -277,7 +293,15 @@ class FilterPanel extends React.Component<Props, States> {
                   <FilterSelect
                     value={filter.operator}
                     placeholder={`Select Operator`}
-                    items={operators}
+                    items={
+                      numericDataTypes.includes(filter.name)
+                        ? operators.numeric
+                        : stringDataTypes.includes(filter.name)
+                        ? operators.string
+                        : booleanDataTypes.includes(filter.name)
+                        ? operators.boolean
+                        : operators.dateTime
+                    }
                     onChange={event =>
                       this.onFilterOperatorChange(event, index)
                     }
