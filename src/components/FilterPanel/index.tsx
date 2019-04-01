@@ -258,6 +258,16 @@ class FilterPanel extends React.Component<Props, States> {
       }
       return acc;
     }, []);
+
+    const disableAddFilter =
+      (filters.length > 0 &&
+        filters.length !==
+          filterInputState[selectedEntity].length + selectedValues.length) ||
+      (filters.length > 0 &&
+        filters.length ===
+          filterInputState[selectedEntity].length + selectedValues.length &&
+        value === '');
+
     return (
       <Container>
         {filters.map((filter: any, index) => {
@@ -340,16 +350,16 @@ class FilterPanel extends React.Component<Props, States> {
         })}
 
         <AddFilterFooter isFilters={filters.length > 0}>
-          {filters.length === 0 || (filters.length > 0 && value !== '') ? (
-            <AddFilterButton onClick={this.onAddFilter}>
-              <PlusIconWrapper />
-              Add Filter
-            </AddFilterButton>
-          ) : (
+          {disableAddFilter ? (
             <DisableFilterButton>
               <PlusIconWrapper />
               Add Filter
             </DisableFilterButton>
+          ) : (
+            <AddFilterButton onClick={this.onAddFilter}>
+              <PlusIconWrapper />
+              Add Filter
+            </AddFilterButton>
           )}
           {filters.length == 0 && (
             <FilterExpTxt>
