@@ -177,7 +177,6 @@ export const submitQuery = (orderBy?: string) => async (dispatch, state) => {
     });
   });
   query = setLimit(query, 5000);
-  console.log(attributeNames);
   // Add this to set ordering
   query = addOrdering(
     query,
