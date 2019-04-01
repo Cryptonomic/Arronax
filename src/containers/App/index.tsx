@@ -130,7 +130,7 @@ export interface Props {
   initLoad: () => void;
   fetchItems: (type: string) => void;
   setSelectedValues: (type: object[]) => void;
-  submitQuery: () => void;
+  submitQuery: (orderBy?: string) => void;
 }
 
 export interface States {
@@ -343,6 +343,7 @@ class Arronax extends React.Component<Props, States> {
       attributes,
       filterCount,
       selectedValues,
+      submitQuery,
     } = this.props;
     const { isFilterCollapse, filterInputState } = this.state;
     const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
@@ -391,6 +392,7 @@ class Arronax extends React.Component<Props, States> {
           </FilterHeader>
           <TabContainer component="div">
             <CustomTable
+              submitQuery={submitQuery}
               items={items}
               entity={selectedEntity}
               selectedColumns={selectedColumns}

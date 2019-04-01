@@ -55,6 +55,7 @@ interface Props {
   items: any[];
   selectedColumns: object;
   network: string;
+  submitQuery: (orderBy?: string) => void;
 }
 
 interface State {
@@ -78,12 +79,14 @@ class CustomTable extends React.Component<Props, State> {
   };
 
   handleRequestSort = (property: string) => {
+    const { submitQuery } = this.props;
     const orderBy = property;
     let order: 'asc' | 'desc' = 'desc';
     if (this.state.orderBy === property && this.state.order === 'desc') {
       order = 'asc';
     }
     this.setState({ order, orderBy });
+    submitQuery(orderBy);
   };
 
   render() {

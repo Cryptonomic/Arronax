@@ -103,7 +103,7 @@ export const setColumns = (type, items) => {
   };
 };
 
-export const submitQuery = () => async (dispatch, state) => {
+export const submitQuery = (orderBy?: string) => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
   const entity = state().app.selectedEntity;
   const selectedFilters = state().app.selectedFilters[entity];
@@ -126,6 +126,9 @@ export const submitQuery = () => async (dispatch, state) => {
   ];
   let valuesToConvert = [];
   let finalValues = [];
+  if (selectedValues.length === 0) {
+    fetchItemsAction(entity, network, serverInfo);
+  }
   selectedValues[entity].forEach(value => {
     if (entity !== 'blocks') {
       const key = Object.keys(value).toString();
@@ -174,10 +177,15 @@ export const submitQuery = () => async (dispatch, state) => {
     });
   });
   query = setLimit(query, 5000);
+  console.log(attributeNames);
   // Add this to set ordering
   query = addOrdering(
     query,
-    !attributeNames.includes('level') ? 'block_level' : 'level',
+    orderBy
+      ? orderBy
+      : !attributeNames.includes('block_level')
+      ? 'level'
+      : 'block_level',
     ConseilSortDirection.DESC
   );
   const items = await executeEntityQuery(
@@ -233,7 +241,8 @@ export const fetchColumns = (columns, entity) => async (dispatch, state) => {
 export const fetchItemsAction = (
   entity: string,
   network: string,
-  serverInfo: any
+  serverInfo: any,
+  orderBy?: string
 ) => async (dispatch, state) => {
   const attributes = state().app.attributes;
   const attributeNames = getAttributeNames(attributes[entity]);
@@ -244,7 +253,11 @@ export const fetchItemsAction = (
   query = setLimit(query, 5000);
   query = addOrdering(
     query,
-    attributeNames.includes('block_level') ? 'block_level' : 'level',
+    orderBy
+      ? orderBy
+      : !attributeNames.includes('block_level')
+      ? 'level'
+      : 'block_level',
     ConseilSortDirection.DESC
   );
   const items = await executeEntityQuery(
