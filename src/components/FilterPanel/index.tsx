@@ -248,22 +248,23 @@ class FilterPanel extends React.Component<Props, States> {
       }
       return acc;
     }, []);
+
     const numericDataTypes = attributes.map(attr => {
       if (attr.dataType === 'Int' || attr.dataType === 'Decimal') {
-        attr.name;
+        return attr.name;
       }
     });
     const stringDataTypes = attributes.map(attr => {
       if (attr.dataType === 'String') {
-        attr.name;
+        return attr.name;
       }
     });
     const booleanDataTypes = attributes.map(attr => {
       if (attr.dataType === 'Boolean') {
-        attr.name;
+        return attr.name;
       }
     });
-    console.log(attributes);
+
     return (
       <Container>
         {filters.map((filter: any, index) => {
