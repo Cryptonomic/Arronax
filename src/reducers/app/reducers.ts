@@ -57,9 +57,9 @@ const initialState: AppState = {
   },
   operators: {
     numeric: [
-      { name: 'BETWEEN', displayName: 'is between' },
       { name: 'EQ', displayName: 'is' },
       { name: 'IN', displayName: 'is in' },
+      { name: 'BETWEEN', displayName: 'is between' },
       { name: 'LT', displayName: 'is less than' },
       { name: 'GT', displayName: 'is greater than' },
       { name: 'ISNULL', displayName: 'is null' },
@@ -69,13 +69,13 @@ const initialState: AppState = {
       { name: 'IN', displayName: 'is in' },
       { name: 'LIKE', displayName: 'is like' },
       { name: 'STARTSWITH', displayName: 'starts with' },
-      { name: 'ENDSWITH', displayName: 'ends With' },
+      { name: 'ENDSWITH', displayName: 'ends with' },
       { name: 'ISNULL', displayName: 'is null' },
     ],
     dateTime: [
       { name: 'EQ', displayName: 'is' },
-      { name: 'BETWEEN', displayName: 'is between' },
       { name: 'IN', displayName: 'is in' },
+      { name: 'BETWEEN', displayName: 'is between' },
       { name: 'BEFORE', displayName: 'is before' },
       { name: 'AFTER', displayName: 'is after' },
       { name: 'ISNULL', displayName: 'is null' },
