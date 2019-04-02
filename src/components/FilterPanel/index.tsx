@@ -266,6 +266,7 @@ class FilterPanel extends React.Component<Props, States> {
       (filters.length > 0 &&
         filters.length ===
           filterInputState[selectedEntity].length + selectedValues.length &&
+        selectedValues.length !== filters.length &&
         value === '');
 
     return (
