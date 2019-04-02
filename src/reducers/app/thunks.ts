@@ -241,8 +241,7 @@ export const fetchColumns = (columns, entity) => async (dispatch, state) => {
 export const fetchItemsAction = (
   entity: string,
   network: string,
-  serverInfo: any,
-  orderBy?: string
+  serverInfo: any
 ) => async (dispatch, state) => {
   const attributes = state().app.attributes;
   const attributeNames = getAttributeNames(attributes[entity]);
@@ -253,11 +252,7 @@ export const fetchItemsAction = (
   query = setLimit(query, 5000);
   query = addOrdering(
     query,
-    orderBy
-      ? orderBy
-      : !attributeNames.includes('block_level')
-      ? 'level'
-      : 'block_level',
+    !attributeNames.includes('block_level') ? 'level' : 'block_level',
     ConseilSortDirection.DESC
   );
   const items = await executeEntityQuery(

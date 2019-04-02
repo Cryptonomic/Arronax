@@ -93,6 +93,11 @@ class CustomTable extends React.Component<Props, State> {
     const { items, entity, network, selectedColumns, rowsPerPage } = this.props;
     const { page, order, orderBy } = this.state;
     const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
+    // need to find out whether it's level or block_level
+    // const orderCheck = Object.keys(items[0]).includes(order)
+    //   ? order
+    //   : 'block_level';
+
     const realRows = stableSort(items, getSorting(order, orderBy)).slice(
       page * rowCount,
       page * rowCount + rowCount
@@ -103,8 +108,6 @@ class CustomTable extends React.Component<Props, State> {
           <TableContainer>
             <CustomTableHeader
               rows={selectedColumns[entity]}
-              // order={order}
-              // orderBy={orderBy}
               createSortHandler={this.handleRequestSort}
             />
             <TableBody>
