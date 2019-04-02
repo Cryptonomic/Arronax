@@ -434,7 +434,8 @@ const mapDispatchToProps = dispatch => ({
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
   initLoad: () => dispatch(initLoad()),
-  submitQuery: () => dispatch(submitQuery()),
+  submitQuery: (order?: string, orderBy?: string) =>
+    dispatch(submitQuery(order, orderBy)),
 });
 
 export default connect(

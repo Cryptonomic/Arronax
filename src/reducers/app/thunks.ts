@@ -103,8 +103,12 @@ export const setColumns = (type, items) => {
   };
 };
 
-export const submitQuery = (orderBy?: string) => async (dispatch, state) => {
+export const submitQuery = (order?: string, orderBy?: string) => async (
+  dispatch,
+  state
+) => {
   dispatch(setLoadingAction(true));
+  console.log(order, orderBy);
   const entity = state().app.selectedEntity;
   const selectedFilters = state().app.selectedFilters[entity];
   const network = state().app.network;
@@ -126,9 +130,6 @@ export const submitQuery = (orderBy?: string) => async (dispatch, state) => {
   ];
   let valuesToConvert = [];
   let finalValues = [];
-  if (selectedValues.length === 0) {
-    fetchItemsAction(entity, network, serverInfo);
-  }
   selectedValues[entity].forEach(value => {
     if (entity !== 'blocks') {
       const key = Object.keys(value).toString();
@@ -185,7 +186,7 @@ export const submitQuery = (orderBy?: string) => async (dispatch, state) => {
       : !attributeNames.includes('block_level')
       ? 'level'
       : 'block_level',
-    ConseilSortDirection.DESC
+    order === 'asc' ? ConseilSortDirection.ASC : ConseilSortDirection.DESC
   );
   const items = await executeEntityQuery(
     serverInfo,

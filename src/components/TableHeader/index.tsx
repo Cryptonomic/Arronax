@@ -16,14 +16,14 @@ const TableCellWrapper = styled(TableCell)`
 `;
 
 interface Props {
-  order: 'asc' | 'desc';
-  orderBy: string;
+  // order: 'asc' | 'desc';
+  // orderBy: string;
   rows: any[];
   createSortHandler(key: string): void;
 }
 
 const TableHeader: React.StatelessComponent<Props> = props => {
-  const { rows, order, orderBy, createSortHandler } = props;
+  const { rows, createSortHandler } = props;
   return (
     <TableHead>
       <TableRow>
@@ -31,12 +31,12 @@ const TableHeader: React.StatelessComponent<Props> = props => {
           return (
             <TableCellWrapper
               key={index}
-              sortDirection={orderBy === row.name ? order : false}
+              // sortDirection={orderBy === row.name ? order : false}
               align="left"
             >
               <TableSortLabel
-                active={orderBy === row.name}
-                direction={order}
+                // active={orderBy === row.name}
+                // direction={order}
                 onClick={() => createSortHandler(row.name)}
               >
                 {row.displayName}

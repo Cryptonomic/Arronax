@@ -44,8 +44,8 @@ const stableSort = (array, cmp) => {
 
 const getSorting = (order, orderBy) => {
   return order === 'desc'
-    ? (a, b) => desc(a, b, orderBy)
-    : (a, b) => -desc(a, b, orderBy);
+    ? (a, b) => -desc(a, b, orderBy)
+    : (a, b) => desc(a, b, orderBy);
 };
 
 interface Props {
@@ -55,7 +55,7 @@ interface Props {
   items: any[];
   selectedColumns: object;
   network: string;
-  submitQuery: (orderBy?: string) => void;
+  submitQuery: (order?: string, orderBy?: string) => void;
 }
 
 interface State {
@@ -69,7 +69,7 @@ class CustomTable extends React.Component<Props, State> {
     super(props);
     this.state = {
       page: 0,
-      order: 'asc',
+      order: 'desc',
       orderBy: 'level',
     };
   }
@@ -86,7 +86,7 @@ class CustomTable extends React.Component<Props, State> {
       order = 'asc';
     }
     this.setState({ order, orderBy });
-    submitQuery(orderBy);
+    submitQuery(order, orderBy);
   };
 
   render() {
@@ -103,8 +103,8 @@ class CustomTable extends React.Component<Props, State> {
           <TableContainer>
             <CustomTableHeader
               rows={selectedColumns[entity]}
-              order={order}
-              orderBy={orderBy}
+              // order={order}
+              // orderBy={orderBy}
               createSortHandler={this.handleRequestSort}
             />
             <TableBody>
