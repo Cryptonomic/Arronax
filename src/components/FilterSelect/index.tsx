@@ -134,7 +134,6 @@ class FilterSelect extends React.Component<Props, States> {
 
   componentDidUpdate(prevProps) {
     const { onChange } = this.props;
-    const { items } = this.props;
     if (prevProps.placeholder === 'Select Operator' && prevProps.value === '') {
       const equalsOperator = Object.values(prevProps.items)[0].name;
       onChange(equalsOperator);
