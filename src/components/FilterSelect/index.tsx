@@ -94,9 +94,18 @@ const MainMenuItem = styled(MenuItem)`
   }
 `;
 
+interface Item {
+  cardinality?: number | null;
+  dataType?: string | null;
+  displayName?: string | null;
+  entity?: string | null;
+  keyType?: string | null;
+  name?: string | null;
+}
+
 interface Props {
   value: string;
-  items: Array<object>;
+  items: Array<Item>;
   placeholder?: string;
   onChange: (value: string) => void;
 }
@@ -120,6 +129,15 @@ class FilterSelect extends React.Component<Props, States> {
       this.setState({ isFadeBottom: false });
     } else {
       this.setState({ isFadeBottom: true });
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { onChange } = this.props;
+    const { items } = this.props;
+    if (prevProps.placeholder === 'Select Operator' && prevProps.value === '') {
+      const equalsOperator = Object.values(prevProps.items)[0].name;
+      onChange(equalsOperator);
     }
   }
 
