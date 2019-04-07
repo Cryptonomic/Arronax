@@ -156,6 +156,17 @@ class FilterSelect extends React.Component<Props, States> {
 
     const selectedItem: any = items.find((item: any) => item.name === value);
     const menuTitle = value ? selectedItem.displayName : placeholder;
+    const newItems = [];
+    items.forEach(item => {
+      if (
+        selectedItem !== undefined &&
+        item['displayName'] === selectedItem.displayName
+      ) {
+        newItems.unshift(item);
+      } else {
+        newItems.push(item);
+      }
+    });
 
     return (
       <Container>
@@ -184,7 +195,7 @@ class FilterSelect extends React.Component<Props, States> {
             <NestedTitle>{placeholder}</NestedTitle>
             <MenuContents onScroll={this.handleScroll}>
               {isFadeTop && <FadeTop />}
-              {items.map((item: any, index) => (
+              {newItems.map((item: any, index) => (
                 <MainMenuItem
                   onClick={() => this.handleChange(item)}
                   key={index}
