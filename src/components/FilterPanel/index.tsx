@@ -58,6 +58,8 @@ const AddFilterButton = styled.div`
   cursor: pointer;
   display: flex;
   align-items: center;
+  opacity: ${({ isDisabled }) => (isDisabled ? 0.5 : 1)};
+  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'initial')};
 `;
 
 const PlusIconWrapper = styled(PlusIcon)`
@@ -255,6 +257,18 @@ class FilterPanel extends React.Component<Props, States> {
         return attr.name;
       }
     });
+      return acc;
+    }, []);
+
+    const disableAddFilter =
+      (filters.length > 0 &&
+        filters.length !==
+          filterInputState[selectedEntity].length + selectedValues.length) ||
+      (filters.length > 0 &&
+        filters.length ===
+          filterInputState[selectedEntity].length + selectedValues.length &&
+        selectedValues.length !== filters.length &&
+        value === '');
 
     return (
       <Container>
@@ -346,7 +360,7 @@ class FilterPanel extends React.Component<Props, States> {
         })}
 
         <AddFilterFooter isFilters={filters.length > 0}>
-          <AddFilterButton onClick={this.onAddFilter}>
+          <AddFilterButton onClick={this.onAddFilter} isDisabled={disableAddFilter}>
             <PlusIconWrapper />
             Add Filter
           </AddFilterButton>
