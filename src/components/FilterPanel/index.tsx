@@ -58,16 +58,8 @@ const AddFilterButton = styled.div`
   cursor: pointer;
   display: flex;
   align-items: center;
-`;
-
-const DisableFilterButton = styled.div`
-  opacity: 0.5;
-  color: #56c2d9;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: default;
-  display: flex;
-  align-items: center;
+  opacity: ${({ isDisabled }) => (isDisabled ? 0.5 : 1)};
+  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'initial')};
 `;
 
 const PlusIconWrapper = styled(PlusIcon)`
@@ -351,17 +343,10 @@ class FilterPanel extends React.Component<Props, States> {
         })}
 
         <AddFilterFooter isFilters={filters.length > 0}>
-          {disableAddFilter ? (
-            <DisableFilterButton>
-              <PlusIconWrapper />
-              Add Filter
-            </DisableFilterButton>
-          ) : (
-            <AddFilterButton onClick={this.onAddFilter}>
-              <PlusIconWrapper />
-              Add Filter
-            </AddFilterButton>
-          )}
+          <AddFilterButton onClick={this.onAddFilter} isDisabled={disableAddFilter}>
+            <PlusIconWrapper />
+            Add Filter
+          </AddFilterButton>
           {filters.length == 0 && (
             <FilterExpTxt>
               You can filter by all {entityName} attributes and more.
