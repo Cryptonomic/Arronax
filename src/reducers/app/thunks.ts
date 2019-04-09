@@ -154,6 +154,7 @@ export const submitQuery = () => async (dispatch, state) => {
         false
       ));
     }
+    // check for startswith/ends with and capitalize the W
     finalValues.forEach(value => {
       const valueKeys = Object.keys(value).toString();
       const values = Object.values(value).toString();
