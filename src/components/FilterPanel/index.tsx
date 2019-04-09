@@ -170,7 +170,9 @@ class FilterPanel extends React.Component<Props, States> {
       fetchValues,
     } = this.props;
 
-    const cards = attributes.filter((attr) => attr.cardinality < 15 && attr.cardinality !== null);
+    const cards = attributes.filter(
+      attr => attr.cardinality < 15 && attr.cardinality !== null
+    );
     if (cards.includes(val)) {
       fetchValues(val);
     }
@@ -240,7 +242,9 @@ class FilterPanel extends React.Component<Props, States> {
     } = this.props;
     const { value } = this.state;
     const entityName = attrTabValue[selectedEntity];
-    const cards = attributes.filter((attr) => attr.cardinality < 15 && attr.cardinality !== null);
+    const cards = attributes.filter(
+      attr => attr.cardinality < 15 && attr.cardinality !== null
+    );
 
     const numericDataTypes = attributes.map(attr => {
       if (attr.dataType === 'Int' || attr.dataType === 'Decimal') {
@@ -257,8 +261,6 @@ class FilterPanel extends React.Component<Props, States> {
         return attr.name;
       }
     });
-      return acc;
-    }, []);
 
     const disableAddFilter =
       (filters.length > 0 &&
@@ -360,7 +362,10 @@ class FilterPanel extends React.Component<Props, States> {
         })}
 
         <AddFilterFooter isFilters={filters.length > 0}>
-          <AddFilterButton onClick={this.onAddFilter} isDisabled={disableAddFilter}>
+          <AddFilterButton
+            onClick={this.onAddFilter}
+            isDisabled={disableAddFilter}
+          >
             <PlusIconWrapper />
             Add Filter
           </AddFilterButton>
