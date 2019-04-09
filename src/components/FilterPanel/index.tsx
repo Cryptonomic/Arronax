@@ -167,12 +167,8 @@ class FilterPanel extends React.Component<Props, States> {
       attributes,
       fetchValues,
     } = this.props;
-    const cards = attributes.reduce((acc, current) => {
-      if (current.cardinality < 15 && current.cardinality !== null) {
-        acc.push(current.name);
-      }
-      return acc;
-    }, []);
+
+    const cards = attributes.filter((attr) => attr.cardinality < 15 && attr.cardinality !== null);
     if (cards.includes(val)) {
       fetchValues(val);
     }
@@ -242,12 +238,7 @@ class FilterPanel extends React.Component<Props, States> {
     } = this.props;
     const { value } = this.state;
     const entityName = attrTabValue[selectedEntity];
-    const cards = attributes.reduce((acc, current) => {
-      if (current.cardinality < 15 && current.cardinality !== null) {
-        acc.push(current.name);
-      }
-      return acc;
-    }, []);
+    const cards = attributes.filter((attr) => attr.cardinality < 15 && attr.cardinality !== null);
 
     const numericDataTypes = attributes.map(attr => {
       if (attr.dataType === 'Int' || attr.dataType === 'Decimal') {
