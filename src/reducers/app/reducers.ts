@@ -33,7 +33,7 @@ export interface AppState {
   availableValues: Array<string>;
   columns: object;
   attributes: object;
-  operators: object[];
+  operators: object;
   selectedFilters: object;
   accounts: TezosAccount[];
   operations: TezosOperation[];
@@ -55,19 +55,33 @@ const initialState: AppState = {
     operations: [],
     accounts: [],
   },
-  operators: [
-    { name: 'BETWEEN', displayName: 'between' },
-    { name: 'EQ', displayName: 'equals' },
-    { name: 'IN', displayName: 'in' },
-    { name: 'LIKE', displayName: 'like' },
-    { name: 'LT', displayName: 'less than' },
-    { name: 'BEFORE', displayName: 'before' },
-    { name: 'GT', displayName: 'greater than' },
-    { name: 'AFTER', displayName: 'after' },
-    { name: 'STARTSWITH', displayName: 'starts with' },
-    { name: 'ENDSWITH', displayName: 'ends With' },
-    { name: 'ISNULL', displayName: 'is null' },
-  ],
+  operators: {
+    numeric: [
+      { name: 'EQ', displayName: 'is' },
+      { name: 'IN', displayName: 'is in' },
+      { name: 'BETWEEN', displayName: 'is between' },
+      { name: 'LT', displayName: 'is less than' },
+      { name: 'GT', displayName: 'is greater than' },
+      { name: 'ISNULL', displayName: 'is null' },
+    ],
+    string: [
+      { name: 'EQ', displayName: 'is' },
+      { name: 'IN', displayName: 'is in' },
+      { name: 'LIKE', displayName: 'is like' },
+      { name: 'STARTSWITH', displayName: 'starts with' },
+      { name: 'ENDSWITH', displayName: 'ends with' },
+      { name: 'ISNULL', displayName: 'is null' },
+    ],
+    dateTime: [
+      { name: 'EQ', displayName: 'is' },
+      { name: 'IN', displayName: 'is in' },
+      { name: 'BETWEEN', displayName: 'is between' },
+      { name: 'BEFORE', displayName: 'is before' },
+      { name: 'AFTER', displayName: 'is after' },
+      { name: 'ISNULL', displayName: 'is null' },
+    ],
+    boolean: [{ name: 'EQ', displayName: 'is' }],
+  },
   columns: {
     blocks: [],
     operations: [],

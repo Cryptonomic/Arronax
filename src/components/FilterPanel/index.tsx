@@ -104,7 +104,7 @@ type Props = {
   selectedEntity: string;
   attributes: any[];
   filters: Array<Filter>;
-  operators: object[];
+  operators: any;
   filterInputState: object;
   setFilterInputState: (
     value: string,
@@ -169,12 +169,10 @@ class FilterPanel extends React.Component<Props, States> {
       attributes,
       fetchValues,
     } = this.props;
-    const cards = attributes.reduce((acc, current) => {
-      if (current.cardinality < 15 && current.cardinality !== null) {
-        acc.push(current.name);
-      }
-      return acc;
-    }, []);
+
+    const cards = attributes.filter(
+      attr => attr.cardinality < 15 && attr.cardinality !== null
+    );
     if (cards.includes(val)) {
       fetchValues(val);
     }
@@ -244,12 +242,25 @@ class FilterPanel extends React.Component<Props, States> {
     } = this.props;
     const { value } = this.state;
     const entityName = attrTabValue[selectedEntity];
-    const cards = attributes.reduce((acc, current) => {
-      if (current.cardinality < 15 && current.cardinality !== null) {
-        acc.push(current.name);
+    const cards = attributes.filter(
+      attr => attr.cardinality < 15 && attr.cardinality !== null
+    );
+
+    const numericDataTypes = attributes.map(attr => {
+      if (attr.dataType === 'Int' || attr.dataType === 'Decimal') {
+        return attr.name;
       }
-      return acc;
-    }, []);
+    });
+    const stringDataTypes = attributes.map(attr => {
+      if (attr.dataType === 'String') {
+        return attr.name;
+      }
+    });
+    const booleanDataTypes = attributes.map(attr => {
+      if (attr.dataType === 'Boolean') {
+        return attr.name;
+      }
+    });
 
     const disableAddFilter =
       (filters.length > 0 &&
@@ -290,7 +301,15 @@ class FilterPanel extends React.Component<Props, States> {
                   <FilterSelect
                     value={filter.operator}
                     placeholder={`Select Operator`}
-                    items={operators}
+                    items={
+                      numericDataTypes.includes(filter.name)
+                        ? operators.numeric
+                        : stringDataTypes.includes(filter.name)
+                        ? operators.string
+                        : booleanDataTypes.includes(filter.name)
+                        ? operators.boolean
+                        : operators.dateTime
+                    }
                     onChange={event =>
                       this.onFilterOperatorChange(event, index)
                     }
@@ -343,7 +362,10 @@ class FilterPanel extends React.Component<Props, States> {
         })}
 
         <AddFilterFooter isFilters={filters.length > 0}>
-          <AddFilterButton onClick={this.onAddFilter} isDisabled={disableAddFilter}>
+          <AddFilterButton
+            onClick={this.onAddFilter}
+            isDisabled={disableAddFilter}
+          >
             <PlusIconWrapper />
             Add Filter
           </AddFilterButton>
