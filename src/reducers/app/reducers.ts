@@ -63,6 +63,7 @@ const initialState: AppState = {
       { name: 'LT', displayName: 'is less than' },
       { name: 'GT', displayName: 'is greater than' },
       { name: 'ISNULL', displayName: 'is null' },
+      { name: 'ISNOTNULL', displayName: 'is not null' },
     ],
     string: [
       { name: 'EQ', displayName: 'is' },
@@ -71,6 +72,7 @@ const initialState: AppState = {
       { name: 'STARTSWITH', displayName: 'starts with' },
       { name: 'ENDSWITH', displayName: 'ends with' },
       { name: 'ISNULL', displayName: 'is null' },
+      { name: 'ISNOTNULL', displayName: 'is not null' },
     ],
     dateTime: [
       { name: 'EQ', displayName: 'is' },
@@ -79,6 +81,7 @@ const initialState: AppState = {
       { name: 'BEFORE', displayName: 'is before' },
       { name: 'AFTER', displayName: 'is after' },
       { name: 'ISNULL', displayName: 'is null' },
+      { name: 'ISNOTNULL', displayName: 'is not null' },
     ],
     boolean: [{ name: 'EQ', displayName: 'is' }],
   },

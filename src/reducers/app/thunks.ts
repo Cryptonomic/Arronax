@@ -145,6 +145,24 @@ export const submitQuery = () => async (dispatch, state) => {
   let query = blankQuery();
   query = addFields(query, ...attributeNames);
   selectedFilters.forEach(filter => {
+    if (filter.operator === 'ISNULL') {
+      return (query = addPredicate(
+        query,
+        filter.name,
+        filter.operator.toLowerCase(),
+        [''],
+        false
+      ));
+    } else if (filter.operator === 'ISNOTNULL') {
+      const newOperator = filter.operator.replace('NOT', '');
+      return (query = addPredicate(
+        query,
+        filter.name,
+        newOperator.toLowerCase(),
+        [''],
+        true
+      ));
+    }
     finalValues.forEach(value => {
       const valueKeys = Object.keys(value).toString();
       const values = Object.values(value).toString();

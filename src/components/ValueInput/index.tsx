@@ -106,7 +106,10 @@ class ValueInput extends React.Component<Props> {
           </Container>
         </React.Fragment>
       );
-    } else if (filter.operator === 'ISNULL') {
+    } else if (
+      filter.operator === 'ISNULL' ||
+      filter.operator === 'ISNOTNULL'
+    ) {
       input = null;
     } else {
       input = (
