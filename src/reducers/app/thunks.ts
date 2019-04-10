@@ -154,10 +154,25 @@ export const submitQuery = () => async (dispatch, state) => {
         false
       ));
     }
-    // check for startswith/ends with and capitalize the W
+    // check for startswith/endswith operators and capitalize the W for ConseilJS
     finalValues.forEach(value => {
       const valueKeys = Object.keys(value).toString();
       const values = Object.values(value).toString();
+      if (
+        (filter.operator === 'STARTSWITH' && filter.name === valueKeys) ||
+        (filter.operator === 'ENDSWITH' && filter.name === valueKeys)
+      ) {
+        const queryValue = Object.values(value);
+        const operator = filter.operator.toLowerCase();
+        const filterOperator = operator.replace('w', 'W');
+        return (query = addPredicate(
+          query,
+          filter.name,
+          filterOperator,
+          queryValue,
+          false
+        ));
+      }
       if (filter.name === valueKeys && values.indexOf('-') !== -1) {
         // Find corresponding filters and their values and add them to the query
         // Find between values (eg: 12000-1400) and split them at the -
