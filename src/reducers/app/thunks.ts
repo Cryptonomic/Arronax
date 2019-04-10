@@ -178,6 +178,16 @@ export const submitQuery = () => async (dispatch, state) => {
           queryValues,
           false
         ));
+      } else if (filter.operator === 'NOTEQ' && filter.name === valueKeys) {
+        const newOperator = filter.operator.replace('NOT', '');
+        const queryValue = Object.values(value);
+        return (query = addPredicate(
+          query,
+          filter.name,
+          newOperator.toLowerCase(),
+          queryValue,
+          true
+        ));
       } else if (filter.name === valueKeys) {
         const queryValue = Object.values(value);
         // Find corresponding filters and their values and add them to the query
