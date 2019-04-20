@@ -180,7 +180,12 @@ export const submitQuery = () => async (dispatch, state) => {
         ));
       } else if (filter.operator === 'NOTEQ' && filter.name === valueKeys) {
         const newOperator = filter.operator.replace('NOT', '');
-        const queryValue = Object.values(value);
+        let queryValue;
+        if (Object.values(value).includes('-')) {
+          queryValue = value.split('-');
+        } else {
+          queryValue = Object.values(value);
+        }
         return (query = addPredicate(
           query,
           filter.name,
