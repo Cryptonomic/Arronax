@@ -170,9 +170,11 @@ class FilterPanel extends React.Component<Props, States> {
       fetchValues,
     } = this.props;
 
-    const cards = attributes.filter(
-      attr => attr.cardinality < 15 && attr.cardinality !== null
-    );
+    const cards = attributes.map(attr => {
+      if (attr.cardinality < 15 && attr.cardinality !== null) {
+        return attr.name;
+      }
+    });
     if (cards.includes(val)) {
       fetchValues(val);
     }
@@ -242,9 +244,12 @@ class FilterPanel extends React.Component<Props, States> {
     } = this.props;
     const { value } = this.state;
     const entityName = attrTabValue[selectedEntity];
-    const cards = attributes.filter(
-      attr => attr.cardinality < 15 && attr.cardinality !== null
-    );
+    const cards = [];
+    attributes.forEach(attr => {
+      if (attr.cardinality < 15 && attr.cardinality !== null) {
+        cards.push(attr.name);
+      }
+    });
 
     const numericDataTypes = attributes.map(attr => {
       if (attr.dataType === 'Int' || attr.dataType === 'Decimal') {
@@ -316,17 +321,17 @@ class FilterPanel extends React.Component<Props, States> {
                   />
                 )}
                 {filter.operator && <HR />}
-                {filter.operator &&
-                  filter.operator === 'EQ' &&
-                  cards.includes(filter.name) && (
-                    <ValueSelect
-                      placeholder={`Select Value`}
-                      filter={filter.name}
-                      selectedValues={selectedValues}
-                      availableValues={availableValues}
-                      onChange={value => this.onValueChange(value)}
-                    />
-                  )}
+                {(filter.operator && filter.operator === 'EQ') ||
+                  (filter.operator === 'NOTEQ' &&
+                    cards.includes(filter.name) && (
+                      <ValueSelect
+                        placeholder={`Select Value`}
+                        filter={filter.name}
+                        selectedValues={selectedValues}
+                        availableValues={availableValues}
+                        onChange={value => this.onValueChange(value)}
+                      />
+                    ))}
                 {filter.operator && !cards.includes(filter.name) && (
                   <ValueInput
                     value={value}

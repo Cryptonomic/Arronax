@@ -173,6 +173,7 @@ class FilterSelect extends React.Component<Props, States> {
 
     const selectedItem: any = items.find((item: any) => item.name === value);
     const menuTitle = value ? selectedItem.displayName : placeholder;
+
     return (
       <Container>
         <ButtonShell

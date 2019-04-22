@@ -153,8 +153,16 @@ export const submitQuery = () => async (dispatch, state) => {
         [''],
         false
       ));
+    } else if (filter.operator === 'ISNOTNULL') {
+      const newOperator = filter.operator.replace('NOT', '');
+      return (query = addPredicate(
+        query,
+        filter.name,
+        newOperator.toLowerCase(),
+        [''],
+        true
+      ));
     }
-    // check for startswith/endswith operators and capitalize the W for ConseilJS
     finalValues.forEach(value => {
       const valueKeys = Object.keys(value).toString();
       const values = Object.values(value).toString();
@@ -184,6 +192,21 @@ export const submitQuery = () => async (dispatch, state) => {
           filter.operator.toLowerCase(),
           queryValues,
           false
+        ));
+      } else if (filter.operator === 'NOTEQ' && filter.name === valueKeys) {
+        const newOperator = filter.operator.replace('NOT', '');
+        let queryValue;
+        if (Object.values(value).includes('-')) {
+          queryValue = value.split('-');
+        } else {
+          queryValue = Object.values(value);
+        }
+        return (query = addPredicate(
+          query,
+          filter.name,
+          newOperator.toLowerCase(),
+          queryValue,
+          true
         ));
       } else if (filter.name === valueKeys) {
         const queryValue = Object.values(value);
