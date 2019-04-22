@@ -145,9 +145,34 @@ export const submitQuery = () => async (dispatch, state) => {
   let query = blankQuery();
   query = addFields(query, ...attributeNames);
   selectedFilters.forEach(filter => {
+    if (filter.operator === 'ISNULL') {
+      return (query = addPredicate(
+        query,
+        filter.name,
+        filter.operator.toLowerCase(),
+        [''],
+        false
+      ));
+    }
+    // check for startswith/endswith operators and capitalize the W for ConseilJS
     finalValues.forEach(value => {
       const valueKeys = Object.keys(value).toString();
       const values = Object.values(value).toString();
+      if (
+        (filter.operator === 'STARTSWITH' && filter.name === valueKeys) ||
+        (filter.operator === 'ENDSWITH' && filter.name === valueKeys)
+      ) {
+        const queryValue = Object.values(value);
+        const operator = filter.operator.toLowerCase();
+        const filterOperator = operator.replace('w', 'W');
+        return (query = addPredicate(
+          query,
+          filter.name,
+          filterOperator,
+          queryValue,
+          false
+        ));
+      }
       if (filter.name === valueKeys && values.indexOf('-') !== -1) {
         // Find corresponding filters and their values and add them to the query
         // Find between values (eg: 12000-1400) and split them at the -
