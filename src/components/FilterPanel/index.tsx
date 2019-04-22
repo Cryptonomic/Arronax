@@ -321,17 +321,28 @@ class FilterPanel extends React.Component<Props, States> {
                   />
                 )}
                 {filter.operator && <HR />}
-                {(filter.operator && filter.operator === 'EQ') ||
-                  (filter.operator === 'NOTEQ' &&
-                    cards.includes(filter.name) && (
-                      <ValueSelect
-                        placeholder={`Select Value`}
-                        filter={filter.name}
-                        selectedValues={selectedValues}
-                        availableValues={availableValues}
-                        onChange={value => this.onValueChange(value)}
-                      />
-                    ))}
+                {filter.operator &&
+                filter.operator === 'EQ' &&
+                cards.includes(filter.name) ? (
+                  <ValueSelect
+                    placeholder={`Select Value`}
+                    filter={filter.name}
+                    selectedValues={selectedValues}
+                    availableValues={availableValues}
+                    onChange={value => this.onValueChange(value)}
+                  />
+                ) : filter.operator &&
+                  filter.operator === 'NOTEQ' &&
+                  cards.includes(filter.name) ? (
+                  <ValueSelect
+                    placeholder={`Select Value`}
+                    filter={filter.name}
+                    selectedValues={selectedValues}
+                    availableValues={availableValues}
+                    onChange={value => this.onValueChange(value)}
+                  />
+                ) : null}
+
                 {filter.operator && !cards.includes(filter.name) && (
                   <ValueInput
                     value={value}
