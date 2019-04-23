@@ -1,16 +1,16 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import configureStore from './configureStore';
+import { Route, HashRouter as Router } from 'react-router-dom';
 import App from './containers/App';
-
-const initialState = {};
-const store = configureStore(initialState);
-const MOUNT_NODE = document.getElementById('root');
+import { Provider } from 'react-redux';
+import { store } from './store';
+import '!file-loader?name=[name].[ext]!./assets/favicon.ico';
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
-  </Provider>,
-  MOUNT_NODE
+    <Router>
+      <Route component={App} />
+    </Router>
+  </Provider>
+  ,document.getElementById('root')
 );

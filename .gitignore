@@ -13,3 +13,7 @@ typings/
 # TSC
 dist
 build
+src/config.tsx
+
+# OSX
+.DS_Store
