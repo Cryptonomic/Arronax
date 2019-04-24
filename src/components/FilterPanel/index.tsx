@@ -270,7 +270,13 @@ class FilterPanel extends React.Component<Props, States> {
     const disableAddFilter =
       (filters.length > 0 &&
         filters.length !==
-          filterInputState[selectedEntity].length + selectedValues.length) ||
+          filterInputState[selectedEntity].length + selectedValues.length &&
+        filters.length !== selectedValues.length) ||
+      (filters.length > 0 &&
+        filters.length ===
+          filterInputState[selectedEntity].length + selectedValues.length &&
+        filters.length !== selectedValues.length &&
+        value === '') ||
       (filters.length > 0 &&
         filters.length ===
           filterInputState[selectedEntity].length + selectedValues.length &&
