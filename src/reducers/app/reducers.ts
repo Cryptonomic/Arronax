@@ -13,8 +13,6 @@ import {
   CHANGE_FILTER,
   SET_ROW_COUNT,
   SET_AVAILABLE_VALUES,
-  SET_SELECTED_VALUE,
-  REMOVE_VALUE,
   COMPLETE_FULL_LOAD,
   SET_FILTER_COUNT,
 } from './types';
@@ -40,7 +38,6 @@ export interface AppState {
   isLoading: boolean;
   selectedEntity: string;
   isFullLoaded: boolean;
-  selectedValues: object;
   rowCount: number;
   filterCount: object;
 }
@@ -103,11 +100,6 @@ const initialState: AppState = {
   isLoading: false,
   selectedEntity: 'blocks',
   isFullLoaded: false,
-  selectedValues: {
-    blocks: {},
-    operations: {},
-    accounts: {},
-  },
   rowCount: 50,
   filterCount: {
     blocks: 0,
@@ -154,7 +146,7 @@ const appReducer = (state = initialState, action) => {
         operator: '',
         operatorType: '',
         isCard: false,
-        value: ''
+        values: ['']
       };
       filters = filters.concat(emptyFilter);
       selectedFilters[action.entity] = filters;
@@ -185,29 +177,6 @@ const appReducer = (state = initialState, action) => {
       entityValues[action.attribute] = action.availableValues;
       availableValues[action.entity] = entityValues;
       return { ...state, availableValues };
-    }
-    case REMOVE_VALUE: {
-      const selectedValues = state.selectedValues;
-      const selectedEntity = state.selectedEntity;
-      let value = state.selectedValues[selectedEntity];
-      const incomingValue = Object.keys(action.selectedValue).toString();
-      const values = value.filter(val => {
-        if (Object.keys(val).toString() !== incomingValue) {
-          return val;
-        } else {
-          return null;
-        }
-      });
-      const finalValues = [...values];
-      selectedValues[selectedEntity] = finalValues;
-      return { ...state, selectedValues };
-    }
-    case SET_SELECTED_VALUE: {
-      const selectedValues = { ...state.selectedValues};
-      const entityValues = {...selectedValues[action.entity]};
-      entityValues[action.attribute] = action.value;
-      entityValues[action.entity] = entityValues;
-      return { ...state, selectedValues };
     }
     case SET_FILTER_COUNT: {
       const selectedEntity = state.selectedEntity;

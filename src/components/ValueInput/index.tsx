@@ -32,61 +32,32 @@ const TextInput = styled(TextField)`
   line-height: 17px;
   width: 150px;
 `;
-
-interface Filter {
-  name: string;
-  operator: string;
-}
-
 interface Props {
-  filter: Filter;
-  inputProps?: object;
+  operator: string;
   InputProps?: object;
-  value: string;
-  selectedEntity: string;
-  onInputChange: (value: string) => void;
-  onBetweenInputChange: (value: string) => void;
+  values: Array<string>;
+  onChange: (value: string, index: number) => void;
 }
 
-class ValueInput extends React.Component<Props> {
-  handleInputChange = value => {
-    const { onInputChange } = this.props;
-    onInputChange(value);
-  };
-
-  handleBetweenChange = value => {
-    const { onBetweenInputChange } = this.props;
-    onBetweenInputChange(value);
-  };
-
-  render() {
+const ValueInput: React.StatelessComponent<Props> = props => {
     const {
       InputProps,
-      inputProps,
-      filter,
-      selectedEntity,
-    } = this.props;
+      operator,
+      values,
+      onChange
+    } = props;
     let input;
 
-    // Find state value that matches this filter
-    const findStateValue = filterInputState[selectedEntity].find(
-      value => Object.keys(value).toString() === filter.name
-    );
-    const currentStateValue = findStateValue
-      ? Object.values(findStateValue).toString()
-      : '';
     // Render specific input type based on operators
-    if (filter.operator === 'BETWEEN' || filter.operator === 'IN') {
-      const splitValues = currentStateValue.split('-');
+    if (operator === 'BETWEEN' || operator === 'IN') {
       input = (
         <React.Fragment>
           <Container>
             <TextInput
-              value={splitValues[0] ? splitValues[0] : ''}
-              inputProps={inputProps}
+              value={values[0]}
               InputProps={InputProps}
-              placeholder={`Insert Value`}
-              onChange={event => this.handleInputChange(event.target.value)}
+              placeholder='Insert Value'
+              onChange={event => onChange(event.target.value, 0)}
             />
           </Container>
           <HR />
@@ -94,36 +65,30 @@ class ValueInput extends React.Component<Props> {
           <HR />
           <Container>
             <TextInput
-              disabled={splitValues[0] ? false : true}
-              value={splitValues[1] ? splitValues[1] : ''}
-              inputProps={inputProps}
+              disabled={!values[0]}
+              value={values[1] ? values[1] : ''}
               InputProps={InputProps}
-              placeholder={`Insert Value`}
-              onChange={event => this.handleBetweenChange(event.target.value)}
+              placeholder='Insert Value'
+              onChange={event => onChange(event.target.value, 1)}
             />
           </Container>
         </React.Fragment>
       );
-    } else if (
-      filter.operator === 'ISNULL' ||
-      filter.operator === 'ISNOTNULL'
-    ) {
+    } else if (operator === 'ISNULL' || operator === 'ISNOTNULL') {
       input = null;
     } else {
       input = (
         <Container>
           <TextInput
-            value={currentStateValue ? currentStateValue : ''}
-            inputProps={inputProps}
+            value={values[0]}
             InputProps={InputProps}
-            placeholder={`Insert Value`}
-            onChange={event => this.handleInputChange(event.target.value)}
+            placeholder='Insert Value'
+            onChange={event => onChange(event.target.value, 0)}
           />
         </Container>
       );
     }
     return <React.Fragment>{input}</React.Fragment>;
-  }
 }
 
 export default ValueInput;

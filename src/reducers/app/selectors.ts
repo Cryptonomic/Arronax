@@ -52,11 +52,6 @@ export const getAvailableValues = createSelector(
   apps => apps.availableValues[apps.selectedEntity]
 );
 
-export const getSelectedValues = createSelector(
-  getAppState,
-  apps => apps.selectedValues[apps.selectedEntity]
-);
-
 export const getRows = createSelector(
   getAppState,
   apps => apps.rowCount

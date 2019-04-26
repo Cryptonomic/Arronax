@@ -71,7 +71,7 @@ const MainMenuItem = styled(MenuItem)`
 `;
 
 interface Props {
-  selectedValue: string | undefined;
+  selectedValue: string | undefined | null;
   values: Array<string>;
   placeholder?: string;
   onChange: (value: object) => void;

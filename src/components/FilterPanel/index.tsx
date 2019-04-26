@@ -8,12 +8,9 @@ import { fetchValues } from '../../reducers/app/thunks';
 import {
   getAvailableValues,
   getSelectedFilters,
-  getOperators,
-  getSelectedValues
+  getOperators
 } from '../../reducers/app/selectors';
 import {
-  setSelectedValueAction,
-  removeValueAction,
   addFilterAction,
   removeFilterAction,
   changeFilterAction,
@@ -99,51 +96,38 @@ interface Filter {
   operator: string;
   operatorType: string;
   isCard?: boolean;
+  values: Array<string>;
 }
 
 type Props = {
-  selectedValues: object;
   availableValues: object;
   selectedEntity: string;
   attributes: any[];
   filters: Array<Filter>;
   operators: any;
-  removeValue: (value: object) => void;
-  setSelectedValue: (entity: string, attribute: string, value: string) => void;
   fetchValues: (value: string) => void;
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
   changeFilter: (entity: string, filter: object, index: number) => void;
 };
 
-type States = {
-  value: string;
-};
 
-class FilterPanel extends React.Component<Props, States> {
-  state = {
-    value: ''
-  };
-
+class FilterPanel extends React.Component<Props, {}> {
   onAddFilter = () => {
     const { addFilter, selectedEntity } = this.props;
     addFilter(selectedEntity);
   };
 
-  // we have to modify
-  onRemoveFilter = (index, filter) => {
+  onRemoveFilter = (index) => {
     const {
       removeFilter,
       selectedEntity,
-      removeValue,
-      selectedValues
     } = this.props;
     removeFilter(selectedEntity, index);
   };
 
   onFilterNameChange = (attr, index) => {
     const {
-      filters,
       selectedEntity,
       changeFilter,
       fetchValues,
@@ -163,10 +147,11 @@ class FilterPanel extends React.Component<Props, States> {
       operatorType = 'boolean';
     }
     const selectedFilter = {
-      ...filters[index],
       name: attr.name,
       isCard,
-      operatorType
+      operatorType,
+      operator: '',
+      values: ['']
     };
     changeFilter(selectedEntity, selectedFilter, index);
   };
@@ -177,27 +162,25 @@ class FilterPanel extends React.Component<Props, States> {
       selectedEntity,
       changeFilter,
     } = this.props;
+
     const selectedFilter = {
       ...filters[index],
-      operator: operator.name
+      operator: operator.name,
+      values: ['']
     };
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
-  onValueChange = (val, attribute) => {
-    const { setSelectedValue, selectedEntity } = this.props;
-    setSelectedValue(selectedEntity, attribute, val);
-  };
+  onFilterValueChange = (value, index, pos) => {
+    const {
+      filters,
+      selectedEntity,
+      changeFilter
+    } = this.props;
 
-  // we have to modify
-  handleInputChange = (value, filter, filterOperator) => {
-    this.setState({ value: value });
-  };
-
-  // we have to modify
-  handleBetweenInputChange = (value, filter, filterOperator) => {
-    this.setState({ value: value });
-    const betweenValue = `-${value}`;
+    const selectedFilter: Filter = {...filters[index]};
+    selectedFilter.values[pos] = value;
+    changeFilter(selectedEntity, selectedFilter, index);
   };
 
   render() {
@@ -206,10 +189,8 @@ class FilterPanel extends React.Component<Props, States> {
       attributes,
       filters,
       operators,
-      selectedValues,
       availableValues
     } = this.props;
-    const { value } = this.state;
     const entityName = attrTabValue[selectedEntity];
 
     const disableAddFilter = false;
@@ -250,7 +231,7 @@ class FilterPanel extends React.Component<Props, States> {
                 {filter.name && (
                   <FilterSelect
                     value={filter.operator}
-                    placeholder={`Select Operator`}
+                    placeholder='Select Operator'
                     items={operators[filter.operatorType]}
                     onChange={operator =>
                       this.onFilterOperatorChange(operator, index)
@@ -258,42 +239,27 @@ class FilterPanel extends React.Component<Props, States> {
                   />
                 )}
                 {filter.operator && <HR />}
-                {(filter.operator && filter.operator === 'EQ') ||
-                  (filter.operator === 'NOTEQ' &&
-                    filter.isCard && (
-                      <ValueSelect
-                        placeholder={`Select Value`}
-                        selectedValue={selectedValues[filter.name]}
-                        values={availableValues[filter.name]}
-                        onChange={value => this.onValueChange(value, filter.name)}
-                      />
-                    ))}
+                {filter.operator && (filter.operator === 'EQ' ||  filter.operator === 'NOTEQ') &&
+                  filter.isCard && (
+                    <ValueSelect
+                      placeholder='Select Value'
+                      selectedValue={filter.values[0]}
+                      values={availableValues[filter.name]}
+                      onChange={value => this.onFilterValueChange(value, index, 0)}
+                    />
+                )}
                 {filter.operator && !filter.isCard && (
                   <ValueInput
-                    value={value}
-                    selectedEntity={selectedEntity}
+                    values={filter.values}
+                    operator={filter.operator}
                     InputProps={{ disableUnderline: true }}
-                    filter={filter}
-                    onInputChange={value =>
-                      this.handleInputChange(
-                        value,
-                        filter.name,
-                        filter.operator
-                      )
-                    }
-                    onBetweenInputChange={value =>
-                      this.handleBetweenInputChange(
-                        value,
-                        filter.name,
-                        filter.operator
-                      )
-                    }
+                    onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
                   />
                 )}
               </FilterItemGr>
               <IconButton
                 aria-label="Delete"
-                onClick={() => this.onRemoveFilter(index, filter)}
+                onClick={() => this.onRemoveFilter(index)}
               >
                 <DeleteIconWrapper />
               </IconButton>
@@ -323,15 +289,11 @@ class FilterPanel extends React.Component<Props, States> {
 const mapStateToProps = state => ({
   filters: getSelectedFilters(state),
   availableValues: getAvailableValues(state),
-  operators: getOperators(state),
-  selectedValues: getSelectedValues(state)
+  operators: getOperators(state)
 });
 
 const mapDispatchToProps = dispatch => ({
   fetchValues: (value: string) => dispatch(fetchValues(value)),
-  removeValue: (value: object) => dispatch(removeValueAction(value)),
-  setSelectedValue: (entity: string, attribute: string, value: string) =>
-    dispatch(setSelectedValueAction(entity, attribute, value)),
   addFilter: (entity: string) => dispatch(addFilterAction(entity)),
   removeFilter: (entity: string, index: number) =>
     dispatch(removeFilterAction(entity, index)),

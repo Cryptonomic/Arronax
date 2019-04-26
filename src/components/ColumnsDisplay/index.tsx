@@ -197,27 +197,18 @@ class ColumnDisplay extends React.Component<Props, States> {
     selected: [],
     anchorEl: null,
     fadeBottom: true,
+    prevPropsSelected: this.props.selectedColumns
   };
 
-  componentDidMount() {
-    const { selectedColumns } = this.props;
-    this.setState({
-      selected: [...selectedColumns],
-    });
+  static getDerivedStateFromProps(props, state) {
+    if (props.selectedColumns !== state.prevPropsSelected) {
+      return {
+        prevPropsSelected: props.selectedColumns,
+        selected: props.selectedColumns
+      };
+    }
+    return null;
   }
-
-  // componentDidUpdate(prevProps: Props) {
-  //   const { selectedColumns, selectedEntity } = this.props;
-  //   if (
-  //     prevProps.selectedColumns[selectedEntity] !==
-  //       selectedColumns[selectedEntity] ||
-  //     selectedEntity !== prevProps.selectedEntity
-  //   ) {
-  //     this.setState({
-  //       selected: [...selectedColumns[selectedEntity]],
-  //     });
-  //   }
-  // }
 
   handleSubmit = async event => {
     const { selected } = this.state;
@@ -272,7 +263,6 @@ class ColumnDisplay extends React.Component<Props, States> {
     const { classes, attributes } = this.props;
     const { anchorEl, fadeBottom, selected } = this.state;
     const selectedName = selected.map(item => item.name);
-
     return (
       <React.Fragment>
         <Container>

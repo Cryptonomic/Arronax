@@ -69,12 +69,6 @@ export const setAvailableValuesAction = actionCreator(
   'attribute',
   'availableValues'
 );
-export const setSelectedValueAction = actionCreator(
-  SET_SELECTED_VALUE,
-  'entity',
-  'attribute',
-  'value'
-);
+
 export const setRowCountAction = actionCreator(SET_ROW_COUNT, 'rows');
 export const setFilterCountAction = actionCreator(SET_FILTER_COUNT, 'count');
-export const removeValueAction = actionCreator(REMOVE_VALUE, 'selectedValue');
