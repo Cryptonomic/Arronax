@@ -9,9 +9,10 @@ import {
   getAvailableValues,
   getSelectedFilters,
   getOperators,
+  getSelectedValues
 } from '../../reducers/app/selectors';
 import {
-  setSelectedValuesAction,
+  setSelectedValueAction,
   removeValueAction,
   addFilterAction,
   removeFilterAction,
@@ -96,23 +97,19 @@ const attrTabValue = {
 interface Filter {
   name: string;
   operator: string;
+  operatorType: string;
+  isCard?: boolean;
 }
 
 type Props = {
-  selectedValues: object[];
-  availableValues: object[];
+  selectedValues: object;
+  availableValues: object;
   selectedEntity: string;
   attributes: any[];
   filters: Array<Filter>;
   operators: any;
-  filterInputState: object;
-  setFilterInputState: (
-    value: string,
-    filterName: string,
-    filterOperator: string
-  ) => void;
   removeValue: (value: object) => void;
-  setSelectedValues: (value: object) => void;
+  setSelectedValue: (entity: string, attribute: string, value: string) => void;
   fetchValues: (value: string) => void;
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
@@ -125,7 +122,7 @@ type States = {
 
 class FilterPanel extends React.Component<Props, States> {
   state = {
-    value: '',
+    value: ''
   };
 
   onAddFilter = () => {
@@ -133,103 +130,74 @@ class FilterPanel extends React.Component<Props, States> {
     addFilter(selectedEntity);
   };
 
+  // we have to modify
   onRemoveFilter = (index, filter) => {
     const {
       removeFilter,
       selectedEntity,
       removeValue,
-      selectedValues,
-      filterInputState,
-      setFilterInputState,
+      selectedValues
     } = this.props;
-    const itemToRemove = filterInputState[selectedEntity].find(
-      value => Object.keys(value).toString() === filter.name
-    );
-    if (itemToRemove) {
-      setFilterInputState(
-        null,
-        Object.keys(itemToRemove).toString(),
-        filter.operator
-      );
-    }
-    selectedValues.forEach(val => {
-      const valueToRemove = Object.keys(val).toString();
-      if (valueToRemove === filter.name) {
-        removeValue(val);
-      }
-    });
     removeFilter(selectedEntity, index);
   };
 
-  onFilterNameChange = (val, index) => {
+  onFilterNameChange = (attr, index) => {
     const {
       filters,
       selectedEntity,
       changeFilter,
-      attributes,
       fetchValues,
+      availableValues
     } = this.props;
 
-    const cards = attributes.map(attr => {
-      if (attr.cardinality < 15 && attr.cardinality !== null) {
-        return attr.name;
-      }
-    });
-    if (cards.includes(val)) {
-      fetchValues(val);
+    const isCard = attr.cardinality < 15 && attr.cardinality !== null;
+    if (isCard && !availableValues[attr.name]) {
+      fetchValues(attr.name);
     }
-    const selectedFilter: any = filters[index];
-    selectedFilter.name = val;
+    let operatorType = 'dateTime';
+    if (attr.dataType === 'Int' || attr.dataType === 'Decimal') {
+      operatorType = 'numeric';
+    } else if (attr.dataType === 'String') {
+      operatorType = 'string';
+    } else if (attr.dataType === 'Boolean') {
+      operatorType = 'boolean';
+    }
+    const selectedFilter = {
+      ...filters[index],
+      name: attr.name,
+      isCard,
+      operatorType
+    };
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
-  onFilterOperatorChange = (val, index) => {
+  onFilterOperatorChange = (operator, index) => {
     const {
       filters,
       selectedEntity,
       changeFilter,
-      filterInputState,
-      setFilterInputState,
     } = this.props;
-    const selectedFilter: any = filters[index];
-    const findInput = filterInputState[selectedEntity].find(
-      filter => Object.keys(filter).toString() === selectedFilter.name
-    );
-    // Check to see if input value for this attribute is populated and clear if so
-    if (findInput) {
-      setFilterInputState(
-        null,
-        Object.keys(findInput).toString(),
-        selectedFilter.operator
-      );
-    }
-    selectedFilter.operator = val;
+    const selectedFilter = {
+      ...filters[index],
+      operator: operator.name
+    };
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
-  onFilterAttributeChange = (val, index) => {
-    const { filters, selectedEntity, changeFilter } = this.props;
-    const selectedFilter: any = filters[index];
-    selectedFilter.attribute = val;
-    changeFilter(selectedEntity, selectedFilter, index);
+  onValueChange = (val, attribute) => {
+    const { setSelectedValue, selectedEntity } = this.props;
+    setSelectedValue(selectedEntity, attribute, val);
   };
 
-  onValueChange = val => {
-    const { setSelectedValues } = this.props;
-    setSelectedValues(val);
-  };
-
+  // we have to modify
   handleInputChange = (value, filter, filterOperator) => {
-    const { setFilterInputState } = this.props;
     this.setState({ value: value });
-    setFilterInputState(value, filter, filterOperator);
   };
 
+  // we have to modify
   handleBetweenInputChange = (value, filter, filterOperator) => {
-    const { setFilterInputState } = this.props;
     this.setState({ value: value });
     const betweenValue = `-${value}`;
-    setFilterInputState(betweenValue, filter, filterOperator);
   };
 
   render() {
@@ -239,59 +207,36 @@ class FilterPanel extends React.Component<Props, States> {
       filters,
       operators,
       selectedValues,
-      availableValues,
-      filterInputState,
+      availableValues
     } = this.props;
     const { value } = this.state;
     const entityName = attrTabValue[selectedEntity];
-    const cards = [];
-    attributes.forEach(attr => {
-      if (attr.cardinality < 15 && attr.cardinality !== null) {
-        cards.push(attr.name);
-      }
-    });
 
-    const numericDataTypes = attributes.map(attr => {
-      if (attr.dataType === 'Int' || attr.dataType === 'Decimal') {
-        return attr.name;
-      }
-    });
-    const stringDataTypes = attributes.map(attr => {
-      if (attr.dataType === 'String') {
-        return attr.name;
-      }
-    });
-    const booleanDataTypes = attributes.map(attr => {
-      if (attr.dataType === 'Boolean') {
-        return attr.name;
-      }
-    });
+    const disableAddFilter = false;
 
-    const disableAddFilter =
-      (filters.length > 0 &&
-        filters.length !==
-          filterInputState[selectedEntity].length + selectedValues.length) ||
-      (filters.length > 0 &&
-        filters.length ===
-          filterInputState[selectedEntity].length + selectedValues.length &&
-        selectedValues.length !== filters.length &&
-        value === '');
+    // const disableAddFilter =
+    //   (filters.length > 0 &&
+    //     filters.length !==
+    //       filterInputState[selectedEntity].length + selectedValues.length) ||
+    //   (filters.length > 0 &&
+    //     filters.length ===
+    //       filterInputState[selectedEntity].length + selectedValues.length &&
+    //     selectedValues.length !== filters.length &&
+    //     value === '');
 
     return (
       <Container>
-        {filters.map((filter: any, index) => {
-          let newAttributes = [];
-          attributes.forEach((attr: any) => {
+        {filters.map((filter: Filter, index) => {
+          const newAttributes = attributes.filter((attr: any) => {
             if (attr.name === filter.name) {
-              newAttributes.push(attr);
+              return true;
             }
-            const index = filters.findIndex(
+            const pos = filters.findIndex(
               (item: any) => item.name === attr.name
             );
-            if (index < 0) {
-              newAttributes.push(attr);
-            }
+            return pos === -1;
           });
+
           return (
             <FilterItemContainer key={index}>
               <FilterItemGr>
@@ -299,44 +244,34 @@ class FilterPanel extends React.Component<Props, States> {
                   value={filter.name}
                   placeholder={`Select ${entityName} Attribute`}
                   items={newAttributes}
-                  onChange={val => this.onFilterNameChange(val, index)}
+                  onChange={attr => this.onFilterNameChange(attr, index)}
                 />
                 {filter.name && <HR />}
                 {filter.name && (
                   <FilterSelect
                     value={filter.operator}
                     placeholder={`Select Operator`}
-                    items={
-                      numericDataTypes.includes(filter.name)
-                        ? operators.numeric
-                        : stringDataTypes.includes(filter.name)
-                        ? operators.string
-                        : booleanDataTypes.includes(filter.name)
-                        ? operators.boolean
-                        : operators.dateTime
-                    }
-                    onChange={event =>
-                      this.onFilterOperatorChange(event, index)
+                    items={operators[filter.operatorType]}
+                    onChange={operator =>
+                      this.onFilterOperatorChange(operator, index)
                     }
                   />
                 )}
                 {filter.operator && <HR />}
                 {(filter.operator && filter.operator === 'EQ') ||
                   (filter.operator === 'NOTEQ' &&
-                    cards.includes(filter.name) && (
+                    filter.isCard && (
                       <ValueSelect
                         placeholder={`Select Value`}
-                        filter={filter.name}
-                        selectedValues={selectedValues}
-                        availableValues={availableValues}
-                        onChange={value => this.onValueChange(value)}
+                        selectedValue={selectedValues[filter.name]}
+                        values={availableValues[filter.name]}
+                        onChange={value => this.onValueChange(value, filter.name)}
                       />
                     ))}
-                {filter.operator && !cards.includes(filter.name) && (
+                {filter.operator && !filter.isCard && (
                   <ValueInput
                     value={value}
                     selectedEntity={selectedEntity}
-                    filterInputState={filterInputState}
                     InputProps={{ disableUnderline: true }}
                     filter={filter}
                     onInputChange={value =>
@@ -389,13 +324,14 @@ const mapStateToProps = state => ({
   filters: getSelectedFilters(state),
   availableValues: getAvailableValues(state),
   operators: getOperators(state),
+  selectedValues: getSelectedValues(state)
 });
 
 const mapDispatchToProps = dispatch => ({
   fetchValues: (value: string) => dispatch(fetchValues(value)),
   removeValue: (value: object) => dispatch(removeValueAction(value)),
-  setSelectedValues: (value: object) =>
-    dispatch(setSelectedValuesAction(value)),
+  setSelectedValue: (entity: string, attribute: string, value: string) =>
+    dispatch(setSelectedValueAction(entity, attribute, value)),
   addFilter: (entity: string) => dispatch(addFilterAction(entity)),
   removeFilter: (entity: string, index: number) =>
     dispatch(removeFilterAction(entity, index)),

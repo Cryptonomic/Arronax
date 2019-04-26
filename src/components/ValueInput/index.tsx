@@ -43,7 +43,6 @@ interface Props {
   inputProps?: object;
   InputProps?: object;
   value: string;
-  filterInputState: object;
   selectedEntity: string;
   onInputChange: (value: string) => void;
   onBetweenInputChange: (value: string) => void;
@@ -65,7 +64,6 @@ class ValueInput extends React.Component<Props> {
       InputProps,
       inputProps,
       filter,
-      filterInputState,
       selectedEntity,
     } = this.props;
     let input;

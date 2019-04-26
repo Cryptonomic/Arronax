@@ -4,13 +4,9 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
+import { convertValue } from '../../utils/general';
 
 const Container = styled.div``;
-
-const HR = styled.div`
-  width: 1px;
-  background-color: #ecedef;
-`;
 
 const ButtonShell = styled(Button)`
   &&& {
@@ -75,9 +71,8 @@ const MainMenuItem = styled(MenuItem)`
 `;
 
 interface Props {
-  filter: any;
-  selectedValues: any;
-  availableValues: Array<object>;
+  selectedValue: string | undefined;
+  values: Array<string>;
   placeholder?: string;
   onChange: (value: object) => void;
 }
@@ -92,9 +87,8 @@ class ValueSelect extends React.Component<Props, States> {
   };
 
   handleChange = value => {
-    const { onChange, filter } = this.props;
-    const newValue = { [filter.toString()]: value };
-    onChange(newValue);
+    const { onChange } = this.props;
+    onChange(value);
     this.setState({ anchorEl: null });
   };
 
@@ -108,42 +102,15 @@ class ValueSelect extends React.Component<Props, States> {
 
   render() {
     const { anchorEl } = this.state;
-    const { availableValues, selectedValues, placeholder, filter } = this.props;
-    let newValue = [];
-
-    selectedValues.forEach(val => {
-      if (val[filter.toString()] !== undefined) {
-        newValue.push(val[filter.toString()]);
-      }
-    });
-    let valuesAvailable = [];
-    availableValues.forEach(item => {
-      if (Object.keys(item) == filter) {
-        if (item[filter.toString()] !== null) {
-          const items = item[filter.toString()].replace(/(^|_)./g, s =>
-            s
-              .split('_')
-              .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-              .join(' ')
-          );
-          valuesAvailable.push(items);
-        } else if (item.toString() === null) {
-          valuesAvailable.push('Null');
-        }
-      }
-    });
-    const selectedItem: any = valuesAvailable.find(
-      (item: any) => item == newValue[0]
-    );
-    const menuTitle =
-      selectedValues && selectedItem !== undefined ? selectedItem : placeholder;
+    const { values, selectedValue, placeholder } = this.props;
+    const menuTitle = selectedValue ? selectedValue : placeholder;
 
     return (
       <Container>
         <ButtonShell
           aria-owns={anchorEl ? 'simple-menu' : undefined}
           aria-haspopup="true"
-          isactive={selectedValues}
+          isactive={!!selectedValue}
           onClick={this.handleClick}
         >
           {menuTitle}
@@ -164,13 +131,13 @@ class ValueSelect extends React.Component<Props, States> {
           >
             <NestedTitle>{placeholder}</NestedTitle>
             <MenuContents>
-              {valuesAvailable.map((value: any, index) => (
+              {values.map((value, index) => (
                 <MainMenuItem
                   onClick={() => this.handleChange(value)}
                   key={index}
-                  selected={value === newValue[0]}
+                  selected={value === selectedValue}
                 >
-                  {value}
+                  {convertValue(value)}
                 </MainMenuItem>
               ))}
             </MenuContents>

@@ -107,7 +107,7 @@ interface Props {
   value: string;
   items: Array<Item>;
   placeholder?: string;
-  onChange: (value: string) => void;
+  onChange: (item: object) => void;
 }
 
 type States = {
@@ -142,7 +142,7 @@ class FilterSelect extends React.Component<Props, States> {
 
   handleChange = item => {
     const { onChange } = this.props;
-    onChange(item.name);
+    onChange(item);
     this.setState({ anchorEl: null });
   };
 

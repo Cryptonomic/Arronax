@@ -12,7 +12,7 @@ import {
   REMOVE_ALL_FILTERS,
   CHANGE_FILTER,
   SET_AVAILABLE_VALUES,
-  SET_SELECTED_VALUES,
+  SET_SELECTED_VALUE,
   SET_ROW_COUNT,
   REMOVE_VALUE,
   COMPLETE_FULL_LOAD,
@@ -65,11 +65,15 @@ export const completeFullLoadAction = actionCreator(
 );
 export const setAvailableValuesAction = actionCreator(
   SET_AVAILABLE_VALUES,
+  'entity',
+  'attribute',
   'availableValues'
 );
-export const setSelectedValuesAction = actionCreator(
-  SET_SELECTED_VALUES,
-  'selectedValue'
+export const setSelectedValueAction = actionCreator(
+  SET_SELECTED_VALUE,
+  'entity',
+  'attribute',
+  'value'
 );
 export const setRowCountAction = actionCreator(SET_ROW_COUNT, 'rows');
 export const setFilterCountAction = actionCreator(SET_FILTER_COUNT, 'count');

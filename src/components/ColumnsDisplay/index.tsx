@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -8,6 +9,13 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DragIcon from '@material-ui/icons/DragHandle';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
+
+import {
+  getColumns,
+} from '../../reducers/app/selectors';
+import {
+  setColumnsAction
+} from '../../reducers/app/actions';
 
 const Container = styled.div`
   display: flex;
@@ -169,22 +177,13 @@ const styles = {
   checked: {},
 };
 
-interface SelectedColumnsData {
-  cardinality: null | number;
-  dataType: string;
-  displayName: string;
-  entity: string;
-  keyType: string;
-  name: string;
-}
-
 type Props = {
-  selectedColumns: any;
+  selectedColumns: any[];
   selectedEntity: string;
   attributes: any;
   classes: any;
   submitValues: () => void;
-  setColumns: (columns: object[]) => void;
+  setColumns: (entity: string, columns: object[]) => void;
 };
 
 type States = {
@@ -201,42 +200,42 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   componentDidMount() {
-    const { selectedColumns, selectedEntity } = this.props;
+    const { selectedColumns } = this.props;
     this.setState({
-      selected: [...selectedColumns[selectedEntity]],
+      selected: [...selectedColumns],
     });
   }
 
-  componentDidUpdate(prevProps: Props) {
-    const { selectedColumns, selectedEntity } = this.props;
-    if (
-      prevProps.selectedColumns[selectedEntity] !==
-        selectedColumns[selectedEntity] ||
-      selectedEntity !== prevProps.selectedEntity
-    ) {
-      this.setState({
-        selected: [...selectedColumns[selectedEntity]],
-      });
-    }
-  }
+  // componentDidUpdate(prevProps: Props) {
+  //   const { selectedColumns, selectedEntity } = this.props;
+  //   if (
+  //     prevProps.selectedColumns[selectedEntity] !==
+  //       selectedColumns[selectedEntity] ||
+  //     selectedEntity !== prevProps.selectedEntity
+  //   ) {
+  //     this.setState({
+  //       selected: [...selectedColumns[selectedEntity]],
+  //     });
+  //   }
+  // }
 
   handleSubmit = async event => {
     const { selected } = this.state;
-    const { setColumns, submitValues } = this.props;
+    const { selectedEntity, setColumns, submitValues } = this.props;
     event.preventDefault();
     await this.setState({ anchorEl: null });
-    await setColumns(selected);
+    await setColumns(selectedEntity, selected);
     await submitValues();
   };
 
-  handleChange = (name: SelectedColumnsData) => event => {
+  handleChange = (attribute) => event => {
     const { selected } = this.state;
     const positionInArray = selected.findIndex(
-      selected => selected.name === name.name
+      column => column.name === attribute.name
     );
     if (positionInArray === -1 && selected.length <= 5) {
       this.setState({
-        selected: [...selected, name],
+        selected: [...selected, attribute],
       });
     } else if (positionInArray > -1 && selected.length <= 6) {
       selected.splice(positionInArray, 1);
@@ -247,9 +246,9 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   cancelChange = () => {
-    const { selectedColumns, selectedEntity } = this.props;
+    const { selectedColumns } = this.props;
     this.setState({
-      selected: [...selectedColumns[selectedEntity]],
+      selected: [...selectedColumns],
       anchorEl: null,
     });
   };
@@ -270,23 +269,9 @@ class ColumnDisplay extends React.Component<Props, States> {
   };
 
   render() {
-    const { selectedEntity, classes, attributes } = this.props;
+    const { classes, attributes } = this.props;
     const { anchorEl, fadeBottom, selected } = this.state;
-    let tab;
-    switch (selectedEntity) {
-      case 'blocks':
-        tab = 'blocks';
-        break;
-      case 'operations':
-        tab = 'operations';
-        break;
-      case 'accounts':
-        tab = 'accounts';
-        break;
-    }
-    const selectedName = selected.map(selected => {
-      return selected.name;
-    });
+    const selectedName = selected.map(item => item.name);
 
     return (
       <React.Fragment>
@@ -309,23 +294,23 @@ class ColumnDisplay extends React.Component<Props, States> {
               <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
               <MenuContents onScroll={this.handleScroll}>
                 <FadeTop />
-                {attributes.map((name, index) => (
+                {attributes.map((attribute, index) => (
                   <MenuItem
                     className={
                       selected.length >= 6 &&
-                      selectedName.indexOf(name.name) === -1
+                      selectedName.indexOf(attribute.name) === -1
                         ? classes.removeSelector
                         : null
                     }
                     classes={{ root: classes.menuItem }}
-                    onClick={this.handleChange(name)}
+                    onClick={this.handleChange(attribute)}
                     key={index}
-                    value={name.name}
+                    value={attribute.name}
                   >
                     <Checkbox
                       className={
                         selected.length >= 6 &&
-                        selectedName.indexOf(name.name) === -1
+                        selectedName.indexOf(attribute.name) === -1
                           ? classes.removeSelector
                           : null
                       }
@@ -334,9 +319,9 @@ class ColumnDisplay extends React.Component<Props, States> {
                         checked: classes.checked,
                       }}
                       disableRipple={true}
-                      checked={selectedName.indexOf(name.name) > -1}
+                      checked={selectedName.indexOf(attribute.name) > -1}
                     />
-                    <ListItemText primary={name.displayName} />
+                    <ListItemText primary={attribute.displayName} />
                     <DraggableIcon />
                   </MenuItem>
                 ))}
@@ -357,4 +342,17 @@ class ColumnDisplay extends React.Component<Props, States> {
   }
 }
 
-export default withStyles(styles)(ColumnDisplay);
+const mapStateToProps = state => ({
+  selectedColumns: getColumns(state)
+});
+
+const mapDispatchToProps = dispatch => ({
+  setColumns: (entity: string, columns: object[]) =>
+    dispatch(setColumnsAction(entity, columns))
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(ColumnDisplay));
+

@@ -103,6 +103,9 @@ export const setColumns = (type, items) => {
   };
 };
 
+
+// we need to modify
+
 export const submitQuery = () => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
   const entity = state().app.selectedEntity;
@@ -256,10 +259,7 @@ export const fetchValues = (attribute: string) => async (dispatch, state) => {
     selectedEntity,
     attribute
   );
-  const newValues = values.map(newValue => {
-    return { [attribute]: newValue };
-  });
-  dispatch(setAvailableValuesAction(newValues));
+  dispatch(setAvailableValuesAction(attribute, values));
   dispatch(setLoadingAction(false));
 };
 

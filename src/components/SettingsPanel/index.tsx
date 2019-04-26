@@ -83,19 +83,10 @@ const CloseIconWrapper = styled(CloseIcon)`
 `;
 
 interface Props {
-  selectedColumns: any;
   isCollapse: boolean;
-  filterInputState: object;
   selectedEntity: string;
   attributes: object[];
-  selectedValues: object[];
-  setColumns: (columns: object[]) => void;
   submitValues: () => void;
-  setFilterInputState: (
-    value: string,
-    filterName: string,
-    filterOperator: string
-  ) => void;
   onClose: () => void;
   resetValues: () => void;
 }
@@ -103,16 +94,11 @@ interface Props {
 const SettingsPanel: React.StatelessComponent<Props> = props => {
   const {
     isCollapse,
-    onClose,
-    selectedColumns,
-    resetValues,
-    submitValues,
-    filterInputState,
-    setFilterInputState,
     selectedEntity,
     attributes,
-    setColumns,
-    selectedValues,
+    onClose,
+    resetValues,
+    submitValues
   } = props;
   return (
     <Collapse in={isCollapse}>
@@ -122,21 +108,16 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
         </CloseIconContainer>
         <FilterTxt>Filter</FilterTxt>
         <FilterPanel
-          selectedValues={selectedValues}
           selectedEntity={selectedEntity}
           attributes={attributes}
-          setFilterInputState={setFilterInputState}
-          filterInputState={filterInputState}
         />
         <DisplayTxt>Display</DisplayTxt>
         <QueryContainer>
           <DisplayContainer>
             <ColumnsDisplay
-              submitValues={submitValues}
-              setColumns={setColumns}
               selectedEntity={selectedEntity}
               attributes={attributes}
-              selectedColumns={selectedColumns}
+              submitValues={submitValues}
             />
           </DisplayContainer>
           <ButtonsContainer>

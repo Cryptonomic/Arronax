@@ -13,7 +13,7 @@ import {
   CHANGE_FILTER,
   SET_ROW_COUNT,
   SET_AVAILABLE_VALUES,
-  SET_SELECTED_VALUES,
+  SET_SELECTED_VALUE,
   REMOVE_VALUE,
   COMPLETE_FULL_LOAD,
   SET_FILTER_COUNT,
@@ -30,7 +30,7 @@ export interface AppState {
   filters: ConseilQuery;
   network: string;
   blocks: TezosBlock[];
-  availableValues: Array<string>;
+  availableValues: object;
   columns: object;
   attributes: object;
   operators: object;
@@ -93,13 +93,21 @@ const initialState: AppState = {
     operations: [],
     accounts: [],
   },
-  availableValues: [],
+  availableValues: {
+    blocks: {},
+    operations: {},
+    accounts: {},
+  },
   accounts: [],
   operations: [],
   isLoading: false,
   selectedEntity: 'blocks',
   isFullLoaded: false,
-  selectedValues: { blocks: [], operations: [], accounts: [] },
+  selectedValues: {
+    blocks: {},
+    operations: {},
+    accounts: {},
+  },
   rowCount: 50,
   filterCount: {
     blocks: 0,
@@ -121,10 +129,9 @@ const appReducer = (state = initialState, action) => {
     case SET_ITEMS:
       return { ...state, [action.entity]: action.items };
     case SET_COLUMNS: {
-      const columns = state.columns;
-      const newColumns = { ...columns };
-      newColumns[action.entity] = action.items;
-      return { ...state, columns: newColumns };
+      const columns = {...state.columns};
+      columns[action.entity] = action.items;
+      return { ...state, columns };
     }
     case SET_TAB:
       return { ...state, selectedEntity: action.entity };
@@ -135,44 +142,49 @@ const appReducer = (state = initialState, action) => {
     case INIT_DATA:
       return { ...state, ...initialState };
     case SET_ATTRIBUTES: {
-      const attributes = state.attributes;
+      const attributes = { ...state.attributes};
       attributes[action.entity] = action.attributes;
       return { ...state, attributes };
     }
     case ADD_FILTER: {
-      const selectedFilters = state.selectedFilters;
+      const selectedFilters = {...state.selectedFilters};
       let filters = selectedFilters[action.entity];
       const emptyFilter = {
         name: '',
         operator: '',
+        operatorType: '',
+        isCard: false,
+        value: ''
       };
       filters = filters.concat(emptyFilter);
       selectedFilters[action.entity] = filters;
       return { ...state, selectedFilters };
     }
     case REMOVE_FILTER: {
-      const selectedFilters = state.selectedFilters;
+      const selectedFilters = {...state.selectedFilters};
       let filters = selectedFilters[action.entity];
       filters.splice(action.index, 1);
       selectedFilters[action.entity] = [...filters];
       return { ...state, selectedFilters };
     }
     case REMOVE_ALL_FILTERS: {
-      const selectedFilters = state.selectedFilters;
+      const selectedFilters = {...state.selectedFilters};
       selectedFilters[action.entity] = [];
-      return { ...state, selectedFilters: selectedFilters };
+      return { ...state, selectedFilters };
     }
     case CHANGE_FILTER: {
-      const selectedFilters = state.selectedFilters;
+      const selectedFilters = {...state.selectedFilters};
       let filters = selectedFilters[action.entity];
       filters[action.index] = action.filter;
       selectedFilters[action.entity] = [...filters];
       return { ...state, selectedFilters };
     }
     case SET_AVAILABLE_VALUES: {
-      const values = state.availableValues;
-      const newValues = [...values, ...action.availableValues];
-      return { ...state, availableValues: newValues };
+      const availableValues = { ...state.availableValues};
+      const entityValues = {...availableValues[action.entity]};
+      entityValues[action.attribute] = action.availableValues;
+      availableValues[action.entity] = entityValues;
+      return { ...state, availableValues };
     }
     case REMOVE_VALUE: {
       const selectedValues = state.selectedValues;
@@ -190,19 +202,11 @@ const appReducer = (state = initialState, action) => {
       selectedValues[selectedEntity] = finalValues;
       return { ...state, selectedValues };
     }
-    case SET_SELECTED_VALUES: {
-      const selectedValues = state.selectedValues;
-      const selectedEntity = state.selectedEntity;
-      let value = state.selectedValues[selectedEntity];
-      const incomingValue = Object.keys(action.selectedValue).toString();
-      const values = [];
-      value.forEach(val => {
-        if (Object.keys(val).toString() !== incomingValue) {
-          values.push(val);
-        }
-      });
-      const finalValues = [...values, action.selectedValue];
-      selectedValues[selectedEntity] = finalValues;
+    case SET_SELECTED_VALUE: {
+      const selectedValues = { ...state.selectedValues};
+      const entityValues = {...selectedValues[action.entity]};
+      entityValues[action.attribute] = action.value;
+      entityValues[action.entity] = entityValues;
       return { ...state, selectedValues };
     }
     case SET_FILTER_COUNT: {
