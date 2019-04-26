@@ -131,7 +131,8 @@ class FilterPanel extends React.Component<Props, {}> {
       selectedEntity,
       changeFilter,
       fetchValues,
-      availableValues
+      availableValues,
+      operators
     } = this.props;
 
     const isCard = attr.cardinality < 15 && attr.cardinality !== null;
@@ -150,7 +151,7 @@ class FilterPanel extends React.Component<Props, {}> {
       name: attr.name,
       isCard,
       operatorType,
-      operator: '',
+      operator: operators[operatorType][0].name,
       values: ['']
     };
     changeFilter(selectedEntity, selectedFilter, index);
