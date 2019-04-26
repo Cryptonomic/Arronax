@@ -175,7 +175,7 @@ export const fetchValues = (attribute: string) => async (dispatch, state) => {
     selectedEntity,
     attribute
   );
-  dispatch(setAvailableValuesAction(attribute, values));
+  dispatch(setAvailableValuesAction(selectedEntity, attribute, values));
   dispatch(setLoadingAction(false));
 };
 

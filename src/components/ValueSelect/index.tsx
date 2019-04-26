@@ -110,7 +110,7 @@ class ValueSelect extends React.Component<Props, States> {
         <ButtonShell
           aria-owns={anchorEl ? 'simple-menu' : undefined}
           aria-haspopup="true"
-          isactive={!!selectedValue}
+          isactive={!!selectedValue? 1:0}
           onClick={this.handleClick}
         >
           {menuTitle}

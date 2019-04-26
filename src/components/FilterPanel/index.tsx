@@ -193,17 +193,18 @@ class FilterPanel extends React.Component<Props, {}> {
     } = this.props;
     const entityName = attrTabValue[selectedEntity];
 
-    const disableAddFilter = false;
-
-    // const disableAddFilter =
-    //   (filters.length > 0 &&
-    //     filters.length !==
-    //       filterInputState[selectedEntity].length + selectedValues.length) ||
-    //   (filters.length > 0 &&
-    //     filters.length ===
-    //       filterInputState[selectedEntity].length + selectedValues.length &&
-    //     selectedValues.length !== filters.length &&
-    //     value === '');
+    const filterLength = filters.length;
+    let disableAddFilter = true;
+    const lastFilter: any = filterLength > 0 ? filters[filterLength - 1] : {};
+    if (filterLength === 0) {
+      disableAddFilter = false;
+    } else if (lastFilter.operator === 'ISNULL' || lastFilter.operator === 'ISNOTNULL') {
+      disableAddFilter = false;
+    } else if(lastFilter.operator === 'BETWEEN' || lastFilter.operator === 'IN') {
+      disableAddFilter = lastFilter.values.length !== 2;
+    } else if (lastFilter.values[0]) {
+      disableAddFilter = false;
+    }
 
     return (
       <Container>
