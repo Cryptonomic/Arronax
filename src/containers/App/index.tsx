@@ -121,14 +121,14 @@ export interface Props {
 }
 
 export interface States {
-  isFilterCollapse: boolean;
+  isFilterCollapsed: boolean;
 }
 
 class Arronax extends React.Component<Props, States> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isFilterCollapse: false
+      isFilterCollapsed: false
     };
   }
 
@@ -149,12 +149,12 @@ class Arronax extends React.Component<Props, States> {
   };
 
   onFilterCollapse = () => {
-    const { isFilterCollapse } = this.state;
-    this.setState({ isFilterCollapse: !isFilterCollapse });
+    const { isFilterCollapsed } = this.state;
+    this.setState({ isFilterCollapsed: !isFilterCollapsed });
   };
 
   onCloseFilter = () => {
-    this.setState({ isFilterCollapse: false });
+    this.setState({ isFilterCollapsed: false });
   };
 
   resetValues = () => {
@@ -180,7 +180,7 @@ class Arronax extends React.Component<Props, States> {
       attributes,
       filterCount
     } = this.props;
-    const { isFilterCollapse } = this.state;
+    const { isFilterCollapsed } = this.state;
     const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
     return (
       <MainContainer>
@@ -205,12 +205,12 @@ class Arronax extends React.Component<Props, States> {
           <SettingsPanel
             selectedEntity={selectedEntity}
             attributes={attributes}
-            isCollapse={isFilterCollapse}
+            isCollapsed={isFilterCollapsed}
             submitValues={this.submitValues}
             resetValues={this.resetValues}            
             onClose={this.onCloseFilter}
           />
-          <FilterHeader isDark={isFilterCollapse}>
+          <FilterHeader isDark={isFilterCollapsed}>
             <FilterTool
               value={filterCount}
               onCollapse={this.onFilterCollapse}

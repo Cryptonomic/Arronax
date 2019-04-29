@@ -145,7 +145,7 @@ const appReducer = (state = initialState, action) => {
         name: '',
         operator: '',
         operatorType: '',
-        isCard: false,
+        isLowCardinality: false,
         values: ['']
       };
       filters = filters.concat(emptyFilter);

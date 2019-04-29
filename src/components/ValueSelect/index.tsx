@@ -71,7 +71,7 @@ const MainMenuItem = styled(MenuItem)`
 `;
 
 interface Props {
-  selectedValue: string | undefined | null;
+  selectedValue: string;
   values: Array<string>;
   placeholder?: string;
   onChange: (value: object) => void;
@@ -82,6 +82,10 @@ type States = {
 };
 
 class ValueSelect extends React.Component<Props, States> {
+  static defaultProps = {
+    values: [],
+    selectedValue: ''
+  };
   state = {
     anchorEl: null,
   };

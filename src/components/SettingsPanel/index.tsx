@@ -83,7 +83,7 @@ const CloseIconWrapper = styled(CloseIcon)`
 `;
 
 interface Props {
-  isCollapse: boolean;
+  isCollapsed: boolean;
   selectedEntity: string;
   attributes: object[];
   submitValues: () => void;
@@ -93,7 +93,7 @@ interface Props {
 
 const SettingsPanel: React.StatelessComponent<Props> = props => {
   const {
-    isCollapse,
+    isCollapsed,
     selectedEntity,
     attributes,
     onClose,
@@ -101,7 +101,7 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
     submitValues
   } = props;
   return (
-    <Collapse in={isCollapse}>
+    <Collapse in={isCollapsed}>
       <Container>
         <CloseIconContainer onClick={onClose}>
           <CloseIconWrapper />

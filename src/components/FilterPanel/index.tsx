@@ -95,7 +95,7 @@ interface Filter {
   name: string;
   operator: string;
   operatorType: string;
-  isCard?: boolean;
+  isLowCardinality?: boolean;
   values: Array<string>;
 }
 
@@ -135,8 +135,8 @@ class FilterPanel extends React.Component<Props, {}> {
       operators
     } = this.props;
 
-    const isCard = attr.cardinality < 15 && attr.cardinality !== null;
-    if (isCard && !availableValues[attr.name]) {
+    const isLowCardinality = attr.cardinality < 15 && attr.cardinality !== null;
+    if (isLowCardinality && !availableValues[attr.name]) {
       fetchValues(attr.name);
     }
     let operatorType = 'dateTime';
@@ -149,7 +149,7 @@ class FilterPanel extends React.Component<Props, {}> {
     }
     const selectedFilter = {
       name: attr.name,
-      isCard,
+      isLowCardinality,
       operatorType,
       operator: operators[operatorType][0].name,
       values: ['']
@@ -242,7 +242,7 @@ class FilterPanel extends React.Component<Props, {}> {
                 )}
                 {filter.operator && <HR />}
                 {filter.operator && (filter.operator === 'EQ' ||  filter.operator === 'NOTEQ') &&
-                  filter.isCard && (
+                  filter.isLowCardinality && (
                     <ValueSelect
                       placeholder='Select Value'
                       selectedValue={filter.values[0]}
@@ -250,7 +250,7 @@ class FilterPanel extends React.Component<Props, {}> {
                       onChange={value => this.onFilterValueChange(value, index, 0)}
                     />
                 )}
-                {filter.operator && !filter.isCard && (
+                {filter.operator && !filter.isLowCardinality && (
                   <ValueInput
                     values={filter.values}
                     operator={filter.operator}
