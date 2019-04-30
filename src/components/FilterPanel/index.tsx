@@ -18,6 +18,7 @@ import {
 import FilterSelect from '../FilterSelect';
 import ValueSelect from '../ValueSelect';
 import ValueInput from '../ValueInput';
+import { Filter } from '../../types';
 
 const Container = styled.div`
   width: 100%;
@@ -91,13 +92,8 @@ const attrTabValue = {
   accounts: 'account',
 };
 
-interface Filter {
-  name: string;
-  operator: string;
-  operatorType: string;
-  isLowCardinality?: boolean;
-  values: Array<string>;
-}
+const CARDINALITY_NUMBER = 15;
+
 
 type Props = {
   availableValues: object;
@@ -135,7 +131,7 @@ class FilterPanel extends React.Component<Props, {}> {
       operators
     } = this.props;
 
-    const isLowCardinality = attr.cardinality < 15 && attr.cardinality !== null;
+    const isLowCardinality = attr.cardinality < CARDINALITY_NUMBER && attr.cardinality !== null;
     if (isLowCardinality && !availableValues[attr.name]) {
       fetchValues(attr.name);
     }

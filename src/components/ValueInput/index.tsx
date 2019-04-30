@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import TextField from '@material-ui/core/TextField';
+import { ConseilOperator } from 'conseiljs';
 
 const Container = styled.div``;
 
@@ -49,7 +50,7 @@ const ValueInput: React.StatelessComponent<Props> = props => {
     let input;
 
     // Render specific input type based on operators
-    if (operator === 'BETWEEN' || operator === 'IN') {
+    if (operator === ConseilOperator.BETWEEN || operator === ConseilOperator.IN) {
       input = (
         <React.Fragment>
           <Container>
@@ -74,7 +75,7 @@ const ValueInput: React.StatelessComponent<Props> = props => {
           </Container>
         </React.Fragment>
       );
-    } else if (operator === 'ISNULL' || operator === 'ISNOTNULL') {
+    } else if (operator === ConseilOperator.ISNULL || operator === 'isnotnull') {
       input = null;
     } else {
       input = (

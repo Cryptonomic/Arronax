@@ -3,7 +3,8 @@ import {
   ConseilDataClient,
   ConseilQueryBuilder,
   ConseilSortDirection,
-  TezosConseilClient
+  TezosConseilClient,
+  ConseilOperator
 } from 'conseiljs';
 const { executeEntityQuery } = ConseilDataClient;
 const {
@@ -34,20 +35,6 @@ const SYNC_TIME = 10;
 
 const configs = getConfigs();
 const { getAttributes, getAttributeValues } = ConseilMetadataClient;
-
-const ConseilOperators = {
-  BETWEEN: 'between',
-  EQ: 'eq',
-  IN: 'in',
-  LIKE: 'like',
-  LT: 'lt',
-  BEFORE: 'before',
-  GT: 'gt', 
-  AFTER: 'after',
-  STARTSWITH: 'startsWith',
-  ENDSWITH: 'endsWith',
-  ISNULL: 'isnull'
-};
 
 const getConfig = val => {
   return configs.find(conf => conf.value === val);
@@ -120,22 +107,22 @@ export const submitQuery = () => async (dispatch, state) => {
   let query = blankQuery();
   query = addFields(query, ...attributeNames);
   selectedFilters.forEach(filter => {
-    if ((filter.operator === 'BETWEEN' || filter.operator === 'IN') && filter.values.length === 1) {
+    if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN) && filter.values.length === 1) {
       return true;
     }
     let isInvert = false;
     let operator = filter.operator;
-    if (filter.operator === 'ISNOTNULL') {
+    if (filter.operator === 'isnotnull') {
       isInvert = true;
-      operator = 'ISNULL';
-    } else if (filter.operator === 'NOTEQ') {
-      operator = 'EQ';
+      operator = ConseilOperator.ISNULL;
+    } else if (filter.operator === 'noteq') {
+      operator = ConseilOperator.EQ;
       isInvert = true;
     }
     query = addPredicate(
       query,
       filter.name,
-      ConseilOperators[operator],
+      operator,
       filter.values,
       isInvert
     );

@@ -18,7 +18,7 @@ import {
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
-import { TezosAccount, TezosBlock, TezosOperation } from '../../types';
+import { TezosAccount, TezosBlock, TezosOperation, Filter } from '../../types';
 import { getLocalAttributes } from '../../utils/attributes';
 
 const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
@@ -54,36 +54,36 @@ const initialState: AppState = {
   },
   operators: {
     numeric: [
-      { name: 'EQ', displayName: 'is' },
-      { name: 'NOTEQ', displayName: 'is not' },
-      { name: 'IN', displayName: 'is in' },
-      { name: 'BETWEEN', displayName: 'is between' },
-      { name: 'LT', displayName: 'is less than' },
-      { name: 'GT', displayName: 'is greater than' },
-      { name: 'ISNULL', displayName: 'is null' },
-      { name: 'ISNOTNULL', displayName: 'is not null' },
+      { name: 'eq', displayName: 'is' },
+      { name: 'noteq', displayName: 'is not' },
+      { name: 'in', displayName: 'is in' },
+      { name: 'between', displayName: 'is between' },
+      { name: 'lt', displayName: 'is less than' },
+      { name: 'gt', displayName: 'is greater than' },
+      { name: 'isnull', displayName: 'is null' },
+      { name: 'isnotnull', displayName: 'is not null' },
     ],
     string: [
-      { name: 'EQ', displayName: 'is' },
-      { name: 'NOTEQ', displayName: 'is not' },
-      { name: 'IN', displayName: 'is in' },
-      { name: 'LIKE', displayName: 'is like' },
-      { name: 'STARTSWITH', displayName: 'starts with' },
-      { name: 'ENDSWITH', displayName: 'ends with' },
-      { name: 'ISNULL', displayName: 'is null' },
-      { name: 'ISNOTNULL', displayName: 'is not null' },
+      { name: 'eq', displayName: 'is' },
+      { name: 'noteq', displayName: 'is not' },
+      { name: 'in', displayName: 'is in' },
+      { name: 'like', displayName: 'is like' },
+      { name: 'startsWith', displayName: 'starts with' },
+      { name: 'endsWith', displayName: 'ends with' },
+      { name: 'isnull', displayName: 'is null' },
+      { name: 'isnotnull', displayName: 'is not null' },
     ],
     dateTime: [
-      { name: 'EQ', displayName: 'is' },
-      { name: 'NOTEQ', displayName: 'is not' },
-      { name: 'IN', displayName: 'is in' },
-      { name: 'BETWEEN', displayName: 'is between' },
-      { name: 'BEFORE', displayName: 'is before' },
-      { name: 'AFTER', displayName: 'is after' },
-      { name: 'ISNULL', displayName: 'is null' },
-      { name: 'ISNOTNULL', displayName: 'is not null' },
+      { name: 'eq', displayName: 'is' },
+      { name: 'noteq', displayName: 'is not' },
+      { name: 'in', displayName: 'is in' },
+      { name: 'between', displayName: 'is between' },
+      { name: 'before', displayName: 'is before' },
+      { name: 'after', displayName: 'is after' },
+      { name: 'isnull', displayName: 'is null' },
+      { name: 'isnotnull', displayName: 'is not null' },
     ],
-    boolean: [{ name: 'EQ', displayName: 'is' }],
+    boolean: [{ name: 'eq', displayName: 'is' }],
   },
   columns: {
     blocks: [],
@@ -141,7 +141,7 @@ const appReducer = (state = initialState, action) => {
     case ADD_FILTER: {
       const selectedFilters = {...state.selectedFilters};
       let filters = selectedFilters[action.entity];
-      const emptyFilter = {
+      const emptyFilter: Filter = {
         name: '',
         operator: '',
         operatorType: '',
