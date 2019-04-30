@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import PlusIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
+import { ConseilOperator } from 'conseiljs';
 import { fetchValues } from '../../reducers/app/thunks';
 import {
   getAvailableValues,
@@ -195,9 +196,9 @@ class FilterPanel extends React.Component<Props, {}> {
     const lastFilter: any = filterLength > 0 ? filters[filterLength - 1] : {};
     if (filterLength === 0) {
       disableAddFilter = false;
-    } else if (lastFilter.operator === 'ISNULL' || lastFilter.operator === 'ISNOTNULL') {
+    } else if (lastFilter.operator === ConseilOperator.ISNULL || lastFilter.operator === 'isnotnull') {
       disableAddFilter = false;
-    } else if(lastFilter.operator === 'BETWEEN' || lastFilter.operator === 'IN') {
+    } else if(lastFilter.operator === ConseilOperator.BETWEEN || lastFilter.operator === ConseilOperator.IN) {
       disableAddFilter = lastFilter.values.length !== 2;
     } else if (lastFilter.values[0]) {
       disableAddFilter = false;
@@ -237,7 +238,7 @@ class FilterPanel extends React.Component<Props, {}> {
                   />
                 )}
                 {filter.operator && <HR />}
-                {filter.operator && (filter.operator === 'EQ' ||  filter.operator === 'NOTEQ') &&
+                {filter.operator && (filter.operator === ConseilOperator.EQ ||  filter.operator === 'noteq') &&
                   filter.isLowCardinality && (
                     <ValueSelect
                       placeholder='Select Value'
