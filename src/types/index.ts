@@ -49,3 +49,11 @@ export interface TezosAccount {
   balance: number;
   counter: number;
 }
+
+export interface Filter {
+  name: string;
+  operator: string;
+  operatorType: string;
+  isLowCardinality?: boolean;
+  values: Array<string>;
+}

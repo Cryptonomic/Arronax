@@ -16,7 +16,7 @@ const ButtonShell = styled(Button)`
     font-size: 18px;
     cursor: pointer;
     color: ${({ isactive }) => (isactive ? '#4A4A4A' : '#9b9b9b')};
-    text-transform: capitalize;
+    text-transform: ${({ iscapital }) => (iscapital ? 'capitalize' : 'initial')};;
   }
 `;
 
@@ -107,7 +107,7 @@ interface Props {
   value: string;
   items: Array<Item>;
   placeholder?: string;
-  onChange: (value: string) => void;
+  onChange: (item: object) => void;
 }
 
 type States = {
@@ -132,17 +132,9 @@ class FilterSelect extends React.Component<Props, States> {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    const { onChange } = this.props;
-    if (prevProps.placeholder === 'Select Operator' && prevProps.value === '') {
-      const equalsOperator = Object.values(prevProps.items)[0];
-      onChange(equalsOperator['name']);
-    }
-  }
-
   handleChange = item => {
     const { onChange } = this.props;
-    onChange(item.name);
+    onChange(item);
     this.setState({ anchorEl: null });
   };
 
@@ -181,6 +173,7 @@ class FilterSelect extends React.Component<Props, States> {
           aria-haspopup="true"
           isactive={value}
           onClick={this.handleClick}
+          iscapital={placeholder !== 'Select Operator'? 1 : 0}
         >
           {menuTitle}
           <ArrowIcon />

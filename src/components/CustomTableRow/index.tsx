@@ -42,7 +42,6 @@ const ExplorerLink = styled.a`
   color: #10ade4;
 `;
 interface Props {
-  entity: string;
   item: any;
   selectedColumns: any[];
   network: string;
