@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import TezosIcon from 'components/TezosIcon';
+import ArronaxIcon from 'components/ArronaxIcon';
 
 const Container = styled.div`
   position: relative;
@@ -16,9 +16,8 @@ const Container = styled.div`
   cursor: pointer;
 `;
 
-const FilterIconWrapper = styled(TezosIcon)`
+const FilterIconWrapper = styled(ArronaxIcon)`
   display: inline-block;
-  transform: rotate(90deg);
   margin-right: 11px;
 `;
 
@@ -49,7 +48,7 @@ const FilterTool: React.StatelessComponent<Props> = props => {
   const { value, onCollapse } = props;
   return (
     <Container onClick={onCollapse}>
-      <FilterIconWrapper size="22px" color="#56C2D9" iconName="settings" />
+      <FilterIconWrapper size="22px" color="#56C2D9" iconName="icon-filter" />
       Filter
       {value > 0 && <FilterMark>{value}</FilterMark>}
     </Container>

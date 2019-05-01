@@ -2,9 +2,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import PlusIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
 import { ConseilOperator } from 'conseiljs';
+import ArronaxIcon from 'components/ArronaxIcon';
 import { fetchValues } from '../../reducers/app/thunks';
 import {
   getAvailableValues,
@@ -66,13 +66,6 @@ const PlusIconWrapper = styled(PlusIcon)`
   &&& {
     color: #56c2d9;
     font-size: 27px;
-  }
-`;
-
-const DeleteIconWrapper = styled(DeleteIcon)`
-  &&& {
-    color: #d8d8d8;
-    font-size: 37px;
   }
 `;
 
@@ -260,7 +253,7 @@ class FilterPanel extends React.Component<Props, {}> {
                 aria-label="Delete"
                 onClick={() => this.onRemoveFilter(index)}
               >
-                <DeleteIconWrapper />
+                <ArronaxIcon size="37px" color="#d8d8d8" iconName="icon-delete" />
               </IconButton>
             </FilterItemContainer>
           );
