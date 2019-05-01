@@ -86,9 +86,9 @@ interface Props {
   isCollapsed: boolean;
   selectedEntity: string;
   attributes: object[];
-  submitValues: () => void;
+  onSubmitFilters: () => void;
   onClose: () => void;
-  resetValues: () => void;
+  onResetFilters: () => void;
 }
 
 const SettingsPanel: React.StatelessComponent<Props> = props => {
@@ -97,8 +97,8 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
     selectedEntity,
     attributes,
     onClose,
-    resetValues,
-    submitValues
+    onResetFilters,
+    onSubmitFilters
   } = props;
   return (
     <Collapse in={isCollapsed}>
@@ -117,15 +117,15 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
             <ColumnsDisplay
               selectedEntity={selectedEntity}
               attributes={attributes}
-              submitValues={submitValues}
+              onSubmitFilters={onSubmitFilters}
             />
           </DisplayContainer>
           <ButtonsContainer>
-            <ResetButton onClick={resetValues}>
+            <ResetButton onClick={onResetFilters}>
               <RefreshIcon />
               {'  '}Reset
             </ResetButton>
-            <RunButton onClick={submitValues}>Run</RunButton>
+            <RunButton onClick={onSubmitFilters}>Run</RunButton>
           </ButtonsContainer>
         </QueryContainer>
       </Container>

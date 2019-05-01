@@ -219,7 +219,21 @@ class Arronax extends React.Component<Props, States> {
     this.setState({ isFilterCollapsed: false });
   };
 
-  resetValues = async () => {
+  onResetFilters = () => {
+    const {
+      removeAllFilters,
+      selectedEntity
+    } = this.props;
+    removeAllFilters(selectedEntity);
+  };
+
+  onSubmitFilters = async () => {
+    const { submitQuery } = this.props;
+    this.onCloseFilter();
+    await submitQuery();
+  };
+
+  onClearFilter = async () => {
     const {
       removeAllFilters,
       selectedEntity,
@@ -227,12 +241,8 @@ class Arronax extends React.Component<Props, States> {
     } = this.props;
     await removeAllFilters(selectedEntity);
     await submitQuery();
-  };
+  }
 
-  submitValues = async () => {
-    const { submitQuery } = this.props;
-    await submitQuery();
-  };
 
   render() {
     const {
@@ -270,8 +280,8 @@ class Arronax extends React.Component<Props, States> {
             selectedEntity={selectedEntity}
             attributes={attributes}
             isCollapsed={isFilterCollapsed}
-            submitValues={this.submitValues}
-            resetValues={this.resetValues}            
+            onSubmitFilters={this.onSubmitFilters}
+            onResetFilters={this.onResetFilters}
             onClose={this.onCloseFilter}
           />
           <FilterHeader isDark={isFilterCollapsed}>
@@ -293,8 +303,8 @@ class Arronax extends React.Component<Props, States> {
                   <NoResultTxt>Sorry, your filters returned no results.</NoResultTxt>
                   <TryTxt>Try a different filter combination.</TryTxt>
                   <ButtonContainer>
-                    <ClearButton onClick={this.resetValues}>Clear Filters</ClearButton>
-                    <TryButton onClick={this.submitValues}>Try Again</TryButton>
+                    <ClearButton onClick={this.onClearFilter}>Clear Filters</ClearButton>
+                    <TryButton onClick={this.onFilterCollapse}>Try Again</TryButton>
                   </ButtonContainer>
                 </NoResultContent>
               </NoResultContainer>
