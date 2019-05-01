@@ -182,7 +182,7 @@ type Props = {
   selectedEntity: string;
   attributes: any;
   classes: any;
-  submitValues: () => void;
+  onSubmitFilters: () => void;
   setColumns: (entity: string, columns: object[]) => void;
 };
 
@@ -212,11 +212,11 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   handleSubmit = async event => {
     const { selected } = this.state;
-    const { selectedEntity, setColumns, submitValues } = this.props;
+    const { selectedEntity, setColumns, onSubmitFilters } = this.props;
     event.preventDefault();
     await this.setState({ anchorEl: null });
     await setColumns(selectedEntity, selected);
-    await submitValues();
+    await onSubmitFilters();
   };
 
   handleChange = (attribute) => event => {

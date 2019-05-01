@@ -162,7 +162,10 @@ const appReducer = (state = initialState, action) => {
     case REMOVE_ALL_FILTERS: {
       const selectedFilters = {...state.selectedFilters};
       selectedFilters[action.entity] = [];
-      return { ...state, selectedFilters };
+      const selectedEntity = state.selectedEntity;
+      const filterCount = {...state.filterCount};
+      filterCount[selectedEntity] = 0;
+      return { ...state, selectedFilters, filterCount };
     }
     case CHANGE_FILTER: {
       const selectedFilters = {...state.selectedFilters};
@@ -182,7 +185,7 @@ const appReducer = (state = initialState, action) => {
       const selectedEntity = state.selectedEntity;
       const filterCount = state.filterCount;
       filterCount[selectedEntity] = action.count;
-      return { ...state, filterCount: filterCount };
+      return { ...state, filterCount };
     }
     case SET_ROW_COUNT: {
       return { ...state, rowCount: action.rows };
