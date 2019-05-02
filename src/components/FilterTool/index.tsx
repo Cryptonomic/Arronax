@@ -4,7 +4,7 @@ import ArronaxIcon from 'components/ArronaxIcon';
 
 const Container = styled.div`
   position: relative;
-  width: 107px;
+  width: 126px;
   height: 52px;
   border: 1px solid #56c2d9;
   border-radius: 5px;

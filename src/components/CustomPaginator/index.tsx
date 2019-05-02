@@ -79,6 +79,9 @@ const ButtonWrapper = styled.div`
   cursor: ${({ isActive }) => (isActive ? 'pointer' : 'default')};
   pointer-events: ${({ isActive }) => (isActive ? 'auto' : 'none')};
   border-radius: ${({ isNext }) => (isNext ? '0 5px 5px 0' : '5px 0 0 5px')};
+  &:hover {
+    border-color: rgb(180, 231, 242);
+  }
 `;
 
 const LeftIconWrapper = styled(LeftChevronIcon)`

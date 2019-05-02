@@ -9,7 +9,9 @@ import { fetchValues } from '../../reducers/app/thunks';
 import {
   getAvailableValues,
   getSelectedFilters,
-  getOperators
+  getOperators,
+  getAttributes,
+  getEntity
 } from '../../reducers/app/selectors';
 import {
   addFilterAction,
@@ -281,7 +283,9 @@ class FilterPanel extends React.Component<Props, {}> {
 const mapStateToProps = state => ({
   filters: getSelectedFilters(state),
   availableValues: getAvailableValues(state),
-  operators: getOperators(state)
+  operators: getOperators(state),
+  attributes: getAttributes(state),
+  selectedEntity: getEntity(state)
 });
 
 const mapDispatchToProps = dispatch => ({

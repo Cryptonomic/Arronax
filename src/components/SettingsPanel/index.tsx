@@ -2,7 +2,6 @@ import * as React from 'react';
 import styled from 'styled-components';
 import Collapse from '@material-ui/core/Collapse';
 import CloseIcon from '@material-ui/icons/CloseOutlined';
-import ColumnsDisplay from '../ColumnsDisplay';
 import FilterPanel from '../FilterPanel';
 import RefreshIcon from '@material-ui/icons/Refresh';
 
@@ -12,15 +11,12 @@ const Container = styled.div`
   background: #ecedef;
 `;
 
-const QueryContainer = styled.div`
-  display: flex;
-`;
-
 const ButtonsContainer = styled.div`
   display: flex;
   width: 100%;
   align-items: center;
   justify-content: flex-end;
+  margin-top: 20px;
 `;
 
 const RunButton = styled.div`
@@ -52,22 +48,6 @@ const FilterTxt = styled.div`
   margin-bottom: 14px;
 `;
 
-const DisplayTxt = styled(FilterTxt)`
-  margin-top: 20px;
-`;
-
-const DisplayContainer = styled.div`
-  align-items: center;
-  padding-left: 24px;
-  padding-right: 24px;
-  height: 93px;
-  background: white;
-  border: 1px solid #ededed;
-  border-radius: 3px;
-  display: flex;
-  flex-grow: row;
-`;
-
 const CloseIconContainer = styled.div`
   position: absolute;
   right: 26px;
@@ -84,8 +64,6 @@ const CloseIconWrapper = styled(CloseIcon)`
 
 interface Props {
   isCollapsed: boolean;
-  selectedEntity: string;
-  attributes: object[];
   onSubmitFilters: () => void;
   onClose: () => void;
   onResetFilters: () => void;
@@ -94,8 +72,6 @@ interface Props {
 const SettingsPanel: React.StatelessComponent<Props> = props => {
   const {
     isCollapsed,
-    selectedEntity,
-    attributes,
     onClose,
     onResetFilters,
     onSubmitFilters
@@ -107,27 +83,14 @@ const SettingsPanel: React.StatelessComponent<Props> = props => {
           <CloseIconWrapper />
         </CloseIconContainer>
         <FilterTxt>Filter</FilterTxt>
-        <FilterPanel
-          selectedEntity={selectedEntity}
-          attributes={attributes}
-        />
-        <DisplayTxt>Display</DisplayTxt>
-        <QueryContainer>
-          <DisplayContainer>
-            <ColumnsDisplay
-              selectedEntity={selectedEntity}
-              attributes={attributes}
-              onSubmitFilters={onSubmitFilters}
-            />
-          </DisplayContainer>
-          <ButtonsContainer>
-            <ResetButton onClick={onResetFilters}>
-              <RefreshIcon />
-              {'  '}Reset
-            </ResetButton>
-            <RunButton onClick={onSubmitFilters}>Run</RunButton>
-          </ButtonsContainer>
-        </QueryContainer>
+        <FilterPanel />
+        <ButtonsContainer>
+          <ResetButton onClick={onResetFilters}>
+            <RefreshIcon />
+            {'  '}Reset
+          </ResetButton>
+          <RunButton onClick={onSubmitFilters}>Run</RunButton>
+        </ButtonsContainer>
       </Container>
     </Collapse>
   );
