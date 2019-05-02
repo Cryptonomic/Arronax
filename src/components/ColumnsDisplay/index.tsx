@@ -8,35 +8,43 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DragIcon from '@material-ui/icons/DragHandle';
-import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
+import ArronaxIcon from '../ArronaxIcon';
 
 import {
   getColumns,
+  getAttributes,
+  getEntity
 } from '../../reducers/app/selectors';
 import {
   setColumnsAction
 } from '../../reducers/app/actions';
+import { submitQuery } from '../../reducers/app/thunks';
 
 const Container = styled.div`
-  display: flex;
-  border: 1px solid #d8d8d8;
-  border-radius: 5px;
-  margin-right: 5px;
-  margin-left: 5px;
+  position: absolute;
+  left: 155px;
+  top: 25px;
+  z-index: 3;
 `;
 
-const ButtonShell = styled(Button)`
-  position: relative;
-  width: 140px;
+const ButtonShell = styled.div`
+  width: 153px;
   height: 52px;
-  border: 1px solid #d8d8d8;
-  border-radius: 5px;
   display: flex;
   align-items: center;
-  justify-content: center;
   font-size: 18px;
-  font-weight: 400 !important;
+  font-weight: 500;
   cursor: pointer;
+  padding-left: 12px;
+  color: rgb(74, 74, 74);
+  border: 1px solid rgb(220, 220, 220);
+  &:hover {
+    border-color: rgb(180, 231, 242);
+    color: rgb(86, 194, 217);
+    span {
+      color: rgb(86, 194, 217);
+    }
+  }
 `;
 
 const NestedTitle = styled.div`
@@ -68,16 +76,9 @@ const ButtonContainer = styled.span`
   margin: 4px 20px 15px 10px !important;
 `;
 
-const ArrowIcon = styled(KeyboardArrowDown)`
-  color: #56c2d9;
-  margin-left: 7px;
-`;
-
-const MenuContainer = styled.div`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
+const ColumnIcon = styled(ArronaxIcon)`
+  display: inline-block;
+  margin-right: 8px;
 `;
 
 const MenuContents = styled.div`
@@ -182,7 +183,7 @@ type Props = {
   selectedEntity: string;
   attributes: any;
   classes: any;
-  onSubmitFilters: () => void;
+  onSubmitQuery: () => void;
   setColumns: (entity: string, columns: object[]) => void;
 };
 
@@ -212,11 +213,11 @@ class ColumnDisplay extends React.Component<Props, States> {
 
   handleSubmit = async event => {
     const { selected } = this.state;
-    const { selectedEntity, setColumns, onSubmitFilters } = this.props;
+    const { selectedEntity, setColumns, onSubmitQuery } = this.props;
     event.preventDefault();
     await this.setState({ anchorEl: null });
     await setColumns(selectedEntity, selected);
-    await onSubmitFilters();
+    await onSubmitQuery();
   };
 
   handleChange = (attribute) => event => {
@@ -264,81 +265,80 @@ class ColumnDisplay extends React.Component<Props, States> {
     const { anchorEl, fadeBottom, selected } = this.state;
     const selectedName = selected.map(item => item.name);
     return (
-      <React.Fragment>
-        <Container>
-          <ButtonShell
-            aria-owns={anchorEl ? 'simple-menu' : undefined}
-            aria-haspopup="true"
-            onClick={this.handleClick}
-          >
-            Columns ({selected.length})
-            <ArrowIcon />
-          </ButtonShell>
-          <MenuContainer>
-            <Menu
-              id="simple-menu"
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={this.cancelChange}
-            >
-              <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
-              <MenuContents onScroll={this.handleScroll}>
-                <FadeTop />
-                {attributes.map((attribute, index) => (
-                  <MenuItem
-                    className={
-                      selected.length >= 6 &&
-                      selectedName.indexOf(attribute.name) === -1
-                        ? classes.removeSelector
-                        : null
-                    }
-                    classes={{ root: classes.menuItem }}
-                    onClick={this.handleChange(attribute)}
-                    key={index}
-                    value={attribute.name}
-                  >
-                    <Checkbox
-                      className={
-                        selected.length >= 6 &&
-                        selectedName.indexOf(attribute.name) === -1
-                          ? classes.removeSelector
-                          : null
-                      }
-                      classes={{
-                        root: classes.checkbox,
-                        checked: classes.checked,
-                      }}
-                      disableRipple={true}
-                      checked={selectedName.indexOf(attribute.name) > -1}
-                    />
-                    <ListItemText primary={attribute.displayName} />
-                    <DraggableIcon />
-                  </MenuItem>
-                ))}
-              </MenuContents>
-              {fadeBottom && <FadeBottom />}
-              <HR />{' '}
-              <ButtonContainer>
-                <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
-                <SubmitButton onClick={this.handleSubmit} variant="contained">
-                  Done
-                </SubmitButton>
-              </ButtonContainer>
-            </Menu>
-          </MenuContainer>
-        </Container>
-      </React.Fragment>
+      <Container>
+        <ButtonShell
+          aria-owns={anchorEl ? 'simple-menu' : undefined}
+          aria-haspopup="true"
+          onClick={this.handleClick}
+        >
+          <ColumnIcon size="20px" color="#4a4a4a" iconName="icon-columns" />
+          Columns ({selected.length})
+        </ButtonShell>
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={this.cancelChange}
+        >
+          <NestedTitle>Select Up to 6 Columns to Display</NestedTitle>
+          <MenuContents onScroll={this.handleScroll}>
+            <FadeTop />
+            {attributes.map((attribute, index) => (
+              <MenuItem
+                className={
+                  selected.length >= 6 &&
+                  selectedName.indexOf(attribute.name) === -1
+                    ? classes.removeSelector
+                    : null
+                }
+                classes={{ root: classes.menuItem }}
+                onClick={this.handleChange(attribute)}
+                key={index}
+                value={attribute.name}
+              >
+                <Checkbox
+                  className={
+                    selected.length >= 6 &&
+                    selectedName.indexOf(attribute.name) === -1
+                      ? classes.removeSelector
+                      : null
+                  }
+                  classes={{
+                    root: classes.checkbox,
+                    checked: classes.checked,
+                  }}
+                  disableRipple={true}
+                  checked={selectedName.indexOf(attribute.name) > -1}
+                />
+                <ListItemText primary={attribute.displayName} />
+                <DraggableIcon />
+              </MenuItem>
+            ))}
+          </MenuContents>
+          {fadeBottom && <FadeBottom />}
+          <HR />{' '}
+          <ButtonContainer>
+            <CancelButton onClick={this.cancelChange}>Cancel</CancelButton>
+            <SubmitButton onClick={this.handleSubmit} variant="contained">
+              Done
+            </SubmitButton>
+          </ButtonContainer>
+        </Menu>
+      </Container>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  selectedColumns: getColumns(state)
+  selectedColumns: getColumns(state),
+  attributes: getAttributes(state),
+  selectedEntity: getEntity(state),
 });
 
 const mapDispatchToProps = dispatch => ({
   setColumns: (entity: string, columns: object[]) =>
-    dispatch(setColumnsAction(entity, columns))
+    dispatch(setColumnsAction(entity, columns)),
+  onSubmitQuery: () => dispatch(submitQuery()),
 });
 
 export default connect(

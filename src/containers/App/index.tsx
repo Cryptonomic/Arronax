@@ -5,7 +5,6 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {
-  getAttributes,
   getLoading,
   getNetwork,
   getEntity,
@@ -23,9 +22,9 @@ import {
   removeAllFiltersAction,
 } from '../../reducers/app/actions';
 import Header from 'components/Header';
-import FilterTool from 'components/FilterTool';
 import SettingsPanel from 'components/SettingsPanel';
 import Footer from 'components/Footer';
+import Toolbar from 'components/Toolbar';
 import CustomTable from '../CustomTable';
 
 import * as octopusSrc from 'assets/sadOctopus.svg';
@@ -50,13 +49,6 @@ const LoadingContainer = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-`;
-
-const FilterHeader = styled.div`
-  display: flex;
-  align-items: center;
-  opacity: ${({ isDark }) => (isDark ? 0.74 : 1)};
-  padding: 25px 30px 0 30px;
 `;
 
 const TabsWrapper = styled(Tabs)`
@@ -172,7 +164,6 @@ export interface Props {
   network: string;
   selectedEntity: string;
   items: object[];
-  attributes: object[];
   isFullLoaded: boolean;
   filterCount: number;
   removeAllFilters: (entity: string) => void;
@@ -251,7 +242,6 @@ class Arronax extends React.Component<Props, States> {
       selectedEntity,
       items,
       isFullLoaded,
-      attributes,
       filterCount
     } = this.props;
     const { isFilterCollapsed } = this.state;
@@ -277,23 +267,15 @@ class Arronax extends React.Component<Props, States> {
             ))}
           </TabsWrapper>
           <SettingsPanel
-            selectedEntity={selectedEntity}
-            attributes={attributes}
             isCollapsed={isFilterCollapsed}
             onSubmitFilters={this.onSubmitFilters}
             onResetFilters={this.onResetFilters}
             onClose={this.onCloseFilter}
           />
-          <FilterHeader isDark={isFilterCollapsed}>
-            <FilterTool
-              value={filterCount}
-              onCollapse={this.onFilterCollapse}
-            />
-            <FilterExTxt>
-              e.g. What blocks were baked by Foundation Baker 1 in the past 24
-              hours?
-            </FilterExTxt>
-          </FilterHeader>
+          <Toolbar
+            filterCount={filterCount}
+            onFilterCollapse={this.onFilterCollapse}
+          />
           <TabContainer component="div">
             {items.length > 0 && <CustomTable items={items} /> }
             {items.length === 0 && (
@@ -328,7 +310,6 @@ const mapStateToProps = (state: any) => ({
   network: getNetwork(state),
   selectedEntity: getEntity(state),
   items: getItems(state),
-  attributes: getAttributes(state),
   isFullLoaded: getIsFullLoaded(state),
 });
 
