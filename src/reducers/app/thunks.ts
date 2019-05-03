@@ -4,7 +4,8 @@ import {
   ConseilQueryBuilder,
   ConseilSortDirection,
   TezosConseilClient,
-  ConseilOperator
+  ConseilOperator,
+  ConseilOutput
 } from 'conseiljs';
 const { executeEntityQuery } = ConseilDataClient;
 const {
@@ -284,3 +285,37 @@ export const syncAttributes = () => async (dispatch, state) => {
     saveAttributes(attributes, blockHead[0].level);
   }
 };
+
+export const exportCsvData = () => async (dispatch, state) => {
+  const selectedEntity = state().app.selectedEntity;
+  const network = state().app.network;
+  const config = getConfig(network);
+  const attributes = state().app.columns;
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
+
+  const attributeNames = getAttributeNames(attributes[selectedEntity]);
+  let query = ConseilQueryBuilder.blankQuery();
+  // query = addFields(query, ...attributeNames);
+  query = setLimit(query, 3);
+  query = addOrdering(
+    query,
+    !attributeNames.includes('level') ? 'block_level' : 'level',
+    ConseilSortDirection.DESC
+  );
+  query = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
+  const result: any = await executeEntityQuery(serverInfo, 'tezos', network, selectedEntity, query);
+  let blob = new Blob([result]);
+  if (window.navigator.msSaveOrOpenBlob) {
+    window.navigator.msSaveBlob(blob, "filename.csv");
+  } else  {
+    const a = window.document.createElement("a");
+    a.href = window.URL.createObjectURL(blob);
+    a.download = "filename.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+}

@@ -60,10 +60,11 @@ const ExportIcon = styled(ArronaxIcon)`
 interface Props {
   filterCount: number;
   onFilterCollapse: () => void;
+  onExportCsv: () => void;
 }
 
 const Toolbar: React.StatelessComponent<Props> = props => {
-  const { filterCount, onFilterCollapse } = props;
+  const { filterCount, onFilterCollapse, onExportCsv } = props;
   return (
     <Container>
       <FilterTool onClick={onFilterCollapse}>
@@ -71,7 +72,7 @@ const Toolbar: React.StatelessComponent<Props> = props => {
         Filter ({filterCount})
       </FilterTool>
       <ColumnsDisplay />
-      <ExportTool>
+      <ExportTool onClick={onExportCsv}>
         <ExportIcon size="20px" color="#4a4a4a" iconName="icon-export" />
         Export CSV
       </ExportTool>

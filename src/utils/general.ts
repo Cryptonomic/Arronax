@@ -10,3 +10,15 @@ export const convertValue = (value) => {
     return 'Null';
   }
 };
+
+export const getShortColumn = (value) => {
+  if (!value) {
+    return null;
+  }
+  const firstHalf = value.substring(0, 6);
+  const secondHalf = value.substring(
+    value.length - 6,
+    value.length
+  );
+  return `${firstHalf}...${secondHalf}`;
+}
