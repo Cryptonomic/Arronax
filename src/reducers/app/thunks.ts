@@ -283,11 +283,11 @@ export const exportCsvData = () => async (dispatch, state) => {
   const result: any = await executeEntityQuery(serverInfo, 'tezos', network, selectedEntity, query);
   let blob = new Blob([result]);
   if (window.navigator.msSaveOrOpenBlob) {
-    window.navigator.msSaveBlob(blob, "filename.csv");
+    window.navigator.msSaveBlob(blob, 'arronax-results.csv');
   } else  {
     const a = window.document.createElement("a");
     a.href = window.URL.createObjectURL(blob);
-    a.download = "filename.csv";
+    a.download = 'arronax-results.csv';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -309,7 +309,7 @@ export const submitQuery = () => async (dispatch, state) => {
 
   let query = getMainQuery(attributeNames, selectedFilters);
   query = setLimit(query, 5000);
-  
+
   const items = await executeEntityQuery(
     serverInfo,
     'tezos',
