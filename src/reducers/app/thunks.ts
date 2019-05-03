@@ -92,61 +92,6 @@ export const setColumns = (type, items) => {
   };
 };
 
-
-export const submitQuery = () => async (dispatch, state) => {
-  dispatch(setLoadingAction(true));
-  const entity = state().app.selectedEntity;
-  const selectedFilters = state().app.selectedFilters[entity];
-  const network = state().app.network;
-  const attributes = state().app.columns;
-  const config = getConfig(network);
-  const attributeNames = getAttributeNames(attributes[entity]);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.key,
-  };
-  let query = blankQuery();
-  query = addFields(query, ...attributeNames);
-  selectedFilters.forEach(filter => {
-    if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN) && filter.values.length === 1) {
-      return true;
-    }
-    let isInvert = false;
-    let operator = filter.operator;
-    if (filter.operator === 'isnotnull') {
-      isInvert = true;
-      operator = ConseilOperator.ISNULL;
-    } else if (filter.operator === 'noteq') {
-      operator = ConseilOperator.EQ;
-      isInvert = true;
-    }
-    query = addPredicate(
-      query,
-      filter.name,
-      operator,
-      filter.values,
-      isInvert
-    );
-  });
-  query = setLimit(query, 5000);
-  // Add this to set ordering
-  query = addOrdering(
-    query,
-    !attributeNames.includes('level') ? 'block_level' : 'level',
-    ConseilSortDirection.DESC
-  );
-  const items = await executeEntityQuery(
-    serverInfo,
-    'tezos',
-    network,
-    entity,
-    query
-  );
-  await dispatch(setFilterCountAction(selectedFilters.length));
-  await dispatch(setItemsAction(entity, items));
-  dispatch(setLoadingAction(false));
-};
-
 export const fetchValues = (attribute: string) => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
   const network = state().app.network;
@@ -286,8 +231,43 @@ export const syncAttributes = () => async (dispatch, state) => {
   }
 };
 
+const getMainQuery = (attributeNames, selectedFilters) => {
+  let query = blankQuery();
+  query = addFields(query, ...attributeNames);
+  selectedFilters.forEach(filter => {
+    if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN) && filter.values.length === 1) {
+      return true;
+    }
+    let isInvert = false;
+    let operator = filter.operator;
+    if (filter.operator === 'isnotnull') {
+      isInvert = true;
+      operator = ConseilOperator.ISNULL;
+    } else if (filter.operator === 'noteq') {
+      operator = ConseilOperator.EQ;
+      isInvert = true;
+    }
+    query = addPredicate(
+      query,
+      filter.name,
+      operator,
+      filter.values,
+      isInvert
+    );
+  });
+  // Add this to set ordering
+  query = addOrdering(
+    query,
+    !attributeNames.includes('level') ? 'block_level' : 'level',
+    ConseilSortDirection.DESC
+  );
+
+  return query;
+}
+
 export const exportCsvData = () => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
+  const selectedFilters = state().app.selectedFilters[selectedEntity];
   const network = state().app.network;
   const config = getConfig(network);
   const attributes = state().app.columns;
@@ -297,15 +277,9 @@ export const exportCsvData = () => async (dispatch, state) => {
   };
 
   const attributeNames = getAttributeNames(attributes[selectedEntity]);
-  let query = ConseilQueryBuilder.blankQuery();
-  // query = addFields(query, ...attributeNames);
-  query = setLimit(query, 3);
-  query = addOrdering(
-    query,
-    !attributeNames.includes('level') ? 'block_level' : 'level',
-    ConseilSortDirection.DESC
-  );
+  let query = getMainQuery(attributeNames, selectedFilters);
   query = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
+
   const result: any = await executeEntityQuery(serverInfo, 'tezos', network, selectedEntity, query);
   let blob = new Blob([result]);
   if (window.navigator.msSaveOrOpenBlob) {
@@ -319,3 +293,31 @@ export const exportCsvData = () => async (dispatch, state) => {
     document.body.removeChild(a);
   }
 }
+
+export const submitQuery = () => async (dispatch, state) => {
+  dispatch(setLoadingAction(true));
+  const entity = state().app.selectedEntity;
+  const selectedFilters = state().app.selectedFilters[entity];
+  const network = state().app.network;
+  const attributes = state().app.columns;
+  const config = getConfig(network);
+  const attributeNames = getAttributeNames(attributes[entity]);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
+
+  let query = getMainQuery(attributeNames, selectedFilters);
+  query = setLimit(query, 5000);
+  
+  const items = await executeEntityQuery(
+    serverInfo,
+    'tezos',
+    network,
+    entity,
+    query
+  );
+  await dispatch(setFilterCountAction(selectedFilters.length));
+  await dispatch(setItemsAction(entity, items));
+  dispatch(setLoadingAction(false));
+};
