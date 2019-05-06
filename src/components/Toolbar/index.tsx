@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import ArronaxIcon from '../ArronaxIcon';
-import ColumnsDisplay from '../ColumnsDisplay';
+import { ToolType } from '../../types';
 
 const Container = styled.div`
   position: relative;
@@ -30,6 +30,15 @@ const ToolItem = styled.div`
       color: rgb(86, 194, 217);
     }
   }
+  &:after {
+    content: '';
+    width: 100%;
+    height: 6px;
+    background: transparent;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
 `;
 
 const FilterTool = styled(ToolItem)`
@@ -37,6 +46,26 @@ const FilterTool = styled(ToolItem)`
   border-radius: 5px 0px 0px 5px;
   padding-left: 13px;
   left: 30px;
+  color: ${({ isactive }) => (isactive ? 'rgb(86, 194, 217)' : 'rgb(74, 74, 74)')};
+  span {
+    color: ${({ isactive }) => (isactive ? 'rgb(86, 194, 217)' : 'rgb(74, 74, 74)')};
+  }
+  &:after {
+    background: ${({ isactive }) => (isactive ? 'rgb(166, 223, 226)' : 'transparent')};
+  }
+`;
+
+const ColumnsTool = styled(ToolItem)`
+  width: 153px;
+  left: 155px;
+  padding-left: 12px;
+  color: ${({ isactive }) => (isactive ? 'rgb(86, 194, 217)' : 'rgb(74, 74, 74)')};
+  span {
+    color: ${({ isactive }) => (isactive ? 'rgb(86, 194, 217)' : 'rgb(74, 74, 74)')};
+  }
+  &:after {
+    background: ${({ isactive }) => (isactive ? 'rgb(166, 223, 226)' : 'transparent')};
+  }
 `;
 
 const ExportTool = styled(ToolItem)`
@@ -44,6 +73,9 @@ const ExportTool = styled(ToolItem)`
   border-radius: 0px 5px 5px 0px;
   left: 307px;
   padding-left: 18px;
+  &:after {
+    background: ${({ isactive }) => (isactive ? 'rgb(166, 223, 226)' : 'transparent')};
+  }
 `;
 
 const FilterIcon = styled(ArronaxIcon)`
@@ -56,21 +88,38 @@ const ExportIcon = styled(ArronaxIcon)`
   margin-right: 6px;
 `;
 
+const ColumnIcon = styled(ArronaxIcon)`
+  display: inline-block;
+  margin-right: 8px;
+`;
+
 
 interface Props {
+  isCollapsed: boolean;
+  selectedTool: string;
   filterCount: number;
-  onFilterCollapse: () => void;
+  columnsCount: number;
+  onChangeTool: (tool: string) => void;
 }
 
 const Toolbar: React.StatelessComponent<Props> = props => {
-  const { filterCount, onFilterCollapse } = props;
+  const { isCollapsed, selectedTool, filterCount, columnsCount, onChangeTool } = props;
   return (
     <Container>
-      <FilterTool onClick={onFilterCollapse}>
+      <FilterTool
+        isactive={isCollapsed && selectedTool === ToolType.FILTER ? 1 : 0}
+        onClick={() => onChangeTool(ToolType.FILTER)}
+      >
         <FilterIcon size="20px" color="#4a4a4a" iconName="icon-filter" />
         Filter ({filterCount})
       </FilterTool>
-      <ColumnsDisplay />
+      <ColumnsTool
+        isactive={isCollapsed && selectedTool === ToolType.COLUMN ? 1 : 0}
+        onClick={() => onChangeTool(ToolType.COLUMN)}
+      >
+        <ColumnIcon size="20px" color="#4a4a4a" iconName="icon-columns" />
+        Columns ({columnsCount})
+      </ColumnsTool>
       <ExportTool>
         <ExportIcon size="20px" color="#4a4a4a" iconName="icon-export" />
         Export CSV
@@ -81,6 +130,8 @@ const Toolbar: React.StatelessComponent<Props> = props => {
 
 Toolbar.defaultProps = {
   filterCount: 0,
+  columnsCount: 0,
+  isCollapsed: false
 };
 
 export default Toolbar;
