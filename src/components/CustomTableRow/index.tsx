@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Circle from '@material-ui/icons/FiberManualRecord';
+import { getShortColumn } from '../../utils/general';
 
 const TableRowWrapper = styled(TableRow)`
   &&& {
@@ -47,17 +48,17 @@ interface Props {
   network: string;
 }
 
-export const displayType = (network, shortenedItem, item, name) => {
+export const displayType = (network, value, name) => {
   if (name === 'account_id' || name === 'manager') {
     return (
       <React.Fragment>
         <StyledCircle1 />
         <StyledCircle2 />
         <ExplorerLink
-          href={`https://${network}.tzscan.io/${item[name]}`}
+          href={`https://${network}.tzscan.io/${value}`}
           target="_blank"
         >
-          {shortenedItem[name]}
+          {getShortColumn(value)}
         </ExplorerLink>
       </React.Fragment>
     );
@@ -72,10 +73,10 @@ export const displayType = (network, shortenedItem, item, name) => {
     return (
       <React.Fragment>
         <ExplorerLink
-          href={`https://${network}.tzscan.io/${item[name]}`}
+          href={`https://${network}.tzscan.io/${value}`}
           target="_blank"
         >
-          {shortenedItem[name]}
+          {getShortColumn(value)}
         </ExplorerLink>
       </React.Fragment>
     );
@@ -85,43 +86,14 @@ export const displayType = (network, shortenedItem, item, name) => {
     name === 'operations_hash' ||
     name === 'signature'
   ) {
-    return shortenedItem[name];
+    return getShortColumn(value);
   } else {
-    return item[name];
+    return value;
   }
 };
 
 const CustomTableRow: React.StatelessComponent<Props> = props => {
   const { selectedColumns, item, network } = props;
-  const shortenedItem = { ...item };
-  let itemsArray = Object.keys(shortenedItem);
-  itemsArray.forEach(hash => {
-    if (item[hash] === null) {
-      return;
-    } else if (
-      hash.toLowerCase().includes('hash') ||
-      hash.toLowerCase().includes('predecessor') ||
-      hash.toLowerCase().includes('account_id') ||
-      hash.toLowerCase().includes('block_id') ||
-      hash.toLowerCase() === 'manager' ||
-      hash.toLowerCase().includes('protocol') ||
-      hash.toLowerCase().includes('block_hash') ||
-      hash.toLowerCase() === 'delegate' ||
-      hash.toLowerCase().includes('operation_group_hash') ||
-      hash.toLowerCase().includes('context') ||
-      hash.toLowerCase().includes('signature')
-    ) {
-      const hashRepresentation = item[hash];
-      const firstHalf = hashRepresentation.substring(0, 6);
-      const secondHalf = hashRepresentation.substring(
-        hashRepresentation.length - 6,
-        hashRepresentation.length
-      );
-      const newHash = `${firstHalf}...${secondHalf}`;
-      shortenedItem[hash] = newHash;
-    }
-    return shortenedItem[hash];
-  });
   return (
     <TableRowWrapper>
       {selectedColumns.map((column, index) => {
@@ -131,7 +103,7 @@ const CustomTableRow: React.StatelessComponent<Props> = props => {
               moment(item[column.name]).format('dd MM YYYY h:mm:ss a')
             ) : (
               <SpanContainer>
-                {displayType(network, shortenedItem, item, column.name)}
+                {displayType(network, item[column.name], column.name)}
               </SpanContainer>
             )}
           </StyledCell>

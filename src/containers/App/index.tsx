@@ -16,6 +16,7 @@ import {
   changeNetwork,
   initLoad,
   submitQuery,
+  exportCsvData
 } from '../../reducers/app/thunks';
 import {
   setTabAction,
@@ -171,6 +172,7 @@ export interface Props {
   changeTab: (type: string) => void;
   initLoad: () => void;
   submitQuery: () => void;
+  exportCsvData: ()=> void
 }
 
 export interface States {
@@ -234,6 +236,11 @@ class Arronax extends React.Component<Props, States> {
     await submitQuery();
   }
 
+  onExportCsv = async () => {
+    const { exportCsvData } = this.props;
+    exportCsvData();
+  }
+
 
   render() {
     const {
@@ -275,6 +282,7 @@ class Arronax extends React.Component<Props, States> {
           <Toolbar
             filterCount={filterCount}
             onFilterCollapse={this.onFilterCollapse}
+            onExportCsv={this.onExportCsv}
           />
           <TabContainer component="div">
             {items.length > 0 && <CustomTable items={items} /> }
@@ -320,6 +328,7 @@ const mapDispatchToProps = dispatch => ({
   changeTab: (type: string) => dispatch(setTabAction(type)),
   initLoad: () => dispatch(initLoad()),
   submitQuery: () => dispatch(submitQuery()),
+  exportCsvData: () => dispatch(exportCsvData())
 });
 
 export default connect(
