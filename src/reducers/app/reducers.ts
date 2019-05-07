@@ -13,13 +13,12 @@ import {
   CHANGE_FILTER,
   SET_ROW_COUNT,
   SET_AVAILABLE_VALUES,
-  SET_SELECTED_VALUES,
-  REMOVE_VALUE,
   COMPLETE_FULL_LOAD,
+  SET_FILTER_COUNT,
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
-import { TezosAccount, TezosBlock, TezosOperation } from '../../types';
+import { TezosAccount, TezosBlock, TezosOperation, Filter } from '../../types';
 import { getLocalAttributes } from '../../utils/attributes';
 
 const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
@@ -29,18 +28,18 @@ export interface AppState {
   filters: ConseilQuery;
   network: string;
   blocks: TezosBlock[];
-  availableValues: Array<string>;
+  availableValues: object;
   columns: object;
   attributes: object;
-  operators: object[];
+  operators: object;
   selectedFilters: object;
   accounts: TezosAccount[];
   operations: TezosOperation[];
   isLoading: boolean;
   selectedEntity: string;
   isFullLoaded: boolean;
-  selectedValues: Array<object>;
   rowCount: number;
+  filterCount: object;
 }
 
 const initialState: AppState = {
@@ -53,32 +52,60 @@ const initialState: AppState = {
     operations: [],
     accounts: [],
   },
-  operators: [
-    { name: 'BETWEEN', displayName: 'between' },
-    { name: 'EQ', displayName: 'equals' },
-    { name: 'IN', displayName: 'in' },
-    { name: 'LIKE', displayName: 'like' },
-    { name: 'LT', displayName: 'less than' },
-    { name: 'BEFORE', displayName: 'before' },
-    { name: 'GT', displayName: 'greater than' },
-    { name: 'AFTER', displayName: 'after' },
-    { name: 'STARTSWITH', displayName: 'starts with' },
-    { name: 'ENDSWITH', displayName: 'ends With' },
-    { name: 'ISNULL', displayName: 'is null' },
-  ],
+  operators: {
+    numeric: [
+      { name: 'eq', displayName: 'is' },
+      { name: 'noteq', displayName: 'is not' },
+      { name: 'in', displayName: 'is in' },
+      { name: 'between', displayName: 'is between' },
+      { name: 'lt', displayName: 'is less than' },
+      { name: 'gt', displayName: 'is greater than' },
+      { name: 'isnull', displayName: 'is null' },
+      { name: 'isnotnull', displayName: 'is not null' },
+    ],
+    string: [
+      { name: 'eq', displayName: 'is' },
+      { name: 'noteq', displayName: 'is not' },
+      { name: 'in', displayName: 'is in' },
+      { name: 'like', displayName: 'is like' },
+      { name: 'startsWith', displayName: 'starts with' },
+      { name: 'endsWith', displayName: 'ends with' },
+      { name: 'isnull', displayName: 'is null' },
+      { name: 'isnotnull', displayName: 'is not null' },
+    ],
+    dateTime: [
+      { name: 'eq', displayName: 'is' },
+      { name: 'noteq', displayName: 'is not' },
+      { name: 'in', displayName: 'is in' },
+      { name: 'between', displayName: 'is between' },
+      { name: 'before', displayName: 'is before' },
+      { name: 'after', displayName: 'is after' },
+      { name: 'isnull', displayName: 'is null' },
+      { name: 'isnotnull', displayName: 'is not null' },
+    ],
+    boolean: [{ name: 'eq', displayName: 'is' }],
+  },
   columns: {
     blocks: [],
     operations: [],
     accounts: [],
   },
-  availableValues: [],
+  availableValues: {
+    blocks: {},
+    operations: {},
+    accounts: {},
+  },
   accounts: [],
   operations: [],
   isLoading: false,
   selectedEntity: 'blocks',
   isFullLoaded: false,
-  selectedValues: [],
   rowCount: 50,
+  filterCount: {
+    blocks: 0,
+    operations: 0,
+    accounts: 0,
+  },
 };
 
 const initEntities = {
@@ -94,10 +121,9 @@ const appReducer = (state = initialState, action) => {
     case SET_ITEMS:
       return { ...state, [action.entity]: action.items };
     case SET_COLUMNS: {
-      const columns = state.columns;
-      const newColumns = { ...columns };
-      newColumns[action.entity] = action.items;
-      return { ...state, columns: newColumns };
+      const columns = {...state.columns};
+      columns[action.entity] = action.items;
+      return { ...state, columns };
     }
     case SET_TAB:
       return { ...state, selectedEntity: action.entity };
@@ -108,69 +134,58 @@ const appReducer = (state = initialState, action) => {
     case INIT_DATA:
       return { ...state, ...initialState };
     case SET_ATTRIBUTES: {
-      const attributes = state.attributes;
+      const attributes = { ...state.attributes};
       attributes[action.entity] = action.attributes;
       return { ...state, attributes };
     }
     case ADD_FILTER: {
-      const selectedFilters = state.selectedFilters;
+      const selectedFilters = {...state.selectedFilters};
       let filters = selectedFilters[action.entity];
-      const emptyFilter = {
+      const emptyFilter: Filter = {
         name: '',
         operator: '',
+        operatorType: '',
+        isLowCardinality: false,
+        values: ['']
       };
       filters = filters.concat(emptyFilter);
       selectedFilters[action.entity] = filters;
       return { ...state, selectedFilters };
     }
     case REMOVE_FILTER: {
-      const selectedFilters = state.selectedFilters;
+      const selectedFilters = {...state.selectedFilters};
       let filters = selectedFilters[action.entity];
       filters.splice(action.index, 1);
       selectedFilters[action.entity] = [...filters];
       return { ...state, selectedFilters };
     }
     case REMOVE_ALL_FILTERS: {
-      const selectedFilters = state.selectedFilters;
+      const selectedFilters = {...state.selectedFilters};
       selectedFilters[action.entity] = [];
-      return { ...state, selectedFilters: selectedFilters };
+      const selectedEntity = state.selectedEntity;
+      const filterCount = {...state.filterCount};
+      filterCount[selectedEntity] = 0;
+      return { ...state, selectedFilters, filterCount };
     }
     case CHANGE_FILTER: {
-      const selectedFilters = state.selectedFilters;
+      const selectedFilters = {...state.selectedFilters};
       let filters = selectedFilters[action.entity];
       filters[action.index] = action.filter;
       selectedFilters[action.entity] = [...filters];
       return { ...state, selectedFilters };
     }
     case SET_AVAILABLE_VALUES: {
-      const values = state.availableValues;
-      const newValues = [...values, ...action.availableValues];
-      return { ...state, availableValues: newValues };
+      const availableValues = { ...state.availableValues};
+      const entityValues = {...availableValues[action.entity]};
+      entityValues[action.attribute] = action.availableValues;
+      availableValues[action.entity] = entityValues;
+      return { ...state, availableValues };
     }
-    case REMOVE_VALUE: {
-      const value = state.selectedValues;
-      const incomingValue = Object.keys(action.selectedValue).toString();
-      const values = value.filter(val => {
-        if (Object.keys(val).toString() !== incomingValue) {
-          return val;
-        } else {
-          return null;
-        }
-      });
-      const finalValues = [...values];
-      return { ...state, selectedValues: finalValues };
-    }
-    case SET_SELECTED_VALUES: {
-      const value = state.selectedValues;
-      const incomingValue = Object.keys(action.selectedValue).toString();
-      const values = [];
-      value.forEach(val => {
-        if (Object.keys(val).toString() !== incomingValue) {
-          values.push(val);
-        }
-      });
-      const finalValues = [...values, action.selectedValue];
-      return { ...state, selectedValues: finalValues };
+    case SET_FILTER_COUNT: {
+      const selectedEntity = state.selectedEntity;
+      const filterCount = state.filterCount;
+      filterCount[selectedEntity] = action.count;
+      return { ...state, filterCount };
     }
     case SET_ROW_COUNT: {
       return { ...state, rowCount: action.rows };

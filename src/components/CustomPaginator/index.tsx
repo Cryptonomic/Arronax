@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import FormControl from '@material-ui/core/FormControl';
 import SelectField from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import Button from '@material-ui/core/Button';
 import ArrowDropDown from '@material-ui/icons/KeyboardArrowDown';
 import LeftChevronIcon from '@material-ui/icons/ChevronLeft';
 import RightChevronIcon from '@material-ui/icons/ChevronRight';
@@ -11,7 +10,7 @@ import RightChevronIcon from '@material-ui/icons/ChevronRight';
 const Container = styled.div`
   position: absolute;
   right: 30px;
-  top: -50px;
+  top: 225px;
   height: 52px;
   display: flex;
   align-items: center;
@@ -80,6 +79,9 @@ const ButtonWrapper = styled.div`
   cursor: ${({ isActive }) => (isActive ? 'pointer' : 'default')};
   pointer-events: ${({ isActive }) => (isActive ? 'auto' : 'none')};
   border-radius: ${({ isNext }) => (isNext ? '0 5px 5px 0' : '5px 0 0 5px')};
+  &:hover {
+    border-color: rgb(180, 231, 242);
+  }
 `;
 
 const LeftIconWrapper = styled(LeftChevronIcon)`
@@ -152,11 +154,11 @@ const CustomPaginator: React.StatelessComponent<Props> = props => {
         <LeftIconWrapper isactive={page !== 0 ? 1 : 0} />
       </ButtonWrapper>
       <ButtonWrapper
-        isActive={page !== pageCount}
+        isActive={page !== pageCount - 1 ? 1 : 0}
         isNext
         onClick={() => onChangePage(page + 1)}
       >
-        <RightIconWrapper isactive={page !== pageCount ? 1 : 0} />
+        <RightIconWrapper isactive={page !== pageCount - 1 ? 1 : 0} />
       </ButtonWrapper>
     </Container>
   );

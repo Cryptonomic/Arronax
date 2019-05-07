@@ -14,7 +14,7 @@ export const getLoading = createSelector(
 
 export const getColumns = createSelector(
   getAppState,
-  apps => apps.columns
+  apps => apps.columns[apps.selectedEntity]
 );
 
 export const getFilter = createSelector(
@@ -49,17 +49,17 @@ export const getSelectedFilters = createSelector(
 
 export const getAvailableValues = createSelector(
   getAppState,
-  apps => apps.availableValues
-);
-
-export const getSelectedValues = createSelector(
-  getAppState,
-  apps => apps.selectedValues
+  apps => apps.availableValues[apps.selectedEntity]
 );
 
 export const getRows = createSelector(
   getAppState,
   apps => apps.rowCount
+);
+
+export const getFilterCount = createSelector(
+  getAppState,
+  apps => apps.filterCount[apps.selectedEntity]
 );
 
 export const getIsFullLoaded = createSelector(

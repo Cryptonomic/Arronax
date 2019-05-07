@@ -125,8 +125,8 @@
 }
 
 @font-face {
-  font-family: 'Tezos-icons';
-  src: url('../../resources/fonts/TezosIcons/Tezos-icons.ttf') format('truetype');
+  font-family: 'Arronax-icons';
+  src: url('../../resources/fonts/ArronaxIcons/arronax.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }

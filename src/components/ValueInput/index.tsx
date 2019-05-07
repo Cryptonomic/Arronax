@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import TextField from '@material-ui/core/TextField';
+import { ConseilOperator } from 'conseiljs';
 
 const Container = styled.div``;
 
@@ -32,60 +33,32 @@ const TextInput = styled(TextField)`
   line-height: 17px;
   width: 150px;
 `;
-
 interface Props {
-  filter: string;
-  filterOperator: string;
-  inputProps?: object;
+  operator: string;
   InputProps?: object;
-  placeholder?: string;
-  filterInputState: any[];
-  setFilterInputState: (
-    value: string,
-    filterName: string,
-    filterOperator: string
-  ) => void;
+  values: Array<string>;
+  onChange: (value: string, index: number) => void;
 }
 
-class ValueInput extends React.Component<Props> {
-  handleInputChange = event => {
-    const { filter, setFilterInputState, filterOperator } = this.props;
-    setFilterInputState(event.target.value, filter, filterOperator);
-  };
-
-  handleBetweenChange = event => {
-    const { filter, setFilterInputState, filterOperator } = this.props;
-    setFilterInputState(`-${event.target.value}`, filter, filterOperator);
-  };
-
-  render() {
+const ValueInput: React.StatelessComponent<Props> = props => {
     const {
       InputProps,
-      inputProps,
-      filterOperator,
-      filter,
-      filterInputState,
-    } = this.props;
-
-    const findValue = filterInputState.find(
-      value => Object.keys(value).toString() === filter
-    );
-    const currentValue = findValue ? Object.values(findValue).toString() : null;
-    const betweenValue = findValue ? Object.values(findValue).toString() : null;
-    const split = findValue ? betweenValue.split('-') : null;
-    const firstBetweenValue = split ? split[0] : null;
-    const secondBetweenValue = split ? split[1] : null;
+      operator,
+      values,
+      onChange
+    } = props;
     let input;
-    if (filterOperator === 'BETWEEN' || filterOperator === 'IN') {
+
+    // Render specific input type based on operators
+    if (operator === ConseilOperator.BETWEEN || operator === ConseilOperator.IN) {
       input = (
         <React.Fragment>
           <Container>
             <TextInput
-              value={firstBetweenValue ? firstBetweenValue : ''}
-              inputProps={inputProps}
+              value={values[0]}
               InputProps={InputProps}
-              placeholder={`Insert Value`}
-              onChange={event => this.handleInputChange(event)}
+              placeholder='Insert Value'
+              onChange={event => onChange(event.target.value, 0)}
             />
           </Container>
           <HR />
@@ -93,33 +66,30 @@ class ValueInput extends React.Component<Props> {
           <HR />
           <Container>
             <TextInput
-              disabled={firstBetweenValue ? false : true}
-              value={secondBetweenValue ? secondBetweenValue : ''}
-              inputProps={inputProps}
+              disabled={!values[0]}
+              value={values[1] ? values[1] : ''}
               InputProps={InputProps}
-              placeholder={`Insert Value`}
-              onChange={event => this.handleBetweenChange(event)}
+              placeholder='Insert Value'
+              onChange={event => onChange(event.target.value, 1)}
             />
           </Container>
         </React.Fragment>
       );
-    } else if (filterOperator === 'ISNULL') {
+    } else if (operator === ConseilOperator.ISNULL || operator === 'isnotnull') {
       input = null;
     } else {
       input = (
         <Container>
           <TextInput
-            value={currentValue ? currentValue : ''}
-            inputProps={inputProps}
+            value={values[0]}
             InputProps={InputProps}
-            placeholder={`Insert Value`}
-            onChange={event => this.handleInputChange(event)}
+            placeholder='Insert Value'
+            onChange={event => onChange(event.target.value, 0)}
           />
         </Container>
       );
     }
     return <React.Fragment>{input}</React.Fragment>;
-  }
 }
 
 export default ValueInput;

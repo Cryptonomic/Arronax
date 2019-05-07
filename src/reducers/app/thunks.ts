@@ -4,6 +4,8 @@ import {
   ConseilQueryBuilder,
   ConseilSortDirection,
   TezosConseilClient,
+  ConseilOperator,
+  ConseilOutput
 } from 'conseiljs';
 const { executeEntityQuery } = ConseilDataClient;
 const {
@@ -22,6 +24,7 @@ import {
   setColumnsAction,
   setAttributesAction,
   completeFullLoadAction,
+  setFilterCountAction,
 } from './actions';
 import getConfigs from '../../utils/getconfig';
 
@@ -47,29 +50,34 @@ const getAttributeNames = attributes => {
 };
 
 const nameList = {
-  operations: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind'],
-  accounts: ['account_id', 'manager', 'delegate_value', 'balance', 'block_level', 'counter'],
-  blocks: ['level', 'timestamp', 'hash', 'predecessor']
+  operations: [
+    'timestamp',
+    'block_level',
+    'source',
+    'destination',
+    'amount',
+    'kind',
+  ],
+  accounts: [
+    'account_id',
+    'manager',
+    'delegate_value',
+    'balance',
+    'block_level',
+    'counter',
+  ],
+  blocks: ['level', 'timestamp', 'hash', 'predecessor'],
 };
 
 const getInitialColumns = (entity, columns) => {
-  const sorted = columns.sort((a, b) =>
-    a.displayName.localeCompare(b.displayName)
-  );
-  return sorted.filter(c => nameList[entity].indexOf(c.name) >= 0);
-};
-
-const convertValues = val => {
-  let newVal = [];
-  val.forEach(val => {
-    if (val !== null) {
-      const item = val.replace(/\s+/g, '_').toLowerCase();
-      newVal.push(item);
-    } else if (val === null) {
-      newVal.push(null);
+  let newColumns = [];
+  columns.forEach(c => {
+    const index = nameList[entity].indexOf(c.name);
+    if (index >= 0) {
+      newColumns[index] = c;
     }
   });
-  return newVal[0];
+  return newColumns;
 };
 
 export const setItems = (type, items) => {
@@ -82,95 +90,6 @@ export const setColumns = (type, items) => {
   return dispatch => {
     dispatch(setColumnsAction(type, items));
   };
-};
-
-export const submitQuery = () => async (dispatch, state) => {
-  dispatch(setLoadingAction(true));
-  const entity = state().app.selectedEntity;
-  const selectedFilters = state().app.selectedFilters[entity];
-  const network = state().app.network;
-  const attributes = state().app.columns;
-  const selectedValues = state().app.selectedValues;
-  const config = getConfig(network);
-  const limit = state().app.rowCount;
-  const attributeNames = getAttributeNames(attributes[entity]);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.key,
-  };
-  const lowCardinalities = [
-    'spendable',
-    'delegate_setable',
-    'kind',
-    'spendable',
-    'delegatable',
-    'status',
-  ];
-  let valuesToConvert = [];
-  let finalValues = [];
-  selectedValues.forEach(value => {
-    if (entity !== 'blocks') {
-      const key = Object.keys(value).toString();
-      if (lowCardinalities.includes(key)) {
-        valuesToConvert.push(Object.values(value).toString());
-        // Convert values with low cardinalities from their display values (eg: Seed Nonce Revelation)
-        // into the required values for interacting with ConseilJS (eg: seed_nonce_revelation)
-        const newValues = convertValues(valuesToConvert);
-        finalValues.push({ [key]: newValues });
-      } else {
-        finalValues.push(value);
-      }
-    } else {
-      finalValues.push(value);
-    }
-  });
-  let query = blankQuery();
-  query = addFields(query, ...attributeNames);
-  selectedFilters.forEach(filter => {
-    finalValues.forEach(value => {
-      const valueKeys = Object.keys(value).toString();
-      const values = Object.values(value).toString();
-      if (filter.name === valueKeys && values.indexOf('-') !== -1) {
-        // Find corresponding filters and their values and add them to the query
-        // Find between values (eg: 12000-1400) and split them at the -
-        // This returns ["1200", "1400"] which is the correct way to interact with ConseilJS with between values
-        const queryValues = values.split('-');
-        return (query = addPredicate(
-          query,
-          filter.name,
-          filter.operator.toLowerCase(),
-          queryValues,
-          false
-        ));
-      } else if (filter.name === valueKeys) {
-        const queryValue = Object.values(value);
-        // Find corresponding filters and their values and add them to the query
-        return (query = addPredicate(
-          query,
-          filter.name,
-          filter.operator.toLowerCase(),
-          queryValue,
-          false
-        ));
-      }
-    });
-  });
-  query = setLimit(query, 5000);
-  // Add this to set ordering
-  query = addOrdering(
-    query,
-    !attributeNames.includes('level') ? 'block_level' : 'level',
-    ConseilSortDirection.DESC
-  );
-  const items = await executeEntityQuery(
-    serverInfo,
-    'tezos',
-    network,
-    entity,
-    query
-  );
-  await dispatch(setItemsAction(entity, items));
-  dispatch(setLoadingAction(false));
 };
 
 export const fetchValues = (attribute: string) => async (dispatch, state) => {
@@ -189,10 +108,7 @@ export const fetchValues = (attribute: string) => async (dispatch, state) => {
     selectedEntity,
     attribute
   );
-  const newValues = values.map(newValue => {
-    return { [attribute]: newValue };
-  });
-  dispatch(setAvailableValuesAction(newValues));
+  dispatch(setAvailableValuesAction(selectedEntity, attribute, values));
   dispatch(setLoadingAction(false));
 };
 
@@ -204,10 +120,10 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
   await dispatch(initLoad());
 };
 
-export const fetchColumns = (columns, entity) => async (dispatch, state) => {
+export const resetColumns = () => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
-  const newColumns = await getInitialColumns(selectedEntity, columns);
-  columns[selectedEntity] = newColumns;
+  const attributes = state().app.attributes;
+  const newColumns = await getInitialColumns(selectedEntity, attributes[selectedEntity]);
   await dispatch(setColumns(selectedEntity, newColumns));
 };
 
@@ -313,4 +229,95 @@ export const syncAttributes = () => async (dispatch, state) => {
     const attributes = state().app.attributes;
     saveAttributes(attributes, blockHead[0].level);
   }
+};
+
+const getMainQuery = (attributeNames, selectedFilters) => {
+  let query = blankQuery();
+  query = addFields(query, ...attributeNames);
+  selectedFilters.forEach(filter => {
+    if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN) && filter.values.length === 1) {
+      return true;
+    }
+    let isInvert = false;
+    let operator = filter.operator;
+    if (filter.operator === 'isnotnull') {
+      isInvert = true;
+      operator = ConseilOperator.ISNULL;
+    } else if (filter.operator === 'noteq') {
+      operator = ConseilOperator.EQ;
+      isInvert = true;
+    }
+    query = addPredicate(
+      query,
+      filter.name,
+      operator,
+      filter.values,
+      isInvert
+    );
+  });
+  // Add this to set ordering
+  query = addOrdering(
+    query,
+    !attributeNames.includes('level') ? 'block_level' : 'level',
+    ConseilSortDirection.DESC
+  );
+
+  return query;
+}
+
+export const exportCsvData = () => async (dispatch, state) => {
+  const selectedEntity = state().app.selectedEntity;
+  const selectedFilters = state().app.selectedFilters[selectedEntity];
+  const network = state().app.network;
+  const config = getConfig(network);
+  const attributes = state().app.columns;
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
+
+  const attributeNames = getAttributeNames(attributes[selectedEntity]);
+  let query = getMainQuery(attributeNames, selectedFilters);
+  query = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
+
+  const result: any = await executeEntityQuery(serverInfo, 'tezos', network, selectedEntity, query);
+  let blob = new Blob([result]);
+  if (window.navigator.msSaveOrOpenBlob) {
+    window.navigator.msSaveBlob(blob, 'arronax-results.csv');
+  } else  {
+    const a = window.document.createElement("a");
+    a.href = window.URL.createObjectURL(blob);
+    a.download = 'arronax-results.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+}
+
+export const submitQuery = () => async (dispatch, state) => {
+  dispatch(setLoadingAction(true));
+  const entity = state().app.selectedEntity;
+  const selectedFilters = state().app.selectedFilters[entity];
+  const network = state().app.network;
+  const attributes = state().app.columns;
+  const config = getConfig(network);
+  const attributeNames = getAttributeNames(attributes[entity]);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
+
+  let query = getMainQuery(attributeNames, selectedFilters);
+  query = setLimit(query, 5000);
+
+  const items = await executeEntityQuery(
+    serverInfo,
+    'tezos',
+    network,
+    entity,
+    query
+  );
+  await dispatch(setFilterCountAction(selectedFilters.length));
+  await dispatch(setItemsAction(entity, items));
+  dispatch(setLoadingAction(false));
 };

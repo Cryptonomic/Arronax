@@ -3,12 +3,10 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
 import {
   getNetwork,
-  getAttributes,
   getRows,
+  getColumns
 } from '../../reducers/app/selectors';
 import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
@@ -52,10 +50,8 @@ const getSorting = (order, orderBy) => {
 
 interface Props {
   rowsPerPage: number;
-  attributes: any[];
-  entity: string;
   items: any[];
-  selectedColumns: object;
+  selectedColumns: any[];
   network: string;
 }
 
@@ -89,7 +85,7 @@ class CustomTable extends React.Component<Props, State> {
   };
 
   render() {
-    const { items, entity, network, selectedColumns, rowsPerPage } = this.props;
+    const { items, network, selectedColumns, rowsPerPage } = this.props;
     const { page, order, orderBy } = this.state;
     const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
     const realRows = stableSort(items, getSorting(order, orderBy)).slice(
@@ -101,7 +97,7 @@ class CustomTable extends React.Component<Props, State> {
         <Overflow>
           <TableContainer>
             <CustomTableHeader
-              rows={selectedColumns[entity]}
+              rows={selectedColumns}
               order={order}
               orderBy={orderBy}
               createSortHandler={this.handleRequestSort}
@@ -111,9 +107,8 @@ class CustomTable extends React.Component<Props, State> {
                 return (
                   <CustomTableRow
                     network={network}
-                    selectedColumns={selectedColumns[entity]}
+                    selectedColumns={selectedColumns}
                     key={index}
-                    entity={entity}
                     item={row}
                   />
                 );
@@ -134,8 +129,8 @@ class CustomTable extends React.Component<Props, State> {
 
 const mapStateToProps = (state: any) => ({
   rowsPerPage: getRows(state),
-  attributes: getAttributes(state),
   network: getNetwork(state),
+  selectedColumns: getColumns(state)
 });
 
 export default connect(
