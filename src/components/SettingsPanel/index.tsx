@@ -5,11 +5,11 @@ import CloseIcon from '@material-ui/icons/CloseOutlined';
 import SwipeableViews from 'react-swipeable-views';
 import FilterPanel from '../FilterPanel';
 import ColumnsPanel from '../ColumnsPanel';
-import { ToolType } from 'src/types';
+import { ToolType } from '../../types';
 
 const Container = styled.div`
   position: relative;
-  padding: 50px 77px 50px 50px;
+  padding: 40px 77px 12px 50px;
   background: rgb(236, 237, 239);
   box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.5);
 `;
@@ -35,27 +35,39 @@ interface Props {
   onClose: () => void;
 }
 
-const SettingsPanel: React.StatelessComponent<Props> = props => {
-  const {
-    isCollapsed,
-    selectedTool,
-    onClose,
-    onSubmit
-  } = props;
-  const activeIndex = selectedTool === ToolType.FILTER ? 0 : 1;
-  return (
-    <Collapse in={isCollapsed}>
-      <Container>
-        <CloseIconContainer onClick={onClose}>
-          <CloseIconWrapper />
-        </CloseIconContainer>
-        <SwipeableViews index={activeIndex} animateHeight>
-          <FilterPanel onSubmit={onSubmit} />
-          <ColumnsPanel onSubmit={onSubmit} />
-        </SwipeableViews>
-      </Container>
-    </Collapse>
-  );
+class SettingsPanel extends React.Component<Props, {}> {
+  swipeableActions = null;
+  componentDidMount() {
+    this.swipeableActions.updateHeight();
+  }
+  render() {
+    const {
+      isCollapsed,
+      selectedTool,
+      onClose,
+      onSubmit
+    } = this.props;
+    const activeIndex = selectedTool === ToolType.FILTER ? 0 : 1;
+    return (
+      <Collapse in={isCollapsed}>
+        <Container>
+          <CloseIconContainer onClick={onClose}>
+            <CloseIconWrapper />
+          </CloseIconContainer>
+          <SwipeableViews
+            index={activeIndex}
+            action={actions => {
+              this.swipeableActions = actions;
+            }}
+            animateHeight
+          >
+            <FilterPanel onSubmit={onSubmit} swipeRef={this.swipeableActions} />
+            <ColumnsPanel onSubmit={onSubmit} />
+          </SwipeableViews>
+        </Container>
+      </Collapse>
+    );
+  }
 };
 
 export default SettingsPanel;

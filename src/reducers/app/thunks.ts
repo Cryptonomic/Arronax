@@ -174,10 +174,10 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
   await dispatch(initLoad());
 };
 
-export const fetchColumns = (columns, entity) => async (dispatch, state) => {
+export const resetColumns = () => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
-  const newColumns = await getInitialColumns(selectedEntity, columns);
-  columns[selectedEntity] = newColumns;
+  const attributes = state().app.attributes;
+  const newColumns = await getInitialColumns(selectedEntity, attributes[selectedEntity]);
   await dispatch(setColumns(selectedEntity, newColumns));
 };
 

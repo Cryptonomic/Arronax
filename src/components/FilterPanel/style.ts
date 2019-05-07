@@ -78,7 +78,7 @@ export const RefreshIcon = styled(ArronaxIcon)`
 
 export const ButtonContainer = styled.div`
   display: flex;
-  margin-top: 25px;
+  padding: 25px;
   justify-content: flex-end;
 `;
 

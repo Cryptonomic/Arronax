@@ -12,16 +12,19 @@ import {
 import {
   setColumnsAction
 } from '../../reducers/app/actions';
+import { resetColumns } from '../../reducers/app/thunks';
 
 const Container = styled.div`
   width: ${({ count }) => count*372 + 'px' };
   margin: auto;
+  max-width: 100%;
 `;
 
 const MainContainer = styled.div`
-  border: 1px solid rgb(237, 237, 237);
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.05);
   background-color: white;
+  max-width: 100%;
+  overflow-x: auto;
 `;
 
 const ColumnsContainer = styled.div`
@@ -51,7 +54,7 @@ const RefreshIcon = styled(ArronaxIcon)`
 
 const ButtonContainer = styled.div`
   display: flex;
-  margin-top: 25px;
+  padding: 25px;
   justify-content: flex-end;
 `;
 
@@ -85,6 +88,7 @@ type Props = {
   attributes: any;
   onSubmit: () => void;
   setColumns: (entity: string, columns: object[]) => void;
+  onResetColumns: () => void;
 };
 
 type States = {
@@ -132,8 +136,8 @@ class ColumnsPanel extends React.Component<Props, States> {
   };
 
   cancelChange = () => {
-    const { selectedColumns } = this.props;
-    this.setState({ selected: [...selectedColumns] });
+    const { onResetColumns } = this.props;
+    onResetColumns();
   };
 
   render() {
@@ -191,7 +195,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setColumns: (entity: string, columns: object[]) =>
-    dispatch(setColumnsAction(entity, columns))
+    dispatch(setColumnsAction(entity, columns)),
+  onResetColumns: () =>
+    dispatch(resetColumns())
 });
 
 export default connect(

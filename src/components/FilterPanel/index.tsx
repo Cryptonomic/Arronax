@@ -53,6 +53,7 @@ type Props = {
   attributes: any[];
   filters: Array<Filter>;
   operators: any;
+  swipeRef: any;
   fetchValues: (value: string) => void;
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
@@ -62,9 +63,10 @@ type Props = {
 };
 
 class FilterPanel extends React.Component<Props, {}> {
-  onAddFilter = () => {
-    const { addFilter, selectedEntity } = this.props;
-    addFilter(selectedEntity);
+  onAddFilter = async () => {
+    const { addFilter, selectedEntity, swipeRef } = this.props;
+    await addFilter(selectedEntity);
+    swipeRef.updateHeight();
   };
 
   onRemoveFilter = (index) => {

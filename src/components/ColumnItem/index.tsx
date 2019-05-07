@@ -49,7 +49,7 @@ const ColumnItem: React.StatelessComponent<Props> = (props) => {
         checked={isChecked}
       />
       {name}
-      {isChecked && <DraggableIcon size="23px" color="#d8d8d8" iconName="icon-reorder"/>}
+      {/* {isChecked && <DraggableIcon size="23px" color="#d8d8d8" iconName="icon-reorder"/>} */}
     </Container>    
   );
 };
