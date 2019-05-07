@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
-import PlusIcon from '@material-ui/icons/Add';
 import IconButton from '@material-ui/core/IconButton';
 import { ConseilOperator } from 'conseiljs';
 import ArronaxIcon from 'components/ArronaxIcon';
@@ -17,70 +15,29 @@ import {
   addFilterAction,
   removeFilterAction,
   changeFilterAction,
+  removeAllFiltersAction
 } from '../../reducers/app/actions';
 import FilterSelect from '../FilterSelect';
 import ValueSelect from '../ValueSelect';
 import ValueInput from '../ValueInput';
 import { Filter } from '../../types';
 
-const Container = styled.div`
-  width: 100%;
-  background: #fbfbfb;
-  border: 1px solid #ededed;
-  border-radius: 3px;
-`;
-
-const FilterItemContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 24px 0 30px;
-`;
-
-const FilterItemGr = styled.div`
-  border-radius: 5px;
-  border: 1px solid #ecedef;
-  display: flex;
-`;
-
-const AddFilterFooter = styled.div`
-  width: 100%;
-  height: ${({ isFilters }) => (isFilters ? '67px' : '93px')};
-  display: flex;
-  align-items: center;
-  padding-left: 24px;
-  border-top: ${({ isFilters }) => (isFilters ? '1px solid #ECEDEF' : 'none')};
-  margin-top: ${({ isFilters }) => (isFilters ? '18px' : '0')};
-`;
-
-const AddFilterButton = styled.div`
-  color: #56c2d9;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  opacity: ${({ isDisabled }) => (isDisabled ? 0.5 : 1)};
-  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'initial')};
-`;
-
-const PlusIconWrapper = styled(PlusIcon)`
-  &&& {
-    color: #56c2d9;
-    font-size: 27px;
-  }
-`;
-
-const FilterExpTxt = styled.div`
-  color: #9b9b9b;
-  font-size: 18px;
-  margin-left: 21px;
-`;
-
-const HR = styled.div`
-  width: 1px;
-  background-color: #ecedef;
-`;
+import {
+  Container,
+  HeaderTxt,
+  MainContainer,
+  FilterItemContainer,
+  FilterItemGr,
+  AddFilterFooter,
+  AddFilterButton,
+  PlusIconWrapper,
+  FilterExpTxt,
+  HR,
+  RefreshIcon,
+  ButtonContainer,
+  RunButton,
+  ResetButton
+} from './style';
 
 const attrTabValue = {
   blocks: 'block',
@@ -90,24 +47,26 @@ const attrTabValue = {
 
 const CARDINALITY_NUMBER = 15;
 
-
 type Props = {
   availableValues: object;
   selectedEntity: string;
   attributes: any[];
   filters: Array<Filter>;
   operators: any;
+  swipeRef: any;
   fetchValues: (value: string) => void;
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
   changeFilter: (entity: string, filter: object, index: number) => void;
+  removeAllFilters: (entity: string) => void;
+  onSubmit: () => void;
 };
 
-
 class FilterPanel extends React.Component<Props, {}> {
-  onAddFilter = () => {
-    const { addFilter, selectedEntity } = this.props;
-    addFilter(selectedEntity);
+  onAddFilter = async () => {
+    const { addFilter, selectedEntity, swipeRef } = this.props;
+    await addFilter(selectedEntity);
+    swipeRef.updateHeight();
   };
 
   onRemoveFilter = (index) => {
@@ -176,13 +135,22 @@ class FilterPanel extends React.Component<Props, {}> {
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
+  onResetFilters = () => {
+    const {
+      removeAllFilters,
+      selectedEntity
+    } = this.props;
+    removeAllFilters(selectedEntity);
+  };
+
   render() {
     const {
       selectedEntity,
       attributes,
       filters,
       operators,
-      availableValues
+      availableValues,
+      onSubmit
     } = this.props;
     const entityName = attrTabValue[selectedEntity];
 
@@ -201,80 +169,92 @@ class FilterPanel extends React.Component<Props, {}> {
 
     return (
       <Container>
-        {filters.map((filter: Filter, index) => {
-          const newAttributes = attributes.filter((attr: any) => {
-            if (attr.name === filter.name) {
-              return true;
-            }
-            const pos = filters.findIndex(
-              (item: any) => item.name === attr.name
-            );
-            return pos === -1;
-          });
+        <HeaderTxt>Filter</HeaderTxt>
+        <MainContainer>
+          {filters.map((filter: Filter, index) => {
+            const newAttributes = attributes.filter((attr: any) => {
+              if (attr.name === filter.name) {
+                return true;
+              }
+              const pos = filters.findIndex(
+                (item: any) => item.name === attr.name
+              );
+              return pos === -1;
+            });
 
-          return (
-            <FilterItemContainer key={index}>
-              <FilterItemGr>
-                <FilterSelect
-                  value={filter.name}
-                  placeholder={`Select ${entityName} Attribute`}
-                  items={newAttributes}
-                  onChange={attr => this.onFilterNameChange(attr, index)}
-                />
-                {filter.name && <HR />}
-                {filter.name && (
+            return (
+              <FilterItemContainer key={index}>
+                <FilterItemGr>
                   <FilterSelect
-                    value={filter.operator}
-                    placeholder='Select Operator'
-                    items={operators[filter.operatorType]}
-                    onChange={operator =>
-                      this.onFilterOperatorChange(operator, index)
-                    }
+                    value={filter.name}
+                    placeholder={`Select ${entityName} Attribute`}
+                    items={newAttributes}
+                    onChange={attr => this.onFilterNameChange(attr, index)}
                   />
-                )}
-                {filter.operator && <HR />}
-                {filter.operator && (filter.operator === ConseilOperator.EQ ||  filter.operator === 'noteq') &&
-                  filter.isLowCardinality && (
-                    <ValueSelect
-                      placeholder='Select Value'
-                      selectedValue={filter.values[0]}
-                      values={availableValues[filter.name]}
-                      onChange={value => this.onFilterValueChange(value, index, 0)}
+                  {filter.name && <HR />}
+                  {filter.name && (
+                    <FilterSelect
+                      value={filter.operator}
+                      placeholder='Select Operator'
+                      items={operators[filter.operatorType]}
+                      onChange={operator =>
+                        this.onFilterOperatorChange(operator, index)
+                      }
                     />
-                )}
-                {filter.operator && !filter.isLowCardinality && (
-                  <ValueInput
-                    values={filter.values}
-                    operator={filter.operator}
-                    InputProps={{ disableUnderline: true }}
-                    onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
-                  />
-                )}
-              </FilterItemGr>
-              <IconButton
-                aria-label="Delete"
-                onClick={() => this.onRemoveFilter(index)}
-              >
-                <ArronaxIcon size="37px" color="#d8d8d8" iconName="icon-delete" />
-              </IconButton>
-            </FilterItemContainer>
-          );
-        })}
+                  )}
+                  {filter.operator && <HR />}
+                  {filter.operator && (filter.operator === ConseilOperator.EQ ||  filter.operator === 'noteq') &&
+                    filter.isLowCardinality && (
+                      <ValueSelect
+                        placeholder='Select Value'
+                        selectedValue={filter.values[0]}
+                        values={availableValues[filter.name]}
+                        onChange={value => this.onFilterValueChange(value, index, 0)}
+                      />
+                  )}
+                  {filter.operator && !filter.isLowCardinality && (
+                    <ValueInput
+                      values={filter.values}
+                      operator={filter.operator}
+                      InputProps={{ disableUnderline: true }}
+                      onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
+                    />
+                  )}
+                </FilterItemGr>
+                <IconButton
+                  aria-label="Delete"
+                  onClick={() => this.onRemoveFilter(index)}
+                >
+                  <ArronaxIcon size="37px" color="#d8d8d8" iconName="icon-delete" />
+                </IconButton>
+              </FilterItemContainer>
+            );
+          })}
 
-        <AddFilterFooter isFilters={filters.length > 0}>
-          <AddFilterButton
-            onClick={this.onAddFilter}
-            isDisabled={disableAddFilter}
-          >
-            <PlusIconWrapper />
-            Add Filter
-          </AddFilterButton>
-          {filters.length == 0 && (
-            <FilterExpTxt>
-              You can filter by all {entityName} attributes and more.
-            </FilterExpTxt>
-          )}
-        </AddFilterFooter>
+          <AddFilterFooter isFilters={filters.length > 0}>
+            <AddFilterButton
+              onClick={this.onAddFilter}
+              isDisabled={disableAddFilter}
+            >
+              <PlusIconWrapper />
+              Add Filter
+            </AddFilterButton>
+            {filters.length == 0 && (
+              <FilterExpTxt>
+                You can filter by all {entityName} attributes and more.
+              </FilterExpTxt>
+            )}
+          </AddFilterFooter>
+        </MainContainer>
+        <ButtonContainer>
+          <ResetButton onClick={this.onResetFilters}>
+            <RefreshIcon size="23px" color="#56c2d9" iconName="icon-reset"/>
+            Reset
+          </ResetButton>
+          <RunButton onClick={onSubmit}>
+            Run
+          </RunButton>
+        </ButtonContainer>
       </Container>
     );
   }
@@ -295,6 +275,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch(removeFilterAction(entity, index)),
   changeFilter: (entity: string, filter: object, index: number) =>
     dispatch(changeFilterAction(entity, filter, index)),
+  removeAllFilters: (selectedEntity: string) =>
+    dispatch(removeAllFiltersAction(selectedEntity)),
 });
 
 export default connect(

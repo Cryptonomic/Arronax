@@ -57,3 +57,9 @@ export interface Filter {
   isLowCardinality?: boolean;
   values: Array<string>;
 }
+
+export enum ToolType {
+  FILTER = 'filter',
+  COLUMN = 'column',
+  EXPORT = 'export'
+}

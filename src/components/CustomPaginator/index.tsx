@@ -10,7 +10,7 @@ import RightChevronIcon from '@material-ui/icons/ChevronRight';
 const Container = styled.div`
   position: absolute;
   right: 30px;
-  top: -50px;
+  top: 225px;
   height: 52px;
   display: flex;
   align-items: center;

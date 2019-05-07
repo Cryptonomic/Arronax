@@ -11,6 +11,7 @@ import {
   getItems,
   getIsFullLoaded,
   getFilterCount,
+  getColumns
 } from '../../reducers/app/selectors';
 import {
   changeNetwork,
@@ -27,6 +28,8 @@ import SettingsPanel from 'components/SettingsPanel';
 import Footer from 'components/Footer';
 import Toolbar from 'components/Toolbar';
 import CustomTable from '../CustomTable';
+
+import { ToolType } from '../../types';
 
 import * as octopusSrc from 'assets/sadOctopus.svg';
 
@@ -50,6 +53,7 @@ const LoadingContainer = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
+  z-index: 100;
 `;
 
 const TabsWrapper = styled(Tabs)`
@@ -65,7 +69,6 @@ const TabsWrapper = styled(Tabs)`
 
 const TabContainer = styled.div`
   padding: 0px 30px;
-  position: relative;
   width: 100%;
 `;
 
@@ -167,6 +170,7 @@ export interface Props {
   items: object[];
   isFullLoaded: boolean;
   filterCount: number;
+  selectedColumns: any[];
   removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
@@ -176,14 +180,16 @@ export interface Props {
 }
 
 export interface States {
-  isFilterCollapsed: boolean;
+  isSettingCollapsed: boolean;
+  selectedTool: string
 }
 
 class Arronax extends React.Component<Props, States> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isFilterCollapsed: false
+      isSettingCollapsed: false,
+      selectedTool: ToolType.FILTER
     };
   }
 
@@ -203,13 +209,24 @@ class Arronax extends React.Component<Props, States> {
     await changeTab(value);
   };
 
-  onFilterCollapse = () => {
-    const { isFilterCollapsed } = this.state;
-    this.setState({ isFilterCollapsed: !isFilterCollapsed });
+  onChangeTool = async (tool: string) => {
+    const { isSettingCollapsed, selectedTool } = this.state;
+    if (isSettingCollapsed && selectedTool !== tool) {
+      this.setState({ selectedTool: tool });
+    } else if (!isSettingCollapsed && selectedTool !== tool) {
+      this.setState({ isSettingCollapsed: !isSettingCollapsed, selectedTool: tool });
+    } else {
+      this.setState({ isSettingCollapsed: !isSettingCollapsed });
+    }
+  }
+
+  onSettingCollapse = () => {
+    const { isSettingCollapsed } = this.state;
+    this.setState({ isSettingCollapsed: !isSettingCollapsed });
   };
 
   onCloseFilter = () => {
-    this.setState({ isFilterCollapsed: false });
+    this.setState({ isSettingCollapsed: false });
   };
 
   onResetFilters = () => {
@@ -220,7 +237,7 @@ class Arronax extends React.Component<Props, States> {
     removeAllFilters(selectedEntity);
   };
 
-  onSubmitFilters = async () => {
+  onSubmit = async () => {
     const { submitQuery } = this.props;
     this.onCloseFilter();
     await submitQuery();
@@ -249,9 +266,10 @@ class Arronax extends React.Component<Props, States> {
       selectedEntity,
       items,
       isFullLoaded,
-      filterCount
+      filterCount,
+      selectedColumns
     } = this.props;
-    const { isFilterCollapsed } = this.state;
+    const { isSettingCollapsed, selectedTool } = this.state;
     const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
     return (
       <MainContainer>
@@ -273,16 +291,19 @@ class Arronax extends React.Component<Props, States> {
               />
             ))}
           </TabsWrapper>
-          <SettingsPanel
-            isCollapsed={isFilterCollapsed}
-            onSubmitFilters={this.onSubmitFilters}
-            onResetFilters={this.onResetFilters}
-            onClose={this.onCloseFilter}
-          />
           <Toolbar
+            isCollapsed={isSettingCollapsed}
+            selectedTool={selectedTool}
             filterCount={filterCount}
-            onFilterCollapse={this.onFilterCollapse}
+            columnsCount={selectedColumns.length}
+            onChangeTool={this.onChangeTool}
             onExportCsv={this.onExportCsv}
+          />
+          <SettingsPanel
+            isCollapsed={isSettingCollapsed}
+            selectedTool={selectedTool}
+            onSubmit={this.onSubmit}
+            onClose={this.onCloseFilter}
           />
           <TabContainer component="div">
             {items.length > 0 && <CustomTable items={items} /> }
@@ -294,7 +315,7 @@ class Arronax extends React.Component<Props, States> {
                   <TryTxt>Try a different filter combination.</TryTxt>
                   <ButtonContainer>
                     <ClearButton onClick={this.onClearFilter}>Clear Filters</ClearButton>
-                    <TryButton onClick={this.onFilterCollapse}>Try Again</TryButton>
+                    <TryButton onClick={this.onSettingCollapse}>Try Again</TryButton>
                   </ButtonContainer>
                 </NoResultContent>
               </NoResultContainer>
@@ -319,6 +340,7 @@ const mapStateToProps = (state: any) => ({
   selectedEntity: getEntity(state),
   items: getItems(state),
   isFullLoaded: getIsFullLoaded(state),
+  selectedColumns: getColumns(state),
 });
 
 const mapDispatchToProps = dispatch => ({
