@@ -17,6 +17,7 @@ import {
   changeNetwork,
   initLoad,
   submitQuery,
+  exportCsvData
 } from '../../reducers/app/thunks';
 import {
   setTabAction,
@@ -175,6 +176,7 @@ export interface Props {
   changeTab: (type: string) => void;
   initLoad: () => void;
   submitQuery: () => void;
+  exportCsvData: ()=> void
 }
 
 export interface States {
@@ -218,7 +220,7 @@ class Arronax extends React.Component<Props, States> {
     }
   }
 
-  onFilterCollapse = () => {
+  onSettingCollapse = () => {
     const { isSettingCollapsed } = this.state;
     this.setState({ isSettingCollapsed: !isSettingCollapsed });
   };
@@ -249,6 +251,11 @@ class Arronax extends React.Component<Props, States> {
     } = this.props;
     await removeAllFilters(selectedEntity);
     await submitQuery();
+  }
+
+  onExportCsv = async () => {
+    const { exportCsvData } = this.props;
+    exportCsvData();
   }
 
 
@@ -290,6 +297,7 @@ class Arronax extends React.Component<Props, States> {
             filterCount={filterCount}
             columnsCount={selectedColumns.length}
             onChangeTool={this.onChangeTool}
+            onExportCsv={this.onExportCsv}
           />
           <SettingsPanel
             isCollapsed={isSettingCollapsed}
@@ -307,7 +315,7 @@ class Arronax extends React.Component<Props, States> {
                   <TryTxt>Try a different filter combination.</TryTxt>
                   <ButtonContainer>
                     <ClearButton onClick={this.onClearFilter}>Clear Filters</ClearButton>
-                    <TryButton onClick={this.onFilterCollapse}>Try Again</TryButton>
+                    <TryButton onClick={this.onSettingCollapse}>Try Again</TryButton>
                   </ButtonContainer>
                 </NoResultContent>
               </NoResultContainer>
@@ -342,6 +350,7 @@ const mapDispatchToProps = dispatch => ({
   changeTab: (type: string) => dispatch(setTabAction(type)),
   initLoad: () => dispatch(initLoad()),
   submitQuery: () => dispatch(submitQuery()),
+  exportCsvData: () => dispatch(exportCsvData())
 });
 
 export default connect(

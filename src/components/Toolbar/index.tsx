@@ -100,10 +100,11 @@ interface Props {
   filterCount: number;
   columnsCount: number;
   onChangeTool: (tool: string) => void;
+  onExportCsv: () => void;
 }
 
 const Toolbar: React.StatelessComponent<Props> = props => {
-  const { isCollapsed, selectedTool, filterCount, columnsCount, onChangeTool } = props;
+  const { isCollapsed, selectedTool, filterCount, columnsCount, onChangeTool, onExportCsv } = props;
   return (
     <Container>
       <FilterTool
@@ -117,10 +118,9 @@ const Toolbar: React.StatelessComponent<Props> = props => {
         isactive={isCollapsed && selectedTool === ToolType.COLUMN ? 1 : 0}
         onClick={() => onChangeTool(ToolType.COLUMN)}
       >
-        <ColumnIcon size="20px" color="#4a4a4a" iconName="icon-columns" />
         Columns ({columnsCount})
       </ColumnsTool>
-      <ExportTool>
+      <ExportTool onClick={onExportCsv}>
         <ExportIcon size="20px" color="#4a4a4a" iconName="icon-export" />
         Export CSV
       </ExportTool>
