@@ -194,13 +194,6 @@ const Header: React.StatelessComponent<Props> = props => {
           ))}
         </SelectWrapper>
       </SelectContainer>
-
-      <SearchContainer>
-        <InputContainer placeholder="Operation ID / Address / Block Level or Block Hash" />
-        <IconButton aria-label="Search">
-          <RevertSearchIcon />
-        </IconButton>
-      </SearchContainer>
     </HeaderContainer>
   );
 };
