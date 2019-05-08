@@ -62,7 +62,7 @@ interface Props {
 
 export const displayType = (network, value, name) => {
   if (name === 'account_id' || name === 'manager') {
-    let colors = Buffer.from(Buffer.from(name.substring(3, 6) + name.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255)/74)).toString('hex');
+    let colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255)/74)).toString('hex');
     return (
       <React.Fragment>
         <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
