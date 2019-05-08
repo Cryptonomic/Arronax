@@ -158,3 +158,29 @@ body {
   font-family: 'Roboto', sans-serif;
   font-weight: 300;
 }
+
+.limit-tooltip .rc-tooltip-inner {
+  padding: 23px 12px 23px 23px;
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.3);
+  border: none;
+}
+
+.limit-tooltip .rc-tooltip-arrow {
+  right: 2%;
+}
+.limit-tooltip .rc-tooltip-arrow {
+  top: -10px;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 10px solid rgba(0, 0, 0, 0.3);
+}
+
+.limit-tooltip .rc-tooltip-arrow::after {
+  content: '';
+  position: absolute;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 10px solid white;
+  left: -12px;
+  top: 1px;
+}

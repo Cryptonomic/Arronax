@@ -48,6 +48,7 @@
     "@material-ui/icons": "^3.0.1",
     "conseiljs": "git+https://github.com/Cryptonomic/ConseilJS.git#a39441ce0fbb7a3458e4271f75557ffb94892a2d",
     "moment": "^2.23.0",
+    "rc-tooltip": "^3.7.3",
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
     "react-redux": "^5.0.7",

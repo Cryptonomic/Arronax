@@ -6,6 +6,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ArrowDropDown from '@material-ui/icons/KeyboardArrowDown';
 import LeftChevronIcon from '@material-ui/icons/ChevronLeft';
 import RightChevronIcon from '@material-ui/icons/ChevronRight';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from 'rc-tooltip';
+import ArronaxIcon from '../ArronaxIcon';
+import 'rc-tooltip/assets/bootstrap_white.css';
 
 const Container = styled.div`
   position: absolute;
@@ -64,7 +68,14 @@ const MainTxtWrapper = styled.div`
   color: #4a4a4a;
   font-size: 16px;
   letter-spacing: 1.95px;
-  margin: 0 13px 0 2px;
+  margin: 0 5px 0 2px;
+`;
+
+const LimitTxt = styled.div`
+  color: #4a4a4a;
+  font-size: 16px;
+  letter-spacing: 1.95px;
+  margin: 0;
 `;
 
 const ButtonWrapper = styled.div`
@@ -96,6 +107,26 @@ const RightIconWrapper = styled(RightChevronIcon)`
   }
 `;
 
+const TooltipButton = styled(IconButton)`
+  &&& {
+    padding: 5px;
+    margin-right: 14px;
+  }
+`;
+
+const TooltipContainer = styled.div`
+  width: 344px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  color: rgb(155, 155, 155);
+  background: white;
+`;
+
+const ExportTxt = styled.span`
+  color: #56c2d9;
+`;
+
 const getList = (pageCount, balance, rowsPerPage) => {
   let items = [];
   for (let i = 0; i < pageCount - 1; i++) {
@@ -124,6 +155,14 @@ const getList = (pageCount, balance, rowsPerPage) => {
   return items;
 };
 
+const getLimitTooltip = () => {
+  return (
+    <TooltipContainer>
+      Queries on Arronax are limited to 5000 results. <ExportTxt>Export to CSV</ExportTxt> to see the whole results.
+    </TooltipContainer>
+  );
+}
+
 interface Props {
   rowsPerPage: number;
   page: number;
@@ -147,6 +186,23 @@ const CustomPaginator: React.StatelessComponent<Props> = props => {
         </SelectWrapper>
       </SelectContainer>
       <MainTxtWrapper>of {totalNumber}</MainTxtWrapper>
+      {totalNumber >= 5000 && (
+        <React.Fragment>
+          <LimitTxt>limit</LimitTxt>
+          <Tooltip
+            placement="bottomRight"
+            overlayClassName="limit-tooltip"
+            overlay={() => getLimitTooltip()}
+            align={{
+              offset: [7, 10],
+            }}
+          >
+            <TooltipButton>
+              <ArronaxIcon iconName="icon-question" size="16px" color="#56c2d9" />
+            </TooltipButton>
+          </Tooltip>
+        </React.Fragment>
+      )}
       <ButtonWrapper
         isActive={page !== 0}
         onClick={() => onChangePage(page - 1)}
