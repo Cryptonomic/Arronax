@@ -17,11 +17,11 @@ const TableRowWrapper = styled(TableRow)`
 `;
 
 const StyledCircle1 = styled(Circle)`
-  color: rgb(255, 155, 213);
+  color: ${({ newcolor }) => newcolor};
 `;
 
 const StyledCircle2 = styled(Circle)`
-  color: rgb(215, 195, 113);
+  color: ${({ newcolor }) => newcolor};
   margin-left: -4px;
   margin-right: 7px;
 `;
@@ -62,10 +62,11 @@ interface Props {
 
 export const displayType = (network, value, name) => {
   if (name === 'account_id' || name === 'manager') {
+    let colors = Buffer.from(Buffer.from(name.substring(3, 6) + name.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255)/74)).toString('hex');
     return (
       <React.Fragment>
-        <StyledCircle1 />
-        <StyledCircle2 />
+        <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
+        <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
         {getShortColumn(value)}
         <ClipboardWrapper data-clipboard-text={value}>
           <CopyIcon />
