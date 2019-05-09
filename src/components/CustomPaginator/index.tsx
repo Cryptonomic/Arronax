@@ -158,7 +158,7 @@ const getList = (pageCount, balance, rowsPerPage) => {
 const getLimitTooltip = (onExportCsv) => {
   return (
     <TooltipContainer>
-      Queries on Arronax are limited to 5000 results. <ExportTxt onClick={onExportCsv}>Export to CSV</ExportTxt> to see the whole results.
+      Queries on Arronax are limited to 5000 results. <ExportTxt onClick={onExportCsv}>Export to CSV</ExportTxt> to get the full result set.
     </TooltipContainer>
   );
 }
