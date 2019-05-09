@@ -53,6 +53,7 @@ interface Props {
   items: any[];
   selectedColumns: any[];
   network: string;
+  onExportCsv: () => void;
 }
 
 interface State {
@@ -85,7 +86,7 @@ class CustomTable extends React.Component<Props, State> {
   };
 
   render() {
-    const { items, network, selectedColumns, rowsPerPage } = this.props;
+    const { items, network, selectedColumns, rowsPerPage, onExportCsv } = this.props;
     const { page, order, orderBy } = this.state;
     const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
     const realRows = stableSort(items, getSorting(order, orderBy)).slice(
@@ -121,6 +122,7 @@ class CustomTable extends React.Component<Props, State> {
           page={page}
           totalNumber={items.length}
           onChangePage={this.handleChangePage}
+          onExportCsv={onExportCsv}
         />
       </React.Fragment>
     );

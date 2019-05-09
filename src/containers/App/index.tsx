@@ -306,7 +306,7 @@ class Arronax extends React.Component<Props, States> {
             onClose={this.onCloseFilter}
           />
           <TabContainer component="div">
-            {items.length > 0 && <CustomTable items={items} /> }
+            {items.length > 0 && <CustomTable items={items} onExportCsv={this.onExportCsv} /> }
             {items.length === 0 && (
               <NoResultContainer>
                 <OctopusImg src={octopusSrc} />
