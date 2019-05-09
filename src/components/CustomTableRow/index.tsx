@@ -76,8 +76,8 @@ interface Props {
 }
 
 export const formatValueForDisplay = (platform, network, value, attribute) => {
-  const { name, entity, dataFormat} = attribute;
-  if (name === 'timestamp') {
+  const { name, entity, dataFormat, dataType} = attribute;
+  if (dataType === 'DateTime') {
     return (
       <Moment parse={dataFormat}>
         {value}
