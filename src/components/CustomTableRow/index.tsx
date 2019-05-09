@@ -78,8 +78,9 @@ interface Props {
 export const formatValueForDisplay = (platform, network, value, attribute) => {
   const { name, entity, dataFormat, dataType} = attribute;
   if (dataType === 'DateTime') {
+    const dateFormat = dataFormat ? dataFormat : 'yyyy MMM dd HH:mm Z';
     return (
-      <Moment parse={dataFormat}>
+      <Moment parse={dateFormat}>
         {value}
       </Moment>
     )
