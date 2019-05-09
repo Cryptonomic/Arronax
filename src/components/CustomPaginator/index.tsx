@@ -155,10 +155,10 @@ const getList = (pageCount, balance, rowsPerPage) => {
   return items;
 };
 
-const getLimitTooltip = () => {
+const getLimitTooltip = (onExportCsv) => {
   return (
     <TooltipContainer>
-      Queries on Arronax are limited to 5000 results. <ExportTxt>Export to CSV</ExportTxt> to see the whole results.
+      Queries on Arronax are limited to 5000 results. <ExportTxt onClick={onExportCsv}>Export to CSV</ExportTxt> to see the whole results.
     </TooltipContainer>
   );
 }
@@ -168,10 +168,11 @@ interface Props {
   page: number;
   totalNumber: number;
   onChangePage(page: number): void;
+  onExportCsv: () => void;
 }
 
 const CustomPaginator: React.StatelessComponent<Props> = props => {
-  const { page, totalNumber, onChangePage, rowsPerPage } = props;
+  const { page, totalNumber, onChangePage, rowsPerPage, onExportCsv } = props;
   const pageCount = Math.ceil(totalNumber / rowsPerPage);
   const balance = totalNumber % rowsPerPage;
   return (
@@ -192,7 +193,7 @@ const CustomPaginator: React.StatelessComponent<Props> = props => {
           <Tooltip
             placement="bottomRight"
             overlayClassName="limit-tooltip"
-            overlay={() => getLimitTooltip()}
+            overlay={getLimitTooltip(onExportCsv)}
             align={{
               offset: [7, 10],
             }}
