@@ -8,6 +8,7 @@ import Circle from '@material-ui/icons/FiberManualRecord';
 import ContentCopy from '@material-ui/icons/FileCopyOutlined';
 import Clipboard from 'react-clipboard.js';
 import { getShortColumn } from '../../utils/general';
+import { AttributeDefinition } from '../../types';
 
 const TableRowWrapper = styled(TableRow)`
   &&& {
@@ -75,12 +76,14 @@ interface Props {
   platform: string;
 }
 
-export const formatValueForDisplay = (platform, network, value, attribute) => {
+export const formatValueForDisplay = (platform: string, network: string, value: any, attribute: AttributeDefinition) => {
   const { name, entity, dataFormat, dataType} = attribute;
   if (dataType === 'DateTime') {
-    const dateFormat = dataFormat ? dataFormat : 'yyyy MMM dd HH:mm Z';
+    if (!dataFormat) {
+      return value;
+    }
     return (
-      <Moment parse={dateFormat}>
+      <Moment parse={dataFormat}>
         {value}
       </Moment>
     )
