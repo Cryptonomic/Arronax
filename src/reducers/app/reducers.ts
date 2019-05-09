@@ -40,10 +40,12 @@ export interface AppState {
   isFullLoaded: boolean;
   rowCount: number;
   filterCount: object;
+  platform: string;
 }
 
 const initialState: AppState = {
   filters: emptyFilters,
+  platform: 'tezos',
   network: 'alphanet',
   blocks: [],
   attributes: attributes,

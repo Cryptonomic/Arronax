@@ -6,7 +6,8 @@ import TableBody from '@material-ui/core/TableBody';
 import {
   getNetwork,
   getRows,
-  getColumns
+  getColumns,
+  getPlatform
 } from '../../reducers/app/selectors';
 import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
@@ -53,6 +54,7 @@ interface Props {
   items: any[];
   selectedColumns: any[];
   network: string;
+  platform: string;
 }
 
 interface State {
@@ -85,7 +87,7 @@ class CustomTable extends React.Component<Props, State> {
   };
 
   render() {
-    const { items, network, selectedColumns, rowsPerPage } = this.props;
+    const { items, network, selectedColumns, rowsPerPage, platform } = this.props;
     const { page, order, orderBy } = this.state;
     const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
     const realRows = stableSort(items, getSorting(order, orderBy)).slice(
@@ -110,6 +112,7 @@ class CustomTable extends React.Component<Props, State> {
                     selectedColumns={selectedColumns}
                     key={index}
                     item={row}
+                    platform={platform}
                   />
                 );
               })}
@@ -130,7 +133,8 @@ class CustomTable extends React.Component<Props, State> {
 const mapStateToProps = (state: any) => ({
   rowsPerPage: getRows(state),
   network: getNetwork(state),
-  selectedColumns: getColumns(state)
+  selectedColumns: getColumns(state),
+  platform: getPlatform(state)
 });
 
 export default connect(
