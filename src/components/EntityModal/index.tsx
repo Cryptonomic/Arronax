@@ -1,8 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import Modal from '@material-ui/core/Modal';
-import ArronaxIcon from '../ArronaxIcon';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Moment from 'react-moment';
+import 'moment-timezone';
+import ArronaxIcon from '../ArronaxIcon';
 
 const ModalWrapper = styled(Modal)``;
 
@@ -59,6 +61,7 @@ const TitleTxt = styled.div`
 
 const ContentTxt = styled.div`
   font-weight: 300;
+  word-break: break-word;
   flex: 1;
 `;
 
@@ -73,6 +76,21 @@ const LoadingContainer = styled.div`
   width: 100%;
   height: 100%;
   z-index: 100;
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  padding: 15px;
+  justify-content: flex-end;
+`;
+
+export const CloseButton = styled.div`
+  color: #56c2d9;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 `;
 
 const TITLE = {
@@ -115,13 +133,30 @@ class EntityModal extends React.Component<Props, {}> {
               {!isLoading && (
                 <ListContainer>
                   {attributes.map((column, index) => {
+                    const { displayName, dataType, dataFormat, name } = column;
+                    let value = item[name];
+                    if (!value) {
+                      return null;
+                    }
+                    if (dataType === 'DateTime' && dataFormat) {
+                      value = (
+                        <Moment parse={dataFormat}>
+                          {value}
+                        </Moment>
+                      );
+                    }
                     return (
                       <RowContainer key={index}>
-                        <TitleTxt>{column.displayName}</TitleTxt>
-                        <ContentTxt>{item[column.name]}</ContentTxt>
+                        <TitleTxt>{displayName}</TitleTxt>
+                        <ContentTxt>{value}</ContentTxt>
                       </RowContainer>
-                    )
+                    );
                   })}
+                  <ButtonContainer>
+                    <CloseButton onClick={onClose}>
+                      Close
+                    </CloseButton>
+                  </ButtonContainer>
                 </ListContainer>
               )}
               {isLoading && (

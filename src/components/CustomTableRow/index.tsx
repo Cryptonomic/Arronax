@@ -57,6 +57,12 @@ const ClipboardWrapper = styled(Clipboard)`
   cursor: pointer;
 `;
 
+const LinkDiv = styled.div`
+  color: #56c2d9;
+  cursor: pointer;
+  text-decoration: underline;
+`;
+
 const DefaultAttributeNames = [
   'predecessor',
   'hash',
@@ -87,7 +93,7 @@ interface Props {
 
 const formatValueForPrimary = (entity, name, shortValue, value, onClickPrimaryKey) => {
   if (PrimaryKeyList[entity].includes(name)) {
-    return <div onClick={() => onClickPrimaryKey(name, value)}>{shortValue}</div>;
+    return <LinkDiv onClick={() => onClickPrimaryKey(name, value)}>{shortValue}</LinkDiv>;
   }
   return shortValue;
 }
