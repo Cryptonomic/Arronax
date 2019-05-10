@@ -44,7 +44,7 @@ const MainContainer = styled.div`
 `;
 
 const LoadingContainer = styled.div`
-  position: absolute;
+  position: fixed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,7 +52,7 @@ const LoadingContainer = styled.div`
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   z-index: 100;
 `;
 
@@ -306,7 +306,7 @@ class Arronax extends React.Component<Props, States> {
             onClose={this.onCloseFilter}
           />
           <TabContainer component="div">
-            {items.length > 0 && <CustomTable items={items} onExportCsv={this.onExportCsv} /> }
+            {items.length > 0 && <CustomTable isLoading={isLoading} items={items} onExportCsv={this.onExportCsv} /> }
             {items.length === 0 && (
               <NoResultContainer>
                 <OctopusImg src={octopusSrc} />

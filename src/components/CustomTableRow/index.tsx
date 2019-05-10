@@ -57,6 +57,12 @@ const ClipboardWrapper = styled(Clipboard)`
   cursor: pointer;
 `;
 
+const LinkDiv = styled.div`
+  color: #56c2d9;
+  cursor: pointer;
+  text-decoration: underline;
+`;
+
 const DefaultAttributeNames = [
   'predecessor',
   'hash',
@@ -69,21 +75,51 @@ const DefaultAttributeNames = [
   'operations_hash',
   'signature'
 ];
+
+const PrimaryKeyList = {
+  blocks: ['hash', 'level'],
+  accounts: ['account_id'],
+  operations: ['operation_group_hash']
+};
+
 interface Props {
   item: any;
   selectedColumns: any[];
   network: string;
   platform: string;
+  selectedEntity: string,
+  onClickPrimaryKey: (key, value) => void;
 }
 
-export const formatValueForDisplay = (platform: string, network: string, value: any, attribute: AttributeDefinition) => {
-  const { name, entity, dataFormat, dataType} = attribute;
-  if (dataType === 'DateTime') {
+const formatValueForPrimary = (entity, name, shortValue, value, onClickPrimaryKey) => {
+  if (PrimaryKeyList[entity].includes(name)) {
+    return <LinkDiv onClick={() => onClickPrimaryKey(name, value)}>{shortValue}</LinkDiv>;
+  } else if (entity === 'accounts' && name === 'manager') { // TODO: resolve via metadata
+    return <LinkDiv onClick={() => onClickPrimaryKey('account_id', value)}>{shortValue}</LinkDiv>;  
+  } else if (entity === 'blocks' && name === 'predecessor') { // TODO: resolve via metadata
+    return <LinkDiv onClick={() => onClickPrimaryKey('hash', value)}>{shortValue}</LinkDiv>;  
+  }
+  return shortValue;
+}
+
+const formatValueForDisplay = (
+  platform: string,
+  network: string,
+  entity: string,
+  value: any,
+  attribute: AttributeDefinition,
+  onClickPrimaryKey: (key, value) => void
+) => {
+  const { name, dataFormat, dataType} = attribute;
+  if (dataType === 'Boolean') {
+      const svalue = value.toString();
+      return svalue.charAt(0).toUpperCase() + svalue.slice(1);
+  } else if (dataType === 'DateTime') {
     if (!dataFormat) {
       return value;
     }
     return (
-      <Moment parse={dataFormat}>
+      <Moment format={dataFormat}>
         {value}
       </Moment>
     )
@@ -93,7 +129,7 @@ export const formatValueForDisplay = (platform: string, network: string, value: 
       <React.Fragment>
         <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
         <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
-        {getShortColumn(value)}
+        {formatValueForPrimary(entity, name, getShortColumn(value), value, onClickPrimaryKey)}
         <ClipboardWrapper data-clipboard-text={value}>
           <CopyIcon />
         </ClipboardWrapper>
@@ -102,26 +138,26 @@ export const formatValueForDisplay = (platform: string, network: string, value: 
   } else if (DefaultAttributeNames.includes(name)) {
     return (
       <React.Fragment>
-        {getShortColumn(value)}
+        {formatValueForPrimary(entity, name, getShortColumn(value), value, onClickPrimaryKey)}
         <ClipboardWrapper data-clipboard-text={value}>
           <CopyIcon />
         </ClipboardWrapper>
       </React.Fragment>
     );
   } else {
-    return value;
+    return formatValueForPrimary(entity, name, value, value, onClickPrimaryKey);
   }
 };
 
 const CustomTableRow: React.StatelessComponent<Props> = props => {
-  const { selectedColumns, item, network, platform } = props;
+  const { selectedColumns, item, network, platform, selectedEntity, onClickPrimaryKey } = props;
   return (
     <TableRowWrapper>
       {selectedColumns.map((column, index) => {
         return (
           <StyledCell key={index}>
             <SpanContainer>
-              {formatValueForDisplay(platform, network, item[column.name], column)}
+              {formatValueForDisplay(platform, network, selectedEntity, item[column.name], column, onClickPrimaryKey)}
             </SpanContainer>
           </StyledCell>
         );

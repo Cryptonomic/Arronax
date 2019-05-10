@@ -25,6 +25,7 @@ import {
   setAttributesAction,
   completeFullLoadAction,
   setFilterCountAction,
+  setModalItemAction
 } from './actions';
 import getConfigs from '../../utils/getconfig';
 
@@ -319,5 +320,41 @@ export const submitQuery = () => async (dispatch, state) => {
   );
   await dispatch(setFilterCountAction(selectedFilters.length));
   await dispatch(setItemsAction(entity, items));
+  dispatch(setLoadingAction(false));
+};
+
+export const getItemByPrimaryKey = (primaryKey: string, value: string | number) => async (dispatch, state) => {
+  dispatch(setLoadingAction(true));
+  const entity = state().app.selectedEntity;
+  const network = state().app.network;
+  const config = getConfig(network);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.key,
+  };
+
+  let query = blankQuery();
+  query = addPredicate(
+    query,
+    primaryKey,
+    ConseilOperator.EQ,
+    [value],
+    false
+  );
+  query = addOrdering(
+    query,
+    entity !== 'blocks' ? 'block_level' : 'level',
+    ConseilSortDirection.DESC
+  );
+  query = setLimit(query, 1);
+
+  const items = await executeEntityQuery(
+    serverInfo,
+    'tezos',
+    network,
+    entity,
+    query
+  );
+  await dispatch(setModalItemAction(items[0]));
   dispatch(setLoadingAction(false));
 };
