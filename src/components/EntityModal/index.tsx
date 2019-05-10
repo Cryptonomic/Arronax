@@ -140,7 +140,7 @@ class EntityModal extends React.Component<Props, {}> {
                     }
                     if (dataType === 'DateTime' && dataFormat) {
                       value = (
-                        <Moment parse={dataFormat}>
+                        <Moment format={dataFormat}>
                           {value}
                         </Moment>
                       );

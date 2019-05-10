@@ -114,7 +114,7 @@ const formatValueForDisplay = (
       return value;
     }
     return (
-      <Moment parse={dataFormat}>
+      <Moment format={dataFormat}>
         {value}
       </Moment>
     )
