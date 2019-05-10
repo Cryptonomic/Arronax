@@ -15,6 +15,7 @@ import {
   SET_AVAILABLE_VALUES,
   COMPLETE_FULL_LOAD,
   SET_FILTER_COUNT,
+  SET_MODAL_ITEM
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -41,6 +42,7 @@ export interface AppState {
   rowCount: number;
   filterCount: object;
   platform: string;
+  selectedModalItem: object;
 }
 
 const initialState: AppState = {
@@ -108,6 +110,7 @@ const initialState: AppState = {
     operations: 0,
     accounts: 0,
   },
+  selectedModalItem: {}
 };
 
 const initEntities = {
@@ -194,6 +197,8 @@ const appReducer = (state = initialState, action) => {
     }
     case COMPLETE_FULL_LOAD:
       return { ...state, isFullLoaded: action.isFullLoaded };
+    case SET_MODAL_ITEM:
+      return { ...state, selectedModalItem: action.item };
   }
   return state;
 };

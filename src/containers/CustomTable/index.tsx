@@ -7,11 +7,16 @@ import {
   getNetwork,
   getRows,
   getColumns,
-  getPlatform
+  getPlatform,
+  getEntity,
+  getAttributes,
+  getModalItem
 } from '../../reducers/app/selectors';
+import { getItemByPrimaryKey } from '../../reducers/app/thunks';
 import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
+import EntityModal from 'components/EntityModal';
 
 const TableContainer = styled(Table)`
   width: 100%;
@@ -55,13 +60,21 @@ interface Props {
   selectedColumns: any[];
   network: string;
   platform: string;
+  selectedEntity: string;
+  selectedModalItem: object;
+  attributes: any[];
+  isLoading: boolean;
   onExportCsv: () => void;
+  getModalItemAction: (key: string, value: string | number) => void;
 }
 
 interface State {
   page: number;
   order: 'asc' | 'desc';
   orderBy: string;
+  isOpenedModal: boolean;
+  selectedPrimaryKey: string;
+  selectedPrimaryValue: string | number;
 }
 
 class CustomTable extends React.Component<Props, State> {
@@ -71,6 +84,9 @@ class CustomTable extends React.Component<Props, State> {
       page: 0,
       order: 'asc',
       orderBy: 'level',
+      isOpenedModal: false,
+      selectedPrimaryKey: '',
+      selectedPrimaryValue: ''
     };
   }
 
@@ -87,9 +103,32 @@ class CustomTable extends React.Component<Props, State> {
     this.setState({ order, orderBy });
   };
 
+  onCloseModal = () => this.setState({isOpenedModal: false});
+
+  onOpenModal = (key, value) => {
+    const { selectedPrimaryKey, selectedPrimaryValue } = this.state;
+    const { getModalItemAction } = this.props;
+    if (selectedPrimaryKey !== key || selectedPrimaryValue !== value) {
+      getModalItemAction(key, value);
+      this.setState({selectedPrimaryKey: key, selectedPrimaryValue: value, isOpenedModal: true});
+    }
+    this.setState({isOpenedModal: true});
+  }
+
   render() {
-    const { items, network, selectedColumns, rowsPerPage, platform, onExportCsv } = this.props;
-    const { page, order, orderBy } = this.state;
+    const {
+      items,
+      network,
+      selectedColumns,
+      rowsPerPage,
+      platform,
+      selectedEntity,
+      selectedModalItem,
+      attributes,
+      isLoading,
+      onExportCsv
+    } = this.props;
+    const { page, order, orderBy, isOpenedModal} = this.state;
     const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
     const realRows = stableSort(items, getSorting(order, orderBy)).slice(
       page * rowCount,
@@ -114,6 +153,8 @@ class CustomTable extends React.Component<Props, State> {
                     key={index}
                     item={row}
                     platform={platform}
+                    selectedEntity={selectedEntity}
+                    onClickPrimaryKey={this.onOpenModal}
                   />
                 );
               })}
@@ -127,6 +168,14 @@ class CustomTable extends React.Component<Props, State> {
           onChangePage={this.handleChangePage}
           onExportCsv={onExportCsv}
         />
+        <EntityModal
+          open={isOpenedModal}
+          selectedEntity={selectedEntity}
+          attributes={attributes}
+          item={selectedModalItem}
+          isLoading={isLoading}
+          onClose={this.onCloseModal}
+        />
       </React.Fragment>
     );
   }
@@ -136,10 +185,18 @@ const mapStateToProps = (state: any) => ({
   rowsPerPage: getRows(state),
   network: getNetwork(state),
   selectedColumns: getColumns(state),
-  platform: getPlatform(state)
+  platform: getPlatform(state),
+  selectedEntity: getEntity(state),
+  selectedModalItem: getModalItem(state),
+  attributes: getAttributes(state),
 });
+
+const mapDispatchToProps = dispatch => ({
+  getModalItemAction: (key, value) => dispatch(getItemByPrimaryKey(key, value))
+});
+
 
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(CustomTable);

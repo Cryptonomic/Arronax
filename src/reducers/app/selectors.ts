@@ -71,3 +71,8 @@ export const getPlatform = createSelector(
   getAppState,
   apps => apps.platform
 );
+
+export const getModalItem = createSelector(
+  getAppState,
+  apps => apps.selectedModalItem
+);

@@ -69,15 +69,38 @@ const DefaultAttributeNames = [
   'operations_hash',
   'signature'
 ];
+
+const PrimaryKeyList = {
+  blocks: ['hash', 'level'],
+  accounts: ['account_id'],
+  operations: ['operation_group_hash']
+};
+
 interface Props {
   item: any;
   selectedColumns: any[];
   network: string;
   platform: string;
+  selectedEntity: string,
+  onClickPrimaryKey: (key, value) => void;
 }
 
-export const formatValueForDisplay = (platform: string, network: string, value: any, attribute: AttributeDefinition) => {
-  const { name, entity, dataFormat, dataType} = attribute;
+const formatValueForPrimary = (entity, name, shortValue, value, onClickPrimaryKey) => {
+  if (PrimaryKeyList[entity].includes(name)) {
+    return <div onClick={() => onClickPrimaryKey(name, value)}>{shortValue}</div>;
+  }
+  return shortValue;
+}
+
+const formatValueForDisplay = (
+  platform: string,
+  network: string,
+  entity: string,
+  value: any,
+  attribute: AttributeDefinition,
+  onClickPrimaryKey: (key, value) => void
+) => {
+  const { name, dataFormat, dataType} = attribute;
   if (dataType === 'DateTime') {
     if (!dataFormat) {
       return value;
@@ -93,7 +116,7 @@ export const formatValueForDisplay = (platform: string, network: string, value: 
       <React.Fragment>
         <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
         <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
-        {getShortColumn(value)}
+        {formatValueForPrimary(entity, name, getShortColumn(value), value, onClickPrimaryKey)}
         <ClipboardWrapper data-clipboard-text={value}>
           <CopyIcon />
         </ClipboardWrapper>
@@ -102,26 +125,26 @@ export const formatValueForDisplay = (platform: string, network: string, value: 
   } else if (DefaultAttributeNames.includes(name)) {
     return (
       <React.Fragment>
-        {getShortColumn(value)}
+        {formatValueForPrimary(entity, name, getShortColumn(value), value, onClickPrimaryKey)}
         <ClipboardWrapper data-clipboard-text={value}>
           <CopyIcon />
         </ClipboardWrapper>
       </React.Fragment>
     );
   } else {
-    return value;
+    return formatValueForPrimary(entity, name, value, value, onClickPrimaryKey);
   }
 };
 
 const CustomTableRow: React.StatelessComponent<Props> = props => {
-  const { selectedColumns, item, network, platform } = props;
+  const { selectedColumns, item, network, platform, selectedEntity, onClickPrimaryKey } = props;
   return (
     <TableRowWrapper>
       {selectedColumns.map((column, index) => {
         return (
           <StyledCell key={index}>
             <SpanContainer>
-              {formatValueForDisplay(platform, network, item[column.name], column)}
+              {formatValueForDisplay(platform, network, selectedEntity, item[column.name], column, onClickPrimaryKey)}
             </SpanContainer>
           </StyledCell>
         );
