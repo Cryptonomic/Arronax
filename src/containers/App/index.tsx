@@ -5,34 +5,33 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {
-  getAttributes,
   getLoading,
   getNetwork,
   getEntity,
   getItems,
-  getColumns,
   getIsFullLoaded,
-  getSelectedValues,
-  getSelectedFilters,
   getFilterCount,
+  getColumns
 } from '../../reducers/app/selectors';
 import {
   changeNetwork,
   initLoad,
   submitQuery,
+  exportCsvData
 } from '../../reducers/app/thunks';
 import {
-  setSelectedValuesAction,
-  setColumnsAction,
   setTabAction,
-  removeValueAction,
   removeAllFiltersAction,
 } from '../../reducers/app/actions';
 import Header from 'components/Header';
-import FilterTool from 'components/FilterTool';
 import SettingsPanel from 'components/SettingsPanel';
 import Footer from 'components/Footer';
+import Toolbar from 'components/Toolbar';
 import CustomTable from '../CustomTable';
+
+import { ToolType } from '../../types';
+
+import * as octopusSrc from 'assets/sadOctopus.svg';
 
 const Container = styled.div`
   padding: 50px 0;
@@ -45,7 +44,7 @@ const MainContainer = styled.div`
 `;
 
 const LoadingContainer = styled.div`
-  position: absolute;
+  position: fixed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,14 +52,8 @@ const LoadingContainer = styled.div`
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-`;
-
-const FilterHeader = styled.div`
-  display: flex;
-  align-items: center;
-  opacity: ${({ isDark }) => (isDark ? 0.74 : 1)};
-  padding: 25px 30px 0 30px;
+  height: 100vh;
+  z-index: 100;
 `;
 
 const TabsWrapper = styled(Tabs)`
@@ -76,7 +69,6 @@ const TabsWrapper = styled(Tabs)`
 
 const TabContainer = styled.div`
   padding: 0px 30px;
-  position: relative;
   width: 100%;
 `;
 
@@ -94,6 +86,66 @@ const FilterExTxt = styled.span`
   font-size: 18px;
   color: #9b9b9b;
   margin-left: 21px;
+`;
+
+const NoResultContainer = styled.div`
+  width: 100%;
+  padding-top: 67px;
+  display: flex;
+  justify-content: center;
+`;
+
+const OctopusImg = styled.img`
+  height: 183px;
+  width: 169px;
+`;
+
+const NoResultContent = styled.div`
+  margin-left: 38px;
+  padding-top: 16px;
+`;
+
+const NoResultTxt = styled.div`
+  color: rgb(42, 57, 115);
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 30px;
+`;
+
+const TryTxt = styled.div`
+  color: rgb(155, 155, 155);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 21px;
+  margin-top: 8px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  margin-top: 24px;
+`;
+
+const CustomButton = styled.div`
+  cursor: pointer;
+  border-radius: 9px;
+  height: 42px;
+  width: 158px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+`;
+
+const ClearButton = styled(CustomButton)`
+  border: 2px solid rgb(0, 196, 220);
+  color: rgb(0, 196, 220);
+`;
+
+const TryButton = styled(CustomButton)`
+  color: white;
+  background: rgb(86, 194, 217);
+  margin-left: 22px;
 `;
 
 const tabsArray = [
@@ -114,70 +166,36 @@ const tabsArray = [
 export interface Props {
   isLoading: boolean;
   network: string;
-  selectedValues: object[];
   selectedEntity: string;
   items: object[];
-  attributes: object[];
-  selectedColumns: any[];
   isFullLoaded: boolean;
-  selectedFilters: object[];
   filterCount: number;
-  setColumns: (entity: string, columns: object[]) => void;
-  removeValue: (value: object) => void;
+  selectedColumns: any[];
   removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
   initLoad: () => void;
-  fetchItems: (type: string) => void;
-  setSelectedValues: (type: object[]) => void;
   submitQuery: () => void;
+  exportCsvData: ()=> void
 }
 
 export interface States {
-  isFilterCollapse: boolean;
-  filterInputState: any;
-  selectedDisplayColumns: object[];
+  isSettingCollapsed: boolean;
+  selectedTool: string
 }
 
 class Arronax extends React.Component<Props, States> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isFilterCollapse: false,
-      filterInputState: { blocks: [], operations: [], accounts: [] },
-      selectedDisplayColumns: [],
+      isSettingCollapsed: false,
+      selectedTool: ToolType.FILTER
     };
   }
 
   componentDidMount() {
     const { initLoad } = this.props;
     initLoad();
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const { filterInputState } = this.state;
-    const { selectedColumns, selectedEntity, selectedFilters } = this.props;
-    const currentFilters = selectedFilters.map(filter =>
-      Object.values(filter)[0].toString()
-    );
-    // Remove any value from state that doesn't match Redux's selected filters state
-    filterInputState[selectedEntity].forEach(filter => {
-      const stateFilter = Object.keys(filter).toString();
-      if (!currentFilters.includes(stateFilter)) {
-        const index = filterInputState[selectedEntity].indexOf(stateFilter);
-        filterInputState[selectedEntity].splice(index, 1);
-        this.setState({ filterInputState: filterInputState });
-      }
-    });
-    if (
-      prevProps.selectedColumns[selectedEntity] !==
-        selectedColumns[selectedEntity] ||
-      selectedEntity !== prevProps.selectedEntity
-    ) {
-      this.setState({
-        selectedDisplayColumns: [...selectedColumns[selectedEntity]],
-      });
-    }
   }
 
   onChangeNetwork = event => {
@@ -191,146 +209,55 @@ class Arronax extends React.Component<Props, States> {
     await changeTab(value);
   };
 
-  onFilterCollapse = () => {
-    const { isFilterCollapse } = this.state;
-    this.setState({ isFilterCollapse: !isFilterCollapse });
+  onChangeTool = async (tool: string) => {
+    const { isSettingCollapsed, selectedTool } = this.state;
+    if (isSettingCollapsed && selectedTool !== tool) {
+      this.setState({ selectedTool: tool });
+    } else if (!isSettingCollapsed && selectedTool !== tool) {
+      this.setState({ isSettingCollapsed: !isSettingCollapsed, selectedTool: tool });
+    } else {
+      this.setState({ isSettingCollapsed: !isSettingCollapsed });
+    }
+  }
+
+  onSettingCollapse = () => {
+    const { isSettingCollapsed } = this.state;
+    this.setState({ isSettingCollapsed: !isSettingCollapsed });
   };
 
   onCloseFilter = () => {
-    this.setState({ isFilterCollapse: false });
+    this.setState({ isSettingCollapsed: false });
   };
 
-  resetValues = () => {
+  onResetFilters = () => {
     const {
-      selectedValues,
-      removeValue,
       removeAllFilters,
-      selectedEntity,
-      selectedFilters,
+      selectedEntity
     } = this.props;
-    const { filterInputState } = this.state;
-    filterInputState[selectedEntity] = [];
-    this.setState({ filterInputState: filterInputState });
     removeAllFilters(selectedEntity);
-    // Remove selected values for this particular entity
-    selectedValues.forEach(value => {
-      selectedFilters.forEach(filter => {
-        const currentValue = Object.keys(value).toString();
-        const currentFilter = Object.values(filter)[0].toString();
-        if (currentValue === currentFilter) {
-          removeValue(value);
-        }
-      });
-    });
   };
 
-  submitValues = async () => {
-    const {
-      setSelectedValues,
-      submitQuery,
-      selectedEntity,
-      setColumns,
-    } = this.props;
-    const { filterInputState, selectedDisplayColumns } = this.state;
-    // Set columns in Redux state
-    await setColumns(selectedEntity, selectedDisplayColumns);
-    // Loop through each value in state and set the value in Redux's state
-    await filterInputState[selectedEntity].forEach(val => {
-      setSelectedValues(val);
-    });
-    // Submit the query to ConseilJS
+  onSubmit = async () => {
+    const { submitQuery } = this.props;
+    this.onCloseFilter();
     await submitQuery();
   };
 
-  setFilterInputState = (val, filterName, filterOperator) => {
-    const { filterInputState } = this.state;
-    const { selectedEntity } = this.props;
-    const filterState = [...filterInputState[selectedEntity]];
-    let filterCheck = [];
-    filterInputState[selectedEntity].forEach(filter => {
-      filterCheck.push(Object.keys(filter).toString());
-    });
-    // Remove the value from state by sending in a NULL value
-    if (val === null) {
-      const itemToRemove = filterState.find(
-        val => Object.keys(val).toString() === filterName
-      );
-      const index = filterState.indexOf(itemToRemove);
-      filterState.splice(index, 1);
-      filterInputState[selectedEntity] = filterState;
-      this.setState({ filterInputState: filterInputState });
-    } else if (
-      filterCheck.includes(filterName) &&
-      filterOperator !== 'BETWEEN'
-    ) {
-      const index = filterCheck.indexOf(filterName);
-      filterState.splice(index, 1);
-      const newState = [...filterState, { [filterName]: val }];
-      filterInputState[selectedEntity] = newState;
-      this.setState({ filterInputState: filterInputState });
-    } else if (
-      filterCheck.includes(filterName) &&
-      filterOperator === 'BETWEEN'
-    ) {
-      const currentValueObject = filterState.find(
-        val => Object.keys(val).toString() === filterName
-      );
-      const currentValue = Object.values(currentValueObject).toString();
-      if (!currentValue.includes('-')) {
-        if (val.includes('-')) {
-          const index = filterCheck.indexOf(filterName);
-          filterState.splice(index, 1);
-          const newState = [
-            ...filterState,
-            { [filterName]: `${currentValue}${val}` },
-          ];
-          filterInputState[selectedEntity] = newState;
-          this.setState({ filterInputState: filterInputState });
-        } else if (!val.includes('-')) {
-          const index = filterCheck.indexOf(filterName);
-          filterState.splice(index, 1);
-          const newState = [...filterState, { [filterName]: val }];
-          filterInputState[selectedEntity] = newState;
-          this.setState({ filterInputState: filterInputState });
-        }
-      } else if (currentValue.includes('-')) {
-        if (val.includes('-')) {
-          const value = Object.values(currentValue);
-          const dashIndex = value.indexOf('-');
-          const firstHalf = value.slice(0, dashIndex).join('');
-          const secondHalf = val;
-          const finalValue = firstHalf + secondHalf;
-          const index = filterCheck.indexOf(filterName);
-          filterState.splice(index, 1);
-          const newState = [...filterState, { [filterName]: finalValue }];
-          filterInputState[selectedEntity] = newState;
-          this.setState({ filterInputState: filterInputState });
-        } else if (!val.includes('-')) {
-          const value = Object.values(currentValue);
-          const dashIndex = value.indexOf('-');
-          const secondHalf = value.slice(dashIndex).join('');
-          const firstHalf = val;
-          const finalValue = firstHalf + secondHalf;
-          const index = filterCheck.indexOf(filterName);
-          filterState.splice(index, 1);
-          const newState = [...filterState, { [filterName]: finalValue }];
-          filterInputState[selectedEntity] = newState;
-          this.setState({ filterInputState: filterInputState });
-        }
-      }
-    } else {
-      const newValues = [
-        ...filterInputState[selectedEntity],
-        { [filterName]: val },
-      ];
-      filterInputState[selectedEntity] = newValues;
-      this.setState({ filterInputState: filterInputState });
-    }
-  };
+  onClearFilter = async () => {
+    const {
+      removeAllFilters,
+      selectedEntity,
+      submitQuery
+    } = this.props;
+    await removeAllFilters(selectedEntity);
+    await submitQuery();
+  }
 
-  setSelectedColumns = (columns: object[]) => {
-    this.setState({ selectedDisplayColumns: columns });
-  };
+  onExportCsv = async () => {
+    const { exportCsvData } = this.props;
+    exportCsvData();
+  }
+
 
   render() {
     const {
@@ -338,13 +265,11 @@ class Arronax extends React.Component<Props, States> {
       network,
       selectedEntity,
       items,
-      selectedColumns,
       isFullLoaded,
-      attributes,
       filterCount,
-      selectedValues,
+      selectedColumns
     } = this.props;
-    const { isFilterCollapse, filterInputState } = this.state;
+    const { isSettingCollapsed, selectedTool } = this.state;
     const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
     return (
       <MainContainer>
@@ -366,35 +291,35 @@ class Arronax extends React.Component<Props, States> {
               />
             ))}
           </TabsWrapper>
+          <Toolbar
+            isCollapsed={isSettingCollapsed}
+            selectedTool={selectedTool}
+            filterCount={filterCount}
+            columnsCount={selectedColumns.length}
+            onChangeTool={this.onChangeTool}
+            onExportCsv={this.onExportCsv}
+          />
           <SettingsPanel
-            selectedValues={selectedValues}
-            setColumns={this.setSelectedColumns}
-            selectedEntity={selectedEntity}
-            attributes={attributes}
-            setFilterInputState={this.setFilterInputState}
-            filterInputState={filterInputState}
-            submitValues={this.submitValues}
-            resetValues={this.resetValues}
-            selectedColumns={selectedColumns}
-            isCollapse={isFilterCollapse}
+            isCollapsed={isSettingCollapsed}
+            selectedTool={selectedTool}
+            onSubmit={this.onSubmit}
             onClose={this.onCloseFilter}
           />
-          <FilterHeader isDark={isFilterCollapse}>
-            <FilterTool
-              value={filterCount}
-              onCollapse={this.onFilterCollapse}
-            />
-            <FilterExTxt>
-              e.g. What blocks were baked by Foundation Baker 1 in the past 24
-              hours?
-            </FilterExTxt>
-          </FilterHeader>
           <TabContainer component="div">
-            <CustomTable
-              items={items}
-              entity={selectedEntity}
-              selectedColumns={selectedColumns}
-            />
+            {items.length > 0 && <CustomTable isLoading={isLoading} items={items} onExportCsv={this.onExportCsv} /> }
+            {items.length === 0 && (
+              <NoResultContainer>
+                <OctopusImg src={octopusSrc} />
+                <NoResultContent>
+                  <NoResultTxt>Sorry, your filters returned no results.</NoResultTxt>
+                  <TryTxt>Try a different filter combination.</TryTxt>
+                  <ButtonContainer>
+                    <ClearButton onClick={this.onClearFilter}>Clear Filters</ClearButton>
+                    <TryButton onClick={this.onSettingCollapse}>Try Again</TryButton>
+                  </ButtonContainer>
+                </NoResultContent>
+              </NoResultContainer>
+            )}
           </TabContainer>
         </Container>
         <Footer />
@@ -410,29 +335,22 @@ class Arronax extends React.Component<Props, States> {
 
 const mapStateToProps = (state: any) => ({
   filterCount: getFilterCount(state),
-  selectedFilters: getSelectedFilters(state),
-  selectedValues: getSelectedValues(state),
-  selectedColumns: getColumns(state),
   isLoading: getLoading(state),
   network: getNetwork(state),
   selectedEntity: getEntity(state),
   items: getItems(state),
-  attributes: getAttributes(state),
   isFullLoaded: getIsFullLoaded(state),
+  selectedColumns: getColumns(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  setColumns: (entity: string, columns: object[]) =>
-    dispatch(setColumnsAction(entity, columns)),
-  setSelectedValues: (value: object[]) =>
-    dispatch(setSelectedValuesAction(value)),
   removeAllFilters: (selectedEntity: string) =>
     dispatch(removeAllFiltersAction(selectedEntity)),
-  removeValue: (value: object) => dispatch(removeValueAction(value)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
   initLoad: () => dispatch(initLoad()),
   submitQuery: () => dispatch(submitQuery()),
+  exportCsvData: () => dispatch(exportCsvData())
 });
 
 export default connect(

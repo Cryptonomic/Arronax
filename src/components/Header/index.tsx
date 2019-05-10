@@ -10,7 +10,7 @@ import ArrowDropDown from '@material-ui/icons/KeyboardArrowDown';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
-import TezosIcon from '../TezosIcon';
+import ArronaxIcon from '../ArronaxIcon';
 import getConfigs from '../../utils/getconfig';
 
 const configs = getConfigs();
@@ -163,7 +163,7 @@ const Header: React.StatelessComponent<Props> = props => {
     <HeaderContainer>
       <HeaderLogo>ARRONAX</HeaderLogo>
       <IconContainer>
-        <TezosIcon size="22px" color="#FFFFFF" iconName="tezos" />
+        <ArronaxIcon size="22px" color="#FFFFFF" iconName="icon-tz" />
       </IconContainer>
       <SelectContainer>
         <SelectWrapper
@@ -194,13 +194,6 @@ const Header: React.StatelessComponent<Props> = props => {
           ))}
         </SelectWrapper>
       </SelectContainer>
-
-      <SearchContainer>
-        <InputContainer placeholder="Operation ID / Address / Block Level or Block Hash" />
-        <IconButton aria-label="Search">
-          <RevertSearchIcon />
-        </IconButton>
-      </SearchContainer>
     </HeaderContainer>
   );
 };

@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 const Icon = styled.span`
-  font-family: 'Tezos-icons' !important;
+  font-family: 'Arronax-icons' !important;
   font-size: ${({ size }) => size};
   color: ${({ color}) => color};
   speak: none;
@@ -28,105 +28,67 @@ const getIconByName = iconName => {
   const toUnicode = unicode => String.fromCharCode(parseInt(unicode, 16));
 
   switch (iconName) {
-    case 'icon-new-window': {
-      return toUnicode('e916');
-    }
-    case 'icon-star': {
-      return toUnicode('e910');
-    }
-    case 'icon-broadcast': {
-      return toUnicode('e911');
-    }
-    case 'arrow-left': {
+    case 'icon-delete': {
       return toUnicode('e900');
     }
-    case 'arrow-right': {
+    case 'icon-octopus-logo': {
+      return toUnicode('e901');
+    }
+    case 'icon-tz': {
       return toUnicode('e902');
     }
-
-    case 'checkmark': {
+    case 'icon-sort-ascending': {
       return toUnicode('e903');
     }
-
-    case 'checkmark-outline': {
+    case 'icon-sort-descending': {
       return toUnicode('e904');
     }
-
-    case 'help': {
+    case 'icon-reorder': {
       return toUnicode('e905');
     }
-
-    case 'manager': {
+    case 'icon-close': {
       return toUnicode('e906');
     }
-
-    case 'smart-address': {
+    case 'icon-reset': {
       return toUnicode('e907');
     }
-
-    case 'tezos': {
+    case 'icon-add': {
       return toUnicode('e908');
     }
-
-    case 'warning': {
+    case 'icon-next': {
       return toUnicode('e909');
     }
-
-    case 'logout': {
+    case 'icon-previous': {
       return toUnicode('e90a');
     }
-
-    case 'settings': {
+    case 'icon-search-left': {
       return toUnicode('e90b');
-    }    
-
-    case 'checkmark2': {
+    }
+    case 'icon-search-right': {
+      return toUnicode('e90c');
+    }
+    case 'icon-down-caret': {
+      return toUnicode('e90d');
+    }
+    case 'icon-columns': {
       return toUnicode('e90e');
     }
-
-    case 'send': {
+    case 'icon-filter': {
       return toUnicode('e90f');
     }
-
-    case 'star': {
+    case 'icon-question': {
       return toUnicode('e910');
     }
-
-    case 'broadcast': {
+    case 'icon-export': {
       return toUnicode('e911');
     }
-
-    case 'view-show': {
-      return toUnicode('e912');
-    }
-
-    case 'view-hide': {
-      return toUnicode('e913');
-    }
-
-    case 'change': {
-      return toUnicode('e914');
-    }
-
-    case 'receive': {
-      return toUnicode('e915');
-    }
-
-    case 'new-window': {
-      return toUnicode('e916');
-    }
-
-    case 'info': {
-      return toUnicode('e917');
-    }
-
     default: {
       console.error(`${iconName} No such icon in Tezos icons font`);
     }
   }
 };
 
-const TezosIcon = (props: Props) => {
+const ArronaxIcon = (props: Props) => {
   const { iconName, size, color, className, onClick } = props;
   return (
     <Icon className={className} size={size} color={color} onClick={onClick}>
@@ -135,4 +97,4 @@ const TezosIcon = (props: Props) => {
   );
 };
 
-export default TezosIcon;
+export default ArronaxIcon;

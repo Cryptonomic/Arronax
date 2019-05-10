@@ -12,11 +12,10 @@ import {
   REMOVE_ALL_FILTERS,
   CHANGE_FILTER,
   SET_AVAILABLE_VALUES,
-  SET_SELECTED_VALUES,
   SET_ROW_COUNT,
-  REMOVE_VALUE,
   COMPLETE_FULL_LOAD,
   SET_FILTER_COUNT,
+  SET_MODAL_ITEM
 } from './types';
 import actionCreator from '../../utils/reduxHelpers';
 
@@ -65,12 +64,11 @@ export const completeFullLoadAction = actionCreator(
 );
 export const setAvailableValuesAction = actionCreator(
   SET_AVAILABLE_VALUES,
+  'entity',
+  'attribute',
   'availableValues'
 );
-export const setSelectedValuesAction = actionCreator(
-  SET_SELECTED_VALUES,
-  'selectedValue'
-);
+
 export const setRowCountAction = actionCreator(SET_ROW_COUNT, 'rows');
 export const setFilterCountAction = actionCreator(SET_FILTER_COUNT, 'count');
-export const removeValueAction = actionCreator(REMOVE_VALUE, 'selectedValue');
+export const setModalItemAction = actionCreator(SET_MODAL_ITEM, 'item');
