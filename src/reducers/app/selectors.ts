@@ -66,3 +66,8 @@ export const getIsFullLoaded = createSelector(
   getAppState,
   apps => apps.isFullLoaded
 );
+
+export const getPlatform = createSelector(
+  getAppState,
+  apps => apps.platform
+);

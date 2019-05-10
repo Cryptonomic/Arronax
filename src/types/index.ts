@@ -63,3 +63,13 @@ export enum ToolType {
   COLUMN = 'column',
   EXPORT = 'export'
 }
+
+export interface AttributeDefinition {
+  name: string,
+  displayName: string,
+  dataType: string,
+  cardinality: number,
+  keyType: string,
+  entity: string,
+  dataFormat: string
+}

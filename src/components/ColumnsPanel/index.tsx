@@ -158,7 +158,7 @@ class ColumnsPanel extends React.Component<Props, States> {
                 onClick={() => this.handleChange(attribute)}
               />
             ))}
-            {attributes.map((attribute, index) => {
+            {attributes.sort((a, b) => (a.displayName.toLowerCase() < b.displayName.toLowerCase()) ? -1 : 1).map((attribute, index) => {
               const pos = selected.findIndex(item => item.name === attribute.name);
               if (pos !== -1) {
                 return null;

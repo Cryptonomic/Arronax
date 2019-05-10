@@ -1,12 +1,14 @@
 import * as React from 'react';
-import * as moment from 'moment';
 import styled from 'styled-components';
+import Moment from 'react-moment';
+import 'moment-timezone';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Circle from '@material-ui/icons/FiberManualRecord';
 import ContentCopy from '@material-ui/icons/FileCopyOutlined';
 import Clipboard from 'react-clipboard.js';
 import { getShortColumn } from '../../utils/general';
+import { AttributeDefinition } from '../../types';
 
 const TableRowWrapper = styled(TableRow)`
   &&& {
@@ -54,14 +56,38 @@ const ClipboardWrapper = styled(Clipboard)`
   outline: none !important;
   cursor: pointer;
 `;
+
+const DefaultAttributeNames = [
+  'predecessor',
+  'hash',
+  'block_id',
+  'block_hash',
+  'operation_group_hash',
+  'delegate',
+  'protocol',
+  'context',
+  'operations_hash',
+  'signature'
+];
 interface Props {
   item: any;
   selectedColumns: any[];
   network: string;
+  platform: string;
 }
 
-export const displayType = (network, value, name) => {
-  if (name === 'account_id' || name === 'manager') {
+export const formatValueForDisplay = (platform: string, network: string, value: any, attribute: AttributeDefinition) => {
+  const { name, entity, dataFormat, dataType} = attribute;
+  if (dataType === 'DateTime') {
+    if (!dataFormat) {
+      return value;
+    }
+    return (
+      <Moment parse={dataFormat}>
+        {value}
+      </Moment>
+    )
+  } else if (name === 'account_id' || name === 'manager') {
     let colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255)/74)).toString('hex');
     return (
       <React.Fragment>
@@ -73,18 +99,7 @@ export const displayType = (network, value, name) => {
         </ClipboardWrapper>
       </React.Fragment>
     );
-  } else if (
-    name === 'predecessor' ||
-    name === 'hash' ||
-    name === 'block_id' ||
-    name === 'block_hash' ||
-    name === 'operation_group_hash' ||
-    name === 'delegate' ||
-    name === 'protocol' ||
-    name === 'context' ||
-    name === 'operations_hash' ||
-    name === 'signature'
-  ) {
+  } else if (DefaultAttributeNames.includes(name)) {
     return (
       <React.Fragment>
         {getShortColumn(value)}
@@ -99,19 +114,15 @@ export const displayType = (network, value, name) => {
 };
 
 const CustomTableRow: React.StatelessComponent<Props> = props => {
-  const { selectedColumns, item, network } = props;
+  const { selectedColumns, item, network, platform } = props;
   return (
     <TableRowWrapper>
       {selectedColumns.map((column, index) => {
         return (
           <StyledCell key={index}>
-            {column.name === 'timestamp' ? (
-              moment(item[column.name]).format('dd MM YYYY h:mm:ss a')
-            ) : (
-              <SpanContainer>
-                {displayType(network, item[column.name], column.name)}
-              </SpanContainer>
-            )}
+            <SpanContainer>
+              {formatValueForDisplay(platform, network, item[column.name], column)}
+            </SpanContainer>
           </StyledCell>
         );
       })}
