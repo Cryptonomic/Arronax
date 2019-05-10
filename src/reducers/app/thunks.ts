@@ -323,7 +323,7 @@ export const submitQuery = () => async (dispatch, state) => {
   dispatch(setLoadingAction(false));
 };
 
-export const getItemByPrimaryKey = (primaryKey, value) => async (dispatch, state) => {
+export const getItemByPrimaryKey = (primaryKey: string, value: string | number) => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
   const entity = state().app.selectedEntity;
   const network = state().app.network;
