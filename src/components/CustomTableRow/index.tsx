@@ -111,7 +111,10 @@ const formatValueForDisplay = (
   onClickPrimaryKey: (key, value) => void
 ) => {
   const { name, dataFormat, dataType} = attribute;
-  if (dataType === 'DateTime') {
+  if (dataType === 'Boolean') {
+      const svalue = value.toString();
+      return svalue.charAt(0).toUpperCase() + svalue.slice(1);
+  } else if (dataType === 'DateTime') {
     if (!dataFormat) {
       return value;
     }
