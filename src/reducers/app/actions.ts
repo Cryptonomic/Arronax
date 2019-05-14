@@ -15,7 +15,8 @@ import {
   SET_ROW_COUNT,
   COMPLETE_FULL_LOAD,
   SET_FILTER_COUNT,
-  SET_MODAL_ITEM
+  SET_MODAL_ITEM,
+  SET_SORT
 } from './types';
 import actionCreator from '../../utils/reduxHelpers';
 
@@ -72,3 +73,5 @@ export const setAvailableValuesAction = actionCreator(
 export const setRowCountAction = actionCreator(SET_ROW_COUNT, 'rows');
 export const setFilterCountAction = actionCreator(SET_FILTER_COUNT, 'count');
 export const setModalItemAction = actionCreator(SET_MODAL_ITEM, 'item');
+
+export const setSortAction = actionCreator(SET_SORT, 'orderBy', 'order');

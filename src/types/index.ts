@@ -73,3 +73,8 @@ export interface AttributeDefinition {
   entity: string,
   dataFormat: string
 }
+
+export interface Sort {
+  order: 'asc' | 'desc';
+  orderBy: string;
+}
