@@ -73,3 +73,12 @@ export interface AttributeDefinition {
   entity: string,
   dataFormat: string
 }
+
+export interface Config {
+  url: string;
+  apiKey: string;
+  platform?: string;
+  network: string;
+  displayName: string;
+  entities?: string[];
+};

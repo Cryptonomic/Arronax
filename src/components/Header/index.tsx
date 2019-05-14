@@ -12,8 +12,9 @@ import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import ArronaxIcon from '../ArronaxIcon';
 import getConfigs from '../../utils/getconfig';
+import { Config } from '../../types';
 
-const configs = getConfigs();
+const configs: Config[] = getConfigs();
 
 const HeaderContainer = styled.div`
   width: 100%;
@@ -149,7 +150,7 @@ const MenuContent = styled.span``;
 const SelectRenderWrapper = styled.div``;
 
 const getConfig = val => {
-  return configs.find(conf => conf.value === val);
+  return configs.find(conf => conf.network === val);
 };
 
 interface Props {
@@ -172,7 +173,7 @@ const Header: React.StatelessComponent<Props> = props => {
           IconComponent={DownIcon}
           renderValue={value => {
             const config = getConfig(value);
-            return <SelectRenderWrapper>{config.title}</SelectRenderWrapper>;
+            return <SelectRenderWrapper>{config.displayName}</SelectRenderWrapper>;
           }}
         >
           <MenuHeaderItem value="" disabled>
@@ -180,16 +181,16 @@ const Header: React.StatelessComponent<Props> = props => {
           </MenuHeaderItem>
           {configs.map(config => (
             <MainMenuItem
-              key={config.value}
-              value={config.value}
+              key={config.network}
+              value={config.network}
               component="div"
             >
               <Radio
-                checked={network === config.value}
+                checked={network === config.network}
                 icon={<UncheckedIcon fontSize="small" />}
                 checkedIcon={<CheckedIcon fontSize="small" />}
               />
-              <MenuContent>{config.title}</MenuContent>
+              <MenuContent>{config.displayName}</MenuContent>
             </MainMenuItem>
           ))}
         </SelectWrapper>
