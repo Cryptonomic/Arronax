@@ -1,17 +1,18 @@
-type Config = {
-  url: string;
-  key: string;
-  value: string;
-  title: string;
-};
+import { Config } from './types';
 
- const configs: Config[] = [
+const configs: Config[] = [
   {
-    value: 'alphanet',
-    title: 'Tezos Alphanet',
+    network: 'alphanet',
+    displayName: 'Tezos Alphanet',
     url: 'https://conseil-dev.cryptonomic-infra.tech:443',
-    key: 'hooman',
+    apiKey: 'hooman'
+  },
+  {
+    network: 'mainnet',
+    displayName: 'Tezos Mainnet',
+    url: 'https://conseil-staging.cryptonomic-infra.tech',
+    apiKey: 'galleon'
   }
-];
+]
 
- export default configs;
+export default configs;
