@@ -15,10 +15,11 @@ import {
   SET_AVAILABLE_VALUES,
   COMPLETE_FULL_LOAD,
   SET_FILTER_COUNT,
-  SET_MODAL_ITEM
+  SET_MODAL_ITEM,
+  SET_SORT
 } from './types';
 
-import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
+import { ConseilQueryBuilder, ConseilQuery, ConseilSortDirection } from 'conseiljs';
 import { TezosAccount, TezosBlock, TezosOperation, Filter } from '../../types';
 import { getLocalAttributes } from '../../utils/attributes';
 
@@ -43,6 +44,7 @@ export interface AppState {
   filterCount: object;
   platform: string;
   selectedModalItem: object;
+  sort: object;
 }
 
 const initialState: AppState = {
@@ -110,7 +112,12 @@ const initialState: AppState = {
     operations: 0,
     accounts: 0,
   },
-  selectedModalItem: {}
+  selectedModalItem: {},
+  sort: {
+    blocks: { orderBy: 'level', order: ConseilSortDirection.DESC },
+    operations: { orderBy: 'block_level', order: ConseilSortDirection.DESC },
+    accounts: { orderBy: 'block_level', order: ConseilSortDirection.DESC },
+  }
 };
 
 const initEntities = {
@@ -199,6 +206,12 @@ const appReducer = (state = initialState, action) => {
       return { ...state, isFullLoaded: action.isFullLoaded };
     case SET_MODAL_ITEM:
       return { ...state, selectedModalItem: action.item };
+    case SET_SORT: {
+        const sort = {...state.sort};
+        const selectedEntity = state.selectedEntity;
+        sort[selectedEntity] = { orderBy: action.orderBy, order: action.order };
+        return { ...state, sort };
+    }
   }
   return state;
 };

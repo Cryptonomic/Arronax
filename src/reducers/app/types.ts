@@ -17,3 +17,4 @@ export const SET_SELECTED_VALUE = 'SET_SELECTED_VALUE';
 export const SET_ROW_COUNT = 'SET_ROW_COUNT';
 export const SET_FILTER_COUNT = 'SET_FILTER_COUNT';
 export const SET_MODAL_ITEM = 'SET_MODAL_ITEM';
+export const SET_SORT = 'SET_SORT';
