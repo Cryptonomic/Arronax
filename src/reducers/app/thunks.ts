@@ -135,6 +135,7 @@ export const fetchItemsAction = (
   serverInfo: any
 ) => async (dispatch, state) => {
   const attributes = state().app.attributes;
+  const sort = state().app.sort;
   const attributeNames = getAttributeNames(attributes[entity]);
   const columns = await getInitialColumns(entity, attributes[entity]);
   await dispatch(setColumns(entity, columns));
@@ -143,8 +144,8 @@ export const fetchItemsAction = (
   query = setLimit(query, 5000);
   query = addOrdering(
     query,
-    attributeNames.includes('block_level') ? 'block_level' : 'level',
-    ConseilSortDirection.DESC
+    sort[entity].orderBy,
+    sort[entity].order
   );
   const items = await executeEntityQuery(
     serverInfo,
@@ -233,7 +234,7 @@ export const syncAttributes = () => async (dispatch, state) => {
   }
 };
 
-const getMainQuery = (attributeNames, selectedFilters) => {
+const getMainQuery = (attributeNames, selectedFilters, sort) => {
   let query = blankQuery();
   query = addFields(query, ...attributeNames);
   selectedFilters.forEach(filter => {
@@ -260,8 +261,8 @@ const getMainQuery = (attributeNames, selectedFilters) => {
   // Add this to set ordering
   query = addOrdering(
     query,
-    !attributeNames.includes('level') ? 'block_level' : 'level',
-    ConseilSortDirection.DESC
+    sort.orderBy,
+    sort.order
   );
 
   return query;
@@ -273,13 +274,14 @@ export const exportCsvData = () => async (dispatch, state) => {
   const network = state().app.network;
   const config = getConfig(network);
   const attributes = state().app.columns;
+  const sort = state().app.sort;
   const serverInfo = {
     url: config.url,
     apiKey: config.apiKey,
   };
 
   const attributeNames = getAttributeNames(attributes[selectedEntity]);
-  let query = getMainQuery(attributeNames, selectedFilters);
+  let query = getMainQuery(attributeNames, selectedFilters, sort[selectedEntity]);
   query = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
 
   const result: any = await executeEntityQuery(serverInfo, 'tezos', network, selectedEntity, query);
@@ -302,6 +304,7 @@ export const submitQuery = () => async (dispatch, state) => {
   const selectedFilters = state().app.selectedFilters[entity];
   const network = state().app.network;
   const attributes = state().app.columns;
+  const sort = state().app.sort;
   const config = getConfig(network);
   const attributeNames = getAttributeNames(attributes[entity]);
   const serverInfo = {
@@ -309,7 +312,7 @@ export const submitQuery = () => async (dispatch, state) => {
     apiKey: config.apiKey,
   };
 
-  let query = getMainQuery(attributeNames, selectedFilters);
+  let query = getMainQuery(attributeNames, selectedFilters, sort[entity]);
   query = setLimit(query, 5000);
 
   const items = await executeEntityQuery(
@@ -328,6 +331,7 @@ export const getItemByPrimaryKey = (primaryKey: string, value: string | number) 
   dispatch(setLoadingAction(true));
   const entity = state().app.selectedEntity;
   const network = state().app.network;
+  const sort = state().app.sort;
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
@@ -344,8 +348,8 @@ export const getItemByPrimaryKey = (primaryKey: string, value: string | number) 
   );
   query = addOrdering(
     query,
-    entity !== 'blocks' ? 'block_level' : 'level',
-    ConseilSortDirection.DESC
+    sort[entity].orderBy,
+    sort[entity].order
   );
   query = setLimit(query, 1);
 

@@ -82,3 +82,7 @@ export interface Config {
   displayName: string;
   entities?: string[];
 };
+export interface Sort {
+  order: 'asc' | 'desc';
+  orderBy: string;
+}
