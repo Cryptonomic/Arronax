@@ -2,7 +2,6 @@ import {
   ConseilMetadataClient,
   ConseilDataClient,
   ConseilQueryBuilder,
-  ConseilSortDirection,
   TezosConseilClient,
   ConseilOperator,
   ConseilOutput
@@ -30,11 +29,9 @@ import {
 import getConfigs from '../../utils/getconfig';
 import { Config } from '../../types';
 
-import { getBlockHeadFromLocal, saveAttributes } from '../../utils/attributes';
+import { getTimeStampFromLocal, saveAttributes } from '../../utils/attributes';
 
-let currentAttributesRefreshInterval = null;
-const SYNC_LEVEL = 57600;
-const SYNC_TIME = 10;
+const CACHE_TIME = 432000000; // 5*24*3600*1000
 
 const configs: Config[] = getConfigs();
 const { getAttributes, getAttributeValues } = ConseilMetadataClient;
@@ -164,40 +161,19 @@ export const initLoad = () => async (dispatch, state) => {
     url: config.url,
     apiKey: config.apiKey,
   };
-  const attributes = state().app.attributes;
-  if (attributes['blocks'].length === 0) {
-    const blockHead: any = await TezosConseilClient.getBlockHead(
-      serverInfo,
-      network
-    );
+  const localDate = getTimeStampFromLocal();
+  const currentDate = Date.now();
+  if (currentDate - localDate > CACHE_TIME) {
     await dispatch(loadAttributes(network, serverInfo));
-    saveAttributes(attributes, blockHead[0].level);
+    const attributes = state().app.attributes;
+    saveAttributes(attributes, currentDate);
   }
-  dispatch(automaticAttributesRefresh());
   await dispatch(fetchItemsAction('blocks', network, serverInfo));
   await dispatch(fetchItemsAction('operations', network, serverInfo));
   await dispatch(fetchItemsAction('accounts', network, serverInfo));
   dispatch(completeFullLoadAction(true));
 };
 
-export const clearAutomaticAttributesRefresh = () => {
-  clearInterval(currentAttributesRefreshInterval);
-};
-
-export const automaticAttributesRefresh = () => dispatch => {
-  const oneSecond = 1000; // milliseconds
-  const oneMinute = 60 * oneSecond;
-  const REFRESH_INTERVAL = SYNC_TIME * oneMinute;
-
-  if (currentAttributesRefreshInterval) {
-    clearAutomaticAttributesRefresh();
-  }
-
-  currentAttributesRefreshInterval = setInterval(
-    () => dispatch(syncAttributes()),
-    REFRESH_INTERVAL
-  );
-};
 
 export const fetchAttributes = (
   entity,
@@ -212,26 +188,6 @@ export const loadAttributes = (network, serverInfo) => async dispatch => {
   await dispatch(fetchAttributes('blocks', network, serverInfo));
   await dispatch(fetchAttributes('operations', network, serverInfo));
   await dispatch(fetchAttributes('accounts', network, serverInfo));
-};
-
-export const syncAttributes = () => async (dispatch, state) => {
-  const network = state().app.network;
-  const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
-
-  const blockHead: any = await TezosConseilClient.getBlockHead(
-    serverInfo,
-    network
-  );
-  const localHead = getBlockHeadFromLocal();
-  if (blockHead[0].level - localHead > SYNC_LEVEL) {
-    await dispatch(loadAttributes(network, serverInfo));
-    const attributes = state().app.attributes;
-    saveAttributes(attributes, blockHead[0].level);
-  }
 };
 
 const getMainQuery = (attributeNames, selectedFilters, sort) => {
