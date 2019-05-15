@@ -1,9 +1,10 @@
-const dumbConfigs = [
+import { Config } from '../types';
+const dumbConfigs: Config[] = [
   {
-    value: 'alphanet',
-    title: '',
+    displayName: 'Missing Configuration',
     url: '',
-    key: '',
+    apiKey: '',
+    network: ''
   },
 ];
 

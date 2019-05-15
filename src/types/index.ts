@@ -74,6 +74,14 @@ export interface AttributeDefinition {
   dataFormat: string
 }
 
+export interface Config {
+  url: string;
+  apiKey: string;
+  platform?: string;
+  network: string;
+  displayName: string;
+  entities?: string[];
+};
 export interface Sort {
   order: 'asc' | 'desc';
   orderBy: string;

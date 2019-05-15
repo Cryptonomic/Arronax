@@ -28,6 +28,7 @@ import {
   setModalItemAction
 } from './actions';
 import getConfigs from '../../utils/getconfig';
+import { Config } from '../../types';
 
 import { getBlockHeadFromLocal, saveAttributes } from '../../utils/attributes';
 
@@ -35,11 +36,11 @@ let currentAttributesRefreshInterval = null;
 const SYNC_LEVEL = 57600;
 const SYNC_TIME = 10;
 
-const configs = getConfigs();
+const configs: Config[] = getConfigs();
 const { getAttributes, getAttributeValues } = ConseilMetadataClient;
 
 const getConfig = val => {
-  return configs.find(conf => conf.value === val);
+  return configs.find(conf => conf.network === val);
 };
 
 const getAttributeNames = attributes => {
@@ -100,7 +101,7 @@ export const fetchValues = (attribute: string) => async (dispatch, state) => {
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
-    apiKey: config.key,
+    apiKey: config.apiKey,
   };
   const values = await getAttributeValues(
     serverInfo,
@@ -161,7 +162,7 @@ export const initLoad = () => async (dispatch, state) => {
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
-    apiKey: config.key,
+    apiKey: config.apiKey,
   };
   const attributes = state().app.attributes;
   if (attributes['blocks'].length === 0) {
@@ -218,7 +219,7 @@ export const syncAttributes = () => async (dispatch, state) => {
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
-    apiKey: config.key,
+    apiKey: config.apiKey,
   };
 
   const blockHead: any = await TezosConseilClient.getBlockHead(
@@ -276,7 +277,7 @@ export const exportCsvData = () => async (dispatch, state) => {
   const sort = state().app.sort;
   const serverInfo = {
     url: config.url,
-    apiKey: config.key,
+    apiKey: config.apiKey,
   };
 
   const attributeNames = getAttributeNames(attributes[selectedEntity]);
@@ -308,7 +309,7 @@ export const submitQuery = () => async (dispatch, state) => {
   const attributeNames = getAttributeNames(attributes[entity]);
   const serverInfo = {
     url: config.url,
-    apiKey: config.key,
+    apiKey: config.apiKey,
   };
 
   let query = getMainQuery(attributeNames, selectedFilters, sort[entity]);
@@ -334,7 +335,7 @@ export const getItemByPrimaryKey = (primaryKey: string, value: string | number) 
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
-    apiKey: config.key,
+    apiKey: config.apiKey,
   };
 
   let query = blankQuery();
