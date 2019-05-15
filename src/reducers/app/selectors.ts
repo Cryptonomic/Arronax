@@ -76,3 +76,8 @@ export const getModalItem = createSelector(
   getAppState,
   apps => apps.selectedModalItem
 );
+
+export const getSort = createSelector(
+  getAppState,
+  apps => apps.sort[apps.selectedEntity]
+);
