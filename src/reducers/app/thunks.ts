@@ -4,7 +4,8 @@ import {
   ConseilQueryBuilder,
   TezosConseilClient,
   ConseilOperator,
-  ConseilOutput
+  ConseilOutput,
+  ConseilSortDirection
 } from 'conseiljs';
 const { executeEntityQuery } = ConseilDataClient;
 const {
@@ -24,7 +25,9 @@ import {
   setAttributesAction,
   completeFullLoadAction,
   setFilterCountAction,
-  setModalItemAction
+  setModalItemAction,
+  setEntitiesAction,
+  initEntityPropertiesAction
 } from './actions';
 import getConfigs from '../../utils/getconfig';
 import { Config } from '../../types';
@@ -34,19 +37,11 @@ import { getTimeStampFromLocal, saveAttributes } from '../../utils/attributes';
 const CACHE_TIME = 432000000; // 5*24*3600*1000
 
 const configs: Config[] = getConfigs();
-const { getAttributes, getAttributeValues } = ConseilMetadataClient;
+const { getAttributes, getAttributeValues, getEntities } = ConseilMetadataClient;
 
-const getConfig = val => {
-  return configs.find(conf => conf.network === val);
-};
+const getConfig = val => configs.find(conf => conf.network === val);
 
-const getAttributeNames = attributes => {
-  let attr = [];
-  attributes.forEach(attribs => {
-    attr.push(attribs.name);
-  });
-  return attr;
-};
+const getAttributeNames = attributes => attributes.map(attr => attr.name);
 
 const nameList = {
   operations: [
@@ -69,6 +64,9 @@ const nameList = {
 };
 
 const getInitialColumns = (entity, columns) => {
+  if (!nameList[entity]) {
+    return columns;
+  }
   let newColumns = [];
   columns.forEach(c => {
     const index = nameList[entity].indexOf(c.name);
@@ -77,18 +75,6 @@ const getInitialColumns = (entity, columns) => {
     }
   });
   return newColumns;
-};
-
-export const setItems = (type, items) => {
-  return dispatch => {
-    dispatch(setItemsAction(type, items));
-  };
-};
-
-export const setColumns = (type, items) => {
-  return dispatch => {
-    dispatch(setColumnsAction(type, items));
-  };
 };
 
 export const fetchValues = (attribute: string) => async (dispatch, state) => {
@@ -120,74 +106,75 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
 };
 
 export const resetColumns = () => async (dispatch, state) => {
-  const selectedEntity = state().app.selectedEntity;
-  const attributes = state().app.attributes;
+  const { selectedEntity, attributes } = state().app;
   const newColumns = await getInitialColumns(selectedEntity, attributes[selectedEntity]);
-  await dispatch(setColumns(selectedEntity, newColumns));
+  await dispatch(setColumnsAction(selectedEntity, newColumns));
 };
 
-export const fetchItemsAction = (
+export const fetchInitEntityAction = (
+  platform,
   entity: string,
   network: string,
-  serverInfo: any
-) => async (dispatch, state) => {
-  const attributes = state().app.attributes;
-  const sort = state().app.sort;
-  const attributeNames = getAttributeNames(attributes[entity]);
-  const columns = await getInitialColumns(entity, attributes[entity]);
-  await dispatch(setColumns(entity, columns));
+  serverInfo: any,
+  attributes: object[]
+) => async dispatch => {
+  const columns = getInitialColumns(entity, attributes);
+  const levelColumn =  columns.find(column => column.name === 'level' || column.name === 'block_level') || columns[0];
+  const sort = {
+    orderBy: levelColumn.name,
+    order: ConseilSortDirection.DESC
+  };
+  const attributeNames = getAttributeNames(columns);
+
   let query = blankQuery();
   query = addFields(query, ...attributeNames);
   query = setLimit(query, 5000);
   query = addOrdering(
     query,
-    sort[entity].orderBy,
-    sort[entity].order
+    sort.orderBy,
+    sort.order
   );
   const items = await executeEntityQuery(
     serverInfo,
-    'tezos',
+    platform,
     network,
     entity,
     query
   );
-  await dispatch(setItemsAction(entity, items));
+  await dispatch(initEntityPropertiesAction(entity, sort, columns, items));
 };
 
 export const initLoad = () => async (dispatch, state) => {
-  const network = state().app.network;
+  const { network, platform } = state().app;
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
     apiKey: config.apiKey,
   };
+  const entities = await getEntities(serverInfo, platform, network);
+  dispatch(setEntitiesAction(entities));
   const localDate = getTimeStampFromLocal();
   const currentDate = Date.now();
   if (currentDate - localDate > CACHE_TIME) {
-    await dispatch(loadAttributes(network, serverInfo));
-    const attributes = state().app.attributes;
+    const attrPromises = entities.map(entity => dispatch(fetchAttributes(platform, entity.name, network, serverInfo)));
+    await Promise.all(attrPromises);
+    const { attributes } = state().app;
     saveAttributes(attributes, currentDate);
   }
-  await dispatch(fetchItemsAction('blocks', network, serverInfo));
-  await dispatch(fetchItemsAction('operations', network, serverInfo));
-  await dispatch(fetchItemsAction('accounts', network, serverInfo));
+  const { attributes } = state().app;
+  const promises = entities.map(entity => dispatch(fetchInitEntityAction(platform, entity.name, network, serverInfo, attributes[entity.name])));
+  await Promise.all(promises);
   dispatch(completeFullLoadAction(true));
 };
 
-
 export const fetchAttributes = (
+  platform,
   entity,
   network,
   serverInfo
 ) => async dispatch => {
-  const attributes = await getAttributes(serverInfo, 'tezos', network, entity);
-  dispatch(setAttributesAction(entity, attributes));
-};
-
-export const loadAttributes = (network, serverInfo) => async dispatch => {
-  await dispatch(fetchAttributes('blocks', network, serverInfo));
-  await dispatch(fetchAttributes('operations', network, serverInfo));
-  await dispatch(fetchAttributes('accounts', network, serverInfo));
+  const attributes = await getAttributes(serverInfo, platform, network, entity);
+  await dispatch(setAttributesAction(entity, attributes));
 };
 
 const getMainQuery = (attributeNames, selectedFilters, sort) => {
@@ -225,19 +212,15 @@ const getMainQuery = (attributeNames, selectedFilters, sort) => {
 }
 
 export const exportCsvData = () => async (dispatch, state) => {
-  const selectedEntity = state().app.selectedEntity;
-  const selectedFilters = state().app.selectedFilters[selectedEntity];
-  const network = state().app.network;
+  const { selectedEntity, network, columns, sort, selectedFilters } = state().app;
   const config = getConfig(network);
-  const attributes = state().app.columns;
-  const sort = state().app.sort;
   const serverInfo = {
     url: config.url,
     apiKey: config.apiKey,
   };
 
-  const attributeNames = getAttributeNames(attributes[selectedEntity]);
-  let query = getMainQuery(attributeNames, selectedFilters, sort[selectedEntity]);
+  const attributeNames = getAttributeNames(columns[selectedEntity]);
+  let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
 
   const result: any = await executeEntityQuery(serverInfo, 'tezos', network, selectedEntity, query);
@@ -256,30 +239,27 @@ export const exportCsvData = () => async (dispatch, state) => {
 
 export const submitQuery = () => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
-  const entity = state().app.selectedEntity;
-  const selectedFilters = state().app.selectedFilters[entity];
-  const network = state().app.network;
-  const attributes = state().app.columns;
-  const sort = state().app.sort;
+  const { selectedEntity, selectedFilters, network, columns, sort } = state().app;
+
   const config = getConfig(network);
-  const attributeNames = getAttributeNames(attributes[entity]);
+  const attributeNames = getAttributeNames(columns[selectedEntity]);
   const serverInfo = {
     url: config.url,
     apiKey: config.apiKey,
   };
 
-  let query = getMainQuery(attributeNames, selectedFilters, sort[entity]);
+  let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
 
   const items = await executeEntityQuery(
     serverInfo,
     'tezos',
     network,
-    entity,
+    selectedEntity,
     query
   );
-  await dispatch(setFilterCountAction(selectedFilters.length));
-  await dispatch(setItemsAction(entity, items));
+  await dispatch(setFilterCountAction(selectedFilters[selectedEntity].length));
+  await dispatch(setItemsAction(selectedEntity, items));
   dispatch(setLoadingAction(false));
 };
 

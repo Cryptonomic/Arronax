@@ -77,7 +77,7 @@ export interface AttributeDefinition {
 export interface Config {
   url: string;
   apiKey: string;
-  platform?: string;
+  platform: string;
   network: string;
   displayName: string;
   entities?: string[];
@@ -85,4 +85,11 @@ export interface Config {
 export interface Sort {
   order: 'asc' | 'desc';
   orderBy: string;
+}
+
+export interface EntityDefinition {
+  name: string;
+  displayName: string;
+  count: number;
+  network?: string;
 }

@@ -11,7 +11,8 @@ import {
   getItems,
   getIsFullLoaded,
   getFilterCount,
-  getColumns
+  getColumns,
+  getEntities
 } from '../../reducers/app/selectors';
 import {
   changeNetwork,
@@ -29,7 +30,7 @@ import Footer from 'components/Footer';
 import Toolbar from 'components/Toolbar';
 import CustomTable from '../CustomTable';
 
-import { ToolType } from '../../types';
+import { ToolType, EntityDefinition } from '../../types';
 
 import * as octopusSrc from 'assets/sadOctopus.svg';
 
@@ -170,7 +171,8 @@ export interface Props {
   items: object[];
   isFullLoaded: boolean;
   filterCount: number;
-  selectedColumns: any[];
+  selectedColumns: EntityDefinition[];
+  entities: EntityDefinition[];
   removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
@@ -185,6 +187,9 @@ export interface States {
 }
 
 class Arronax extends React.Component<Props, States> {
+  static defaultProps = {
+    items: []
+  };
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -267,60 +272,65 @@ class Arronax extends React.Component<Props, States> {
       items,
       isFullLoaded,
       filterCount,
-      selectedColumns
+      selectedColumns,
+      entities
     } = this.props;
     const { isSettingCollapsed, selectedTool } = this.state;
-    const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
+    const isRealLoading = isLoading || !isFullLoaded;
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
         <Container>
-          <TabsWrapper value={selectedEntity}>
-            {tabsArray.map((item, index) => (
-              <Tab
-                key={index}
-                value={item.value}
-                component={() => (
-                  <TabItem
-                    isSelected={selectedEntity === item.value}
-                    onClick={() => this.onChangeTab(item.value)}
-                  >
-                    {item.title}
-                  </TabItem>
-                )}
+          {isFullLoaded && (
+            <React.Fragment>
+              <TabsWrapper value={selectedEntity}>
+                {entities.map((entity, index) => (
+                  <Tab
+                    key={index}
+                    value={entity.name}
+                    component={() => (
+                      <TabItem
+                        isSelected={selectedEntity === entity.name}
+                        onClick={() => this.onChangeTab(entity.name)}
+                      >
+                        {entity.displayName}
+                      </TabItem>
+                    )}
+                  />
+                ))}
+              </TabsWrapper>
+              <Toolbar
+                isCollapsed={isSettingCollapsed}
+                selectedTool={selectedTool}
+                filterCount={filterCount}
+                columnsCount={selectedColumns.length}
+                onChangeTool={this.onChangeTool}
+                onExportCsv={this.onExportCsv}
               />
-            ))}
-          </TabsWrapper>
-          <Toolbar
-            isCollapsed={isSettingCollapsed}
-            selectedTool={selectedTool}
-            filterCount={filterCount}
-            columnsCount={selectedColumns.length}
-            onChangeTool={this.onChangeTool}
-            onExportCsv={this.onExportCsv}
-          />
-          <SettingsPanel
-            isCollapsed={isSettingCollapsed}
-            selectedTool={selectedTool}
-            onSubmit={this.onSubmit}
-            onClose={this.onCloseFilter}
-          />
-          <TabContainer component="div">
-            {items.length > 0 && <CustomTable isLoading={isLoading} items={items} onExportCsv={this.onExportCsv} /> }
-            {items.length === 0 && (
-              <NoResultContainer>
-                <OctopusImg src={octopusSrc} />
-                <NoResultContent>
-                  <NoResultTxt>Sorry, your filters returned no results.</NoResultTxt>
-                  <TryTxt>Try a different filter combination.</TryTxt>
-                  <ButtonContainer>
-                    <ClearButton onClick={this.onClearFilter}>Clear Filters</ClearButton>
-                    <TryButton onClick={this.onSettingCollapse}>Try Again</TryButton>
-                  </ButtonContainer>
-                </NoResultContent>
-              </NoResultContainer>
-            )}
-          </TabContainer>
+              <SettingsPanel
+                isCollapsed={isSettingCollapsed}
+                selectedTool={selectedTool}
+                onSubmit={this.onSubmit}
+                onClose={this.onCloseFilter}
+              />
+              <TabContainer component="div">
+                {items.length > 0 && <CustomTable isLoading={isLoading} items={items} onExportCsv={this.onExportCsv} /> }
+                {items.length === 0 && (
+                  <NoResultContainer>
+                    <OctopusImg src={octopusSrc} />
+                    <NoResultContent>
+                      <NoResultTxt>Sorry, your filters returned no results.</NoResultTxt>
+                      <TryTxt>Try a different filter combination.</TryTxt>
+                      <ButtonContainer>
+                        <ClearButton onClick={this.onClearFilter}>Clear Filters</ClearButton>
+                        <TryButton onClick={this.onSettingCollapse}>Try Again</TryButton>
+                      </ButtonContainer>
+                    </NoResultContent>
+                  </NoResultContainer>
+                )}
+              </TabContainer>
+            </React.Fragment>
+          )}
         </Container>
         <Footer />
         {isRealLoading && (
@@ -341,6 +351,7 @@ const mapStateToProps = (state: any) => ({
   items: getItems(state),
   isFullLoaded: getIsFullLoaded(state),
   selectedColumns: getColumns(state),
+  entities: getEntities(state)
 });
 
 const mapDispatchToProps = dispatch => ({
