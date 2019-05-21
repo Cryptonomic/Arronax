@@ -65,7 +65,7 @@ const nameList = {
 
 const getInitialColumns = (entity, columns) => {
   if (!nameList[entity]) {
-    return columns;
+    return [...columns];
   }
   let newColumns = [];
   columns.forEach(c => {
@@ -100,8 +100,9 @@ export const fetchValues = (attribute: string) => async (dispatch, state) => {
 export const changeNetwork = (network: string) => async (dispatch, state) => {
   const oldNetwork = state().app.network;
   if (oldNetwork === network) return;
-  dispatch(initDataAction());
-  dispatch(setNetworkAction(network));
+  localStorage.setItem('timestamp', '0');
+  await dispatch(initDataAction());
+  await dispatch(setNetworkAction(network));
   await dispatch(initLoad());
 };
 

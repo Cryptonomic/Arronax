@@ -83,12 +83,6 @@ const TabItem = styled.div`
   cursor: pointer;
 `;
 
-const FilterExTxt = styled.span`
-  font-size: 18px;
-  color: #9b9b9b;
-  margin-left: 21px;
-`;
-
 const NoResultContainer = styled.div`
   width: 100%;
   padding-top: 67px;
@@ -149,21 +143,6 @@ const TryButton = styled(CustomButton)`
   margin-left: 22px;
 `;
 
-const tabsArray = [
-  {
-    value: 'blocks',
-    title: 'Blocks',
-  },
-  {
-    value: 'operations',
-    title: 'Operations',
-  },
-  {
-    value: 'accounts',
-    title: 'Accounts',
-  },
-];
-
 export interface Props {
   isLoading: boolean;
   network: string;
@@ -190,12 +169,15 @@ class Arronax extends React.Component<Props, States> {
   static defaultProps = {
     items: []
   };
+  settingRef = null;
   constructor(props: Props) {
     super(props);
     this.state = {
       isSettingCollapsed: false,
       selectedTool: ToolType.FILTER
     };
+
+    this.settingRef = React.createRef();
   }
 
   componentDidMount() {
@@ -212,6 +194,7 @@ class Arronax extends React.Component<Props, States> {
     const { changeTab } = this.props;
     changeTab(value);
     await changeTab(value);
+    this.settingRef.current.onChangeHeight();
   };
 
   onChangeTool = async (tool: string) => {
@@ -308,6 +291,7 @@ class Arronax extends React.Component<Props, States> {
                 onExportCsv={this.onExportCsv}
               />
               <SettingsPanel
+                ref={this.settingRef}
                 isCollapsed={isSettingCollapsed}
                 selectedTool={selectedTool}
                 onSubmit={this.onSubmit}
