@@ -10,16 +10,16 @@ export const getLocalAttributes = () => {
   };
 };
 
-export const saveAttributes = (attributes, blockHead) => {
+export const saveAttributes = (attributes, timestamp) => {
   localStorage.setItem('attributes', JSON.stringify(attributes));
-  localStorage.setItem('blockHead', blockHead);
+  localStorage.setItem('timestamp', timestamp);
 };
 
 
-export const getBlockHeadFromLocal = () => {
-  const blockHead = localStorage.getItem('blockHead');
-  if (blockHead) {
-    return Number(blockHead);
+export const getTimeStampFromLocal = () => {
+  const timestamp = localStorage.getItem('timestamp');
+  if (timestamp) {
+    return Number(timestamp);
   }
   return 0;
 };
