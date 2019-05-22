@@ -4,14 +4,14 @@ const configs: Config[] = [
   {
     network: 'alphanet',
     displayName: 'Tezos Alphanet',
-    url: 'https://conseil-dev.cryptonomic-infra.tech:443',
-    apiKey: 'hooman'
+    url: 'https://host.com',
+    apiKey: 'key'
   },
   {
     network: 'mainnet',
     displayName: 'Tezos Mainnet',
-    url: 'https://conseil-prod.cryptonomic-infra.tech:443',
-    apiKey: 'galleon'
+    url: 'https://host.com',
+    apiKey: 'key'
   }
 ]
 
