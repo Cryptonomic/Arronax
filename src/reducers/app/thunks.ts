@@ -49,23 +49,9 @@ const getAttributeNames = attributes => {
 };
 
 const nameList = {
-  operations: [
-    'timestamp',
-    'block_level',
-    'source',
-    'destination',
-    'amount',
-    'kind',
-  ],
-  accounts: [
-    'account_id',
-    'manager',
-    'delegate_value',
-    'balance',
-    'block_level',
-    'counter',
-  ],
-  blocks: ['level', 'timestamp', 'hash', 'predecessor'],
+    operations: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind', 'fee', 'operation_group_hash'],
+    accounts: ['account_id', 'manager', 'delegate_value', 'balance'],
+    blocks: ['level', 'timestamp', 'hash', 'baker', 'meta_cycle']
 };
 
 const getInitialColumns = (entity, columns) => {
