@@ -118,6 +118,7 @@ const Toolbar: React.StatelessComponent<Props> = props => {
         isactive={isCollapsed && selectedTool === ToolType.COLUMN ? 1 : 0}
         onClick={() => onChangeTool(ToolType.COLUMN)}
       >
+        <ColumnIcon size="20px" color="#4a4a4a" iconName="icon-columns" />
         Columns ({columnsCount})
       </ColumnsTool>
       <ExportTool onClick={onExportCsv}>
