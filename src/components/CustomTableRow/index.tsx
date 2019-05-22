@@ -92,7 +92,7 @@ interface Props {
 }
 
 const formatValueForPrimary = (entity, name, shortValue, value, onClickPrimaryKey) => {
-  if (PrimaryKeyList[entity].includes(name)) {
+  if (PrimaryKeyList[entity] && PrimaryKeyList[entity].includes(name)) {
     return <LinkDiv onClick={() => onClickPrimaryKey(name, value)}>{shortValue}</LinkDiv>;
   } else if (entity === 'accounts' && name === 'manager') { // TODO: resolve via metadata
     return <LinkDiv onClick={() => onClickPrimaryKey('account_id', value)}>{shortValue}</LinkDiv>;  

@@ -40,6 +40,11 @@ class SettingsPanel extends React.Component<Props, {}> {
   componentDidMount() {
     this.swipeableActions.updateHeight();
   }
+
+  onChangeHeight() {
+    this.swipeableActions.updateHeight();
+  }
+
   render() {
     const {
       isCollapsed,

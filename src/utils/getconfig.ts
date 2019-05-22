@@ -4,7 +4,8 @@ const dumbConfigs: Config[] = [
     displayName: 'Missing Configuration',
     url: '',
     apiKey: '',
-    network: ''
+    network: '',
+    platform: ''
   },
 ];
 

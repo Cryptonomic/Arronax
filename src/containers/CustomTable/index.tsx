@@ -45,7 +45,7 @@ interface Props {
   onExportCsv: () => void;
   getModalItemAction: (key: string, value: string | number) => void;
   onSubmitQuery: () => void;
-  onSetSort: (orderBy: string, order: 'asc' | 'desc') => void;
+  onSetSort: (entity: string, sort: Sort) => void;
 }
 
 interface State {
@@ -70,13 +70,17 @@ class CustomTable extends React.Component<Props, State> {
     this.setState({ page });
   };
 
-  handleRequestSort = async (property: string) => {
-    const { selectedSort, onSetSort, onSubmitQuery } = this.props;
+  handleRequestSort = async (orderBy: string) => {
+    const { selectedSort, selectedEntity, onSetSort, onSubmitQuery } = this.props;
     let order: 'asc' | 'desc' = 'desc';
-    if (selectedSort.orderBy === property && selectedSort.order === 'desc') {
+    if (selectedSort.orderBy === orderBy && selectedSort.order === 'desc') {
       order = 'asc';
     }
-    await onSetSort(property, order);
+    const sort: Sort = {
+      orderBy,
+      order
+    };
+    await onSetSort(selectedEntity, sort);
     onSubmitQuery();
   };
 
@@ -173,7 +177,7 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = dispatch => ({
   getModalItemAction: (key, value) => dispatch(getItemByPrimaryKey(key, value)),
   onSubmitQuery: () => dispatch(submitQuery()),
-  onSetSort: (orderBy: string, order: 'asc' | 'desc') => dispatch(setSortAction(orderBy, order))
+  onSetSort: (entity: string, sort: Sort) => dispatch(setSortAction(entity, sort))
 });
 
 
