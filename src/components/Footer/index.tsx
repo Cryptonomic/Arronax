@@ -1,32 +1,27 @@
-
 import * as React from 'react';
 import styled from 'styled-components';
 
 const FooterContainer = styled.div`
   width: 100%;
-  height: 301px;
+  height: 250px;
   background: linear-gradient(-198.43494882292202deg, #4A9396 0%, #4A4F96 100%);
-  padding: 60px 89px;
+  padding: 50px 50px;
 `;
 
 const LinkItem = styled.div`
   color: #FFFFFE;
   font-size: 18px;
-  letter-spacing: 3px;
+  letter-spacing: 1px;
   line-height: 45px;
-  cursor: pointer;
-  max-width: 113px;
+  max-width: 500px;
 `;
-
-
 
 const Footer: React.StatelessComponent<{}> = () => {
   return (
     <FooterContainer>
-      <LinkItem>About</LinkItem>
-      <LinkItem>Resources</LinkItem>
-      <LinkItem>Charts</LinkItem>
-      <LinkItem>News</LinkItem>
+      <LinkItem>An <a href="https://github.com/Cryptonomic/Arronax" target="_blank">open-source</a> product by <a href="https://cryptonomic.tech" target="_blank">Cryptonomic</a></LinkItem>
+      <LinkItem>Powered by <a href="https://github.com/Cryptonomic/Conseil" target="_blank">Conseil</a></LinkItem>
+      <LinkItem>Built with <a href="https://github.com/Cryptonomic/ConseilJS" target="_blank">ConseilJS</a></LinkItem>
     </FooterContainer>
   );
 }

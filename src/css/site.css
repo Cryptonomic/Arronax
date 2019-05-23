@@ -184,3 +184,8 @@ body {
   left: -12px;
   top: 1px;
 }
+
+div[class^="Footer"] a {
+    color: #56c2d9;
+    text-decoration: none;
+}
