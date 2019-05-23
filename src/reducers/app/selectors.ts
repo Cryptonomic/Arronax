@@ -4,7 +4,7 @@ export const getAppState = state => state.app;
 
 export const getItems = createSelector(
   getAppState,
-  apps => apps[apps.selectedEntity]
+  apps => apps.items[apps.selectedEntity]
 );
 
 export const getLoading = createSelector(
@@ -30,6 +30,11 @@ export const getNetwork = createSelector(
 export const getEntity = createSelector(
   getAppState,
   apps => apps.selectedEntity
+);
+
+export const getEntities = createSelector(
+  getAppState,
+  apps => apps.entities
 );
 
 export const getAttributes = createSelector(

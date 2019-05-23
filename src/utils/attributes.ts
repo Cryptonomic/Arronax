@@ -3,11 +3,7 @@ export const getLocalAttributes = () => {
   if (attributes) {
     return JSON.parse(attributes);
   }
-  return {
-    blocks: [],
-    operations: [],
-    accounts: [],
-  };
+  return { };
 };
 
 export const saveAttributes = (attributes, timestamp) => {
