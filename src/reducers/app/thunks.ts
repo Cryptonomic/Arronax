@@ -49,7 +49,7 @@ const getAttributeNames = attributes => {
 };
 
 const nameList = {
-    operations: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind', 'fee', 'operation_group_hash'],
+    operations: ['timestamp', 'block_level', 'kind', 'source', 'destination', 'amount', 'fee', 'operation_group_hash'],
     accounts: ['account_id', 'manager', 'delegate_value', 'balance'],
     blocks: ['level', 'timestamp', 'hash', 'baker', 'meta_cycle']
 };
