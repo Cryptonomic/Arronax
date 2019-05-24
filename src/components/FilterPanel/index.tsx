@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
 import { ConseilOperator } from 'conseiljs';
 import ArronaxIcon from 'components/ArronaxIcon';
-import { fetchValues } from '../../reducers/app/thunks';
+import { fetchValues, resetFilters } from '../../reducers/app/thunks';
 import {
   getAvailableValues,
   getSelectedFilters,
@@ -14,13 +14,13 @@ import {
 import {
   addFilterAction,
   removeFilterAction,
-  changeFilterAction,
-  removeAllFiltersAction
+  changeFilterAction
 } from '../../reducers/app/actions';
 import FilterSelect from '../FilterSelect';
 import ValueSelect from '../ValueSelect';
 import ValueInput from '../ValueInput';
 import { Filter } from '../../types';
+import { CARDINALITY_NUMBER } from '../../utils/defaultQueries';
 
 import {
   Container,
@@ -45,8 +45,6 @@ const attrTabValue = {
   accounts: 'account',
 };
 
-const CARDINALITY_NUMBER = 15;
-
 type Props = {
   availableValues: object;
   selectedEntity: string;
@@ -58,7 +56,7 @@ type Props = {
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
   changeFilter: (entity: string, filter: object, index: number) => void;
-  removeAllFilters: (entity: string) => void;
+  resetFilters: () => void;
   onSubmit: () => void;
 };
 
@@ -136,11 +134,8 @@ class FilterPanel extends React.Component<Props, {}> {
   };
 
   onResetFilters = () => {
-    const {
-      removeAllFilters,
-      selectedEntity
-    } = this.props;
-    removeAllFilters(selectedEntity);
+    const { resetFilters } = this.props;
+    resetFilters();
   };
 
   render() {
@@ -275,8 +270,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch(removeFilterAction(entity, index)),
   changeFilter: (entity: string, filter: object, index: number) =>
     dispatch(changeFilterAction(entity, filter, index)),
-  removeAllFilters: (selectedEntity: string) =>
-    dispatch(removeAllFiltersAction(selectedEntity)),
+  resetFilters: () =>
+    dispatch(resetFilters()),
 });
 
 export default connect(

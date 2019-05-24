@@ -2,7 +2,6 @@ import {
   ConseilMetadataClient,
   ConseilDataClient,
   ConseilQueryBuilder,
-  TezosConseilClient,
   ConseilOperator,
   ConseilOutput,
   ConseilSortDirection
@@ -27,14 +26,18 @@ import {
   setFilterCountAction,
   setModalItemAction,
   setEntitiesAction,
-  initEntityPropertiesAction
+  initEntityPropertiesAction,
+  initFilterAction
 } from './actions';
 import getConfigs from '../../utils/getconfig';
-import { Config } from '../../types';
+import { Config, AttributeDefinition, Sort, Filter } from '../../types';
 
 import { getTimeStampFromLocal, saveAttributes } from '../../utils/attributes';
+import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
 
 const CACHE_TIME = 432000000; // 5*24*3600*1000
+
+let InitProperties = {};
 
 const configs: Config[] = getConfigs();
 const { getAttributes, getAttributeValues, getEntities } = ConseilMetadataClient;
@@ -43,25 +46,6 @@ const getConfig = val => configs.find(conf => conf.network === val);
 
 const getAttributeNames = attributes => attributes.map(attr => attr.name);
 
-const nameList = {
-    operations: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind', 'fee', 'operation_group_hash'],
-    accounts: ['account_id', 'manager', 'delegate_value', 'balance'],
-    blocks: ['level', 'timestamp', 'hash', 'baker', 'meta_cycle']
-};
-
-const getInitialColumns = (entity, columns) => {
-  if (!nameList[entity]) {
-    return [...columns];
-  }
-  let newColumns = [];
-  columns.forEach(c => {
-    const index = nameList[entity].indexOf(c.name);
-    if (index >= 0) {
-      newColumns[index] = c;
-    }
-  });
-  return newColumns;
-};
 
 export const fetchValues = (attribute: string) => async (dispatch, state) => {
   const selectedEntity = state().app.selectedEntity;
@@ -93,9 +77,17 @@ export const changeNetwork = (network: string) => async (dispatch, state) => {
 };
 
 export const resetColumns = () => async (dispatch, state) => {
-  const { selectedEntity, attributes } = state().app;
-  const newColumns = await getInitialColumns(selectedEntity, attributes[selectedEntity]);
-  await dispatch(setColumnsAction(selectedEntity, newColumns));
+  const { selectedEntity } = state().app;
+  const initProperty = InitProperties[selectedEntity];
+  const columns = initProperty ? initProperty.columns : [];
+  await dispatch(setColumnsAction(selectedEntity, columns));
+};
+
+export const resetFilters = () => async (dispatch, state) => {
+  const { selectedEntity } = state().app;
+  const initProperty = InitProperties[selectedEntity];
+  const filters = initProperty ? initProperty.filters : [];
+  await dispatch(initFilterAction(selectedEntity, filters));
 };
 
 export const fetchInitEntityAction = (
@@ -103,24 +95,79 @@ export const fetchInitEntityAction = (
   entity: string,
   network: string,
   serverInfo: any,
-  attributes: object[]
+  attributes: AttributeDefinition[]
 ) => async dispatch => {
-  const columns = getInitialColumns(entity, attributes);
-  const levelColumn =  columns.find(column => column.name === 'level' || column.name === 'block_level') || columns[0];
-  const sort = {
-    orderBy: levelColumn.name,
-    order: ConseilSortDirection.DESC
-  };
-  const attributeNames = getAttributeNames(columns);
-
+  const defaultQuery = defaultQueries[entity];
+  let columns = [];
+  let sort: Sort;
+  let filters: Filter[] = [];
   let query = blankQuery();
-  query = addFields(query, ...attributeNames);
-  query = setLimit(query, 5000);
-  query = addOrdering(
-    query,
-    sort.orderBy,
-    sort.order
-  );
+  if (defaultQuery) {
+    const { fields, predicates, orderBy } = defaultQuery;
+    query = defaultQuery;
+    attributes.forEach(attribute => {
+      const index = fields.indexOf(attribute.name);
+      if (index >= 0) {
+        columns[index] = attribute;
+      }
+    });
+    sort = {
+      orderBy: orderBy[0].field,
+      order: orderBy[0].direction
+    };
+
+    filters = predicates.map(predicate => {
+      const selectedAttribute = attributes.find(attr => attr.name === predicate.field);
+      // const isLowCardinality = selectedAttribute.cardinality < CARDINALITY_NUMBER && selectedAttribute.cardinality !== null;
+      let operatorType = 'dateTime';
+      if (selectedAttribute.dataType === 'Int' || selectedAttribute.dataType === 'Decimal') {
+        operatorType = 'numeric';
+      } else if (selectedAttribute.dataType === 'String') {
+        operatorType = 'string';
+      } else if (selectedAttribute.dataType === 'Boolean') {
+        operatorType = 'boolean';
+      }
+      let operator = predicate.operation;
+      if (predicate.inverse) {
+        if (predicate.operation === ConseilOperator.ISNULL) {
+          operator = 'isnotnull';
+        } else if (predicate.operation === ConseilOperator.EQ) {
+          operator = 'noteq';
+        }
+      }
+      return {
+        name: predicate.field,
+        operator,
+        values: predicate.set,
+        operatorType,
+        isLowCardinality: false
+      };
+    });
+    const initProperty = {
+      columns, filters 
+    };
+
+    InitProperties = {
+      ...InitProperties,
+      [entity]: initProperty
+    };    
+  } else {
+    columns = [...attributes];
+    const levelColumn =  columns.find(column => column.name === 'level' || column.name === 'block_level') || columns[0];
+    sort = {
+      orderBy: levelColumn.name,
+      order: ConseilSortDirection.DESC
+    };
+    const attributeNames = getAttributeNames(columns);
+    query = addFields(query, ...attributeNames);
+    query = setLimit(query, 5000);
+    query = addOrdering(
+      query,
+      sort.orderBy,
+      sort.order
+    );
+  }
+  
   const items = await executeEntityQuery(
     serverInfo,
     platform,
@@ -128,7 +175,7 @@ export const fetchInitEntityAction = (
     entity,
     query
   );
-  await dispatch(initEntityPropertiesAction(entity, sort, columns, items));
+  await dispatch(initEntityPropertiesAction(entity, filters, sort, columns, items));
 };
 
 export const initLoad = () => async (dispatch, state) => {

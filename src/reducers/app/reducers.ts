@@ -17,7 +17,8 @@ import {
   SET_MODAL_ITEM,
   SET_SORT,
   SET_ENTITIES,
-  INIT_ENTITY_PROPERTIES
+  INIT_ENTITY_PROPERTIES,
+  INIT_FILTER
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -88,7 +89,9 @@ const initialState: AppState = {
     ],
     boolean: [{ name: 'eq', displayName: 'is' }],
   },
-  columns: {},
+  columns: {
+
+  },
   availableValues: {},
   isLoading: false,
   selectedEntity: '',
@@ -190,12 +193,13 @@ const appReducer = (state = initialState, action) => {
       return { ...state, entities, selectedEntity };
     }
     case INIT_ENTITY_PROPERTIES: {
-      const filterCount = { ...state.filterCount, [action.entity]: 0 };
+      const filterCount = { ...state.filterCount, [action.entity]: action.filters.length };
       const sort = { ...state.sort, [action.entity]: action.sort};
       const columns = { ...state.columns, [action.entity]: action.columns };
       const items = { ...state.items, [action.entity]: action.items };
-      const selectedFilters = { ...state.selectedFilters, [action.entity]: [] };
+      const selectedFilters = { ...state.selectedFilters, [action.entity]: action.filters };
       const availableValues = { ...state.availableValues, [action.entity]: {} };
+
       return {
         ...state,
         sort,
@@ -205,6 +209,11 @@ const appReducer = (state = initialState, action) => {
         columns,
         items
       };
+    }
+    case INIT_FILTER: {
+      const selectedFilters = {...state.selectedFilters, [action.entity]: action.filters};
+      const filterCount = { ...state.filterCount, [action.entity]: action.filters.length };
+      return { ...state, selectedFilters, filterCount };
     }
   }
   return state;

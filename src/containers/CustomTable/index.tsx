@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
+import { ConseilSortDirection } from 'conseiljs';
 import {
   getNetwork,
   getRows,
@@ -72,9 +73,9 @@ class CustomTable extends React.Component<Props, State> {
 
   handleRequestSort = async (orderBy: string) => {
     const { selectedSort, selectedEntity, onSetSort, onSubmitQuery } = this.props;
-    let order: 'asc' | 'desc' = 'desc';
+    let order = ConseilSortDirection.DESC;
     if (selectedSort.orderBy === orderBy && selectedSort.order === 'desc') {
-      order = 'asc';
+      order = ConseilSortDirection.ASC;
     }
     const sort: Sort = {
       orderBy,

@@ -1,3 +1,4 @@
+import { ConseilSortDirection } from 'conseiljs';
 export interface TezosBlock {
   level: number;
   proto: number;
@@ -83,7 +84,7 @@ export interface Config {
   entities?: string[];
 };
 export interface Sort {
-  order: 'asc' | 'desc';
+  order: ConseilSortDirection;
   orderBy: string;
 }
 
