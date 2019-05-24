@@ -7,7 +7,7 @@ export const defaultQueries = {
   },
   operations: {
     "fields": ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind', 'fee', 'operation_group_hash'],
-    "predicates": [{ "field": "kind", "set": ["transaxction"], "operation": "eq", "inverse": false }],
+    "predicates": [{ "field": "kind", "set": ["transaction"], "operation": "eq", "inverse": false }],
     "orderBy": [{ "field": "timestamp", "direction": "desc" }],
     "limit": 5000
   },
