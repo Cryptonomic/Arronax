@@ -112,7 +112,7 @@ const Toolbar: React.StatelessComponent<Props> = props => {
         onClick={() => onChangeTool(ToolType.FILTER)}
       >
         <FilterIcon size="20px" color="#4a4a4a" iconName="icon-filter" />
-        Filter ({filterCount})
+        Filter {filterCount > 0 ? "(" + filterCount + ")" : "" }
       </FilterTool>
       <ColumnsTool
         isactive={isCollapsed && selectedTool === ToolType.COLUMN ? 1 : 0}
