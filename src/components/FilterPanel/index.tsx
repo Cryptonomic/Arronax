@@ -154,15 +154,7 @@ class FilterPanel extends React.Component<Props, {}> {
       <Container>
         <MainContainer>
           {filters.map((filter: Filter, index) => {
-            const newAttributes = attributes.filter((attr: any) => {
-              if (attr.name === filter.name) {
-                return true;
-              }
-              const pos = filters.findIndex(
-                (item: any) => item.name === attr.name
-              );
-              return pos === -1;
-            });
+            const newAttributes = attributes.filter((attr: any) => { return !attr.cardinality || attr.cardinality > 1; });
 
             return (
               <FilterItemContainer key={index}>
