@@ -152,7 +152,6 @@ class FilterPanel extends React.Component<Props, {}> {
 
     return (
       <Container>
-        <HeaderTxt>Filter</HeaderTxt>
         <MainContainer>
           {filters.map((filter: Filter, index) => {
             const newAttributes = attributes.filter((attr: any) => {
@@ -222,11 +221,6 @@ class FilterPanel extends React.Component<Props, {}> {
               <PlusIconWrapper />
               Add Filter
             </AddFilterButton>
-            {filters.length == 0 && (
-              <FilterExpTxt>
-                You can filter by all {entityName} attributes and more.
-              </FilterExpTxt>
-            )}
           </AddFilterFooter>
         </MainContainer>
         <ButtonContainer>
