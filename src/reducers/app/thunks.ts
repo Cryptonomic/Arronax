@@ -34,6 +34,7 @@ import { Config, AttributeDefinition, Sort, Filter } from '../../types';
 
 import { getTimeStampFromLocal, saveAttributes } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
+import { getOperatorType } from '../../utils/general';
 
 const CACHE_TIME = 432000000; // 5*24*3600*1000
 
@@ -46,10 +47,8 @@ const getConfig = val => configs.find(conf => conf.network === val);
 
 const getAttributeNames = attributes => attributes.map(attr => attr.name);
 
-
 export const fetchValues = (attribute: string) => async (dispatch, state) => {
-  const selectedEntity = state().app.selectedEntity;
-  const network = state().app.network;
+  const { selectedEntity, network, platform }  = state().app;
   dispatch(setLoadingAction(true));
   const config = getConfig(network);
   const serverInfo = {
@@ -58,13 +57,30 @@ export const fetchValues = (attribute: string) => async (dispatch, state) => {
   };
   const values = await getAttributeValues(
     serverInfo,
-    'tezos',
+    platform,
     network,
     selectedEntity,
     attribute
   );
   dispatch(setAvailableValuesAction(selectedEntity, attribute, values));
   dispatch(setLoadingAction(false));
+};
+
+const initCardinalityValues = (
+  platform: string,
+  entity: string,
+  network: string,
+  attribute: string,
+  serverInfo: any
+) => async dispatch => {
+  const values = await getAttributeValues(
+    serverInfo,
+    platform,
+    network,
+    entity,
+    attribute
+  );
+  dispatch(setAvailableValuesAction(entity, attribute, values));
 };
 
 export const changeNetwork = (network: string) => async (dispatch, state) => {
@@ -105,6 +121,7 @@ export const fetchInitEntityAction = (
   if (defaultQuery) {
     const { fields, predicates, orderBy } = defaultQuery;
     query = defaultQuery;
+    // initColumns
     attributes.forEach(attribute => {
       const index = fields.indexOf(attribute.name);
       if (index >= 0) {
@@ -116,17 +133,18 @@ export const fetchInitEntityAction = (
       order: orderBy[0].direction
     };
 
+    let cardinalityPromises = [];
+    // initFilters
     filters = predicates.map(predicate => {
       const selectedAttribute = attributes.find(attr => attr.name === predicate.field);
-      // const isLowCardinality = selectedAttribute.cardinality < CARDINALITY_NUMBER && selectedAttribute.cardinality !== null;
-      let operatorType = 'dateTime';
-      if (selectedAttribute.dataType === 'Int' || selectedAttribute.dataType === 'Decimal') {
-        operatorType = 'numeric';
-      } else if (selectedAttribute.dataType === 'String') {
-        operatorType = 'string';
-      } else if (selectedAttribute.dataType === 'Boolean') {
-        operatorType = 'boolean';
+      const isLowCardinality = selectedAttribute.cardinality < CARDINALITY_NUMBER && selectedAttribute.cardinality !== null;
+      if (isLowCardinality) {
+        cardinalityPromises.push(
+          dispatch(initCardinalityValues(platform, entity, network, selectedAttribute.name, serverInfo))
+        );
       }
+      const operatorType = getOperatorType(selectedAttribute.dataType);
+      
       let operator = predicate.operation;
       if (predicate.inverse) {
         if (predicate.operation === ConseilOperator.ISNULL) {
@@ -140,13 +158,16 @@ export const fetchInitEntityAction = (
         operator,
         values: predicate.set,
         operatorType,
-        isLowCardinality: false
+        isLowCardinality
       };
     });
+
+    await Promise.all(cardinalityPromises);
+
+    // These values are used when reset columns or filters
     const initProperty = {
       columns, filters 
     };
-
     InitProperties = {
       ...InitProperties,
       [entity]: initProperty

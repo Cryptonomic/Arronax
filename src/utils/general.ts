@@ -22,3 +22,16 @@ export const getShortColumn = (value) => {
   );
   return `${firstHalf}...${secondHalf}`;
 }
+
+export const getOperatorType = (dataType: string) => {
+  if (dataType === 'Int' || dataType === 'Decimal') {
+    return 'numeric';
+  }
+  if (dataType === 'String') {
+    return 'string';
+  }
+  if (dataType === 'Boolean') {
+    return 'boolean';
+  }
+  return 'dateTime';
+}

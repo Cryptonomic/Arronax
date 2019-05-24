@@ -21,6 +21,7 @@ import ValueSelect from '../ValueSelect';
 import ValueInput from '../ValueInput';
 import { Filter } from '../../types';
 import { CARDINALITY_NUMBER } from '../../utils/defaultQueries';
+import { getOperatorType } from '../../utils/general';
 
 import {
   Container,
@@ -38,12 +39,6 @@ import {
   RunButton,
   ResetButton
 } from './style';
-
-const attrTabValue = {
-  blocks: 'block',
-  operations: 'operation',
-  accounts: 'account',
-};
 
 type Props = {
   availableValues: object;
@@ -88,14 +83,7 @@ class FilterPanel extends React.Component<Props, {}> {
     if (isLowCardinality && !availableValues[attr.name]) {
       fetchValues(attr.name);
     }
-    let operatorType = 'dateTime';
-    if (attr.dataType === 'Int' || attr.dataType === 'Decimal') {
-      operatorType = 'numeric';
-    } else if (attr.dataType === 'String') {
-      operatorType = 'string';
-    } else if (attr.dataType === 'Boolean') {
-      operatorType = 'boolean';
-    }
+    const operatorType = getOperatorType(attr.dataType);
     const selectedFilter = {
       name: attr.name,
       isLowCardinality,
@@ -147,7 +135,7 @@ class FilterPanel extends React.Component<Props, {}> {
       availableValues,
       onSubmit
     } = this.props;
-    const entityName = attrTabValue[selectedEntity];
+    const entityName = selectedEntity.replace(/_/gi, ' ').slice(0, -1);
 
     const filterLength = filters.length;
     let disableAddFilter = true;

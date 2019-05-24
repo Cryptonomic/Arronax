@@ -170,7 +170,7 @@ const appReducer = (state = initialState, action) => {
     case SET_AVAILABLE_VALUES: {
       const availableValues = { ...state.availableValues};
       const entityValues = {...availableValues[action.entity]};
-      entityValues[action.attribute] = action.availableValues;
+      entityValues[action.attribute] = action.availableValues.sort();
       availableValues[action.entity] = entityValues;
       return { ...state, availableValues };
     }
