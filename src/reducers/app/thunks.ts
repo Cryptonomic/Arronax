@@ -80,7 +80,7 @@ const initCardinalityValues = (
     entity,
     attribute
   );
-  dispatch(setAvailableValuesAction(entity, attribute, values));
+  await dispatch(setAvailableValuesAction(entity, attribute, values));
 };
 
 export const changeNetwork = (network: string) => async (dispatch, state) => {
@@ -117,6 +117,7 @@ export const fetchInitEntityAction = (
   let columns = [];
   let sort: Sort;
   let filters: Filter[] = [];
+  let cardinalityPromises = [];
   let query = blankQuery();
   if (defaultQuery) {
     const { fields, predicates, orderBy } = defaultQuery;
@@ -133,7 +134,6 @@ export const fetchInitEntityAction = (
       order: orderBy[0].direction
     };
 
-    let cardinalityPromises = [];
     // initFilters
     filters = predicates.map(predicate => {
       const selectedAttribute = attributes.find(attr => attr.name === predicate.field);
@@ -161,8 +161,6 @@ export const fetchInitEntityAction = (
         isLowCardinality
       };
     });
-
-    await Promise.all(cardinalityPromises);
 
     // These values are used when reset columns or filters
     const initProperty = {
@@ -197,6 +195,7 @@ export const fetchInitEntityAction = (
     query
   );
   await dispatch(initEntityPropertiesAction(entity, filters, sort, columns, items));
+  await Promise.all(cardinalityPromises);
 };
 
 export const initLoad = () => async (dispatch, state) => {
