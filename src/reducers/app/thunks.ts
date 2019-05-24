@@ -44,7 +44,7 @@ const getConfig = val => configs.find(conf => conf.network === val);
 const getAttributeNames = attributes => attributes.map(attr => attr.name);
 
 const nameList = {
-    operations: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind', 'fee', 'operation_group_hash'],
+    operations: ['timestamp', 'block_level', 'kind', 'source', 'destination', 'amount', 'fee', 'operation_group_hash'],
     accounts: ['account_id', 'manager', 'delegate_value', 'balance'],
     blocks: ['level', 'timestamp', 'hash', 'baker', 'meta_cycle']
 };
