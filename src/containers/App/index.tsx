@@ -59,7 +59,7 @@ const LoadingContainer = styled.div`
 
 const TabsWrapper = styled(Tabs)`
   &&& {
-    padding: 0 30px;
+    padding: 0 15px;
     width: 100%;
     span[class*='MuiPrivateTabIndicator-root'] {
       background-color: #a6dfe2;
@@ -69,7 +69,7 @@ const TabsWrapper = styled(Tabs)`
 `;
 
 const TabContainer = styled.div`
-  padding: 0px 30px;
+  padding: 0px 15px;
   width: 100%;
 `;
 
@@ -78,7 +78,7 @@ const TabItem = styled.div`
   font-size: 24px;
   letter-spacing: 3px;
   font-weight: ${({ isSelected }) => (isSelected ? 'normal' : 300)};
-  margin-right: 133px;
+  margin-right: 50px;
   margin-bottom: 7px;
   cursor: pointer;
 `;
@@ -246,7 +246,6 @@ class Arronax extends React.Component<Props, States> {
     exportCsvData();
   }
 
-
   render() {
     const {
       isLoading,
@@ -266,7 +265,7 @@ class Arronax extends React.Component<Props, States> {
         <Container>
           {isFullLoaded && (
             <React.Fragment>
-              <TabsWrapper value={selectedEntity}>
+              <TabsWrapper value={selectedEntity} variant="scrollable">
                 {entities.map((entity, index) => (
                   <Tab
                     key={index}
