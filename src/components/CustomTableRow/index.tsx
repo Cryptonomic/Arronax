@@ -78,15 +78,26 @@ interface Props {
   onClickPrimaryKey: (key, value) => void;
 }
 
-const formatValueForPrimary = (entity, name, shortValue, value, onClickPrimaryKey) => {
-  if (PrimaryKeyList[entity] && PrimaryKeyList[entity].includes(name)) {
-    return <LinkDiv onClick={() => onClickPrimaryKey(name, value)}>{shortValue}</LinkDiv>;
-  } else if (entity === 'accounts' && name === 'manager') { // TODO: resolve via metadata
-    return <LinkDiv onClick={() => onClickPrimaryKey('account_id', value)}>{shortValue}</LinkDiv>;  
-  } else if (entity === 'blocks' && name === 'predecessor') { // TODO: resolve via metadata
-    return <LinkDiv onClick={() => onClickPrimaryKey('hash', value)}>{shortValue}</LinkDiv>;  
+const formatValueForPrimary = (attribute: AttributeDefinition, displayValue: string, value: any, onClickPrimaryKey) => {
+  const {entity, name} = attribute;
+
+  if (attribute.reference) {
+    return <LinkDiv onClick={() => onClickPrimaryKey(attribute.reference.entity, attribute.reference.key, value)}>{displayValue}</LinkDiv>;
   }
-  return shortValue;
+
+  if (PrimaryKeyList[entity] && PrimaryKeyList[entity].includes(name)) {
+    return <LinkDiv onClick={() => onClickPrimaryKey(name, value)}>{displayValue}</LinkDiv>;
+  }
+
+  if (entity === 'accounts' && name === 'manager') { // TODO: resolve via metadata
+    return <LinkDiv onClick={() => onClickPrimaryKey('account_id', value)}>{displayValue}</LinkDiv>;  
+  }
+
+  if (entity === 'blocks' && name === 'predecessor') { // TODO: resolve via metadata
+    return <LinkDiv onClick={() => onClickPrimaryKey('hash', value)}>{displayValue}</LinkDiv>;  
+  }
+
+  return displayValue;
 }
 
 const formatValueForDisplay = (
@@ -123,7 +134,7 @@ const formatValueForDisplay = (
       <React.Fragment>
         <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
         <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
-        {formatValueForPrimary(entity, name, getShortColumn(value), value, onClickPrimaryKey)}
+        {formatValueForPrimary(attribute, getShortColumn(value), value, onClickPrimaryKey)}
         <ClipboardWrapper data-clipboard-text={value}>
           <CopyIcon />
         </ClipboardWrapper>
@@ -140,7 +151,7 @@ const formatValueForDisplay = (
     if (!value || value.length === 0) { return ''; }
     return (
       <React.Fragment>
-        {formatValueForPrimary(entity, name, getShortColumn(value), value, onClickPrimaryKey)}
+        {formatValueForPrimary(attribute, getShortColumn(value), value, onClickPrimaryKey)}
         <ClipboardWrapper data-clipboard-text={value}>
           <CopyIcon />
         </ClipboardWrapper>
@@ -157,7 +168,7 @@ const formatValueForDisplay = (
         return value;
     }
   } else {
-    return formatValueForPrimary(entity, name, value, value, onClickPrimaryKey);
+    return formatValueForPrimary(attribute, value, value, onClickPrimaryKey);
   }
 };
 
