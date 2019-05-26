@@ -12,14 +12,11 @@ export const convertValue = (value) => {
 };
 
 export const getShortColumn = (value) => {
-  if (!value) {
-    return null;
-  }
+  if (Number(value)) { return value; }
+  if (!value || value.length < 6) { return ''; }
+
   const firstHalf = value.substring(0, 6);
-  const secondHalf = value.substring(
-    value.length - 6,
-    value.length
-  );
+  const secondHalf = value.slice(-6);
   return `${firstHalf}...${secondHalf}`;
 }
 

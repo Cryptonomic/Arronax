@@ -63,19 +63,6 @@ const LinkDiv = styled.div`
   text-decoration: underline;
 `;
 
-const DefaultAttributeNames = [
-  'predecessor',
-  'hash',
-  'block_id',
-  'block_hash',
-  'operation_group_hash',
-  'delegate',
-  'protocol',
-  'context',
-  'operations_hash',
-  'signature'
-];
-
 const PrimaryKeyList = {
   blocks: ['hash', 'level'],
   accounts: ['account_id'],
@@ -110,7 +97,7 @@ const formatValueForDisplay = (
   attribute: AttributeDefinition,
   onClickPrimaryKey: (key, value) => void
 ) => {
-  const { name, dataFormat, dataType} = attribute;
+  const {name, dataFormat, dataType} = attribute;
   if (dataType === 'Boolean') {
       const svalue = value.toString();
       return svalue.charAt(0).toUpperCase() + svalue.slice(1);
@@ -123,7 +110,14 @@ const formatValueForDisplay = (
         {value}
       </Moment>
     )
-  } else if (name === 'account_id' || name === 'manager') {
+  } else if (dataType === 'AccountAddress'
+    || ( // TODO: remove once dataType is set properly
+      (entity === 'accounts' && (name === 'account_id' || name === 'manager' || name === 'delegate_value'))
+      || (entity === 'operations' && (name === 'source' || name === 'destination'))
+      || (entity === 'blocks' && name === 'baker')
+    )
+  ) {
+    if (!value || value.length === 0) { return ''; }
     let colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255)/74)).toString('hex');
     return (
       <React.Fragment>
@@ -135,7 +129,15 @@ const formatValueForDisplay = (
         </ClipboardWrapper>
       </React.Fragment>
     );
-  } else if (DefaultAttributeNames.includes(name)) {
+} else if (dataType === 'Hash'
+  || ( // TODO: remove once dataType is set properly
+      (entity === 'blocks' && (name === 'hash' || name === 'predecessor' || 'operations_hash'))
+      || (entity === 'accounts' && name === 'block_id')
+      || (entity === 'rolls' && name === 'block_id')
+      || (entity === 'ballots' && name === 'block_id')
+  )
+) {
+    if (!value || value.length === 0) { return ''; }
     return (
       <React.Fragment>
         {formatValueForPrimary(entity, name, getShortColumn(value), value, onClickPrimaryKey)}
@@ -144,6 +146,16 @@ const formatValueForDisplay = (
         </ClipboardWrapper>
       </React.Fragment>
     );
+} else if (dataType === 'Decimal') {
+    if (attribute.scale && attribute.scale !== 0) {
+        const n = Number(value);
+        const d = n/Math.pow(10, attribute.scale);
+        if (n < 10000) { return d.toFixed(4); }
+
+        return d.toFixed(2);
+    } else {
+        return value;
+    }
   } else {
     return formatValueForPrimary(entity, name, value, value, onClickPrimaryKey);
   }
