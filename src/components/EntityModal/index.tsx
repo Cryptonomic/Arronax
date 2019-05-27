@@ -127,15 +127,22 @@ class EntityModal extends React.Component<Props, {}> {
                   {attributes.map((column, index) => {
                     const { displayName, dataType, dataFormat, name } = column;
                     let value = item[name];
-                    if (!value) {
-                      return null;
-                    }
-                    if (dataType === 'DateTime' && dataFormat) {
+                    if (!value || value.length === 0) {
+                        value = '';
+                    } else if (dataType === 'DateTime' && dataFormat) {
                       value = (
                         <Moment format={dataFormat}>
                           {value}
                         </Moment>
                       );
+                    } else if (dataType === 'Decimal' && column.scale && column.scale !== 0) {
+                        const n = Number(value);
+                        const d = n/Math.pow(10, column.scale);
+                        if (n < 10000) {
+                            value = d.toFixed(4);
+                        } else {
+                            value = d.toFixed(2);
+                        }
                     }
                     return (
                       <RowContainer key={index}>
