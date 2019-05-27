@@ -120,7 +120,7 @@ class CustomTable extends React.Component<Props, State> {
       page * rowCount,
       page * rowCount + rowCount
     );
-    const seletedObjectEntity = entities.find(entity => entity.name === selectedEntity);
+    const selectedObjectEntity = entities.find(entity => entity.name === selectedEntity);
     return (
       <React.Fragment>
         <Overflow>
@@ -157,7 +157,7 @@ class CustomTable extends React.Component<Props, State> {
         />
         <EntityModal
           open={isOpenedModal}
-          title={seletedObjectEntity.displayName}
+          title={selectedObjectEntity.displayName}
           attributes={attributes}
           item={selectedModalItem}
           isLoading={isLoading}
@@ -185,7 +185,6 @@ const mapDispatchToProps = dispatch => ({
   onSubmitQuery: () => dispatch(submitQuery()),
   onSetSort: (entity: string, sort: Sort) => dispatch(setSortAction(entity, sort))
 });
-
 
 export default connect(
   mapStateToProps,
