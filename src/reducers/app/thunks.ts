@@ -28,7 +28,8 @@ import {
   setModalItemAction,
   setEntitiesAction,
   initEntityPropertiesAction,
-  initFilterAction
+  initFilterAction,
+  setTabAction
 } from './actions';
 import getConfigs from '../../utils/getconfig';
 import { Config, AttributeDefinition, Sort, Filter } from '../../types';
@@ -213,6 +214,9 @@ export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispat
   };
   const entities = await getEntities(serverInfo, platform, network);
   dispatch(setEntitiesAction(entities));
+  if (urlEntity && urlQuery) {
+    dispatch(setTabAction(urlEntity));
+  }
   const localDate = getTimeStampFromLocal();
   const currentDate = Date.now();
   if (currentDate - localDate > CACHE_TIME) {
