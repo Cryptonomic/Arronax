@@ -89,9 +89,7 @@ const initialState: AppState = {
     ],
     boolean: [{ name: 'eq', displayName: 'is' }],
   },
-  columns: {
-
-  },
+  columns: { },
   availableValues: {},
   isLoading: false,
   selectedEntity: '',
@@ -100,12 +98,6 @@ const initialState: AppState = {
   filterCount: {},
   selectedModalItem: {},
   sort: {}
-};
-
-const initEntities = {
-  blocks: [],
-  accounts: [],
-  operations: [],
 };
 
 const appReducer = (state = initialState, action) => {

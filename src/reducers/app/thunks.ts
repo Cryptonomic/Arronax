@@ -266,7 +266,7 @@ const getMainQuery = (attributeNames, selectedFilters, sort) => {
 }
 
 export const exportCsvData = () => async (dispatch, state) => {
-  const { selectedEntity, network, columns, sort, selectedFilters } = state().app;
+  const { selectedEntity, platform, network, columns, sort, selectedFilters } = state().app;
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
@@ -277,7 +277,7 @@ export const exportCsvData = () => async (dispatch, state) => {
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
 
-  const result: any = await executeEntityQuery(serverInfo, 'tezos', network, selectedEntity, query);
+  const result: any = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
   let blob = new Blob([result]);
   if (window.navigator.msSaveOrOpenBlob) {
     window.navigator.msSaveBlob(blob, 'arronax-results.csv');
@@ -293,7 +293,7 @@ export const exportCsvData = () => async (dispatch, state) => {
 
 export const submitQuery = () => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
-  const { selectedEntity, selectedFilters, network, columns, sort } = state().app;
+  const { selectedEntity, selectedFilters, platform, network, columns, sort } = state().app;
 
   const config = getConfig(network);
   const attributeNames = getAttributeNames(columns[selectedEntity]);
@@ -302,13 +302,7 @@ export const submitQuery = () => async (dispatch, state) => {
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
 
-  const items = await executeEntityQuery(
-    serverInfo,
-    'tezos',
-    network,
-    selectedEntity,
-    query
-  );
+  const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
   await dispatch(setFilterCountAction(selectedFilters[selectedEntity].length));
   await dispatch(setItemsAction(selectedEntity, items));
   dispatch(setLoadingAction(false));
@@ -326,7 +320,7 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
   query = addOrdering(query, sort[entity].orderBy, sort[entity].order);
   query = setLimit(query, 1);
 
-  const items = await executeEntityQuery(serverInfo, 'tezos', network, entity, query);
+  const items = await executeEntityQuery(serverInfo, state().app.platform, network, entity, query);
   await dispatch(setModalItemAction(items[0]));
   dispatch(setLoadingAction(false));
 };
