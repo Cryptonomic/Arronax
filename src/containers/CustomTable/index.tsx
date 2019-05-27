@@ -12,7 +12,8 @@ import {
   getEntity,
   getAttributes,
   getModalItem,
-  getSort
+  getSort,
+  getEntities
 } from '../../reducers/app/selectors';
 import { getItemByPrimaryKey, submitQuery } from '../../reducers/app/thunks';
 import { setSortAction } from '../../reducers/app/actions';
@@ -20,7 +21,7 @@ import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
 import EntityModal from 'components/EntityModal';
-import { Sort } from '../../types';
+import { Sort, EntityDefinition } from '../../types';
 
 const TableContainer = styled(Table)`
   width: 100%;
@@ -43,6 +44,7 @@ interface Props {
   attributes: any[];
   isLoading: boolean;
   selectedSort: Sort;
+  entities: EntityDefinition[];
   onExportCsv: () => void;
   getModalItemAction: (entity: string, key: string, value: string | number) => void;
   onSubmitQuery: () => void;
@@ -109,6 +111,7 @@ class CustomTable extends React.Component<Props, State> {
       attributes,
       selectedSort,
       isLoading,
+      entities,
       onExportCsv
     } = this.props;
     const { page, isOpenedModal} = this.state;
@@ -117,6 +120,7 @@ class CustomTable extends React.Component<Props, State> {
       page * rowCount,
       page * rowCount + rowCount
     );
+    const seletedObjectEntity = entities.find(entity => entity.name === selectedEntity);
     return (
       <React.Fragment>
         <Overflow>
@@ -153,7 +157,7 @@ class CustomTable extends React.Component<Props, State> {
         />
         <EntityModal
           open={isOpenedModal}
-          selectedEntity={selectedEntity}
+          title={seletedObjectEntity.displayName}
           attributes={attributes}
           item={selectedModalItem}
           isLoading={isLoading}
@@ -172,7 +176,8 @@ const mapStateToProps = (state: any) => ({
   selectedEntity: getEntity(state),
   selectedModalItem: getModalItem(state),
   attributes: getAttributes(state),
-  selectedSort: getSort(state)
+  selectedSort: getSort(state),
+  entities: getEntities(state)
 });
 
 const mapDispatchToProps = dispatch => ({

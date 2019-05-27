@@ -95,12 +95,12 @@ export const CloseButton = styled.div`
 `;
 
 type Props = {
-  selectedEntity: string,
-  open: boolean,
+  open: boolean;
   item: any;
   attributes: any[];
-  isLoading: boolean,
-  onClose: () => void
+  isLoading: boolean;
+  title: string;
+  onClose: () => void;
 };
 
 class EntityModal extends React.Component<Props, {}> {
@@ -109,20 +109,19 @@ class EntityModal extends React.Component<Props, {}> {
   }
   render() {
     const {
-      selectedEntity,
       open,
       item,
       attributes,
       isLoading,
       onClose,
+      title
     } = this.props;
-    const entityName = selectedEntity.replace(/_/gi, ' ').slice(0, -1);
     return (
       <ModalWrapper open={open}>
         <ScrollContainer onClick={onClose}>
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
-            <ModalTitle>{entityName} Details</ModalTitle>
+            <ModalTitle>{title} Details</ModalTitle>
               {!isLoading && (
                 <ListContainer>
                   {attributes.map((column, index) => {
