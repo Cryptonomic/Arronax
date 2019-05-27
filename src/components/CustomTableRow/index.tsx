@@ -75,7 +75,7 @@ interface Props {
   network: string;
   platform: string;
   selectedEntity: string,
-  onClickPrimaryKey: (key, value) => void;
+  onClickPrimaryKey: (entity, key, value) => void;
 }
 
 const formatValueForPrimary = (attribute: AttributeDefinition, displayValue: string, value: any, onClickPrimaryKey) => {
@@ -86,16 +86,9 @@ const formatValueForPrimary = (attribute: AttributeDefinition, displayValue: str
   }
 
   if (PrimaryKeyList[entity] && PrimaryKeyList[entity].includes(name)) {
-    return <LinkDiv onClick={() => onClickPrimaryKey(name, value)}>{displayValue}</LinkDiv>;
+    return <LinkDiv onClick={() => onClickPrimaryKey(entity, name, value)}>{displayValue}</LinkDiv>;
   }
 
-  if (entity === 'accounts' && name === 'manager') { // TODO: resolve via metadata
-    return <LinkDiv onClick={() => onClickPrimaryKey('account_id', value)}>{displayValue}</LinkDiv>;  
-  }
-
-  if (entity === 'blocks' && name === 'predecessor') { // TODO: resolve via metadata
-    return <LinkDiv onClick={() => onClickPrimaryKey('hash', value)}>{displayValue}</LinkDiv>;  
-  }
 
   return displayValue;
 }
@@ -106,7 +99,7 @@ const formatValueForDisplay = (
   entity: string,
   value: any,
   attribute: AttributeDefinition,
-  onClickPrimaryKey: (key, value) => void
+  onClickPrimaryKey: (entity, key, value) => void
 ) => {
   const {name, dataFormat, dataType} = attribute;
   if (dataType === 'Boolean') {

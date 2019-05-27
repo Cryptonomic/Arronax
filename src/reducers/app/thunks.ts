@@ -297,10 +297,7 @@ export const submitQuery = () => async (dispatch, state) => {
 
   const config = getConfig(network);
   const attributeNames = getAttributeNames(columns[selectedEntity]);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
@@ -317,39 +314,19 @@ export const submitQuery = () => async (dispatch, state) => {
   dispatch(setLoadingAction(false));
 };
 
-export const getItemByPrimaryKey = (primaryKey: string, value: string | number) => async (dispatch, state) => {
+export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: string | number) => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
-  const entity = state().app.selectedEntity;
   const network = state().app.network;
   const sort = state().app.sort;
   const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   let query = blankQuery();
-  query = addPredicate(
-    query,
-    primaryKey,
-    ConseilOperator.EQ,
-    [value],
-    false
-  );
-  query = addOrdering(
-    query,
-    sort[entity].orderBy,
-    sort[entity].order
-  );
+  query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
+  query = addOrdering(query, sort[entity].orderBy, sort[entity].order);
   query = setLimit(query, 1);
 
-  const items = await executeEntityQuery(
-    serverInfo,
-    'tezos',
-    network,
-    entity,
-    query
-  );
+  const items = await executeEntityQuery(serverInfo, 'tezos', network, entity, query);
   await dispatch(setModalItemAction(items[0]));
   dispatch(setLoadingAction(false));
 };

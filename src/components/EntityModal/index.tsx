@@ -109,7 +109,6 @@ type Props = {
 };
 
 class EntityModal extends React.Component<Props, {}> {
-
   onClickModal = (event) => {
     event.stopPropagation();
   }
@@ -123,9 +122,7 @@ class EntityModal extends React.Component<Props, {}> {
       onClose,
     } = this.props;
     return (
-      <ModalWrapper
-        open={open}      
-      >
+      <ModalWrapper open={open}>
         <ScrollContainer onClick={onClose}>
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />

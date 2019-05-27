@@ -44,7 +44,7 @@ interface Props {
   isLoading: boolean;
   selectedSort: Sort;
   onExportCsv: () => void;
-  getModalItemAction: (key: string, value: string | number) => void;
+  getModalItemAction: (entity: string, key: string, value: string | number) => void;
   onSubmitQuery: () => void;
   onSetSort: (entity: string, sort: Sort) => void;
 }
@@ -87,11 +87,11 @@ class CustomTable extends React.Component<Props, State> {
 
   onCloseModal = () => this.setState({isOpenedModal: false});
 
-  onOpenModal = (key, value) => {
+  onOpenModal = (entity, key, value) => {
     const { selectedPrimaryKey, selectedPrimaryValue } = this.state;
     const { getModalItemAction } = this.props;
     if (selectedPrimaryKey !== key || selectedPrimaryValue !== value) {
-      getModalItemAction(key, value);
+      getModalItemAction(entity, key, value);
       this.setState({selectedPrimaryKey: key, selectedPrimaryValue: value, isOpenedModal: true});
     }
     this.setState({isOpenedModal: true});
@@ -176,7 +176,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  getModalItemAction: (key, value) => dispatch(getItemByPrimaryKey(key, value)),
+  getModalItemAction: (entity, key, value) => dispatch(getItemByPrimaryKey(entity, key, value)),
   onSubmitQuery: () => dispatch(submitQuery()),
   onSetSort: (entity: string, sort: Sort) => dispatch(setSortAction(entity, sort))
 });
