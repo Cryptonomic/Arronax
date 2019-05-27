@@ -42,6 +42,7 @@ const ModalTitle = styled.div`
   line-height: 28px;
   font-weight: 400;
   color: #9b9b9b;
+  text-transform: capitalize;
 `;
 
 const RowContainer = styled.div`
@@ -93,12 +94,6 @@ export const CloseButton = styled.div`
   align-items: center;
 `;
 
-const TITLE = {
-  blocks: 'Block',
-  opperations: 'Operation',
-  accounts: 'Account'
-};
-
 type Props = {
   selectedEntity: string,
   open: boolean,
@@ -121,12 +116,13 @@ class EntityModal extends React.Component<Props, {}> {
       isLoading,
       onClose,
     } = this.props;
+    const entityName = selectedEntity.replace(/_/gi, ' ').slice(0, -1);
     return (
       <ModalWrapper open={open}>
         <ScrollContainer onClick={onClose}>
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
-            <ModalTitle>{TITLE[selectedEntity]} Details</ModalTitle>
+            <ModalTitle>{entityName} Details</ModalTitle>
               {!isLoading && (
                 <ListContainer>
                   {attributes.map((column, index) => {
