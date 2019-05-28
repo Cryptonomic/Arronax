@@ -214,9 +214,9 @@ class FilterPanel extends React.Component<Props, {}> {
                   )}
                   {filter.operator && !filter.isLowCardinality && (
                     <ValueInput
+                      type={filter.operatorType}
                       values={filter.values}
                       operator={filter.operator}
-                      InputProps={{ disableUnderline: true }}
                       onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
                     />
                   )}
