@@ -24,7 +24,7 @@ export const getOperatorType = (dataType: string) => {
   if (dataType === 'Int' || dataType === 'Decimal') {
     return 'numeric';
   }
-  if (dataType === 'String') {
+  if (dataType === 'String' || dataType === 'AccountAddress' || dataType === 'Hash') {
     return 'string';
   }
   if (dataType === 'Boolean') {
