@@ -56,6 +56,7 @@ interface State {
   isOpenedModal: boolean;
   selectedPrimaryKey: string;
   selectedPrimaryValue: string | number;
+  referenceEntity: string;
 }
 
 class CustomTable extends React.Component<Props, State> {
@@ -65,7 +66,8 @@ class CustomTable extends React.Component<Props, State> {
       page: 0,
       isOpenedModal: false,
       selectedPrimaryKey: '',
-      selectedPrimaryValue: ''
+      selectedPrimaryValue: '',
+      referenceEntity: props.selectedEntity
     };
   }
 
@@ -94,7 +96,7 @@ class CustomTable extends React.Component<Props, State> {
     const { getModalItemAction } = this.props;
     if (selectedPrimaryKey !== key || selectedPrimaryValue !== value) {
       getModalItemAction(entity, key, value);
-      this.setState({selectedPrimaryKey: key, selectedPrimaryValue: value, isOpenedModal: true});
+      this.setState({referenceEntity: entity, selectedPrimaryKey: key, selectedPrimaryValue: value, isOpenedModal: true});
     }
     this.setState({isOpenedModal: true});
   }
@@ -114,13 +116,13 @@ class CustomTable extends React.Component<Props, State> {
       entities,
       onExportCsv
     } = this.props;
-    const { page, isOpenedModal} = this.state;
+    const { page, referenceEntity, isOpenedModal} = this.state;
     const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
     const realRows = items.slice(
       page * rowCount,
       page * rowCount + rowCount
     );
-    const selectedObjectEntity = entities.find(entity => entity.name === selectedEntity);
+    const selectedObjectEntity = entities.find(entity => entity.name === referenceEntity);
     return (
       <React.Fragment>
         <Overflow>
