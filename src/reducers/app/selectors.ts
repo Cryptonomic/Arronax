@@ -42,6 +42,11 @@ export const getAttributes = createSelector(
   apps => apps.attributes[apps.selectedEntity]
 );
 
+export const getAttributesAll = createSelector(
+  getAppState,
+  apps => apps.attributes
+);
+
 export const getOperators = createSelector(
   getAppState,
   apps => apps.operators

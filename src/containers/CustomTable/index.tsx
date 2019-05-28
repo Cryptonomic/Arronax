@@ -10,7 +10,7 @@ import {
   getColumns,
   getPlatform,
   getEntity,
-  getAttributes,
+  getAttributesAll,
   getModalItem,
   getSort,
   getEntities
@@ -41,7 +41,7 @@ interface Props {
   platform: string;
   selectedEntity: string;
   selectedModalItem: object;
-  attributes: any[];
+  attributes: object;
   isLoading: boolean;
   selectedSort: Sort;
   entities: EntityDefinition[];
@@ -160,7 +160,7 @@ class CustomTable extends React.Component<Props, State> {
         <EntityModal
           open={isOpenedModal}
           title={selectedObjectEntity.displayName}
-          attributes={attributes}
+          attributes={attributes[referenceEntity]}
           item={selectedModalItem}
           isLoading={isLoading}
           onClose={this.onCloseModal}
@@ -177,7 +177,7 @@ const mapStateToProps = (state: any) => ({
   platform: getPlatform(state),
   selectedEntity: getEntity(state),
   selectedModalItem: getModalItem(state),
-  attributes: getAttributes(state),
+  attributes: getAttributesAll(state),
   selectedSort: getSort(state),
   entities: getEntities(state)
 });
