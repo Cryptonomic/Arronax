@@ -6,6 +6,7 @@ import {
   ConseilOutput,
   ConseilSortDirection
 } from 'conseiljs';
+import base64url from 'base64url';
 const { executeEntityQuery } = ConseilDataClient;
 const {
   blankQuery,
@@ -27,7 +28,8 @@ import {
   setModalItemAction,
   setEntitiesAction,
   initEntityPropertiesAction,
-  initFilterAction
+  initFilterAction,
+  setTabAction
 } from './actions';
 import getConfigs from '../../utils/getconfig';
 import { Config, AttributeDefinition, Sort, Filter } from '../../types';
@@ -111,9 +113,11 @@ export const fetchInitEntityAction = (
   entity: string,
   network: string,
   serverInfo: any,
-  attributes: AttributeDefinition[]
+  attributes: AttributeDefinition[],
+  urlEntity: string,
+  urlQuery: string
 ) => async dispatch => {
-  const defaultQuery = defaultQueries[entity];
+  const defaultQuery = urlEntity === entity && urlQuery ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
   let columns = [];
   let sort: Sort;
   let filters: Filter[] = [];
@@ -154,6 +158,8 @@ export const fetchInitEntityAction = (
           operator = 'isnotnull';
         } else if (predicate.operation === ConseilOperator.EQ) {
           operator = 'noteq';
+        } else if (predicate.operation === ConseilOperator.STARTSWITH) {
+          operator = 'notstartWith';
         }
       }
       return {
@@ -193,11 +199,12 @@ export const fetchInitEntityAction = (
     entity,
     query
   );
+  
   await dispatch(initEntityPropertiesAction(entity, filters, sort, columns, items));
   await Promise.all(cardinalityPromises);
 };
 
-export const initLoad = () => async (dispatch, state) => {
+export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispatch, state) => {
   const { network, platform } = state().app;
   const config = getConfig(network);
   const serverInfo = {
@@ -206,6 +213,9 @@ export const initLoad = () => async (dispatch, state) => {
   };
   const entities = await getEntities(serverInfo, platform, network);
   dispatch(setEntitiesAction(entities));
+  if (urlEntity && urlQuery) {
+    dispatch(setTabAction(urlEntity));
+  }
   const localDate = getTimeStampFromLocal();
   const currentDate = Date.now();
   if (currentDate - localDate > CACHE_TIME) {
@@ -215,7 +225,17 @@ export const initLoad = () => async (dispatch, state) => {
     saveAttributes(attributes, currentDate);
   }
   const { attributes } = state().app;
-  const promises = entities.map(entity => dispatch(fetchInitEntityAction(platform, entity.name, network, serverInfo, attributes[entity.name])));
+  const promises = entities.map(entity => dispatch(
+    fetchInitEntityAction(
+      platform,
+      entity.name,
+      network,
+      serverInfo,
+      attributes[entity.name],
+      urlEntity,
+      urlQuery
+    ))
+  );
   await Promise.all(promises);
   dispatch(completeFullLoadAction(true));
 };
@@ -245,6 +265,9 @@ const getMainQuery = (attributeNames, selectedFilters, sort) => {
     } else if (filter.operator === 'noteq') {
       operator = ConseilOperator.EQ;
       isInvert = true;
+    } else if (filter.operator === 'notstartWith') {
+      operator = ConseilOperator.STARTSWITH;
+      isInvert = true;
     }
     query = addPredicate(
       query,
@@ -262,6 +285,23 @@ const getMainQuery = (attributeNames, selectedFilters, sort) => {
   );
 
   return query;
+}
+
+export const shareReport = () => async (dispatch, state) => {
+  const { selectedEntity, columns, sort, selectedFilters } = state().app;
+  const attributeNames = getAttributeNames(columns[selectedEntity]);
+  let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
+  query = setLimit(query, 5000);
+  const serializedQuery = JSON.stringify(query);
+  const hostUrl = window.location.origin;
+  const encodedUrl = base64url(serializedQuery);
+  const shareLink = `${hostUrl}?e=${selectedEntity}&q=${encodedUrl}`;
+  const textField = document.createElement('textarea')
+  textField.innerText = shareLink;
+  document.body.appendChild(textField);
+  textField.select();
+  document.execCommand('copy');
+  textField.remove();
 }
 
 export const exportCsvData = () => async (dispatch, state) => {
@@ -309,6 +349,7 @@ export const submitQuery = () => async (dispatch, state) => {
 
 export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: string | number) => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
+
   const network = state().app.network;
   const sort = state().app.sort;
   const config = getConfig(network);
@@ -320,6 +361,7 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
   query = setLimit(query, 1);
 
   const items = await executeEntityQuery(serverInfo, state().app.platform, network, entity, query);
+
   await dispatch(setModalItemAction(items[0]));
   dispatch(setLoadingAction(false));
 };
