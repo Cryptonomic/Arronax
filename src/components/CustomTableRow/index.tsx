@@ -75,7 +75,7 @@ interface Props {
   network: string;
   platform: string;
   selectedEntity: string,
-  onClickPrimaryKey: (key, value) => void;
+  onClickPrimaryKey: (entity, key, value) => void;
 }
 
 const formatValueForPrimary = (attribute: AttributeDefinition, displayValue: string, value: any, onClickPrimaryKey) => {
@@ -86,15 +86,7 @@ const formatValueForPrimary = (attribute: AttributeDefinition, displayValue: str
   }
 
   if (PrimaryKeyList[entity] && PrimaryKeyList[entity].includes(name)) {
-    return <LinkDiv onClick={() => onClickPrimaryKey(name, value)}>{displayValue}</LinkDiv>;
-  }
-
-  if (entity === 'accounts' && name === 'manager') { // TODO: resolve via metadata
-    return <LinkDiv onClick={() => onClickPrimaryKey('account_id', value)}>{displayValue}</LinkDiv>;  
-  }
-
-  if (entity === 'blocks' && name === 'predecessor') { // TODO: resolve via metadata
-    return <LinkDiv onClick={() => onClickPrimaryKey('hash', value)}>{displayValue}</LinkDiv>;  
+    return <LinkDiv onClick={() => onClickPrimaryKey(entity, name, value)}>{displayValue}</LinkDiv>;
   }
 
   return displayValue;
@@ -106,8 +98,9 @@ const formatValueForDisplay = (
   entity: string,
   value: any,
   attribute: AttributeDefinition,
-  onClickPrimaryKey: (key, value) => void
+  onClickPrimaryKey: (entity, key, value) => void
 ) => {
+  if (!value || value.length === 0) { return ''; }
   const {name, dataFormat, dataType} = attribute;
   if (dataType === 'Boolean') {
       const svalue = value.toString();
@@ -121,13 +114,7 @@ const formatValueForDisplay = (
         {value}
       </Moment>
     )
-  } else if (dataType === 'AccountAddress'
-    || ( // TODO: remove once dataType is set properly
-      (entity === 'accounts' && (name === 'account_id' || name === 'manager' || name === 'delegate_value'))
-      || (entity === 'operations' && (name === 'source' || name === 'destination'))
-      || (entity === 'blocks' && name === 'baker')
-    )
-  ) {
+  } else if (dataType === 'AccountAddress') {
     if (!value || value.length === 0) { return ''; }
     let colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255)/74)).toString('hex');
     return (
@@ -140,15 +127,7 @@ const formatValueForDisplay = (
         </ClipboardWrapper>
       </React.Fragment>
     );
-} else if (dataType === 'Hash'
-  || ( // TODO: remove once dataType is set properly
-      (entity === 'blocks' && (name === 'hash' || name === 'predecessor' || 'operations_hash'))
-      || (entity === 'accounts' && name === 'block_id')
-      || (entity === 'rolls' && name === 'block_id')
-      || (entity === 'ballots' && name === 'block_id')
-  )
-) {
-    if (!value || value.length === 0) { return ''; }
+} else if (dataType === 'Hash') {
     return (
       <React.Fragment>
         {formatValueForPrimary(attribute, getShortColumn(value), value, onClickPrimaryKey)}

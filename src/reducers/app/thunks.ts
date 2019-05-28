@@ -50,7 +50,7 @@ const getConfig = val => configs.find(conf => conf.network === val);
 const getAttributeNames = attributes => attributes.map(attr => attr.name);
 
 export const fetchValues = (attribute: string) => async (dispatch, state) => {
-  const { selectedEntity, network, platform }  = state().app;
+  const { selectedEntity, network, platform } = state().app;
   dispatch(setLoadingAction(true));
   const config = getConfig(network);
   const serverInfo = {
@@ -123,20 +123,23 @@ export const fetchInitEntityAction = (
   let filters: Filter[] = [];
   let cardinalityPromises = [];
   let query = blankQuery();
+
   if (defaultQuery) {
     const { fields, predicates, orderBy } = defaultQuery;
     query = defaultQuery;
     // initColumns
-    attributes.forEach(attribute => {
-      const index = fields.indexOf(attribute.name);
-      if (index >= 0) {
-        columns[index] = attribute;
-      }
-    });
-    sort = {
+    if (fields.length > 0) {
+      attributes.forEach(attribute => {
+        if (fields.indexOf(attribute.name) >= 0) { columns.push(attribute); }
+      });
+    } else {
+      attributes.forEach(attribute => columns.push(attribute));
+    }
+
+    sort = { // TODO: read multiple
       orderBy: orderBy[0].field,
       order: orderBy[0].direction
-    };
+      };
 
     // initFilters
     filters = predicates.map(predicate => {
@@ -148,7 +151,7 @@ export const fetchInitEntityAction = (
         );
       }
       const operatorType = getOperatorType(selectedAttribute.dataType);
-      
+
       let operator = predicate.operation;
       if (predicate.inverse) {
         if (predicate.operation === ConseilOperator.ISNULL) {
@@ -170,29 +173,25 @@ export const fetchInitEntityAction = (
 
     // These values are used when reset columns or filters
     const initProperty = {
-      columns, filters 
+      columns, filters
     };
     InitProperties = {
       ...InitProperties,
       [entity]: initProperty
-    };    
+    };
   } else {
     columns = [...attributes];
-    const levelColumn =  columns.find(column => column.name === 'level' || column.name === 'block_level') || columns[0];
+    const levelColumn = columns.find(column => column.name === 'level' || column.name === 'block_level') || columns[0];
     sort = {
       orderBy: levelColumn.name,
       order: ConseilSortDirection.DESC
-    };
+      };
     const attributeNames = getAttributeNames(columns);
     query = addFields(query, ...attributeNames);
     query = setLimit(query, 5000);
-    query = addOrdering(
-      query,
-      sort.orderBy,
-      sort.order
-    );
+    query = addOrdering(query, sort.orderBy, sort.order);
   }
-  
+
   const items = await executeEntityQuery(
     serverInfo,
     platform,
@@ -306,7 +305,7 @@ export const shareReport = () => async (dispatch, state) => {
 }
 
 export const exportCsvData = () => async (dispatch, state) => {
-  const { selectedEntity, network, platform, columns, sort, selectedFilters } = state().app;
+  const { selectedEntity, platform, network, columns, sort, selectedFilters } = state().app;
   const config = getConfig(network);
   const serverInfo = {
     url: config.url,
@@ -321,7 +320,7 @@ export const exportCsvData = () => async (dispatch, state) => {
   let blob = new Blob([result]);
   if (window.navigator.msSaveOrOpenBlob) {
     window.navigator.msSaveBlob(blob, 'arronax-results.csv');
-  } else  {
+  } else {
     const a = window.document.createElement("a");
     a.href = window.URL.createObjectURL(blob);
     a.download = 'arronax-results.csv';
@@ -337,57 +336,32 @@ export const submitQuery = () => async (dispatch, state) => {
 
   const config = getConfig(network);
   const attributeNames = getAttributeNames(columns[selectedEntity]);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
 
-  const items = await executeEntityQuery(
-    serverInfo,
-    platform,
-    network,
-    selectedEntity,
-    query
-  );
+  const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
   await dispatch(setFilterCountAction(selectedFilters[selectedEntity].length));
   await dispatch(setItemsAction(selectedEntity, items));
   dispatch(setLoadingAction(false));
 };
 
-export const getItemByPrimaryKey = (primaryKey: string, value: string | number) => async (dispatch, state) => {
+export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: string | number) => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
-  const { selectedEntity, platform, network, sort } = state().app;
+
+  const network = state().app.network;
+  const sort = state().app.sort;
   const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   let query = blankQuery();
-  query = addPredicate(
-    query,
-    primaryKey,
-    ConseilOperator.EQ,
-    [value],
-    false
-  );
-  query = addOrdering(
-    query,
-    sort[selectedEntity].orderBy,
-    sort[selectedEntity].order
-  );
+  query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
+  query = addOrdering(query, sort[entity].orderBy, sort[entity].order);
   query = setLimit(query, 1);
 
-  const items = await executeEntityQuery(
-    serverInfo,
-    platform,
-    network,
-    selectedEntity,
-    query
-  );
+  const items = await executeEntityQuery(serverInfo, state().app.platform, network, entity, query);
+
   await dispatch(setModalItemAction(items[0]));
   dispatch(setLoadingAction(false));
 };
