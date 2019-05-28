@@ -162,8 +162,11 @@ export const fetchInitEntityAction = (
           operator = 'notstartWith';
         } else if (predicate.operation === ConseilOperator.ENDSWITH) {
           operator = 'notendWith';
-        }
+        } else if (predicate.operation === ConseilOperator.IN) {
+            operator = 'notin';
+          }
       }
+
       return {
         name: predicate.field,
         operator,
@@ -253,8 +256,7 @@ export const fetchAttributes = (
 };
 
 const getMainQuery = (attributeNames, selectedFilters, sort) => {
-  let query = blankQuery();
-  query = addFields(query, ...attributeNames);
+  let query = addFields(blankQuery(), ...attributeNames);
   selectedFilters.forEach(filter => {
     if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN) && filter.values.length === 1) {
       return true;
@@ -276,8 +278,11 @@ const getMainQuery = (attributeNames, selectedFilters, sort) => {
         operator = ConseilOperator.STARTSWITH;
         isInvert = true;
     } else if (filter.operator === 'notendWith') {
-      operator = ConseilOperator.ENDSWITH;
-      isInvert = true;
+        operator = ConseilOperator.ENDSWITH;
+        isInvert = true;
+    } else if (filter.operator === 'notin') {
+        operator = ConseilOperator.IN;
+        isInvert = true;
     }
 
     query = addPredicate(query, filter.name, operator, filter.values, isInvert);

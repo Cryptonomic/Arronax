@@ -196,6 +196,16 @@ class FilterPanel extends React.Component<Props, {}> {
                       onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
                     />
                   )}
+                  {filter.operator &&
+                        (filter.operator === ConseilOperator.IN || filter.operator === 'notin')
+                        && filter.isLowCardinality && (
+                    <ValueInput
+                      values={filter.values}
+                      operator={filter.operator}
+                      InputProps={{ disableUnderline: true }}
+                      onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
+                    />
+                  )}
                   {filter.operator && !filter.isLowCardinality && (
                     <ValueInput
                       values={filter.values}
