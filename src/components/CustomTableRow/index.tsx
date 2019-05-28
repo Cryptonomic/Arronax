@@ -89,7 +89,6 @@ const formatValueForPrimary = (attribute: AttributeDefinition, displayValue: str
     return <LinkDiv onClick={() => onClickPrimaryKey(entity, name, value)}>{displayValue}</LinkDiv>;
   }
 
-
   return displayValue;
 }
 
@@ -135,7 +134,7 @@ const formatValueForDisplay = (
     );
 } else if (dataType === 'Hash'
   || ( // TODO: remove once dataType is set properly
-      (entity === 'blocks' && (name === 'hash' || name === 'predecessor' || 'operations_hash'))
+      (entity === 'blocks' && (name === 'hash' || name === 'predecessor' || name === 'operations_hash'))
       || (entity === 'accounts' && name === 'block_id')
       || (entity === 'rolls' && name === 'block_id')
       || (entity === 'ballots' && name === 'block_id')
