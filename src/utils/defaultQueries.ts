@@ -13,7 +13,9 @@ export const defaultQueries = {
     },
     accounts: {
         fields: ['account_id', 'manager', 'delegate_value', 'balance'],
-        predicates: [{ field: 'account_id', set: ['kt1'], operation: 'startsWith', inverse: true }],
+        predicates: [
+            { field: 'account_id', set: ['kt1'], operation: 'startsWith', inverse: true },
+            { field: 'balance', set: [0], operation: 'gt', inverse: false }],
         orderBy: [{ field: 'block_level', direction: 'desc' }],
         limit: 5000
     },
@@ -25,7 +27,7 @@ export const defaultQueries = {
     },
     fees: {
         fields: ['kind', 'timestamp', 'high', 'medium', 'low'],
-        predicates: [{ field: 'kind', set: ['transaction', 'origination'], operation: 'in', inverse: true }],
+        predicates: [{ field: 'kind', set: ['transaction', 'origination'], operation: 'in', inverse: false }],
         orderBy: [{ field: 'timestamp', direction: 'desc' }, { field: 'kind', direction: 'asc' }],
         limit: 5000
     }
