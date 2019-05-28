@@ -100,7 +100,7 @@ const formatValueForDisplay = (
   attribute: AttributeDefinition,
   onClickPrimaryKey: (entity, key, value) => void
 ) => {
-  if (!value || value.length === 0) { return ''; }
+  if (value == null || value.length === 0) { return ''; }
   const {name, dataFormat, dataType} = attribute;
   if (dataType === 'Boolean') {
       const svalue = value.toString();
@@ -115,7 +115,7 @@ const formatValueForDisplay = (
       </Moment>
     )
   } else if (dataType === 'AccountAddress') {
-    if (!value || value.length === 0) { return ''; }
+    if (value == null || value.length === 0) { return ''; }
     let colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255)/74)).toString('hex');
     return (
       <React.Fragment>

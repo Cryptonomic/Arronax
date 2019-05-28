@@ -127,7 +127,7 @@ class EntityModal extends React.Component<Props, {}> {
                   {attributes.map((column, index) => {
                     const { displayName, dataType, dataFormat, name } = column;
                     let value = item[name];
-                    if (!value || value.length === 0) {
+                    if (value == null || value.length === 0) {
                         value = '';
                     } else if (dataType === 'DateTime' && dataFormat) {
                       value = (
@@ -143,6 +143,9 @@ class EntityModal extends React.Component<Props, {}> {
                         } else {
                             value = d.toFixed(2);
                         }
+                    } else if (dataType === 'Boolean') {
+                        value = value.toString();
+                        value = value.charAt(0).toUpperCase() + value.substring(1);
                     }
                     return (
                       <RowContainer key={index}>
