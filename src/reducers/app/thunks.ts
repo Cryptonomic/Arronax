@@ -160,6 +160,8 @@ export const fetchInitEntityAction = (
           operator = 'noteq';
         } else if (predicate.operation === ConseilOperator.STARTSWITH) {
           operator = 'notstartWith';
+        } else if (predicate.operation === ConseilOperator.ENDSWITH) {
+          operator = 'notendWith';
         }
       }
       return {
@@ -266,16 +268,14 @@ const getMainQuery = (attributeNames, selectedFilters, sort) => {
       operator = ConseilOperator.EQ;
       isInvert = true;
     } else if (filter.operator === 'notstartWith') {
-      operator = ConseilOperator.STARTSWITH;
+        operator = ConseilOperator.STARTSWITH;
+        isInvert = true;
+    } else if (filter.operator === 'notendWith') {
+      operator = ConseilOperator.ENDSWITH;
       isInvert = true;
     }
-    query = addPredicate(
-      query,
-      filter.name,
-      operator,
-      filter.values,
-      isInvert
-    );
+
+    query = addPredicate(query, filter.name, operator, filter.values, isInvert);
   });
   // Add this to set ordering
   query = addOrdering(

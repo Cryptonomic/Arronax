@@ -75,6 +75,7 @@ const initialState: AppState = {
       { name: 'startsWith', displayName: 'starts with' },
       { name: 'notstartWith', displayName: 'does not start with' },
       { name: 'endsWith', displayName: 'ends with' },
+      { name: 'notendWith', displayName: 'does not end with' },
       { name: 'isnull', displayName: 'is null' },
       { name: 'isnotnull', displayName: 'is not null' },
     ],

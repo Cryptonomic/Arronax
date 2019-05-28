@@ -177,14 +177,24 @@ class FilterPanel extends React.Component<Props, {}> {
                     />
                   )}
                   {filter.operator && <HR />}
-                  {filter.operator && (filter.operator === ConseilOperator.EQ ||  filter.operator === 'noteq') &&
-                    filter.isLowCardinality && (
+                  {filter.operator && (filter.operator === ConseilOperator.EQ ||  filter.operator === 'noteq') && filter.isLowCardinality && (
                       <ValueSelect
                         placeholder='Select Value'
                         selectedValue={filter.values[0]}
                         values={availableValues[filter.name]}
                         onChange={value => this.onFilterValueChange(value, index, 0)}
                       />
+                  )}
+                  {filter.operator &&
+                        (filter.operator === ConseilOperator.STARTSWITH || filter.operator === 'notstartWith'
+                         || filter.operator === ConseilOperator.ENDSWITH || filter.operator === 'notendWith')
+                        && filter.isLowCardinality && (
+                    <ValueInput
+                      values={filter.values}
+                      operator={filter.operator}
+                      InputProps={{ disableUnderline: true }}
+                      onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
+                    />
                   )}
                   {filter.operator && !filter.isLowCardinality && (
                     <ValueInput
