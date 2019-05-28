@@ -259,6 +259,11 @@ const getMainQuery = (attributeNames, selectedFilters, sort) => {
     if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN) && filter.values.length === 1) {
       return true;
     }
+
+    if (filter.operator !== ConseilOperator.ISNULL && filter.operator !== 'isnotnull' && (filter.values.length === 0 || filter.values[0].length === 0)) {
+        return true;
+    }
+
     let isInvert = false;
     let operator = filter.operator;
     if (filter.operator === 'isnotnull') {
