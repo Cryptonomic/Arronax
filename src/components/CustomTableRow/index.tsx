@@ -100,6 +100,7 @@ const formatValueForDisplay = (
   attribute: AttributeDefinition,
   onClickPrimaryKey: (entity, key, value) => void
 ) => {
+  if (!value || value.length === 0) { return ''; }
   const {name, dataFormat, dataType} = attribute;
   if (dataType === 'Boolean') {
       const svalue = value.toString();
@@ -113,13 +114,7 @@ const formatValueForDisplay = (
         {value}
       </Moment>
     )
-  } else if (dataType === 'AccountAddress'
-    || ( // TODO: remove once dataType is set properly
-      (entity === 'accounts' && (name === 'account_id' || name === 'manager' || name === 'delegate_value'))
-      || (entity === 'operations' && (name === 'source' || name === 'destination'))
-      || (entity === 'blocks' && name === 'baker')
-    )
-  ) {
+  } else if (dataType === 'AccountAddress') {
     if (!value || value.length === 0) { return ''; }
     let colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255)/74)).toString('hex');
     return (
@@ -132,15 +127,7 @@ const formatValueForDisplay = (
         </ClipboardWrapper>
       </React.Fragment>
     );
-} else if (dataType === 'Hash'
-  || ( // TODO: remove once dataType is set properly
-      (entity === 'blocks' && (name === 'hash' || name === 'predecessor' || name === 'operations_hash'))
-      || (entity === 'accounts' && name === 'block_id')
-      || (entity === 'rolls' && name === 'block_id')
-      || (entity === 'ballots' && name === 'block_id')
-  )
-) {
-    if (!value || value.length === 0) { return ''; }
+} else if (dataType === 'Hash') {
     return (
       <React.Fragment>
         {formatValueForPrimary(attribute, getShortColumn(value), value, onClickPrimaryKey)}
