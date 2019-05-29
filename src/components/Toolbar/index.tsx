@@ -70,8 +70,17 @@ const ColumnsTool = styled(ToolItem)`
 
 const ExportTool = styled(ToolItem)`
   width: 149px;
-  border-radius: 0px 5px 5px 0px;
   left: 307px;
+  padding-left: 18px;
+  &:after {
+    background: ${({ isactive }) => (isactive ? 'rgb(166, 223, 226)' : 'transparent')};
+  }
+`;
+
+const ShareTool = styled(ToolItem)`
+  width: 149px;
+  border-radius: 0px 5px 5px 0px;
+  left: 455px;
   padding-left: 18px;
   &:after {
     background: ${({ isactive }) => (isactive ? 'rgb(166, 223, 226)' : 'transparent')};
@@ -101,10 +110,11 @@ interface Props {
   columnsCount: number;
   onChangeTool: (tool: string) => void;
   onExportCsv: () => void;
+  onShareReport: () => void;
 }
 
 const Toolbar: React.StatelessComponent<Props> = props => {
-  const { isCollapsed, selectedTool, filterCount, columnsCount, onChangeTool, onExportCsv } = props;
+  const { isCollapsed, selectedTool, filterCount, columnsCount, onChangeTool, onExportCsv, onShareReport } = props;
   return (
     <Container>
       <FilterTool
@@ -112,7 +122,7 @@ const Toolbar: React.StatelessComponent<Props> = props => {
         onClick={() => onChangeTool(ToolType.FILTER)}
       >
         <FilterIcon size="20px" color="#4a4a4a" iconName="icon-filter" />
-        Filter ({filterCount})
+        Filter {filterCount > 0 ? "(" + filterCount + ")" : "" }
       </FilterTool>
       <ColumnsTool
         isactive={isCollapsed && selectedTool === ToolType.COLUMN ? 1 : 0}
@@ -125,6 +135,9 @@ const Toolbar: React.StatelessComponent<Props> = props => {
         <ExportIcon size="20px" color="#4a4a4a" iconName="icon-export" />
         Export CSV
       </ExportTool>
+      <ShareTool onClick={onShareReport}>
+        Share Report
+      </ShareTool>
     </Container>
   );
 };

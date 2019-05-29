@@ -162,7 +162,7 @@ const Header: React.StatelessComponent<Props> = props => {
   const { network, onChangeNetwork } = props;
   return (
     <HeaderContainer>
-      <HeaderLogo>ARRONAX</HeaderLogo>
+      <HeaderLogo>ARRONAX beta</HeaderLogo>
       <IconContainer>
         <ArronaxIcon size="22px" color="#FFFFFF" iconName="icon-tz" />
       </IconContainer>

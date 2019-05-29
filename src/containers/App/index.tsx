@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
+import { RouteProps, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -11,13 +13,15 @@ import {
   getItems,
   getIsFullLoaded,
   getFilterCount,
-  getColumns
+  getColumns,
+  getEntities
 } from '../../reducers/app/selectors';
 import {
   changeNetwork,
   initLoad,
   submitQuery,
-  exportCsvData
+  exportCsvData,
+  shareReport
 } from '../../reducers/app/thunks';
 import {
   setTabAction,
@@ -29,7 +33,7 @@ import Footer from 'components/Footer';
 import Toolbar from 'components/Toolbar';
 import CustomTable from '../CustomTable';
 
-import { ToolType } from '../../types';
+import { ToolType, EntityDefinition } from '../../types';
 
 import * as octopusSrc from 'assets/sadOctopus.svg';
 
@@ -58,7 +62,7 @@ const LoadingContainer = styled.div`
 
 const TabsWrapper = styled(Tabs)`
   &&& {
-    padding: 0 30px;
+    padding: 0 15px;
     width: 100%;
     span[class*='MuiPrivateTabIndicator-root'] {
       background-color: #a6dfe2;
@@ -68,7 +72,7 @@ const TabsWrapper = styled(Tabs)`
 `;
 
 const TabContainer = styled.div`
-  padding: 0px 30px;
+  padding: 0px 15px;
   width: 100%;
 `;
 
@@ -77,15 +81,9 @@ const TabItem = styled.div`
   font-size: 24px;
   letter-spacing: 3px;
   font-weight: ${({ isSelected }) => (isSelected ? 'normal' : 300)};
-  margin-right: 133px;
+  margin-right: 50px;
   margin-bottom: 7px;
   cursor: pointer;
-`;
-
-const FilterExTxt = styled.span`
-  font-size: 18px;
-  color: #9b9b9b;
-  margin-left: 21px;
 `;
 
 const NoResultContainer = styled.div`
@@ -148,35 +146,22 @@ const TryButton = styled(CustomButton)`
   margin-left: 22px;
 `;
 
-const tabsArray = [
-  {
-    value: 'blocks',
-    title: 'Blocks',
-  },
-  {
-    value: 'operations',
-    title: 'Operations',
-  },
-  {
-    value: 'accounts',
-    title: 'Accounts',
-  },
-];
-
-export interface Props {
+export interface Props extends RouteProps {
   isLoading: boolean;
   network: string;
   selectedEntity: string;
   items: object[];
   isFullLoaded: boolean;
   filterCount: number;
-  selectedColumns: any[];
+  selectedColumns: EntityDefinition[];
+  entities: EntityDefinition[];
   removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
-  initLoad: () => void;
+  initLoad: (e: string, q: string) => void;
   submitQuery: () => void;
-  exportCsvData: ()=> void
+  exportCsvData: ()=> void;
+  shareReport: ()=> void;
 }
 
 export interface States {
@@ -185,17 +170,26 @@ export interface States {
 }
 
 class Arronax extends React.Component<Props, States> {
+  static defaultProps = {
+    items: []
+  };
+  settingRef = null;
   constructor(props: Props) {
     super(props);
     this.state = {
       isSettingCollapsed: false,
       selectedTool: ToolType.FILTER
     };
+
+    this.settingRef = React.createRef();
   }
 
   componentDidMount() {
     const { initLoad } = this.props;
-    initLoad();
+    const search = new URLSearchParams(this.props.location.search);
+    const e = search.get('e');
+    const q = search.get('q');
+    initLoad(e, q);
   }
 
   onChangeNetwork = event => {
@@ -207,6 +201,7 @@ class Arronax extends React.Component<Props, States> {
     const { changeTab } = this.props;
     changeTab(value);
     await changeTab(value);
+    this.settingRef.current.onChangeHeight();
   };
 
   onChangeTool = async (tool: string) => {
@@ -258,6 +253,10 @@ class Arronax extends React.Component<Props, States> {
     exportCsvData();
   }
 
+  onShareReport = () => {
+    const { shareReport } = this.props;
+    shareReport();
+  }
 
   render() {
     const {
@@ -267,60 +266,67 @@ class Arronax extends React.Component<Props, States> {
       items,
       isFullLoaded,
       filterCount,
-      selectedColumns
+      selectedColumns,
+      entities
     } = this.props;
     const { isSettingCollapsed, selectedTool } = this.state;
-    const isRealLoading = isLoading || (!isFullLoaded && items.length === 0);
+    const isRealLoading = isLoading || !isFullLoaded;
     return (
       <MainContainer>
         <Header network={network} onChangeNetwork={this.onChangeNetwork} />
         <Container>
-          <TabsWrapper value={selectedEntity}>
-            {tabsArray.map((item, index) => (
-              <Tab
-                key={index}
-                value={item.value}
-                component={() => (
-                  <TabItem
-                    isSelected={selectedEntity === item.value}
-                    onClick={() => this.onChangeTab(item.value)}
-                  >
-                    {item.title}
-                  </TabItem>
-                )}
+          {isFullLoaded && (
+            <React.Fragment>
+              <TabsWrapper value={selectedEntity} variant="scrollable">
+                {entities.map((entity, index) => (
+                  <Tab
+                    key={index}
+                    value={entity.name}
+                    component={() => (
+                      <TabItem
+                        isSelected={selectedEntity === entity.name}
+                        onClick={() => this.onChangeTab(entity.name)}
+                      >
+                        {entity.displayName}
+                      </TabItem>
+                    )}
+                  />
+                ))}
+              </TabsWrapper>
+              <Toolbar
+                isCollapsed={isSettingCollapsed}
+                selectedTool={selectedTool}
+                filterCount={filterCount}
+                columnsCount={selectedColumns.length}
+                onChangeTool={this.onChangeTool}
+                onExportCsv={this.onExportCsv}
+                onShareReport={this.onShareReport}
               />
-            ))}
-          </TabsWrapper>
-          <Toolbar
-            isCollapsed={isSettingCollapsed}
-            selectedTool={selectedTool}
-            filterCount={filterCount}
-            columnsCount={selectedColumns.length}
-            onChangeTool={this.onChangeTool}
-            onExportCsv={this.onExportCsv}
-          />
-          <SettingsPanel
-            isCollapsed={isSettingCollapsed}
-            selectedTool={selectedTool}
-            onSubmit={this.onSubmit}
-            onClose={this.onCloseFilter}
-          />
-          <TabContainer component="div">
-            {items.length > 0 && <CustomTable isLoading={isLoading} items={items} onExportCsv={this.onExportCsv} /> }
-            {items.length === 0 && (
-              <NoResultContainer>
-                <OctopusImg src={octopusSrc} />
-                <NoResultContent>
-                  <NoResultTxt>Sorry, your filters returned no results.</NoResultTxt>
-                  <TryTxt>Try a different filter combination.</TryTxt>
-                  <ButtonContainer>
-                    <ClearButton onClick={this.onClearFilter}>Clear Filters</ClearButton>
-                    <TryButton onClick={this.onSettingCollapse}>Try Again</TryButton>
-                  </ButtonContainer>
-                </NoResultContent>
-              </NoResultContainer>
-            )}
-          </TabContainer>
+              <SettingsPanel
+                ref={this.settingRef}
+                isCollapsed={isSettingCollapsed}
+                selectedTool={selectedTool}
+                onSubmit={this.onSubmit}
+                onClose={this.onCloseFilter}
+              />
+              <TabContainer component="div">
+                {items.length > 0 && <CustomTable isLoading={isLoading} items={items} onExportCsv={this.onExportCsv} /> }
+                {items.length === 0 && isFullLoaded && (
+                  <NoResultContainer>
+                    <OctopusImg src={octopusSrc} />
+                    <NoResultContent>
+                      <NoResultTxt>Sorry, your filters returned no results.</NoResultTxt>
+                      <TryTxt>Try a different filter combination.</TryTxt>
+                      <ButtonContainer>
+                        <ClearButton onClick={this.onClearFilter}>Clear Filters</ClearButton>
+                        <TryButton onClick={this.onSettingCollapse}>Try Again</TryButton>
+                      </ButtonContainer>
+                    </NoResultContent>
+                  </NoResultContainer>
+                )}
+              </TabContainer>
+            </React.Fragment>
+          )}
         </Container>
         <Footer />
         {isRealLoading && (
@@ -341,6 +347,7 @@ const mapStateToProps = (state: any) => ({
   items: getItems(state),
   isFullLoaded: getIsFullLoaded(state),
   selectedColumns: getColumns(state),
+  entities: getEntities(state)
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -348,12 +355,16 @@ const mapDispatchToProps = dispatch => ({
     dispatch(removeAllFiltersAction(selectedEntity)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
-  initLoad: () => dispatch(initLoad()),
+  initLoad: (e: string, q: string) => dispatch(initLoad(e, q)),
   submitQuery: () => dispatch(submitQuery()),
-  exportCsvData: () => dispatch(exportCsvData())
+  exportCsvData: () => dispatch(exportCsvData()),
+  shareReport: () => dispatch(shareReport())
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+export default compose(
+  withRouter,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(Arronax);

@@ -31,7 +31,7 @@ const ColumnsContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  max-height: 510px;
+  max-height: 310px;
 `;
 
 const HeaderTxt = styled.div`
@@ -146,9 +146,7 @@ class ColumnsPanel extends React.Component<Props, States> {
     const columnsCount = Math.ceil(attributes.length / 10);
     return (
       <Container count={columnsCount}>
-        <HeaderTxt>Columns</HeaderTxt>
         <MainContainer>
-          <Title>Select Columns to Display</Title>
           <ColumnsContainer>
             {selected.map((attribute, index) => (
               <ColumnItem

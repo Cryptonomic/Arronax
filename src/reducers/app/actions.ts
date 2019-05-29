@@ -12,11 +12,13 @@ import {
   REMOVE_ALL_FILTERS,
   CHANGE_FILTER,
   SET_AVAILABLE_VALUES,
-  SET_ROW_COUNT,
   COMPLETE_FULL_LOAD,
   SET_FILTER_COUNT,
   SET_MODAL_ITEM,
-  SET_SORT
+  SET_SORT,
+  SET_ENTITIES,
+  INIT_ENTITY_PROPERTIES,
+  INIT_FILTER
 } from './types';
 import actionCreator from '../../utils/reduxHelpers';
 
@@ -70,8 +72,11 @@ export const setAvailableValuesAction = actionCreator(
   'availableValues'
 );
 
-export const setRowCountAction = actionCreator(SET_ROW_COUNT, 'rows');
 export const setFilterCountAction = actionCreator(SET_FILTER_COUNT, 'count');
 export const setModalItemAction = actionCreator(SET_MODAL_ITEM, 'item');
 
-export const setSortAction = actionCreator(SET_SORT, 'orderBy', 'order');
+export const setSortAction = actionCreator(SET_SORT, 'entity', 'sort');
+export const setEntitiesAction = actionCreator(SET_ENTITIES, 'entities');
+
+export const initEntityPropertiesAction = actionCreator(INIT_ENTITY_PROPERTIES, 'entity', 'filters', 'sort', 'columns', 'items');
+export const initFilterAction = actionCreator(INIT_FILTER, 'entity', 'filters');

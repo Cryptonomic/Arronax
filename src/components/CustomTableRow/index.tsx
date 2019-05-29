@@ -63,19 +63,6 @@ const LinkDiv = styled.div`
   text-decoration: underline;
 `;
 
-const DefaultAttributeNames = [
-  'predecessor',
-  'hash',
-  'block_id',
-  'block_hash',
-  'operation_group_hash',
-  'delegate',
-  'protocol',
-  'context',
-  'operations_hash',
-  'signature'
-];
-
 const PrimaryKeyList = {
   blocks: ['hash', 'level'],
   accounts: ['account_id'],
@@ -88,18 +75,21 @@ interface Props {
   network: string;
   platform: string;
   selectedEntity: string,
-  onClickPrimaryKey: (key, value) => void;
+  onClickPrimaryKey: (entity, key, value) => void;
 }
 
-const formatValueForPrimary = (entity, name, shortValue, value, onClickPrimaryKey) => {
-  if (PrimaryKeyList[entity].includes(name)) {
-    return <LinkDiv onClick={() => onClickPrimaryKey(name, value)}>{shortValue}</LinkDiv>;
-  } else if (entity === 'accounts' && name === 'manager') { // TODO: resolve via metadata
-    return <LinkDiv onClick={() => onClickPrimaryKey('account_id', value)}>{shortValue}</LinkDiv>;  
-  } else if (entity === 'blocks' && name === 'predecessor') { // TODO: resolve via metadata
-    return <LinkDiv onClick={() => onClickPrimaryKey('hash', value)}>{shortValue}</LinkDiv>;  
+const formatValueForPrimary = (attribute: AttributeDefinition, displayValue: string, value: any, onClickPrimaryKey) => {
+  const {entity, name} = attribute;
+
+  if (attribute.reference) {
+    return <LinkDiv onClick={() => onClickPrimaryKey(attribute.reference.entity, attribute.reference.key, value)}>{displayValue}</LinkDiv>;
   }
-  return shortValue;
+
+  if (PrimaryKeyList[entity] && PrimaryKeyList[entity].includes(name)) {
+    return <LinkDiv onClick={() => onClickPrimaryKey(entity, name, value)}>{displayValue}</LinkDiv>;
+  }
+
+  return displayValue;
 }
 
 const formatValueForDisplay = (
@@ -108,9 +98,10 @@ const formatValueForDisplay = (
   entity: string,
   value: any,
   attribute: AttributeDefinition,
-  onClickPrimaryKey: (key, value) => void
+  onClickPrimaryKey: (entity, key, value) => void
 ) => {
-  const { name, dataFormat, dataType} = attribute;
+  if (value == null || value.length === 0) { return ''; }
+  const {name, dataFormat, dataType} = attribute;
   if (dataType === 'Boolean') {
       const svalue = value.toString();
       return svalue.charAt(0).toUpperCase() + svalue.slice(1);
@@ -123,29 +114,40 @@ const formatValueForDisplay = (
         {value}
       </Moment>
     )
-  } else if (name === 'account_id' || name === 'manager') {
+  } else if (dataType === 'AccountAddress') {
+    if (value == null || value.length === 0) { return ''; }
     let colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255)/74)).toString('hex');
     return (
       <React.Fragment>
         <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
         <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
-        {formatValueForPrimary(entity, name, getShortColumn(value), value, onClickPrimaryKey)}
+        {formatValueForPrimary(attribute, getShortColumn(value), value, onClickPrimaryKey)}
         <ClipboardWrapper data-clipboard-text={value}>
           <CopyIcon />
         </ClipboardWrapper>
       </React.Fragment>
     );
-  } else if (DefaultAttributeNames.includes(name)) {
+} else if (dataType === 'Hash') {
     return (
       <React.Fragment>
-        {formatValueForPrimary(entity, name, getShortColumn(value), value, onClickPrimaryKey)}
+        {formatValueForPrimary(attribute, getShortColumn(value), value, onClickPrimaryKey)}
         <ClipboardWrapper data-clipboard-text={value}>
           <CopyIcon />
         </ClipboardWrapper>
       </React.Fragment>
     );
+} else if (dataType === 'Decimal') {
+    if (attribute.scale && attribute.scale !== 0) {
+        const n = Number(value);
+        const d = n/Math.pow(10, attribute.scale);
+        if (n < 10000) { return d.toFixed(4); }
+
+        return d.toFixed(2);
+    } else {
+        return value;
+    }
   } else {
-    return formatValueForPrimary(entity, name, value, value, onClickPrimaryKey);
+    return formatValueForPrimary(attribute, value, value, onClickPrimaryKey);
   }
 };
 

@@ -42,6 +42,7 @@ const ModalTitle = styled.div`
   line-height: 28px;
   font-weight: 400;
   color: #9b9b9b;
+  text-transform: capitalize;
 `;
 
 const RowContainer = styled.div`
@@ -93,57 +94,58 @@ export const CloseButton = styled.div`
   align-items: center;
 `;
 
-const TITLE = {
-  blocks: 'Block',
-  opperations: 'Operation',
-  accounts: 'Account'
-};
-
 type Props = {
-  selectedEntity: string,
-  open: boolean,
+  open: boolean;
   item: any;
   attributes: any[];
-  isLoading: boolean,
-  onClose: () => void
+  isLoading: boolean;
+  title: string;
+  onClose: () => void;
 };
 
 class EntityModal extends React.Component<Props, {}> {
-
   onClickModal = (event) => {
     event.stopPropagation();
   }
   render() {
     const {
-      selectedEntity,
       open,
       item,
       attributes,
       isLoading,
       onClose,
+      title
     } = this.props;
     return (
-      <ModalWrapper
-        open={open}      
-      >
+      <ModalWrapper open={open}>
         <ScrollContainer onClick={onClose}>
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
-            <ModalTitle>{TITLE[selectedEntity]} Details</ModalTitle>
+            <ModalTitle>{title} Details</ModalTitle>
               {!isLoading && (
                 <ListContainer>
                   {attributes.map((column, index) => {
                     const { displayName, dataType, dataFormat, name } = column;
                     let value = item[name];
-                    if (!value) {
-                      return null;
-                    }
-                    if (dataType === 'DateTime' && dataFormat) {
+                    if (value == null || value.length === 0) {
+                        value = '';
+                    } else if (dataType === 'DateTime' && dataFormat) {
                       value = (
                         <Moment format={dataFormat}>
                           {value}
                         </Moment>
                       );
+                    } else if (dataType === 'Decimal' && column.scale && column.scale !== 0) {
+                        const n = Number(value);
+                        const d = n/Math.pow(10, column.scale);
+                        if (n < 10000) {
+                            value = d.toFixed(4);
+                        } else {
+                            value = d.toFixed(2);
+                        }
+                    } else if (dataType === 'Boolean') {
+                        value = value.toString();
+                        value = value.charAt(0).toUpperCase() + value.substring(1);
                     }
                     return (
                       <RowContainer key={index}>

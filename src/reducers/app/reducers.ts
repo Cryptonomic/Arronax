@@ -11,38 +11,39 @@ import {
   REMOVE_FILTER,
   REMOVE_ALL_FILTERS,
   CHANGE_FILTER,
-  SET_ROW_COUNT,
   SET_AVAILABLE_VALUES,
   COMPLETE_FULL_LOAD,
   SET_FILTER_COUNT,
   SET_MODAL_ITEM,
-  SET_SORT
+  SET_SORT,
+  SET_ENTITIES,
+  INIT_ENTITY_PROPERTIES,
+  INIT_FILTER
 } from './types';
 
-import { ConseilQueryBuilder, ConseilQuery, ConseilSortDirection } from 'conseiljs';
-import { TezosAccount, TezosBlock, TezosOperation, Filter } from '../../types';
+import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
+import { Filter, EntityDefinition } from '../../types';
 import { getLocalAttributes } from '../../utils/attributes';
 
 const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
 const attributes = getLocalAttributes();
 
 export interface AppState {
-  filters: ConseilQuery;
+  platform: string;
   network: string;
-  blocks: TezosBlock[];
+  entities: EntityDefinition[],
+  filters: ConseilQuery;
   availableValues: object;
   columns: object;
   attributes: object;
+  items: object;
   operators: object;
   selectedFilters: object;
-  accounts: TezosAccount[];
-  operations: TezosOperation[];
   isLoading: boolean;
   selectedEntity: string;
   isFullLoaded: boolean;
   rowCount: number;
   filterCount: object;
-  platform: string;
   selectedModalItem: object;
   sort: object;
 }
@@ -51,18 +52,16 @@ const initialState: AppState = {
   filters: emptyFilters,
   platform: 'tezos',
   network: 'alphanet',
-  blocks: [],
+  entities: [],
   attributes: attributes,
-  selectedFilters: {
-    blocks: [],
-    operations: [],
-    accounts: [],
-  },
+  items: {},
+  selectedFilters: {},
   operators: {
     numeric: [
       { name: 'eq', displayName: 'is' },
       { name: 'noteq', displayName: 'is not' },
       { name: 'in', displayName: 'is in' },
+      { name: 'notin', displayName: 'is not in' },
       { name: 'between', displayName: 'is between' },
       { name: 'lt', displayName: 'is less than' },
       { name: 'gt', displayName: 'is greater than' },
@@ -73,9 +72,12 @@ const initialState: AppState = {
       { name: 'eq', displayName: 'is' },
       { name: 'noteq', displayName: 'is not' },
       { name: 'in', displayName: 'is in' },
+      { name: 'notin', displayName: 'is not in' },
       { name: 'like', displayName: 'is like' },
       { name: 'startsWith', displayName: 'starts with' },
+      { name: 'notstartWith', displayName: 'does not start with' },
       { name: 'endsWith', displayName: 'ends with' },
+      { name: 'notendWith', displayName: 'does not end with' },
       { name: 'isnull', displayName: 'is null' },
       { name: 'isnotnull', displayName: 'is not null' },
     ],
@@ -83,6 +85,7 @@ const initialState: AppState = {
       { name: 'eq', displayName: 'is' },
       { name: 'noteq', displayName: 'is not' },
       { name: 'in', displayName: 'is in' },
+      { name: 'notin', displayName: 'is not in' },
       { name: 'between', displayName: 'is between' },
       { name: 'before', displayName: 'is before' },
       { name: 'after', displayName: 'is after' },
@@ -91,39 +94,15 @@ const initialState: AppState = {
     ],
     boolean: [{ name: 'eq', displayName: 'is' }],
   },
-  columns: {
-    blocks: [],
-    operations: [],
-    accounts: [],
-  },
-  availableValues: {
-    blocks: {},
-    operations: {},
-    accounts: {},
-  },
-  accounts: [],
-  operations: [],
+  columns: { },
+  availableValues: {},
   isLoading: false,
-  selectedEntity: 'blocks',
+  selectedEntity: '',
   isFullLoaded: false,
   rowCount: 50,
-  filterCount: {
-    blocks: 0,
-    operations: 0,
-    accounts: 0,
-  },
+  filterCount: {},
   selectedModalItem: {},
-  sort: {
-    blocks: { orderBy: 'level', order: ConseilSortDirection.DESC },
-    operations: { orderBy: 'block_level', order: ConseilSortDirection.DESC },
-    accounts: { orderBy: 'block_level', order: ConseilSortDirection.DESC },
-  }
-};
-
-const initEntities = {
-  blocks: [],
-  accounts: [],
-  operations: [],
+  sort: {}
 };
 
 const appReducer = (state = initialState, action) => {
@@ -131,10 +110,10 @@ const appReducer = (state = initialState, action) => {
     case SET_FILTER:
       return { ...state, filters: action.filters };
     case SET_ITEMS:
-      return { ...state, [action.entity]: action.items };
+      const items = { ...state.items, [action.entity]: action.items };
+      return { ...state, items };
     case SET_COLUMNS: {
-      const columns = {...state.columns};
-      columns[action.entity] = action.items;
+      const columns = {...state.columns, [action.entity]: action.items};
       return { ...state, columns };
     }
     case SET_TAB:
@@ -146,8 +125,7 @@ const appReducer = (state = initialState, action) => {
     case INIT_DATA:
       return { ...state, ...initialState };
     case SET_ATTRIBUTES: {
-      const attributes = { ...state.attributes};
-      attributes[action.entity] = action.attributes;
+      const attributes = { ...state.attributes, [action.entity]: action.attributes};
       return { ...state, attributes };
     }
     case ADD_FILTER: {
@@ -189,28 +167,50 @@ const appReducer = (state = initialState, action) => {
     case SET_AVAILABLE_VALUES: {
       const availableValues = { ...state.availableValues};
       const entityValues = {...availableValues[action.entity]};
-      entityValues[action.attribute] = action.availableValues;
+      entityValues[action.attribute] = action.availableValues.sort();
       availableValues[action.entity] = entityValues;
       return { ...state, availableValues };
     }
     case SET_FILTER_COUNT: {
       const selectedEntity = state.selectedEntity;
-      const filterCount = state.filterCount;
-      filterCount[selectedEntity] = action.count;
+      const filterCount = { ...state.filterCount, [selectedEntity]: action.count };
       return { ...state, filterCount };
-    }
-    case SET_ROW_COUNT: {
-      return { ...state, rowCount: action.rows };
     }
     case COMPLETE_FULL_LOAD:
       return { ...state, isFullLoaded: action.isFullLoaded };
     case SET_MODAL_ITEM:
       return { ...state, selectedModalItem: action.item };
     case SET_SORT: {
-        const sort = {...state.sort};
-        const selectedEntity = state.selectedEntity;
-        sort[selectedEntity] = { orderBy: action.orderBy, order: action.order };
-        return { ...state, sort };
+      const sort = {...state.sort, [action.entity]: action.sort};
+      return { ...state, sort };
+    }
+    case SET_ENTITIES: {
+      const entities = action.entities;
+      const selectedEntity = entities[0].name;
+      return { ...state, entities, selectedEntity };
+    }
+    case INIT_ENTITY_PROPERTIES: {
+      const filterCount = { ...state.filterCount, [action.entity]: action.filters.length };
+      const sort = { ...state.sort, [action.entity]: action.sort};
+      const columns = { ...state.columns, [action.entity]: action.columns };
+      const items = { ...state.items, [action.entity]: action.items };
+      const selectedFilters = { ...state.selectedFilters, [action.entity]: action.filters };
+      const availableValues = { ...state.availableValues, [action.entity]: {} };
+
+      return {
+        ...state,
+        sort,
+        filterCount,
+        selectedFilters,
+        availableValues,
+        columns,
+        items
+      };
+    }
+    case INIT_FILTER: {
+      const selectedFilters = {...state.selectedFilters, [action.entity]: action.filters};
+      const filterCount = { ...state.filterCount, [action.entity]: action.filters.length };
+      return { ...state, selectedFilters, filterCount };
     }
   }
   return state;
