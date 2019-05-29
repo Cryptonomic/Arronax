@@ -17,7 +17,8 @@ import {
   SET_MODAL_ITEM,
   SET_SORT,
   SET_ENTITIES,
-  INIT_ENTITY_PROPERTIES
+  INIT_ENTITY_PROPERTIES,
+  INIT_FILTER
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
@@ -60,6 +61,7 @@ const initialState: AppState = {
       { name: 'eq', displayName: 'is' },
       { name: 'noteq', displayName: 'is not' },
       { name: 'in', displayName: 'is in' },
+      { name: 'notin', displayName: 'is not in' },
       { name: 'between', displayName: 'is between' },
       { name: 'lt', displayName: 'is less than' },
       { name: 'gt', displayName: 'is greater than' },
@@ -70,9 +72,12 @@ const initialState: AppState = {
       { name: 'eq', displayName: 'is' },
       { name: 'noteq', displayName: 'is not' },
       { name: 'in', displayName: 'is in' },
+      { name: 'notin', displayName: 'is not in' },
       { name: 'like', displayName: 'is like' },
       { name: 'startsWith', displayName: 'starts with' },
+      { name: 'notstartWith', displayName: 'does not start with' },
       { name: 'endsWith', displayName: 'ends with' },
+      { name: 'notendWith', displayName: 'does not end with' },
       { name: 'isnull', displayName: 'is null' },
       { name: 'isnotnull', displayName: 'is not null' },
     ],
@@ -80,6 +85,7 @@ const initialState: AppState = {
       { name: 'eq', displayName: 'is' },
       { name: 'noteq', displayName: 'is not' },
       { name: 'in', displayName: 'is in' },
+      { name: 'notin', displayName: 'is not in' },
       { name: 'between', displayName: 'is between' },
       { name: 'before', displayName: 'is before' },
       { name: 'after', displayName: 'is after' },
@@ -88,7 +94,7 @@ const initialState: AppState = {
     ],
     boolean: [{ name: 'eq', displayName: 'is' }],
   },
-  columns: {},
+  columns: { },
   availableValues: {},
   isLoading: false,
   selectedEntity: '',
@@ -97,12 +103,6 @@ const initialState: AppState = {
   filterCount: {},
   selectedModalItem: {},
   sort: {}
-};
-
-const initEntities = {
-  blocks: [],
-  accounts: [],
-  operations: [],
 };
 
 const appReducer = (state = initialState, action) => {
@@ -167,7 +167,7 @@ const appReducer = (state = initialState, action) => {
     case SET_AVAILABLE_VALUES: {
       const availableValues = { ...state.availableValues};
       const entityValues = {...availableValues[action.entity]};
-      entityValues[action.attribute] = action.availableValues;
+      entityValues[action.attribute] = action.availableValues.sort();
       availableValues[action.entity] = entityValues;
       return { ...state, availableValues };
     }
@@ -190,12 +190,13 @@ const appReducer = (state = initialState, action) => {
       return { ...state, entities, selectedEntity };
     }
     case INIT_ENTITY_PROPERTIES: {
-      const filterCount = { ...state.filterCount, [action.entity]: 0 };
+      const filterCount = { ...state.filterCount, [action.entity]: action.filters.length };
       const sort = { ...state.sort, [action.entity]: action.sort};
       const columns = { ...state.columns, [action.entity]: action.columns };
       const items = { ...state.items, [action.entity]: action.items };
-      const selectedFilters = { ...state.selectedFilters, [action.entity]: [] };
+      const selectedFilters = { ...state.selectedFilters, [action.entity]: action.filters };
       const availableValues = { ...state.availableValues, [action.entity]: {} };
+
       return {
         ...state,
         sort,
@@ -205,6 +206,11 @@ const appReducer = (state = initialState, action) => {
         columns,
         items
       };
+    }
+    case INIT_FILTER: {
+      const selectedFilters = {...state.selectedFilters, [action.entity]: action.filters};
+      const filterCount = { ...state.filterCount, [action.entity]: action.filters.length };
+      return { ...state, selectedFilters, filterCount };
     }
   }
   return state;

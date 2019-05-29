@@ -31,7 +31,7 @@ const TextInput = styled(TextField)`
   height: 17px;
   letter-spacing: 0;
   line-height: 17px;
-  width: 150px;
+  width: 300px;
 `;
 interface Props {
   operator: string;

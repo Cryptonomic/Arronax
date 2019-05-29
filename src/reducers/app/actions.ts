@@ -17,7 +17,8 @@ import {
   SET_MODAL_ITEM,
   SET_SORT,
   SET_ENTITIES,
-  INIT_ENTITY_PROPERTIES
+  INIT_ENTITY_PROPERTIES,
+  INIT_FILTER
 } from './types';
 import actionCreator from '../../utils/reduxHelpers';
 
@@ -77,4 +78,5 @@ export const setModalItemAction = actionCreator(SET_MODAL_ITEM, 'item');
 export const setSortAction = actionCreator(SET_SORT, 'entity', 'sort');
 export const setEntitiesAction = actionCreator(SET_ENTITIES, 'entities');
 
-export const initEntityPropertiesAction = actionCreator(INIT_ENTITY_PROPERTIES, 'entity', 'sort', 'columns', 'items');
+export const initEntityPropertiesAction = actionCreator(INIT_ENTITY_PROPERTIES, 'entity', 'filters', 'sort', 'columns', 'items');
+export const initFilterAction = actionCreator(INIT_FILTER, 'entity', 'filters');

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
 import { ConseilOperator } from 'conseiljs';
 import ArronaxIcon from 'components/ArronaxIcon';
-import { fetchValues } from '../../reducers/app/thunks';
+import { fetchValues, resetFilters } from '../../reducers/app/thunks';
 import {
   getAvailableValues,
   getSelectedFilters,
@@ -14,13 +14,14 @@ import {
 import {
   addFilterAction,
   removeFilterAction,
-  changeFilterAction,
-  removeAllFiltersAction
+  changeFilterAction
 } from '../../reducers/app/actions';
 import FilterSelect from '../FilterSelect';
 import ValueSelect from '../ValueSelect';
 import ValueInput from '../ValueInput';
 import { Filter } from '../../types';
+import { CARDINALITY_NUMBER } from '../../utils/defaultQueries';
+import { getOperatorType } from '../../utils/general';
 
 import {
   Container,
@@ -39,14 +40,6 @@ import {
   ResetButton
 } from './style';
 
-const attrTabValue = {
-  blocks: 'block',
-  operations: 'operation',
-  accounts: 'account',
-};
-
-const CARDINALITY_NUMBER = 15;
-
 type Props = {
   availableValues: object;
   selectedEntity: string;
@@ -58,7 +51,7 @@ type Props = {
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
   changeFilter: (entity: string, filter: object, index: number) => void;
-  removeAllFilters: (entity: string) => void;
+  resetFilters: () => void;
   onSubmit: () => void;
 };
 
@@ -90,14 +83,7 @@ class FilterPanel extends React.Component<Props, {}> {
     if (isLowCardinality && !availableValues[attr.name]) {
       fetchValues(attr.name);
     }
-    let operatorType = 'dateTime';
-    if (attr.dataType === 'Int' || attr.dataType === 'Decimal') {
-      operatorType = 'numeric';
-    } else if (attr.dataType === 'String') {
-      operatorType = 'string';
-    } else if (attr.dataType === 'Boolean') {
-      operatorType = 'boolean';
-    }
+    const operatorType = getOperatorType(attr.dataType);
     const selectedFilter = {
       name: attr.name,
       isLowCardinality,
@@ -136,11 +122,8 @@ class FilterPanel extends React.Component<Props, {}> {
   };
 
   onResetFilters = () => {
-    const {
-      removeAllFilters,
-      selectedEntity
-    } = this.props;
-    removeAllFilters(selectedEntity);
+    const { resetFilters } = this.props;
+    resetFilters();
   };
 
   render() {
@@ -152,7 +135,7 @@ class FilterPanel extends React.Component<Props, {}> {
       availableValues,
       onSubmit
     } = this.props;
-    const entityName = attrTabValue[selectedEntity];
+    const entityName = selectedEntity.replace(/_/gi, ' ').slice(0, -1);
 
     const filterLength = filters.length;
     let disableAddFilter = true;
@@ -169,18 +152,9 @@ class FilterPanel extends React.Component<Props, {}> {
 
     return (
       <Container>
-        <HeaderTxt>Filter</HeaderTxt>
         <MainContainer>
           {filters.map((filter: Filter, index) => {
-            const newAttributes = attributes.filter((attr: any) => {
-              if (attr.name === filter.name) {
-                return true;
-              }
-              const pos = filters.findIndex(
-                (item: any) => item.name === attr.name
-              );
-              return pos === -1;
-            });
+            const newAttributes = attributes.filter((attr: any) => { return !attr.cardinality || attr.cardinality > 1; });
 
             return (
               <FilterItemContainer key={index}>
@@ -203,14 +177,34 @@ class FilterPanel extends React.Component<Props, {}> {
                     />
                   )}
                   {filter.operator && <HR />}
-                  {filter.operator && (filter.operator === ConseilOperator.EQ ||  filter.operator === 'noteq') &&
-                    filter.isLowCardinality && (
+                  {filter.operator && (filter.operator === ConseilOperator.EQ ||  filter.operator === 'noteq') && filter.isLowCardinality && (
                       <ValueSelect
                         placeholder='Select Value'
                         selectedValue={filter.values[0]}
                         values={availableValues[filter.name]}
                         onChange={value => this.onFilterValueChange(value, index, 0)}
                       />
+                  )}
+                  {filter.operator &&
+                        (filter.operator === ConseilOperator.STARTSWITH || filter.operator === 'notstartWith'
+                         || filter.operator === ConseilOperator.ENDSWITH || filter.operator === 'notendWith')
+                        && filter.isLowCardinality && (
+                    <ValueInput
+                      values={filter.values}
+                      operator={filter.operator}
+                      InputProps={{ disableUnderline: true }}
+                      onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
+                    />
+                  )}
+                  {filter.operator &&
+                        (filter.operator === ConseilOperator.IN || filter.operator === 'notin')
+                        && filter.isLowCardinality && (
+                    <ValueInput
+                      values={filter.values}
+                      operator={filter.operator}
+                      InputProps={{ disableUnderline: true }}
+                      onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
+                    />
                   )}
                   {filter.operator && !filter.isLowCardinality && (
                     <ValueInput
@@ -239,11 +233,6 @@ class FilterPanel extends React.Component<Props, {}> {
               <PlusIconWrapper />
               Add Filter
             </AddFilterButton>
-            {filters.length == 0 && (
-              <FilterExpTxt>
-                You can filter by all {entityName} attributes and more.
-              </FilterExpTxt>
-            )}
           </AddFilterFooter>
         </MainContainer>
         <ButtonContainer>
@@ -275,8 +264,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch(removeFilterAction(entity, index)),
   changeFilter: (entity: string, filter: object, index: number) =>
     dispatch(changeFilterAction(entity, filter, index)),
-  removeAllFilters: (selectedEntity: string) =>
-    dispatch(removeAllFiltersAction(selectedEntity)),
+  resetFilters: () =>
+    dispatch(resetFilters()),
 });
 
 export default connect(

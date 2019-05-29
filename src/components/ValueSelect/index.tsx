@@ -27,8 +27,7 @@ const NestedTitle = styled.div`
   outline: none;
   padding: 5px 25px 0 25px;
   color: #9b9b9b;
-  font-family: Roboto-Medium;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 500;
   letter-spacing: 0;
   text-transform: capitalize;
@@ -133,7 +132,6 @@ class ValueSelect extends React.Component<Props, States> {
               },
             }}
           >
-            <NestedTitle>{placeholder}</NestedTitle>
             <MenuContents>
               {values.map((value, index) => (
                 <MainMenuItem

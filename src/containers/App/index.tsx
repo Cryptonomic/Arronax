@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
+import { RouteProps, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -18,7 +20,8 @@ import {
   changeNetwork,
   initLoad,
   submitQuery,
-  exportCsvData
+  exportCsvData,
+  shareReport
 } from '../../reducers/app/thunks';
 import {
   setTabAction,
@@ -59,7 +62,7 @@ const LoadingContainer = styled.div`
 
 const TabsWrapper = styled(Tabs)`
   &&& {
-    padding: 0 30px;
+    padding: 0 15px;
     width: 100%;
     span[class*='MuiPrivateTabIndicator-root'] {
       background-color: #a6dfe2;
@@ -69,7 +72,7 @@ const TabsWrapper = styled(Tabs)`
 `;
 
 const TabContainer = styled.div`
-  padding: 0px 30px;
+  padding: 0px 15px;
   width: 100%;
 `;
 
@@ -78,7 +81,7 @@ const TabItem = styled.div`
   font-size: 24px;
   letter-spacing: 3px;
   font-weight: ${({ isSelected }) => (isSelected ? 'normal' : 300)};
-  margin-right: 133px;
+  margin-right: 50px;
   margin-bottom: 7px;
   cursor: pointer;
 `;
@@ -143,7 +146,7 @@ const TryButton = styled(CustomButton)`
   margin-left: 22px;
 `;
 
-export interface Props {
+export interface Props extends RouteProps {
   isLoading: boolean;
   network: string;
   selectedEntity: string;
@@ -155,9 +158,10 @@ export interface Props {
   removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
-  initLoad: () => void;
+  initLoad: (e: string, q: string) => void;
   submitQuery: () => void;
-  exportCsvData: ()=> void
+  exportCsvData: ()=> void;
+  shareReport: ()=> void;
 }
 
 export interface States {
@@ -182,7 +186,10 @@ class Arronax extends React.Component<Props, States> {
 
   componentDidMount() {
     const { initLoad } = this.props;
-    initLoad();
+    const search = new URLSearchParams(this.props.location.search);
+    const e = search.get('e');
+    const q = search.get('q');
+    initLoad(e, q);
   }
 
   onChangeNetwork = event => {
@@ -246,6 +253,10 @@ class Arronax extends React.Component<Props, States> {
     exportCsvData();
   }
 
+  onShareReport = () => {
+    const { shareReport } = this.props;
+    shareReport();
+  }
 
   render() {
     const {
@@ -266,7 +277,7 @@ class Arronax extends React.Component<Props, States> {
         <Container>
           {isFullLoaded && (
             <React.Fragment>
-              <TabsWrapper value={selectedEntity}>
+              <TabsWrapper value={selectedEntity} variant="scrollable">
                 {entities.map((entity, index) => (
                   <Tab
                     key={index}
@@ -289,6 +300,7 @@ class Arronax extends React.Component<Props, States> {
                 columnsCount={selectedColumns.length}
                 onChangeTool={this.onChangeTool}
                 onExportCsv={this.onExportCsv}
+                onShareReport={this.onShareReport}
               />
               <SettingsPanel
                 ref={this.settingRef}
@@ -343,12 +355,16 @@ const mapDispatchToProps = dispatch => ({
     dispatch(removeAllFiltersAction(selectedEntity)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
   changeTab: (type: string) => dispatch(setTabAction(type)),
-  initLoad: () => dispatch(initLoad()),
+  initLoad: (e: string, q: string) => dispatch(initLoad(e, q)),
   submitQuery: () => dispatch(submitQuery()),
-  exportCsvData: () => dispatch(exportCsvData())
+  exportCsvData: () => dispatch(exportCsvData()),
+  shareReport: () => dispatch(shareReport())
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+export default compose(
+  withRouter,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(Arronax);

@@ -3,15 +3,17 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
+import { ConseilSortDirection } from 'conseiljs';
 import {
   getNetwork,
   getRows,
   getColumns,
   getPlatform,
   getEntity,
-  getAttributes,
+  getAttributesAll,
   getModalItem,
-  getSort
+  getSort,
+  getEntities
 } from '../../reducers/app/selectors';
 import { getItemByPrimaryKey, submitQuery } from '../../reducers/app/thunks';
 import { setSortAction } from '../../reducers/app/actions';
@@ -19,7 +21,7 @@ import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
 import EntityModal from 'components/EntityModal';
-import { Sort } from '../../types';
+import { Sort, EntityDefinition } from '../../types';
 
 const TableContainer = styled(Table)`
   width: 100%;
@@ -39,11 +41,12 @@ interface Props {
   platform: string;
   selectedEntity: string;
   selectedModalItem: object;
-  attributes: any[];
+  attributes: object;
   isLoading: boolean;
   selectedSort: Sort;
+  entities: EntityDefinition[];
   onExportCsv: () => void;
-  getModalItemAction: (key: string, value: string | number) => void;
+  getModalItemAction: (entity: string, key: string, value: string | number) => void;
   onSubmitQuery: () => void;
   onSetSort: (entity: string, sort: Sort) => void;
 }
@@ -53,6 +56,7 @@ interface State {
   isOpenedModal: boolean;
   selectedPrimaryKey: string;
   selectedPrimaryValue: string | number;
+  referenceEntity: string;
 }
 
 class CustomTable extends React.Component<Props, State> {
@@ -62,7 +66,8 @@ class CustomTable extends React.Component<Props, State> {
       page: 0,
       isOpenedModal: false,
       selectedPrimaryKey: '',
-      selectedPrimaryValue: ''
+      selectedPrimaryValue: '',
+      referenceEntity: props.selectedEntity
     };
   }
 
@@ -72,9 +77,9 @@ class CustomTable extends React.Component<Props, State> {
 
   handleRequestSort = async (orderBy: string) => {
     const { selectedSort, selectedEntity, onSetSort, onSubmitQuery } = this.props;
-    let order: 'asc' | 'desc' = 'desc';
+    let order = ConseilSortDirection.DESC;
     if (selectedSort.orderBy === orderBy && selectedSort.order === 'desc') {
-      order = 'asc';
+      order = ConseilSortDirection.ASC;
     }
     const sort: Sort = {
       orderBy,
@@ -86,12 +91,12 @@ class CustomTable extends React.Component<Props, State> {
 
   onCloseModal = () => this.setState({isOpenedModal: false});
 
-  onOpenModal = (key, value) => {
+  onOpenModal = (entity, key, value) => {
     const { selectedPrimaryKey, selectedPrimaryValue } = this.state;
     const { getModalItemAction } = this.props;
     if (selectedPrimaryKey !== key || selectedPrimaryValue !== value) {
-      getModalItemAction(key, value);
-      this.setState({selectedPrimaryKey: key, selectedPrimaryValue: value, isOpenedModal: true});
+      getModalItemAction(entity, key, value);
+      this.setState({referenceEntity: entity, selectedPrimaryKey: key, selectedPrimaryValue: value, isOpenedModal: true});
     }
     this.setState({isOpenedModal: true});
   }
@@ -108,14 +113,16 @@ class CustomTable extends React.Component<Props, State> {
       attributes,
       selectedSort,
       isLoading,
+      entities,
       onExportCsv
     } = this.props;
-    const { page, isOpenedModal} = this.state;
+    const { page, referenceEntity, isOpenedModal} = this.state;
     const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
     const realRows = items.slice(
       page * rowCount,
       page * rowCount + rowCount
     );
+    const selectedObjectEntity = entities.find(entity => entity.name === referenceEntity);
     return (
       <React.Fragment>
         <Overflow>
@@ -152,8 +159,8 @@ class CustomTable extends React.Component<Props, State> {
         />
         <EntityModal
           open={isOpenedModal}
-          selectedEntity={selectedEntity}
-          attributes={attributes}
+          title={selectedObjectEntity.displayName}
+          attributes={attributes[referenceEntity]}
           item={selectedModalItem}
           isLoading={isLoading}
           onClose={this.onCloseModal}
@@ -170,16 +177,16 @@ const mapStateToProps = (state: any) => ({
   platform: getPlatform(state),
   selectedEntity: getEntity(state),
   selectedModalItem: getModalItem(state),
-  attributes: getAttributes(state),
-  selectedSort: getSort(state)
+  attributes: getAttributesAll(state),
+  selectedSort: getSort(state),
+  entities: getEntities(state)
 });
 
 const mapDispatchToProps = dispatch => ({
-  getModalItemAction: (key, value) => dispatch(getItemByPrimaryKey(key, value)),
+  getModalItemAction: (entity, key, value) => dispatch(getItemByPrimaryKey(entity, key, value)),
   onSubmitQuery: () => dispatch(submitQuery()),
   onSetSort: (entity: string, sort: Sort) => dispatch(setSortAction(entity, sort))
 });
-
 
 export default connect(
   mapStateToProps,
