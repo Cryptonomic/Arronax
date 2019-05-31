@@ -20,63 +20,158 @@ import {
   INIT_ENTITY_PROPERTIES,
   INIT_FILTER
 } from './types';
-import actionCreator from '../../utils/reduxHelpers';
 
-export const setItemsAction = actionCreator(SET_ITEMS, 'entity', 'items');
+import { AttributeDefinition, Sort, Filter, EntityDefinition } from '../../types';
 
-export const setColumnsAction = actionCreator(SET_COLUMNS, 'entity', 'items');
+export function setItemsAction(entity: string, items: any[]) {
+  return {
+    type: SET_ITEMS,
+    entity,
+    items
+  }
+}
 
-export const setFilterAction = actionCreator(SET_FILTER, 'filters');
+export function setColumnsAction(entity: string, items: any[]) {
+  return {
+    type: SET_COLUMNS,
+    entity,
+    items
+  }
+}
 
-export const setTabAction = actionCreator(SET_TAB, 'entity');
+export function setFilterAction(filters: Filter[]) {
+  return {
+    type: SET_FILTER,
+    filters
+  }
+}
 
-export const setLoadingAction = actionCreator(SET_LOADING, 'isLoading');
+export function setTabAction(entity: string) {
+  return {
+    type: SET_TAB,
+    entity
+  }
+}
 
-export const initDataAction = actionCreator(INIT_DATA);
+export function setLoadingAction(isLoading: boolean) {
+  return {
+    type: SET_LOADING,
+    isLoading
+  }
+}
 
-export const setNetworkAction = actionCreator(SET_NETWORK, 'network');
+export function initDataAction() {
+  return {
+    type: INIT_DATA
+  }
+}
 
-export const setAttributesAction = actionCreator(
-  SET_ATTRIBUTES,
-  'entity',
-  'attributes'
-);
+export function setNetworkAction(network: string) {
+  return {
+    type: SET_NETWORK,
+    network
+  }
+}
 
-export const addFilterAction = actionCreator(ADD_FILTER, 'entity');
+export function setAttributesAction(entity: string, attributes: AttributeDefinition[]) {
+  return {
+    type: SET_ATTRIBUTES,
+    entity,
+    attributes
+  }
+}
 
-export const removeFilterAction = actionCreator(
-  REMOVE_FILTER,
-  'entity',
-  'index'
-);
+export function addFilterAction(entity: string) {
+  return {
+    type: ADD_FILTER,
+    entity
+  }
+}
 
-export const removeAllFiltersAction = actionCreator(
-  REMOVE_ALL_FILTERS,
-  'entity'
-);
+export function removeFilterAction(entity: string, index: number) {
+  return {
+    type: REMOVE_FILTER,
+    entity,
+    index
+  }
+}
 
-export const changeFilterAction = actionCreator(
-  CHANGE_FILTER,
-  'entity',
-  'filter',
-  'index'
-);
-export const completeFullLoadAction = actionCreator(
-  COMPLETE_FULL_LOAD,
-  'isFullLoaded'
-);
-export const setAvailableValuesAction = actionCreator(
-  SET_AVAILABLE_VALUES,
-  'entity',
-  'attribute',
-  'availableValues'
-);
+export function removeAllFiltersAction(entity: string) {
+  return {
+    type: REMOVE_ALL_FILTERS,
+    entity
+  }
+}
 
-export const setFilterCountAction = actionCreator(SET_FILTER_COUNT, 'count');
-export const setModalItemAction = actionCreator(SET_MODAL_ITEM, 'item');
+export function changeFilterAction(entity: string, filter: Filter, index: number) {
+  return {
+    type: CHANGE_FILTER,
+    entity,
+    filter,
+    index
+  }
+}
 
-export const setSortAction = actionCreator(SET_SORT, 'entity', 'sort');
-export const setEntitiesAction = actionCreator(SET_ENTITIES, 'entities');
+export function completeFullLoadAction(isFullLoaded: boolean) {
+  return {
+    type: COMPLETE_FULL_LOAD,
+    isFullLoaded
+  }
+}
 
-export const initEntityPropertiesAction = actionCreator(INIT_ENTITY_PROPERTIES, 'entity', 'filters', 'sort', 'columns', 'items');
-export const initFilterAction = actionCreator(INIT_FILTER, 'entity', 'filters');
+export function setAvailableValuesAction(entity: string, attribute: string, availableValues: any[]) {
+  return {
+    type: SET_AVAILABLE_VALUES,
+    entity,
+    attribute,
+    availableValues
+  }
+}
+
+export function setFilterCountAction(count: number) {
+  return {
+    type: SET_FILTER_COUNT,
+    count
+  }
+}
+
+export function setModalItemAction(item: any) {
+  return {
+    type: SET_MODAL_ITEM,
+    item
+  }
+}
+
+export function setSortAction(entity: string, sort: Sort) {
+  return {
+    type: SET_SORT,
+    entity,
+    sort
+  }
+}
+
+export function setEntitiesAction(entities: EntityDefinition[]) {
+  return {
+    type: SET_ENTITIES,
+    entities
+  }
+}
+
+export function initEntityPropertiesAction(entity: string, filters: Filter[], sort: Sort, columns: any[], items: any[]) {
+  return {
+    type: INIT_ENTITY_PROPERTIES,
+    entity,
+    filters,
+    sort,
+    columns,
+    items
+  }
+}
+
+export function initFilterAction(entity: string, filters: Filter[]) {
+  return {
+    type: INIT_FILTER,
+    entity,
+    filters
+  }
+}

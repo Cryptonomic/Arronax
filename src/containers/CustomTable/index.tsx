@@ -1,6 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import muiStyled from '@material-ui/styles/styled';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import { ConseilSortDirection } from 'conseiljs';
@@ -20,14 +21,14 @@ import { setSortAction } from '../../reducers/app/actions';
 import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
-import EntityModal from 'components/EntityModal';
+import EntityModal from '../../components/EntityModal';
 import { Sort, EntityDefinition } from '../../types';
 
-const TableContainer = styled(Table)`
-  width: 100%;
-  background: #fff;
-  border-radius: 4px;
-`;
+const TableContainer = muiStyled(Table)({
+  width: '100%',
+  background: '#fff',
+  borderRadius: '4px'
+});
 
 const Overflow = styled.div`
   overflow-x: auto;
@@ -41,7 +42,7 @@ interface Props {
   platform: string;
   selectedEntity: string;
   selectedModalItem: object;
-  attributes: object;
+  attributes: any;
   isLoading: boolean;
   selectedSort: Sort;
   entities: EntityDefinition[];
@@ -71,7 +72,7 @@ class CustomTable extends React.Component<Props, State> {
     };
   }
 
-  handleChangePage = page => {
+  handleChangePage = (page: number) => {
     this.setState({ page });
   };
 
@@ -91,7 +92,7 @@ class CustomTable extends React.Component<Props, State> {
 
   onCloseModal = () => this.setState({isOpenedModal: false});
 
-  onOpenModal = (entity, key, value) => {
+  onOpenModal = (entity: string, key: string, value: string | number) => {
     const { selectedPrimaryKey, selectedPrimaryValue } = this.state;
     const { getModalItemAction } = this.props;
     if (selectedPrimaryKey !== key || selectedPrimaryValue !== value) {
@@ -182,8 +183,8 @@ const mapStateToProps = (state: any) => ({
   entities: getEntities(state)
 });
 
-const mapDispatchToProps = dispatch => ({
-  getModalItemAction: (entity, key, value) => dispatch(getItemByPrimaryKey(entity, key, value)),
+const mapDispatchToProps = (dispatch: any) => ({
+  getModalItemAction: (entity: string, key: string, value: string | number) => dispatch(getItemByPrimaryKey(entity, key, value)),
   onSubmitQuery: () => dispatch(submitQuery()),
   onSetSort: (entity: string, sort: Sort) => dispatch(setSortAction(entity, sort))
 });

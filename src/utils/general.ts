@@ -1,4 +1,4 @@
-export const convertValue = (value) => {
+export const convertValue = (value: string) => {
   if (value) {
     return value.replace(/(^|_)./g, s =>
       s

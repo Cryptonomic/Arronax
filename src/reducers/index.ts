@@ -1,8 +1,6 @@
 import { combineReducers } from 'redux';
-// import { TezosConseilQuery, TezosFilter } from 'conseiljs';
-import { TezosAccount, TezosBlock, TezosOperation } from '../types';
-import message from './message/reducers';
-import app from './app/reducers';
+import { message } from './message/reducers';
+import { app } from './app/reducers';
 
 export interface RootState {
   app: any;
@@ -10,8 +8,7 @@ export interface RootState {
 };
 
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   app,
-  message: message
+  message
 });
-export default rootReducer;

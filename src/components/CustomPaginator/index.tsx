@@ -1,14 +1,12 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import muiStyled from '@material-ui/styles/styled';
 import FormControl from '@material-ui/core/FormControl';
 import SelectField from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import ArrowDropDown from '@material-ui/icons/KeyboardArrowDown';
-import LeftChevronIcon from '@material-ui/icons/ChevronLeft';
-import RightChevronIcon from '@material-ui/icons/ChevronRight';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from 'rc-tooltip';
-import ArronaxIcon from '../ArronaxIcon';
+import { ArronaxIcon } from '../ArronaxIcon';
 import 'rc-tooltip/assets/bootstrap_white.css';
 
 const Container = styled.div`
@@ -20,37 +18,31 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const SelectContainer = styled(FormControl)`
-  &&& {
-    margin-left: 12px;
-  }
-`;
+const SelectContainer = muiStyled(FormControl)({
+  marginLeft: '12px'
+});
 
-const SelectWrapper = styled(SelectField)`
-  &&& {
-    &:before {
-      border-bottom: 0;
-    }
-    &:after {
-      border-bottom: 0;
-    }
-    &:hover:before {
-      border-bottom: 0 !important;
-    }
-    font-size: 16px;
-    font-weight: 400;
-    letter-spacing: 1.95px;
-    color: #56c2d9;
+const SelectWrapper = muiStyled(SelectField)({
+  fontSize: '16px',
+  fontWeight: 400,
+  letterSpacing: '1.95px',
+  color: '#56c2d9',
+  '&:before': {
+    borderBottom: 0,
+  },
+  '&:after': {
+    borderBottom: 0,
+  },
+  '&:hover:before': {
+    borderBottom: '0 !important',
   }
-`;
+});
 
-const DownIcon = styled(ArrowDropDown)`
-  &&& {
-    color: #65c8ce;
-    font-size: 20px;
-    top: calc(50% - 9px);
-    right: 10px;
-  }
+const DownIcon = styled(ArronaxIcon)`
+  position: absolute;
+  top: -2px;
+  right: 0;
+  z-index: -1;
 `;
 
 const MainMenuItem = styled(MenuItem)`
@@ -78,7 +70,7 @@ const LimitTxt = styled.div`
   margin: 0;
 `;
 
-const ButtonWrapper = styled.div`
+const ButtonWrapper = styled.div<{ isActive: number, isNext?: boolean }>`
   height: 52px;
   width: 52px;
   border: 1px solid #ecedef;
@@ -95,24 +87,10 @@ const ButtonWrapper = styled.div`
   }
 `;
 
-const LeftIconWrapper = styled(LeftChevronIcon)`
-  &&& {
-    color: ${({ isactive }) => (isactive ? '#65C8CE' : '#D3D3D3')};
-  }
-`;
-
-const RightIconWrapper = styled(RightChevronIcon)`
-  &&& {
-    color: ${({ isactive }) => (isactive ? '#65C8CE' : '#D3D3D3')};
-  }
-`;
-
-const TooltipButton = styled(IconButton)`
-  &&& {
-    padding: 5px;
-    margin-right: 14px;
-  }
-`;
+const TooltipButton = muiStyled(IconButton)({
+  padding: '5px',
+  marginRight: '14px'
+});
 
 const TooltipContainer = styled.div`
   width: 344px;
@@ -127,7 +105,7 @@ const ExportTxt = styled.span`
   color: #56c2d9;
 `;
 
-const getList = (pageCount, balance, rowsPerPage) => {
+const getList = (pageCount: number, balance: number, rowsPerPage: number) => {
   let items = [];
   for (let i = 0; i < pageCount - 1; i++) {
     items.push(
@@ -155,7 +133,7 @@ const getList = (pageCount, balance, rowsPerPage) => {
   return items;
 };
 
-const getLimitTooltip = (onExportCsv) => {
+const getLimitTooltip = (onExportCsv: () => void) => {
   return (
     <TooltipContainer>
       Queries on Arronax are limited to 5000 results. <ExportTxt onClick={onExportCsv}>Export to CSV</ExportTxt> to get the full result set.
@@ -171,7 +149,7 @@ interface Props {
   onExportCsv: () => void;
 }
 
-const CustomPaginator: React.StatelessComponent<Props> = props => {
+const CustomPaginator: React.FC<Props> = props => {
   const { page, totalNumber, onChangePage, rowsPerPage, onExportCsv } = props;
   const pageCount = Math.ceil(totalNumber / rowsPerPage);
   const balance = totalNumber % rowsPerPage;
@@ -180,8 +158,10 @@ const CustomPaginator: React.StatelessComponent<Props> = props => {
       <SelectContainer>
         <SelectWrapper
           value={page}
-          onChange={event => onChangePage(event.target.value)}
-          IconComponent={DownIcon}
+          onChange={(event: any) => onChangePage(event.target.value)}
+          IconComponent={() =>
+            <DownIcon iconName="icon-down-caret" size="40px" color="#65c8ce" />
+          }
         >
           {getList(pageCount, balance, rowsPerPage)}
         </SelectWrapper>
@@ -205,17 +185,17 @@ const CustomPaginator: React.StatelessComponent<Props> = props => {
         </React.Fragment>
       )}
       <ButtonWrapper
-        isActive={page !== 0}
+        isActive={page !== 0 ? 1 : 0}
         onClick={() => onChangePage(page - 1)}
       >
-        <LeftIconWrapper isactive={page !== 0 ? 1 : 0} />
+        <ArronaxIcon iconName="icon-previous" size="16px" color={page !== 0 ? '#65C8CE' : '#D3D3D3'} />
       </ButtonWrapper>
       <ButtonWrapper
         isActive={page !== pageCount - 1 ? 1 : 0}
         isNext
         onClick={() => onChangePage(page + 1)}
       >
-        <RightIconWrapper isactive={page !== pageCount - 1 ? 1 : 0} />
+        <ArronaxIcon iconName="icon-next" size="16px" color={page !== pageCount - 1 ? '#65C8CE' : '#D3D3D3'} />
       </ButtonWrapper>
     </Container>
   );

@@ -9,7 +9,7 @@ const dumbConfigs: Config[] = [
   },
 ];
 
-const getConfigs = () => {
+export function getConfigs() {
   try {
     const configs = require('../config');
     return configs.default;
@@ -17,5 +17,3 @@ const getConfigs = () => {
     return dumbConfigs;
   }
 };
-
-export default getConfigs;

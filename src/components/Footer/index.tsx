@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const FooterContainer = styled.div`
@@ -16,7 +16,7 @@ const LinkItem = styled.div`
   max-width: 500px;
 `;
 
-const Footer: React.StatelessComponent<{}> = () => {
+const Footer: React.FC<{}> = () => {
   return (
     <FooterContainer>
       <LinkItem>An <a href="https://github.com/Cryptonomic/Arronax" target="_blank">open-source</a> product by <a href="https://cryptonomic.tech" target="_blank">Cryptonomic</a></LinkItem>

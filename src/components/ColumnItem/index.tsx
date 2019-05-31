@@ -1,8 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
-import ArronaxIcon from '../ArronaxIcon';
 
 const Container = styled.div`
   display: flex;
@@ -13,11 +12,6 @@ const Container = styled.div`
   &:hover {
     background: rgba(101, 200, 206, 0.13);
   }
-`;
-
-const DraggableIcon = styled(ArronaxIcon)`
-  margin-left: auto;
-  opacity: 0.4;
 `;
 
 const styles = {
@@ -36,7 +30,7 @@ interface Props {
   onClick: () => void;
 }
 
-const ColumnItem: React.StatelessComponent<Props> = (props) => {
+const ColumnItem: React.FC<Props> = (props) => {
   const { isChecked, name, classes, onClick } = props;
   return (
     <Container onClick={onClick}>
