@@ -19,9 +19,9 @@ const LinkItem = styled.div`
 const Footer: React.FC<{}> = () => {
   return (
     <FooterContainer>
-      <LinkItem>An <a href="https://github.com/Cryptonomic/Arronax" target="_blank">open-source</a> product by <a href="https://cryptonomic.tech" target="_blank">Cryptonomic</a></LinkItem>
-      <LinkItem>Powered by <a href="https://github.com/Cryptonomic/Conseil" target="_blank">Conseil</a></LinkItem>
-      <LinkItem>Built with <a href="https://github.com/Cryptonomic/ConseilJS" target="_blank">ConseilJS</a></LinkItem>
+      <LinkItem>An <a href="https://github.com/Cryptonomic/Arronax" target="_blank" rel="noopener noreferrer">open-source</a> product by <a href="https://cryptonomic.tech" target="_blank" rel="noopener noreferrer">Cryptonomic</a></LinkItem>
+      <LinkItem>Powered by <a href="https://github.com/Cryptonomic/Conseil" target="_blank" rel="noopener noreferrer">Conseil</a></LinkItem>
+      <LinkItem>Built with <a href="https://github.com/Cryptonomic/ConseilJS" target="_blank" rel="noopener noreferrer">ConseilJS</a></LinkItem>
     </FooterContainer>
   );
 }

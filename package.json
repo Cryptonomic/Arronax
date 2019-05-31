@@ -2,6 +2,12 @@
   "name": "arronax",
   "version": "0.0.2",
   "description": "Blockchain analytics and business intelligence tool for the Tezos chain.",
+  "author": "Cryptonomic",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cryptonomic/Arronax"
+  },
   "dependencies": {
     "@material-ui/core": "^4.0.1",
     "@material-ui/icons": "^4.0.1",
