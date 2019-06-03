@@ -51,7 +51,7 @@ export interface AppState {
 const initialState: AppState = {
   filters: emptyFilters,
   platform: 'tezos',
-  network: 'alphanet',
+  network: 'mainnet',
   entities: [],
   attributes: attributes,
   items: {},

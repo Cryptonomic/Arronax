@@ -143,7 +143,7 @@ class ColumnsPanel extends React.Component<Props, States> {
   render() {
     const { attributes } = this.props;
     const { selected } = this.state;
-    const columnsCount = Math.ceil(attributes.length / 10);
+    const columnsCount = Math.ceil(attributes.length / 6);
     return (
       <Container count={columnsCount}>
         <MainContainer>
