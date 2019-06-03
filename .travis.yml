@@ -48,6 +48,8 @@ install:
     else
       :
     fi
+env:
+  - CI=false
     
 before_script:
   # On Linux, create a "virtual display". This allows browsers to work properly
