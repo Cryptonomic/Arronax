@@ -34,7 +34,7 @@ import {
 import getConfigs from '../../utils/getconfig';
 import { Config, AttributeDefinition, Sort, Filter } from '../../types';
 
-import { getTimeStampFromLocal, saveAttributes } from '../../utils/attributes';
+import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
 import { getOperatorType } from '../../utils/general';
 
@@ -221,13 +221,14 @@ export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispat
   if (urlEntity && urlQuery) {
     dispatch(setTabAction(urlEntity));
   }
+  validateCache(2);
   const localDate = getTimeStampFromLocal();
   const currentDate = Date.now();
   if (currentDate - localDate > CACHE_TIME) {
     const attrPromises = entities.map(entity => dispatch(fetchAttributes(platform, entity.name, network, serverInfo)));
     await Promise.all(attrPromises);
     const { attributes } = state().app;
-    saveAttributes(attributes, currentDate);
+    saveAttributes(attributes, currentDate, 2);
   }
   const { attributes } = state().app;
   const promises = entities.map(entity => dispatch(
