@@ -124,18 +124,14 @@ const formatValueForDisplay = (
         <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
         <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
         {formatValueForPrimary(attribute, getShortColumn(value), value, onClickPrimaryKey)}
-        <ClipboardWrapper data-clipboard-text={value}>
-          <CopyIcon />
-        </ClipboardWrapper>
+        <ClipboardWrapper data-clipboard-text={value}> <CopyIcon /> </ClipboardWrapper>
       </React.Fragment>
     );
 } else if (dataType === 'Hash') {
     return (
       <React.Fragment>
         {formatValueForPrimary(attribute, getShortColumn(value), value, onClickPrimaryKey)}
-        <ClipboardWrapper data-clipboard-text={value}>
-          <CopyIcon />
-        </ClipboardWrapper>
+        <ClipboardWrapper data-clipboard-text={value}> <CopyIcon /> </ClipboardWrapper>
       </React.Fragment>
     );
 } else if (dataType === 'Decimal') {
@@ -148,9 +144,18 @@ const formatValueForDisplay = (
     } else {
         return value;
     }
-  } else {
+} else if (dataType === 'String' && value.length > 100) {
+    return (
+        <React.Fragment>
+          {value.substring(0, 100)}
+          <ClipboardWrapper data-clipboard-text={value}> <CopyIcon /> </ClipboardWrapper>
+        </React.Fragment>
+      );
+} else if (dataType === 'String' && value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
+    return value.split('_').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+} else {
     return formatValueForPrimary(attribute, value, value, onClickPrimaryKey);
-  }
+}
 };
 
 const CustomTableRow: React.FC<Props> = props => {
