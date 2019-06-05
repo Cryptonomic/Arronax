@@ -7,14 +7,6 @@ import {
   ConseilSortDirection
 } from 'conseiljs';
 import base64url from 'base64url';
-const { executeEntityQuery } = ConseilDataClient;
-const {
-  blankQuery,
-  addOrdering,
-  addFields,
-  setLimit,
-  addPredicate,
-} = ConseilQueryBuilder;
 import {
   setAvailableValuesAction,
   setItemsAction,
@@ -31,23 +23,32 @@ import {
   initFilterAction,
   setTabAction
 } from './actions';
-import getConfigs from '../../utils/getconfig';
+import { getConfigs } from '../../utils/getconfig';
 import { Config, AttributeDefinition, Sort, Filter } from '../../types';
 
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
 import { getOperatorType } from '../../utils/general';
 
+const { executeEntityQuery } = ConseilDataClient;
+const {
+  blankQuery,
+  addOrdering,
+  addFields,
+  setLimit,
+  addPredicate,
+} = ConseilQueryBuilder;
+
 const CACHE_TIME = 432000000; // 5*24*3600*1000
 
-let InitProperties = {};
+let InitProperties: any = {};
 
 const configs: Config[] = getConfigs();
 const { getAttributes, getAttributeValues, getEntities } = ConseilMetadataClient;
 
-const getConfig = val => configs.find(conf => conf.network === val);
+const getConfig = (val: string) => configs.find(conf => conf.network === val);
 
-const getAttributeNames = attributes => attributes.map(attr => attr.name);
+const getAttributeNames = (attributes: AttributeDefinition[]) => attributes.map(attr => attr.name);
 
 export const fetchValues = (attribute: string) => async (dispatch, state) => {
   const { selectedEntity, network, platform } = state().app;
@@ -109,19 +110,19 @@ export const resetFilters = () => async (dispatch, state) => {
 };
 
 export const fetchInitEntityAction = (
-  platform,
+  platform: string,
   entity: string,
   network: string,
   serverInfo: any,
   attributes: AttributeDefinition[],
   urlEntity: string,
   urlQuery: string
-) => async dispatch => {
+) => async (dispatch: any) => {
   const defaultQuery = urlEntity === entity && urlQuery ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
-  let columns = [];
+  let columns: any[] = [];
   let sort: Sort;
   let filters: Filter[] = [];
-  let cardinalityPromises = [];
+  let cardinalityPromises: any[] = [];
   let query = blankQuery();
 
   if (defaultQuery) {
@@ -190,7 +191,7 @@ export const fetchInitEntityAction = (
     sort = {
       orderBy: levelColumn.name,
       order: ConseilSortDirection.DESC
-      };
+    };
     const attributeNames = getAttributeNames(columns);
     query = addFields(query, ...attributeNames);
     query = setLimit(query, 5000);
@@ -247,18 +248,18 @@ export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispat
 };
 
 export const fetchAttributes = (
-  platform,
-  entity,
-  network,
-  serverInfo
+  platform: string,
+  entity: string,
+  network: string,
+  serverInfo: any
 ) => async dispatch => {
   const attributes = await getAttributes(serverInfo, platform, network, entity);
   await dispatch(setAttributesAction(entity, attributes));
 };
 
-const getMainQuery = (attributeNames, selectedFilters, sort) => {
+const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], sort: Sort) => {
   let query = addFields(blankQuery(), ...attributeNames);
-  selectedFilters.forEach(filter => {
+  selectedFilters.forEach((filter: Filter) => {
     if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN) && filter.values.length === 1) {
       return true;
     }
@@ -268,7 +269,7 @@ const getMainQuery = (attributeNames, selectedFilters, sort) => {
     }
 
     let isInvert = false;
-    let operator = filter.operator;
+    let operator: any = filter.operator;
     if (filter.operator === 'isnotnull') {
       isInvert = true;
       operator = ConseilOperator.ISNULL;
@@ -358,7 +359,7 @@ export const submitQuery = () => async (dispatch, state) => {
   dispatch(setLoadingAction(false));
 };
 
-export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: string | number) => async (dispatch, state) => {
+export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: string | number) => async (dispatch: any, state: any) => {
   dispatch(setLoadingAction(true));
 
   const network = state().app.network;

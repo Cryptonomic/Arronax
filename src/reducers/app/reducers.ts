@@ -105,7 +105,7 @@ const initialState: AppState = {
   sort: {}
 };
 
-const appReducer = (state = initialState, action) => {
+export const app = (state = initialState, action) => {
   switch (action.type) {
     case SET_FILTER:
       return { ...state, filters: action.filters };
@@ -215,4 +215,3 @@ const appReducer = (state = initialState, action) => {
   }
   return state;
 };
-export default appReducer;

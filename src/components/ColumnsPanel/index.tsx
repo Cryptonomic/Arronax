@@ -1,8 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import ArronaxIcon from '../ArronaxIcon';
+import { ArronaxIcon } from '../ArronaxIcon';
 import ColumnItem from '../ColumnItem';
+import { AttributeDefinition } from '../../types';
 
 import {
   getColumns,
@@ -14,7 +15,7 @@ import {
 } from '../../reducers/app/actions';
 import { resetColumns } from '../../reducers/app/thunks';
 
-const Container = styled.div`
+const Container = styled.div<{ count: number }>`
   width: ${({ count }) => count*372 + 'px' };
   margin: auto;
   max-width: 100%;
@@ -32,20 +33,6 @@ const ColumnsContainer = styled.div`
   flex-direction: column;
   flex-wrap: wrap;
   max-height: 310px;
-`;
-
-const HeaderTxt = styled.div`
-  color: #4a4a4a;
-  font-size: 20px;
-  margin-bottom: 14px;
-`;
-
-const Title = styled.div`
-  font-size: 16px;
-  line-height: 19px;
-  padding: 13px 25px;
-  color: rgb(155, 155, 155);
-  font-weight: 400;
 `;
 
 const RefreshIcon = styled(ArronaxIcon)`
@@ -83,25 +70,30 @@ const ResetButton = styled.div`
 `;
 
 type Props = {
-  selectedColumns: any[];
+  selectedColumns: AttributeDefinition[];
   selectedEntity: string;
-  attributes: any;
+  attributes: AttributeDefinition[];
   onSubmit: () => void;
-  setColumns: (entity: string, columns: object[]) => void;
+  setColumns: (entity: string, columns: AttributeDefinition[]) => void;
   onResetColumns: () => void;
 };
 
 type States = {
-  selected: object[];
+  selected: AttributeDefinition[];
+  prevPropsSelected: AttributeDefinition[];
 };
 
 class ColumnsPanel extends React.Component<Props, States> {
-  state = {
-    selected: [],
-    prevPropsSelected: []
-  };
 
-  static getDerivedStateFromProps(props, state) {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      selected: [],
+      prevPropsSelected: []
+    };
+  }
+
+  static getDerivedStateFromProps(props: Props, state: States) {
     if (props.selectedColumns !== state.prevPropsSelected) {
       return {
         prevPropsSelected: props.selectedColumns,
@@ -118,10 +110,10 @@ class ColumnsPanel extends React.Component<Props, States> {
     await onSubmit();
   };
 
-  handleChange = (attribute) => {
+  handleChange = (attribute: AttributeDefinition) => {
     const { selected } = this.state;
     const positionInArray = selected.findIndex(
-      column => column.name === attribute.name
+      (column: AttributeDefinition) => column.name === attribute.name
     );
     if (positionInArray === -1) {
       this.setState({
@@ -148,7 +140,7 @@ class ColumnsPanel extends React.Component<Props, States> {
       <Container count={columnsCount}>
         <MainContainer>
           <ColumnsContainer>
-            {selected.map((attribute, index) => (
+            {selected.map((attribute: AttributeDefinition, index: number) => (
               <ColumnItem
                 key={index}
                 isChecked
@@ -156,18 +148,19 @@ class ColumnsPanel extends React.Component<Props, States> {
                 onClick={() => this.handleChange(attribute)}
               />
             ))}
-            {attributes.sort((a, b) => (a.displayName.toLowerCase() < b.displayName.toLowerCase()) ? -1 : 1).map((attribute, index) => {
-              const pos = selected.findIndex(item => item.name === attribute.name);
-              if (pos !== -1) {
-                return null;
-              }
-              return (
-                <ColumnItem
-                  key={index}
-                  name={attribute.displayName}
-                  onClick={() => this.handleChange(attribute)}
-                />
-              );
+            {attributes.sort((a: AttributeDefinition, b: AttributeDefinition) => (a.displayName.toLowerCase() < b.displayName.toLowerCase() ? -1 : 1))
+              .map((attribute: AttributeDefinition, index: number) => {
+                const pos = selected.findIndex((item: AttributeDefinition) => item.name === attribute.name);
+                if (pos !== -1) {
+                  return null;
+                }
+                return (
+                  <ColumnItem
+                    key={index}
+                    name={attribute.displayName}
+                    onClick={() => this.handleChange(attribute)}
+                  />
+                );
             })}
           </ColumnsContainer>
         </MainContainer>
@@ -185,13 +178,13 @@ class ColumnsPanel extends React.Component<Props, States> {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any) => ({
   selectedColumns: getColumns(state),
   attributes: getAttributes(state),
   selectedEntity: getEntity(state),
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: any) => ({
   setColumns: (entity: string, columns: object[]) =>
     dispatch(setColumnsAction(entity, columns)),
   onResetColumns: () =>

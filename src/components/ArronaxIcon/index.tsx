@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
-const Icon = styled.span`
+const Icon = styled.span<{ size: string }>`
   font-family: 'Arronax-icons' !important;
   font-size: ${({ size }) => size};
   color: ${({ color}) => color};
@@ -17,15 +17,15 @@ const Icon = styled.span`
 `;
 
 interface Props {
-  iconName?: string;
+  iconName: string;
   color: string;
-  size?: string;
+  size: string;
   onClick?: () => void;
   className?: string;
 };
 
-const getIconByName = iconName => {
-  const toUnicode = unicode => String.fromCharCode(parseInt(unicode, 16));
+const getIconByName = (iconName: string) => {
+  const toUnicode = (unicode: string) => String.fromCharCode(parseInt(unicode, 16));
 
   switch (iconName) {
     case 'icon-delete': {
@@ -88,7 +88,7 @@ const getIconByName = iconName => {
   }
 };
 
-const ArronaxIcon = (props: Props) => {
+export function ArronaxIcon(props: Props) {
   const { iconName, size, color, className, onClick } = props;
   return (
     <Icon className={className} size={size} color={color} onClick={onClick}>
@@ -96,5 +96,3 @@ const ArronaxIcon = (props: Props) => {
     </Icon>
   );
 };
-
-export default ArronaxIcon;

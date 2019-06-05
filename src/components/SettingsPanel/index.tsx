@@ -1,7 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Collapse from '@material-ui/core/Collapse';
 import CloseIcon from '@material-ui/icons/CloseOutlined';
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import SwipeableViews from 'react-swipeable-views';
 import FilterPanel from '../FilterPanel';
 import ColumnsPanel from '../ColumnsPanel';
@@ -26,7 +27,7 @@ const CloseIconWrapper = styled(CloseIcon)`
     color: #9b9b9b;
     font-size: 27px;
   }
-`;
+` as React.ComponentType<SvgIconProps>;
 
 interface Props {
   isCollapsed: boolean;
@@ -36,7 +37,7 @@ interface Props {
 }
 
 class SettingsPanel extends React.Component<Props, {}> {
-  swipeableActions = null;
+  swipeableActions: any;
   componentDidMount() {
     this.swipeableActions.updateHeight();
   }
@@ -61,7 +62,7 @@ class SettingsPanel extends React.Component<Props, {}> {
           </CloseIconContainer>
           <SwipeableViews
             index={activeIndex}
-            action={actions => {
+            action={(actions: any) => {
               this.swipeableActions = actions;
             }}
             animateHeight

@@ -1,9 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Moment from 'react-moment';
 import 'moment-timezone';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
+import TableCell, { TableCellProps } from '@material-ui/core/TableCell';
+import TableRow, { TableRowProps } from '@material-ui/core/TableRow';
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import Circle from '@material-ui/icons/FiberManualRecord';
 import ContentCopy from '@material-ui/icons/FileCopyOutlined';
 import Clipboard from 'react-clipboard.js';
@@ -16,17 +17,18 @@ const TableRowWrapper = styled(TableRow)`
       background-color: #ecedef;
     }
   }
-`;
+` as React.ComponentType<TableRowProps>;
 
-const StyledCircle1 = styled(Circle)`
+type StyledCircleProps = SvgIconProps & { newcolor: string };
+const StyledCircle1 = styled(Circle)<{ newcolor: string }>`
   color: ${({ newcolor }) => newcolor};
-`;
+` as React.ComponentType<StyledCircleProps>;
 
-const StyledCircle2 = styled(Circle)`
+const StyledCircle2 = styled(Circle)<{ newcolor: string }>`
   color: ${({ newcolor }) => newcolor};
   margin-left: -4px;
   margin-right: 7px;
-`;
+` as React.ComponentType<StyledCircleProps>;
 
 const StyledCell = styled(TableCell)`
   &&& {
@@ -36,7 +38,7 @@ const StyledCell = styled(TableCell)`
     letter-spacing: -0.55px;
     border: none;
   }
-`;
+` as React.ComponentType<TableCellProps>;
 
 const SpanContainer = styled.span`
   display: flex;
@@ -48,7 +50,7 @@ const CopyIcon = styled(ContentCopy)`
     color: #a6dfe2;
     font-size: 20px;
   }
-`;
+` as React.ComponentType<SvgIconProps>;
 
 const ClipboardWrapper = styled(Clipboard)`
   border: none;
@@ -63,7 +65,7 @@ const LinkDiv = styled.div`
   text-decoration: underline;
 `;
 
-const PrimaryKeyList = {
+const PrimaryKeyList: any = {
   blocks: ['hash', 'level'],
   accounts: ['account_id'],
   operations: ['operation_group_hash']
@@ -75,10 +77,10 @@ interface Props {
   network: string;
   platform: string;
   selectedEntity: string,
-  onClickPrimaryKey: (entity, key, value) => void;
+  onClickPrimaryKey: (entity: string, key: any, value: any) => void;
 }
 
-const formatValueForPrimary = (attribute: AttributeDefinition, displayValue: string, value: any, onClickPrimaryKey) => {
+const formatValueForPrimary = (attribute: any, displayValue: string, value: any, onClickPrimaryKey: any) => {
   const {entity, name} = attribute;
 
   if (attribute.reference) {
@@ -98,10 +100,10 @@ const formatValueForDisplay = (
   entity: string,
   value: any,
   attribute: AttributeDefinition,
-  onClickPrimaryKey: (entity, key, value) => void
+  onClickPrimaryKey: (entity: string, key: string, value: string | number) => void
 ) => {
   if (value == null || value.length === 0) { return ''; }
-  const {name, dataFormat, dataType} = attribute;
+  const {dataFormat, dataType} = attribute;
   if (dataType === 'Boolean') {
       const svalue = value.toString();
       return svalue.charAt(0).toUpperCase() + svalue.slice(1);
@@ -146,12 +148,23 @@ const formatValueForDisplay = (
     } else {
         return value;
     }
-  } else {
+} else if (dataType === 'String' && value.length > 100) {
+    return (
+        <React.Fragment>
+          {value.substring(0, 100)}
+          <ClipboardWrapper data-clipboard-text={value}>
+            <CopyIcon />
+          </ClipboardWrapper>
+        </React.Fragment>
+      );
+} else if (dataType === 'String' && value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
+    return value.split('_').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+} else {
     return formatValueForPrimary(attribute, value, value, onClickPrimaryKey);
-  }
+}
 };
 
-const CustomTableRow: React.StatelessComponent<Props> = props => {
+const CustomTableRow: React.FC<Props> = props => {
   const { selectedColumns, item, network, platform, selectedEntity, onClickPrimaryKey } = props;
   return (
     <TableRowWrapper>

@@ -1,14 +1,15 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import Button from '@material-ui/core/Button';
+import Button, { ButtonProps } from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import { convertValue } from '../../utils/general';
 
 const Container = styled.div``;
 
-const ButtonShell = styled(Button)`
+const ButtonShell = styled(Button)<{isactive: boolean}>`
   &&& {
     height: 52px;
     display: flex;
@@ -19,24 +20,12 @@ const ButtonShell = styled(Button)`
     color: ${({ isactive }) => (isactive ? '#4A4A4A' : '#9b9b9b')};
     text-transform: capitalize;
   }
-`;
-
-const NestedTitle = styled.div`
-  cursor: default;
-  flex-shrink: 0;
-  outline: none;
-  padding: 5px 25px 0 25px;
-  color: #9b9b9b;
-  font-size: 20px;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-transform: capitalize;
-`;
+` as React.ComponentType<ButtonProps & {isactive: boolean}>;
 
 const ArrowIcon = styled(KeyboardArrowDown)`
   color: #56c2d9;
   margin-left: 7px;
-`;
+` as React.ComponentType<SvgIconProps>;
 
 const MenuContainer = styled.div`
   height: 100%;
@@ -71,25 +60,28 @@ const MainMenuItem = styled(MenuItem)`
 
 interface Props {
   selectedValue: string;
-  values: Array<string>;
+  values: string[];
   placeholder?: string;
   onChange: (value: object) => void;
 }
 
 type States = {
-  anchorEl: boolean;
+  anchorEl: any;
 };
 
 class ValueSelect extends React.Component<Props, States> {
-  static defaultProps = {
+  static defaultProps: any = {
     values: [],
     selectedValue: ''
   };
-  state = {
-    anchorEl: null,
-  };
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      anchorEl: null
+    };
+  }
 
-  handleChange = value => {
+  handleChange = (value: any) => {
     const { onChange } = this.props;
     onChange(value);
     this.setState({ anchorEl: null });
@@ -99,7 +91,7 @@ class ValueSelect extends React.Component<Props, States> {
     this.setState({ anchorEl: null });
   };
 
-  handleClick = event => {
+  handleClick = (event: any) => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
@@ -113,7 +105,7 @@ class ValueSelect extends React.Component<Props, States> {
         <ButtonShell
           aria-owns={anchorEl ? 'simple-menu' : undefined}
           aria-haspopup="true"
-          isactive={!!selectedValue? 1:0}
+          isactive={!!selectedValue}
           onClick={this.handleClick}
         >
           {menuTitle}
