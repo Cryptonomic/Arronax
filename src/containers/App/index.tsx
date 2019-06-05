@@ -287,7 +287,7 @@ class Arronax extends React.Component<Props, States> {
                         isSelected={selectedEntity === entity.name}
                         onClick={() => this.onChangeTab(entity.name)}
                       >
-                        {entity.displayName}
+                        {entity.displayNamePlural}
                       </TabItem>
                     )}
                   />
