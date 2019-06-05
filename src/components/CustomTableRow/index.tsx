@@ -124,14 +124,18 @@ const formatValueForDisplay = (
         <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
         <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
         {formatValueForPrimary(attribute, getShortColumn(value), value, onClickPrimaryKey)}
-        <ClipboardWrapper data-clipboard-text={value}> <CopyIcon /> </ClipboardWrapper>
+        <ClipboardWrapper data-clipboard-text={value}>
+          <CopyIcon />
+        </ClipboardWrapper>
       </React.Fragment>
     );
 } else if (dataType === 'Hash') {
     return (
       <React.Fragment>
         {formatValueForPrimary(attribute, getShortColumn(value), value, onClickPrimaryKey)}
-        <ClipboardWrapper data-clipboard-text={value}> <CopyIcon /> </ClipboardWrapper>
+        <ClipboardWrapper data-clipboard-text={value}>
+          <CopyIcon />
+        </ClipboardWrapper>
       </React.Fragment>
     );
 } else if (dataType === 'Decimal') {
@@ -148,7 +152,9 @@ const formatValueForDisplay = (
     return (
         <React.Fragment>
           {value.substring(0, 100)}
-          <ClipboardWrapper data-clipboard-text={value}> <CopyIcon /> </ClipboardWrapper>
+          <ClipboardWrapper data-clipboard-text={value}>
+            <CopyIcon />
+          </ClipboardWrapper>
         </React.Fragment>
       );
 } else if (dataType === 'String' && value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
