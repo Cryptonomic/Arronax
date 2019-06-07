@@ -85,7 +85,7 @@ type States = {
 class ValueSelect extends React.Component<Props, States> {
   static defaultProps: any = {
     values: [],
-    selectedValue: ''
+    selectedValues: []
   };
   constructor(props: Props) {
     super(props);
