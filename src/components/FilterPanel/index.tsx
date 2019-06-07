@@ -107,7 +107,7 @@ class FilterPanel extends React.Component<Props, {}> {
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
-  onFilterValueChange = (value: any, index: number, pos: number) => {
+  onInputValueChange = (value: any, index: number, pos: number) => {
     const {
       filters,
       selectedEntity,
@@ -116,6 +116,18 @@ class FilterPanel extends React.Component<Props, {}> {
 
     const selectedFilter: any = {...filters[index]};
     selectedFilter.values[pos] = value;
+    changeFilter(selectedEntity, selectedFilter, index);
+  };
+
+  onCardinalityValueChange = (values: string[], index: number) => {
+    const {
+      filters,
+      selectedEntity,
+      changeFilter
+    } = this.props;
+
+    const selectedFilter: any = {...filters[index]};
+    selectedFilter.values = values;
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
@@ -142,7 +154,7 @@ class FilterPanel extends React.Component<Props, {}> {
       disableAddFilter = false;
     } else if (lastFilter.operator === ConseilOperator.ISNULL || lastFilter.operator === 'isnotnull') {
       disableAddFilter = false;
-    } else if(lastFilter.operator === ConseilOperator.BETWEEN || lastFilter.operator === ConseilOperator.IN) {
+    } else if(lastFilter.operator === ConseilOperator.BETWEEN) {
       disableAddFilter = lastFilter.values.length !== 2;
     } else if (lastFilter.values[0]) {
       disableAddFilter = false;
@@ -175,33 +187,13 @@ class FilterPanel extends React.Component<Props, {}> {
                     />
                   )}
                   {filter.operator && <HR />}
-                  {filter.operator && (filter.operator === ConseilOperator.EQ ||  filter.operator === 'noteq') && filter.isLowCardinality && (
-                      <ValueSelect
-                        placeholder='Select Value'
-                        selectedValue={filter.values[0]}
-                        values={availableValues[filter.name]}
-                        onChange={value => this.onFilterValueChange(value, index, 0)}
-                      />
-                  )}
-                  {filter.operator &&
-                        (filter.operator === ConseilOperator.STARTSWITH || filter.operator === 'notstartWith'
-                         || filter.operator === ConseilOperator.ENDSWITH || filter.operator === 'notendWith')
-                        && filter.isLowCardinality && (
-                    <ValueInput
-                      values={filter.values}
+                  {filter.operator && filter.isLowCardinality && (
+                    <ValueSelect
+                      placeholder='Select Value'
                       operator={filter.operator}
-                      InputProps={{ disableUnderline: true }}
-                      onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
-                    />
-                  )}
-                  {filter.operator &&
-                        (filter.operator === ConseilOperator.IN || filter.operator === 'notin')
-                        && filter.isLowCardinality && (
-                    <ValueInput
-                      values={filter.values}
-                      operator={filter.operator}
-                      InputProps={{ disableUnderline: true }}
-                      onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
+                      selectedValues={filter.values}
+                      values={availableValues[filter.name]}
+                      onChange={values => this.onCardinalityValueChange(values, index)}
                     />
                   )}
                   {filter.operator && !filter.isLowCardinality && (
@@ -209,7 +201,7 @@ class FilterPanel extends React.Component<Props, {}> {
                       values={filter.values}
                       operator={filter.operator}
                       InputProps={{ disableUnderline: true }}
-                      onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
+                      onChange={(value, pos) => this.onInputValueChange(value, index, pos)}
                     />
                   )}
                 </FilterItemGr>

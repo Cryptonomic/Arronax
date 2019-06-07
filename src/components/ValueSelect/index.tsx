@@ -1,15 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
+import { ConseilOperator } from 'conseiljs';
+import { withStyles } from '@material-ui/core/styles';
 import Button, { ButtonProps } from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import MenuItem, { MenuItemProps } from '@material-ui/core/MenuItem';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
+import Checkbox from '@material-ui/core/Checkbox';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import { convertValue } from '../../utils/general';
 
 const Container = styled.div``;
 
-const ButtonShell = styled(Button)<{isactive: boolean}>`
+const ButtonShell = styled(Button)<{isactive: number}>`
   &&& {
     height: 52px;
     display: flex;
@@ -20,7 +23,7 @@ const ButtonShell = styled(Button)<{isactive: boolean}>`
     color: ${({ isactive }) => (isactive ? '#4A4A4A' : '#9b9b9b')};
     text-transform: capitalize;
   }
-` as React.ComponentType<ButtonProps & {isactive: boolean}>;
+` as React.ComponentType<ButtonProps & {isactive: number}>;
 
 const ArrowIcon = styled(KeyboardArrowDown)`
   color: #56c2d9;
@@ -42,7 +45,7 @@ const MenuContents = styled.div`
   min-height: 1.25em;
 `;
 
-const MainMenuItem = styled(MenuItem)`
+const MainMenuItem = styled(MenuItem)<{ ismultiple: number }>`
   &&& {
     &[class*='selected'] {
       background-color: rgba(101,  200, 206, 0.13);
@@ -52,17 +55,27 @@ const MainMenuItem = styled(MenuItem)`
     }
     font-size: 20px;
     font-weight: 300;
-    padding-left: 25px;
+    padding-left: ${({ ismultiple }) => (ismultiple ? '0px' : '25px')};
     padding-right: 25px;
     color: #4a4a4a;
   }
-`;
+`as React.ComponentType<MenuItemProps & {ismultiple: number}>;
+
+const CheckboxWrapper = withStyles({
+  root: {
+    '&$checked': {
+      color: '#56c2d9'
+    },
+  },
+  checked: {},
+})(Checkbox);
 
 interface Props {
-  selectedValue: string;
+  operator: string;
+  selectedValues: string[];
   values: string[];
   placeholder?: string;
-  onChange: (value: object) => void;
+  onChange: (value: any) => void;
 }
 
 type States = {
@@ -87,6 +100,21 @@ class ValueSelect extends React.Component<Props, States> {
     this.setState({ anchorEl: null });
   };
 
+  handleMultipleChange = (value: any) => {
+    const { selectedValues, onChange } = this.props;
+    const index = selectedValues.indexOf(value);
+    let newValues = [];
+    if ( selectedValues[0] === '' ) {
+      newValues = [value];
+    } else if (index > -1) {
+      selectedValues.splice(index, 1);
+      newValues = selectedValues;
+    } else {
+      newValues = [...selectedValues, value];
+    }
+    onChange(newValues);
+  }
+
   cancelChange = () => {
     this.setState({ anchorEl: null });
   };
@@ -95,17 +123,58 @@ class ValueSelect extends React.Component<Props, States> {
     this.setState({ anchorEl: event.currentTarget });
   };
 
+  onGetItem = (value, index) => {
+    const { operator, selectedValues } = this.props;
+    if (operator === ConseilOperator.IN) {
+      return (
+        <MainMenuItem
+          onClick={() => this.handleMultipleChange(value)}
+          key={index}
+          ismultiple={1}
+        >
+          <CheckboxWrapper
+            disableRipple={true}
+            checked={selectedValues.includes(value)}
+          />
+          {convertValue(value)}
+        </MainMenuItem>
+      );
+    }
+
+    return (
+      <MainMenuItem
+        onClick={() => this.handleChange(value)}
+        key={index}
+        selected={value === selectedValues[0]}
+        ismultiple={0}
+      >
+        {convertValue(value)}
+      </MainMenuItem>
+    );
+  }
+
   render() {
     const { anchorEl } = this.state;
-    const { values, selectedValue, placeholder } = this.props;
-    const menuTitle = selectedValue ? selectedValue : placeholder;
+    const { values, selectedValues, placeholder } = this.props;
+    let menuTitle = '';
+    if (selectedValues[0]) {
+      selectedValues.forEach((value, index) => {
+        if (index === 0) {
+          menuTitle = convertValue(value);
+        } else {
+          menuTitle += `, ${convertValue(value)}`;
+        }
+      });
+    } else {
+      menuTitle = placeholder;
+    }
 
     return (
       <Container>
         <ButtonShell
           aria-owns={anchorEl ? 'simple-menu' : undefined}
           aria-haspopup="true"
-          isactive={!!selectedValue}
+          isactive={selectedValues.length > 0 ? 1 : 0 }
           onClick={this.handleClick}
         >
           {menuTitle}
@@ -125,15 +194,9 @@ class ValueSelect extends React.Component<Props, States> {
             }}
           >
             <MenuContents>
-              {values.map((value, index) => (
-                <MainMenuItem
-                  onClick={() => this.handleChange(value)}
-                  key={index}
-                  selected={value === selectedValue}
-                >
-                  {convertValue(value)}
-                </MainMenuItem>
-              ))}
+              {values.map((value, index) => {
+                return this.onGetItem(value, index)
+              })}
             </MenuContents>
           </Menu>
         </MenuContainer>

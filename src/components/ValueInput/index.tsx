@@ -51,7 +51,7 @@ const ValueInput: React.FC<Props> = props => {
     let input;
 
     // Render specific input type based on operators
-    if (operator === ConseilOperator.BETWEEN || operator === ConseilOperator.IN) {
+    if (operator === ConseilOperator.BETWEEN || operator === ConseilOperator.IN || operator === 'notin') {
       input = (
         <React.Fragment>
           <Container>
