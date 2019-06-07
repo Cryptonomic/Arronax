@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { ArronaxIcon } from '../ArronaxIcon';
 import ColumnItem from '../ColumnItem';
+import ColumnDragItem from '../ColumnDragItem';
 import { AttributeDefinition } from '../../types';
 
 import {
@@ -141,9 +142,9 @@ class ColumnsPanel extends React.Component<Props, States> {
         <MainContainer>
           <ColumnsContainer>
             {selected.map((attribute: AttributeDefinition, index: number) => (
-              <ColumnItem
+              <ColumnDragItem
                 key={index}
-                isChecked
+                index={index}
                 name={attribute.displayName}
                 onClick={() => this.handleChange(attribute)}
               />

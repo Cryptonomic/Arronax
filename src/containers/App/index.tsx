@@ -7,6 +7,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import HTML5Backend from 'react-dnd-html5-backend';
+import { DragDropContext } from 'react-dnd';
 import {
   getLoading,
   getNetwork,
@@ -371,6 +373,7 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default compose(
+  DragDropContext(HTML5Backend),
   withRouter,
   connect(
     mapStateToProps,

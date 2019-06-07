@@ -23,6 +23,8 @@
     "rc-tooltip": "^3.7.3",
     "react": "^16.8.6",
     "react-clipboard.js": "^2.0.10",
+    "react-dnd": "^7.5.0",
+    "react-dnd-html5-backend": "^7.5.0",
     "react-dom": "^16.8.6",
     "react-moment": "^0.9.2",
     "react-redux": "^7.0.3",
