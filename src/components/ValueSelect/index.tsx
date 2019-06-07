@@ -96,7 +96,7 @@ class ValueSelect extends React.Component<Props, States> {
 
   handleChange = (value: any) => {
     const { onChange } = this.props;
-    onChange(value);
+    onChange([value]);
     this.setState({ anchorEl: null });
   };
 
