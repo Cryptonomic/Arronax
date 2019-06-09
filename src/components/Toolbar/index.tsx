@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import Tooltip from '@material-ui/core/Tooltip';
 import { ArronaxIcon } from '../ArronaxIcon';
 import { ToolType } from '../../types';
 
@@ -109,6 +110,14 @@ interface Props {
 
 const Toolbar: React.FC<Props> = props => {
   const { isCollapsed, selectedTool, filterCount, columnsCount, onChangeTool, onExportCsv, onShareReport } = props;
+  const [open, setOpen] = React.useState(false);
+  function shareReport() {
+    setOpen(true);
+    onShareReport();
+    setTimeout(() => {
+      setOpen(false);
+    }, 2000);
+  }
   return (
     <Container>
       <FilterTool
@@ -129,9 +138,11 @@ const Toolbar: React.FC<Props> = props => {
         <ExportIcon size="20px" color="#4a4a4a" iconName="icon-export" />
         Export CSV
       </ExportTool>
-      <ShareTool onClick={onShareReport}>
-        Share Report
-      </ShareTool>
+      <Tooltip title="Copied!" placement="right-start" open={open}>
+        <ShareTool onClick={shareReport}>
+          Share Report
+        </ShareTool>
+      </Tooltip>
     </Container>
   );
 };
