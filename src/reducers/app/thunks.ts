@@ -217,7 +217,20 @@ export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispat
     url: config.url,
     apiKey: config.apiKey,
   };
-  const entities = await getEntities(serverInfo, platform, network);
+
+  let entities = await getEntities(serverInfo, platform, network);
+	  if (config.entities && config.entities.length > 0) {
+	      let filteredEntities: EntityDefinition[] = [];
+	      config.entities.forEach(e => {
+	          let match = entities.find(i => i.name === e);
+	          if (!!match) { filteredEntities.push(match); }
+	      });
+	      entities.forEach(e => {
+	          if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
+	      });
+	      entities = filteredEntities;
+	  }
+
   dispatch(setEntitiesAction(entities));
   if (urlEntity && urlQuery) {
     dispatch(setTabAction(urlEntity));
