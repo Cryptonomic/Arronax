@@ -47,6 +47,7 @@ export interface Config {
   displayName: string;
   entities?: string[];
 };
+
 export interface Sort {
   order: ConseilSortDirection;
   orderBy: string;
@@ -55,7 +56,7 @@ export interface Sort {
 export interface EntityDefinition {
   name: string;
   displayName: string;
-  displayNamePlural: string;
+  displayNamePlural?: string;
   count: number;
-  network?: string;
+  network: string;
 }
