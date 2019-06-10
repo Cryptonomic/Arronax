@@ -16,12 +16,13 @@ import { XYCoord } from 'dnd-core';
 import { ArronaxIcon } from '../ArronaxIcon';
 import ItemTypes from '../../types/DragItemTypes';
 
-const Container = styled.div`
+const Container = styled.div<{isdragging: number}>`
   display: flex;
   height: 51px;
   width: 372px;
   align-items: center;
   padding: 0 28px 0 10px;
+  opacity: ${({ isdragging }) => (isdragging ? 0.5 : 1)};
   &:hover {
     background: rgba(101, 200, 206, 0.13);
   }
@@ -47,6 +48,7 @@ interface Props {
   isDragging: boolean;
   connectDragSource: ConnectDragSource;
   connectDropTarget: ConnectDropTarget;
+  moveItem: (dragIndex: number, hoverIndex: number) => void
 }
 
 interface CardInstance {
@@ -59,12 +61,11 @@ const ColumnDragItem = React.forwardRef<HTMLDivElement, Props>(
     connectDragSource(elementRef);
     connectDropTarget(elementRef);
 
-    const opacity = isDragging ? 0 : 1
     useImperativeHandle<{}, CardInstance>(ref, () => ({
       getNode: () => elementRef.current,
     }));
     return (
-      <Container ref={elementRef}>
+      <Container ref={elementRef} isdragging={isDragging? 1 : 0}>
         <CheckboxWrapper
           disableRipple={true}
           checked={true}
@@ -76,20 +77,6 @@ const ColumnDragItem = React.forwardRef<HTMLDivElement, Props>(
     )
   },
 )
-
-// const ColumnDragItem: React.FC<Props> = (props) => {
-//   const { name, onClick } = props;
-//   return (
-//     <Container onClick={onClick}>
-//       <CheckboxWrapper
-//         disableRipple={true}
-//         checked={true}
-//       />
-//       {name}
-//       <DragIcon size="23px" color="#d8d8d8" iconName="icon-reorder"/>
-//     </Container>    
-//   );
-// };
 
 export default DropTarget(
   ItemTypes.COLUMN,
@@ -129,10 +116,6 @@ export default DropTarget(
       // Get pixels to the top
       const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top
 
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
-
       // Dragging downwards
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
         return
@@ -143,16 +126,8 @@ export default DropTarget(
         return
       }
 
-      console.log('dragIndex', dragIndex);
-      console.log('hoverIndex', hoverIndex);
-
       // Time to actually perform the action
-      // props.moveCard(dragIndex, hoverIndex)
-
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
+      props.moveItem(dragIndex, hoverIndex)
       monitor.getItem().index = hoverIndex
     },
   },
