@@ -29,6 +29,7 @@ import { Config, AttributeDefinition, Sort, Filter } from '../../types';
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
 import { getOperatorType } from '../../utils/general';
+import { EntityDefinition } from 'conseiljs/dist/types/conseil/MetadataTypes';
 
 const { executeEntityQuery } = ConseilDataClient;
 const {
