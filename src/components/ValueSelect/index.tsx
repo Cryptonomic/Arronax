@@ -125,7 +125,7 @@ class ValueSelect extends React.Component<Props, States> {
 
   onGetItem = (value, index) => {
     const { operator, selectedValues } = this.props;
-    if (operator === ConseilOperator.IN) {
+    if (operator === ConseilOperator.IN || operator === 'notin') {
       return (
         <MainMenuItem
           onClick={() => this.handleMultipleChange(value)}
