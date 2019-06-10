@@ -55,7 +55,7 @@ export interface Sort {
 export interface EntityDefinition {
   name: string;
   displayName: string;
-  displayNamePlural: string;
+  // displayNamePlural: string;
   count: number;
   network?: string;
 }

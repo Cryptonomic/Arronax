@@ -218,18 +218,22 @@ export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispat
     apiKey: config.apiKey,
   };
 
-  let entities = await getEntities(serverInfo, platform, network);
-	  if (config.entities && config.entities.length > 0) {
-	      let filteredEntities: EntityDefinition[] = [];
-	      config.entities.forEach(e => {
-	          let match = entities.find(i => i.name === e);
-	          if (!!match) { filteredEntities.push(match); }
-	      });
-	      entities.forEach(e => {
-	          if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
-	      });
-	      entities = filteredEntities;
-	  }
+  let entitiesFromServer = await getEntities(serverInfo, platform, network);
+  let entities = [];
+  entitiesFromServer.forEach(entity => {
+    if (entity.name !== 'rolls') entities.push(entity);
+  });
+  if (config.entities && config.entities.length > 0) {
+    let filteredEntities = [];
+    config.entities.forEach(e => {
+        let match = entities.find(i => i.name === e);
+        if (!!match) { filteredEntities.push(match); }
+    });
+    entities.forEach(e => {
+        if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
+    });
+    entities = filteredEntities;
+  }
 
   dispatch(setEntitiesAction(entities));
   if (urlEntity && urlQuery) {
@@ -244,19 +248,18 @@ export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispat
     const { attributes } = state().app;
     saveAttributes(attributes, currentDate, 2);
   }
-  const { attributes } = state().app;
-  const promises = entities.map(entity => dispatch(
+  const { attributes, selectedEntity } = state().app;
+  await dispatch(
     fetchInitEntityAction(
       platform,
-      entity.name,
+      selectedEntity,
       network,
       serverInfo,
-      attributes[entity.name],
+      attributes[selectedEntity],
       urlEntity,
       urlQuery
-    ))
+    )
   );
-  await Promise.all(promises);
   dispatch(completeFullLoadAction(true));
 };
 
@@ -389,4 +392,29 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
 
   await dispatch(setModalItemAction(items[0]));
   dispatch(setLoadingAction(false));
+};
+
+export const changeTab = (entity: string) => async (dispatch, state) => {
+  const { network, platform, attributes, items } = state().app;
+  const config = getConfig(network);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.apiKey,
+  };
+  if(!items[entity] || (items[entity] && items[entity].length === 0)) {
+    dispatch(setLoadingAction(true));
+    await dispatch(
+      fetchInitEntityAction(
+        platform,
+        entity,
+        network,
+        serverInfo,
+        attributes[entity],
+        '',
+        ''
+      )
+    );
+    dispatch(setLoadingAction(false));
+  }
+  dispatch(setTabAction(entity));
 };
