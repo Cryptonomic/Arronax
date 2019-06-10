@@ -273,7 +273,7 @@ export const fetchAttributes = (
 const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], sort: Sort) => {
   let query = addFields(blankQuery(), ...attributeNames);
   selectedFilters.forEach((filter: Filter) => {
-    if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN) && filter.values.length === 1) {
+    if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN || filter.operator === 'notin') && filter.values.length === 1) {
       return true;
     }
 
