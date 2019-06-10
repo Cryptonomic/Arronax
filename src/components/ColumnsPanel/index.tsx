@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { ArronaxIcon } from '../ArronaxIcon';
 import ColumnItem from '../ColumnItem';
+import ColumnDragItem from '../ColumnDragItem';
 import { AttributeDefinition } from '../../types';
 
 import {
@@ -132,6 +133,16 @@ class ColumnsPanel extends React.Component<Props, States> {
     onResetColumns();
   };
 
+  onMoveItem = (dragIndex: number, hoverIndex: number) => {
+    const { selected } = this.state;
+    const selectedItem = selected[dragIndex];
+    selected.splice(dragIndex, 1);
+    selected.splice(hoverIndex, 0, selectedItem);
+    this.setState({
+      selected: [...selected],
+    });
+  }
+
   render() {
     const { attributes } = this.props;
     const { selected } = this.state;
@@ -141,11 +152,12 @@ class ColumnsPanel extends React.Component<Props, States> {
         <MainContainer>
           <ColumnsContainer>
             {selected.map((attribute: AttributeDefinition, index: number) => (
-              <ColumnItem
+              <ColumnDragItem
                 key={index}
-                isChecked
+                index={index}
                 name={attribute.displayName}
                 onClick={() => this.handleChange(attribute)}
+                moveItem={this.onMoveItem}
               />
             ))}
             {attributes.sort((a: AttributeDefinition, b: AttributeDefinition) => (a.displayName.toLowerCase() < b.displayName.toLowerCase() ? -1 : 1))
