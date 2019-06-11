@@ -137,10 +137,7 @@ export const fetchInitEntityAction = (
       attributes.forEach(attribute => columns.push(attribute));
     }
 
-    sort = { // TODO: read multiple
-      orderBy: orderBy[0].field,
-      order: orderBy[0].direction
-      };
+    sort = orderBy.map(o => { return { orderBy: o.field, order: o.direction } });
 
     // initFilters
     filters = predicates.map(predicate => {
