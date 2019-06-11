@@ -4,7 +4,7 @@ import {
   ConseilQueryBuilder,
   ConseilOperator,
   ConseilOutput,
-  ConseilSortDirection
+  ConseilSortDirection, EntityDefinition, AttributeDefinition
 } from 'conseiljs';
 import base64url from 'base64url';
 import {
@@ -24,7 +24,7 @@ import {
   setTabAction
 } from './actions';
 import { getConfigs } from '../../utils/getconfig';
-import { Config, AttributeDefinition, Sort, Filter, EntityDefinition } from '../../types';
+import { Config, Sort, Filter } from '../../types';
 
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
@@ -298,7 +298,7 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], sorts
 
     query = addPredicate(query, filter.name, operator, filter.values, isInvert);
   });
-  // Add this to set ordering
+
   sorts.forEach(sort=> {
     query = addOrdering(
       query,
@@ -330,10 +330,7 @@ export const shareReport = () => async (dispatch, state) => {
 export const exportCsvData = () => async (dispatch, state) => {
   const { selectedEntity, platform, network, columns, sort, selectedFilters } = state().app;
   const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);

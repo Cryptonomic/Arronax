@@ -9,6 +9,7 @@ import Tab from '@material-ui/core/Tab';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
+import { EntityDefinition } from 'conseiljs';
 import {
   getLoading,
   getNetwork,
@@ -36,7 +37,7 @@ import Footer from '../../components/Footer';
 import Toolbar from '../../components/Toolbar';
 import CustomTable from '../CustomTable';
 
-import { ToolType, EntityDefinition } from '../../types';
+import { ToolType } from '../../types';
 import octopusSrc from '../../assets/sadOctopus.svg';
 
 const Container = styled.div`

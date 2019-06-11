@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ArronaxIcon } from '../ArronaxIcon';
 import ColumnItem from '../ColumnItem';
 import ColumnDragItem from '../ColumnDragItem';
-import { AttributeDefinition } from '../../types';
+import { AttributeDefinition } from 'conseiljs';
 
 import {
   getColumns,
