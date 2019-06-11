@@ -57,5 +57,5 @@ export interface EntityDefinition {
   displayName: string;
   displayNamePlural: string;
   count: number;
-  network?: string;
+  network: string;
 }

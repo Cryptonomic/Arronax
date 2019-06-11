@@ -24,10 +24,10 @@ import {
   initLoad,
   submitQuery,
   exportCsvData,
-  shareReport
+  shareReport,
+  changeTab
 } from '../../reducers/app/thunks';
 import {
-  setTabAction,
   removeAllFiltersAction,
 } from '../../reducers/app/actions';
 import Header from '../../components/Header';
@@ -213,7 +213,6 @@ class Arronax extends React.Component<Props, States> {
 
   onChangeTab = async (value: string) => {
     const { changeTab } = this.props;
-    changeTab(value);
     await changeTab(value);
     this.settingRef.current.onChangeHeight();
   };
@@ -365,7 +364,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   removeAllFilters: (selectedEntity: string) =>
     dispatch(removeAllFiltersAction(selectedEntity)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
-  changeTab: (type: string) => dispatch(setTabAction(type)),
+  changeTab: (type: string) => dispatch(changeTab(type)),
   initLoad: (e: string, q: string) => dispatch(initLoad(e, q)),
   submitQuery: () => dispatch(submitQuery()),
   exportCsvData: () => dispatch(exportCsvData()),

@@ -24,7 +24,7 @@ import {
   setTabAction
 } from './actions';
 import { getConfigs } from '../../utils/getconfig';
-import { Config, AttributeDefinition, Sort, Filter } from '../../types';
+import { Config, AttributeDefinition, Sort, Filter, EntityDefinition } from '../../types';
 
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
@@ -145,7 +145,7 @@ export const fetchInitEntityAction = (
     // initFilters
     filters = predicates.map(predicate => {
       const selectedAttribute = attributes.find(attr => attr.name === predicate.field);
-      const isLowCardinality = selectedAttribute.cardinality < CARDINALITY_NUMBER && selectedAttribute.cardinality !== null;
+      const isLowCardinality = selectedAttribute.cardinality !== undefined && selectedAttribute.cardinality < CARDINALITY_NUMBER;
       if (isLowCardinality) {
         cardinalityPromises.push(
           dispatch(initCardinalityValues(platform, entity, network, selectedAttribute.name, serverInfo))
@@ -213,23 +213,23 @@ export const fetchInitEntityAction = (
 export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispatch, state) => {
   const { network, platform } = state().app;
   const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   let entities = await getEntities(serverInfo, platform, network);
-	  if (config.entities && config.entities.length > 0) {
-	      let filteredEntities: EntityDefinition[] = [];
-	      config.entities.forEach(e => {
-	          let match = entities.find(i => i.name === e);
-	          if (!!match) { filteredEntities.push(match); }
-	      });
-	      entities.forEach(e => {
-	          if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
-	      });
-	      entities = filteredEntities;
-	  }
+    if (config.entities && config.entities.length > 0) {
+        let filteredEntities: EntityDefinition[] = [];
+        config.entities.forEach(e => {
+            if (e === 'rolls') { return; }
+            let match = entities.find(i => i.name === e);
+            if (!!match) { filteredEntities.push(match); }
+        });
+        entities.forEach(e => {
+            if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
+        });
+        entities = filteredEntities;
+    }
+
+    entities.forEach(e => { if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) { e.displayNamePlural = e.displayName}}); // TODO: remove
 
   dispatch(setEntitiesAction(entities));
   if (urlEntity && urlQuery) {
@@ -244,19 +244,18 @@ export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispat
     const { attributes } = state().app;
     saveAttributes(attributes, currentDate, 2);
   }
-  const { attributes } = state().app;
-  const promises = entities.map(entity => dispatch(
+  const { attributes, selectedEntity } = state().app;
+  await dispatch(
     fetchInitEntityAction(
       platform,
-      entity.name,
+      selectedEntity,
       network,
       serverInfo,
-      attributes[entity.name],
+      attributes[selectedEntity],
       urlEntity,
       urlQuery
-    ))
+    )
   );
-  await Promise.all(promises);
   dispatch(completeFullLoadAction(true));
 };
 
@@ -389,4 +388,29 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
 
   await dispatch(setModalItemAction(items[0]));
   dispatch(setLoadingAction(false));
+};
+
+export const changeTab = (entity: string) => async (dispatch, state) => {
+  const { network, platform, attributes, items } = state().app;
+  const config = getConfig(network);
+  const serverInfo = {
+    url: config.url,
+    apiKey: config.apiKey,
+  };
+  if(!items[entity] || (items[entity] && items[entity].length === 0)) {
+    dispatch(setLoadingAction(true));
+    await dispatch(
+      fetchInitEntityAction(
+        platform,
+        entity,
+        network,
+        serverInfo,
+        attributes[entity],
+        '',
+        ''
+      )
+    );
+    dispatch(setLoadingAction(false));
+  }
+  dispatch(setTabAction(entity));
 };
