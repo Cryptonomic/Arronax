@@ -216,11 +216,11 @@ export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispat
     if (config.entities && config.entities.length > 0) {
         let filteredEntities: EntityDefinition[] = [];
         config.entities.forEach(e => {
-            if (e === 'rolls') { return; }
             let match = entities.find(i => i.name === e);
             if (!!match) { filteredEntities.push(match); }
         });
         entities.forEach(e => {
+            if (e.name === 'rolls') { return; }
             if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
         });
         entities = filteredEntities;

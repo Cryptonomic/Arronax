@@ -21,7 +21,7 @@ export const defaultQueries = {
     },
     rolls: {
         fields: [],
-        predicates: [],
+        predicates: [{ field: 'block_level', set: [418201], operation: 'gt', inverse: false }],
         orderBy: [{ field: 'block_level', direction: 'desc' }, { field: 'rolls', direction: 'desc' }],
         limit: 5000
     },
@@ -33,19 +33,13 @@ export const defaultQueries = {
     },
     balance_updates: {
         fields: [],
-        predicates: [{ field: 'timestamp', set: [1556683200000], operation: 'after', inverse: false }],
+        predicates: [{ field: 'level', set: [418201], operation: 'gt', inverse: false }],
         orderBy: [],
         limit: 5000
     },
     ballots: {
         fields: [],
-        predicates: [{ field: 'timestamp', set: [1556683200000], operation: 'after', inverse: false }],
-        orderBy: [],
-        limit: 5000
-    },
-    operation_groups: {
-        fields: [],
-        predicates: [{ field: 'timestamp', set: [1556683200000], operation: 'after', inverse: false }],
+        predicates: [{ field: 'block_level', set: [418201], operation: 'gt', inverse: false }],
         orderBy: [],
         limit: 5000
     }
