@@ -15,8 +15,7 @@ export const defaultQueries = {
         fields: ['account_id', 'manager', 'delegate_value', 'balance'],
         predicates: [
             { field: 'account_id', set: ['kt1'], operation: 'startsWith', inverse: true },
-            { field: 'balance', set: [0], operation: 'gt', inverse: false },
-            { field: 'timestamp', set: [1556683200000], operation: 'gt', inverse: false }],
+            { field: 'balance', set: [0], operation: 'gt', inverse: false }],
         orderBy: [{ field: 'block_level', direction: 'desc' }],
         limit: 5000
     },
@@ -30,6 +29,24 @@ export const defaultQueries = {
         fields: ['kind', 'timestamp', 'high', 'medium', 'low'],
         predicates: [{ field: 'kind', set: ['transaction', 'origination'], operation: 'in', inverse: false }, { field: 'timestamp', set: [1556683200000], operation: 'gt', inverse: false }],
         orderBy: [{ field: 'timestamp', direction: 'desc' }, { field: 'kind', direction: 'asc' }],
+        limit: 5000
+    },
+    balance_updates: {
+        fields: [],
+        predicates: [{ field: 'timestamp', set: [1556683200000], operation: 'gt', inverse: false }],
+        orderBy: [],
+        limit: 5000
+    },
+    ballots: {
+        fields: [],
+        predicates: [{ field: 'timestamp', set: [1556683200000], operation: 'gt', inverse: false }],
+        orderBy: [],
+        limit: 5000
+    },
+    operation_groups: {
+        fields: [],
+        predicates: [{ field: 'timestamp', set: [1556683200000], operation: 'gt', inverse: false }],
+        orderBy: [],
         limit: 5000
     }
 };

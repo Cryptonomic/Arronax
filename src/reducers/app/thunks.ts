@@ -145,7 +145,7 @@ export const fetchInitEntityAction = (
     // initFilters
     filters = predicates.map(predicate => {
       const selectedAttribute = attributes.find(attr => attr.name === predicate.field);
-      const isLowCardinality = selectedAttribute.cardinality < CARDINALITY_NUMBER && selectedAttribute.cardinality !== null;
+      const isLowCardinality = selectedAttribute.cardinality !== undefined && selectedAttribute.cardinality < CARDINALITY_NUMBER;
       if (isLowCardinality) {
         cardinalityPromises.push(
           dispatch(initCardinalityValues(platform, entity, network, selectedAttribute.name, serverInfo))
