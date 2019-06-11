@@ -24,7 +24,7 @@ import {
   setTabAction
 } from './actions';
 import { getConfigs } from '../../utils/getconfig';
-import { Config, AttributeDefinition, Sort, Filter } from '../../types';
+import { Config, AttributeDefinition, Sort, Filter, EntityDefinition } from '../../types';
 
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
@@ -213,27 +213,23 @@ export const fetchInitEntityAction = (
 export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispatch, state) => {
   const { network, platform } = state().app;
   const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
 
-  let entitiesFromServer = await getEntities(serverInfo, platform, network);
-  let entities = [];
-  entitiesFromServer.forEach(entity => {
-    if (entity.name !== 'rolls') entities.push(entity);
-  });
-  if (config.entities && config.entities.length > 0) {
-    let filteredEntities = [];
-    config.entities.forEach(e => {
-        let match = entities.find(i => i.name === e);
-        if (!!match) { filteredEntities.push(match); }
-    });
-    entities.forEach(e => {
-        if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
-    });
-    entities = filteredEntities;
-  }
+  let entities = await getEntities(serverInfo, platform, network);
+    if (config.entities && config.entities.length > 0) {
+        let filteredEntities: EntityDefinition[] = [];
+        config.entities.forEach(e => {
+            if (e === 'rolls') { return; }
+            let match = entities.find(i => i.name === e);
+            if (!!match) { filteredEntities.push(match); }
+        });
+        entities.forEach(e => {
+            if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
+        });
+        entities = filteredEntities;
+    }
+
+    entities.forEach(e => { if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) { e.displayNamePlural = e.displayName}}); // TODO: remove
 
   dispatch(setEntitiesAction(entities));
   if (urlEntity && urlQuery) {
