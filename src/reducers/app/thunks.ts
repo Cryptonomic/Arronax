@@ -184,7 +184,7 @@ export const fetchInitEntityAction = (
     };
   } else {
     columns = [...attributes];
-    const levelColumn = columns.find(column => column.name === 'level' || column.name === 'block_level') || columns[0];
+    const levelColumn = columns.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || columns[0];
     sort = {
       orderBy: levelColumn.name,
       order: ConseilSortDirection.DESC
@@ -370,13 +370,11 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
   dispatch(setLoadingAction(true));
 
   const network = state().app.network;
-  const sort = state().app.sort;
   const config = getConfig(network);
   const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   let query = blankQuery();
   query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
-  query = addOrdering(query, sort[entity].orderBy, sort[entity].order);
   query = setLimit(query, 1);
 
   const items = await executeEntityQuery(serverInfo, state().app.platform, network, entity, query);
