@@ -266,7 +266,7 @@ export const fetchAttributes = (
   await dispatch(setAttributesAction(entity, attributes));
 };
 
-const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], sort: Sort) => {
+const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], sorts: Sort[]) => {
   let query = addFields(blankQuery(), ...attributeNames);
   selectedFilters.forEach((filter: Filter) => {
     if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN || filter.operator === 'notin') && filter.values.length === 1) {
@@ -299,11 +299,13 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], sort:
     query = addPredicate(query, filter.name, operator, filter.values, isInvert);
   });
   // Add this to set ordering
-  query = addOrdering(
-    query,
-    sort.orderBy,
-    sort.order
-  );
+  sorts.forEach(sort=> {
+    query = addOrdering(
+      query,
+      sort.orderBy,
+      sort.order
+    );
+  }); 
 
   return query;
 }
@@ -361,7 +363,6 @@ export const submitQuery = () => async (dispatch, state) => {
 
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
-
   const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
   await dispatch(setFilterCountAction(selectedFilters[selectedEntity].length));
   await dispatch(setItemsAction(selectedEntity, items));
