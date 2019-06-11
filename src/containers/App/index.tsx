@@ -300,7 +300,7 @@ class Arronax extends React.Component<Props, States> {
                   <TabWrapper
                     key={index}
                     value={entity.name}
-                    label={entity.displayNamePlural}
+                    label={entity.displayName}
                   />
                 ))}
               </TabsWrapper>

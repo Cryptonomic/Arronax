@@ -218,18 +218,22 @@ export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispat
     apiKey: config.apiKey,
   };
 
-  let entities = await getEntities(serverInfo, platform, network);
-	  if (config.entities && config.entities.length > 0) {
-	      let filteredEntities: EntityDefinition[] = [];
-	      config.entities.forEach(e => {
-	          let match = entities.find(i => i.name === e);
-	          if (!!match) { filteredEntities.push(match); }
-	      });
-	      entities.forEach(e => {
-	          if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
-	      });
-	      entities = filteredEntities;
-	  }
+  let entitiesFromServer = await getEntities(serverInfo, platform, network);
+  let entities = [];
+  entitiesFromServer.forEach(entity => {
+    if (entity.name !== 'rolls') entities.push(entity);
+  });
+  if (config.entities && config.entities.length > 0) {
+      let filteredEntities = [];
+      config.entities.forEach(e => {
+          let match = entities.find(i => i.name === e);
+          if (!!match) { filteredEntities.push(match); }
+      });
+      entities.forEach(e => {
+          if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
+      });
+      entities = filteredEntities;
+  }
 
   dispatch(setEntitiesAction(entities));
   if (urlEntity && urlQuery) {

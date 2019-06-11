@@ -13,6 +13,7 @@ const Container = styled.div`
   padding: 40px 77px 12px 50px;
   background: rgb(236, 237, 239);
   box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.5);
+  z-index: 100;
 `;
 
 const CloseIconContainer = styled.div`
@@ -28,6 +29,16 @@ const CloseIconWrapper = styled(CloseIcon)`
     font-size: 27px;
   }
 ` as React.ComponentType<SvgIconProps>;
+
+const SwipeableViewsWrapper = styled(SwipeableViews)`
+  &&& {
+    overflow-x: visible !important;
+    [aria-hidden="true"] > div > div {
+      opacity: 0;
+    }
+  }
+`;
+
 
 interface Props {
   isCollapsed: boolean;
@@ -60,7 +71,7 @@ class SettingsPanel extends React.Component<Props, {}> {
           <CloseIconContainer onClick={onClose}>
             <CloseIconWrapper />
           </CloseIconContainer>
-          <SwipeableViews
+          <SwipeableViewsWrapper
             index={activeIndex}
             action={(actions: any) => {
               this.swipeableActions = actions;
@@ -69,7 +80,7 @@ class SettingsPanel extends React.Component<Props, {}> {
           >
             <FilterPanel onSubmit={onSubmit} swipeRef={this.swipeableActions} />
             <ColumnsPanel onSubmit={onSubmit} />
-          </SwipeableViews>
+          </SwipeableViewsWrapper>
         </Container>
       </Collapse>
     );
