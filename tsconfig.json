@@ -1,5 +1,10 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "components/*": ["src/components/*"],
+      "assets/*": ["src/assets/*"]
+    },
     "target": "es5",
     "lib": [
       "dom",
@@ -25,5 +30,9 @@
   ],
   "typeRoots": [
     "../node_modules/@types"
+  ],
+  "compileOnSave": false,
+  "exclude": [
+    "node_modules"
   ]
 }
