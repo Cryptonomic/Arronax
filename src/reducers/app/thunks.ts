@@ -29,7 +29,6 @@ import { Config, Sort, Filter } from '../../types';
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
 import { getOperatorType } from '../../utils/general';
-import console = require('console');
 
 const { executeEntityQuery } = ConseilDataClient;
 const {
@@ -121,10 +120,11 @@ export const fetchInitEntityAction = (
 ) => async (dispatch: any) => {
   const defaultQuery = urlEntity === entity && urlQuery ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
   let columns: any[] = [];
-  let sort: Sort[];
+  let sorts: Sort[];
   let filters: Filter[] = [];
   let cardinalityPromises: any[] = [];
   let query = blankQuery();
+  const levelColumn = attributes.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || columns[0];
 
   if (defaultQuery) {
     const { fields, predicates, orderBy } = defaultQuery;
@@ -138,8 +138,16 @@ export const fetchInitEntityAction = (
       attributes.forEach(attribute => columns.push(attribute));
     }
 
-    sort = orderBy.map(o => { return { orderBy: o.field, order: o.direction } });
-
+    if(orderBy.length > 0) {
+      sorts = orderBy.map(o => { return { orderBy: o.field, order: o.direction } });
+    } else {
+      // adding the default sort
+      sorts = [{
+        orderBy: levelColumn.name,
+        order: ConseilSortDirection.DESC
+      }];
+      query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
+    }
     // initFilters
     filters = predicates.map(predicate => {
       const selectedAttribute = attributes.find(attr => attr.name === predicate.field);
@@ -184,16 +192,14 @@ export const fetchInitEntityAction = (
       [entity]: initProperty
     };
   } else {
-    columns = [...attributes];
-    const levelColumn = columns.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || columns[0];
-    sort = [{
+    sorts = [{
       orderBy: levelColumn.name,
       order: ConseilSortDirection.DESC
     }];
-    const attributeNames = getAttributeNames(columns);
+    const attributeNames = getAttributeNames(attributes);
     query = addFields(query, ...attributeNames);
     query = setLimit(query, 5000);
-    query = addOrdering(query, sort[0].orderBy, sort[0].order);
+    query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
   }
 
   const items = await executeEntityQuery(
@@ -204,7 +210,7 @@ export const fetchInitEntityAction = (
     query
   );
   
-  await dispatch(initEntityPropertiesAction(entity, filters, sort, columns, items));
+  await dispatch(initEntityPropertiesAction(entity, filters, sorts, columns, items));
   await Promise.all(cardinalityPromises);
 };
 
@@ -301,7 +307,7 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
     query = addPredicate(query, filter.name, operator, filter.values, isInvert);
   });
 
-    ordering.forEach(sort => { query = addOrdering(query, sort.orderBy, sort.order); });
+  query = addOrdering(query, ordering[0].orderBy, ordering[0].order);
 
   return query;
 }
