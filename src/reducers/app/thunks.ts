@@ -29,6 +29,7 @@ import { Config, Sort, Filter } from '../../types';
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
 import { getOperatorType } from '../../utils/general';
+import console = require('console');
 
 const { executeEntityQuery } = ConseilDataClient;
 const {
@@ -120,7 +121,7 @@ export const fetchInitEntityAction = (
 ) => async (dispatch: any) => {
   const defaultQuery = urlEntity === entity && urlQuery ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
   let columns: any[] = [];
-  let sort: Sort;
+  let sort: Sort[];
   let filters: Filter[] = [];
   let cardinalityPromises: any[] = [];
   let query = blankQuery();
@@ -185,14 +186,14 @@ export const fetchInitEntityAction = (
   } else {
     columns = [...attributes];
     const levelColumn = columns.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || columns[0];
-    sort = {
+    sort = [{
       orderBy: levelColumn.name,
       order: ConseilSortDirection.DESC
-    };
+    }];
     const attributeNames = getAttributeNames(columns);
     query = addFields(query, ...attributeNames);
     query = setLimit(query, 5000);
-    query = addOrdering(query, sort.orderBy, sort.order);
+    query = addOrdering(query, sort[0].orderBy, sort[0].order);
   }
 
   const items = await executeEntityQuery(
@@ -216,6 +217,7 @@ export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispat
     if (config.entities && config.entities.length > 0) {
         let filteredEntities: EntityDefinition[] = [];
         config.entities.forEach(e => {
+            if (e === 'rolls') { return; }
             let match = entities.find(i => i.name === e);
             if (!!match) { filteredEntities.push(match); }
         });
@@ -266,7 +268,7 @@ export const fetchAttributes = (
   await dispatch(setAttributesAction(entity, attributes));
 };
 
-const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], sorts: Sort[]) => {
+const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], ordering: Sort[]) => {
   let query = addFields(blankQuery(), ...attributeNames);
   selectedFilters.forEach((filter: Filter) => {
     if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN || filter.operator === 'notin') && filter.values.length === 1) {
@@ -299,13 +301,7 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], sorts
     query = addPredicate(query, filter.name, operator, filter.values, isInvert);
   });
 
-  sorts.forEach(sort=> {
-    query = addOrdering(
-      query,
-      sort.orderBy,
-      sort.order
-    );
-  }); 
+    ordering.forEach(sort => { query = addOrdering(query, sort.orderBy, sort.order); });
 
   return query;
 }
@@ -386,23 +382,11 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
 export const changeTab = (entity: string) => async (dispatch, state) => {
   const { network, platform, attributes, items } = state().app;
   const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
+
   if(!items[entity] || (items[entity] && items[entity].length === 0)) {
     dispatch(setLoadingAction(true));
-    await dispatch(
-      fetchInitEntityAction(
-        platform,
-        entity,
-        network,
-        serverInfo,
-        attributes[entity],
-        '',
-        ''
-      )
-    );
+    await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[entity], '', ''));
     dispatch(setLoadingAction(false));
   }
   dispatch(setTabAction(entity));

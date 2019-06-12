@@ -49,7 +49,7 @@ interface Props {
   onExportCsv: () => void;
   getModalItemAction: (entity: string, key: string, value: string | number) => void;
   onSubmitQuery: () => void;
-  onSetSort: (entity: string, sort: Sort) => void;
+  onSetSort: (entity: string, sort: Sort[]) => void;
 }
 
 interface State {
@@ -82,10 +82,7 @@ class CustomTable extends React.Component<Props, State> {
     if (selectedSort.orderBy === orderBy && selectedSort.order === 'desc') {
       order = ConseilSortDirection.ASC;
     }
-    const sort: Sort = {
-      orderBy,
-      order
-    };
+    const sort: Sort[] = [{ orderBy, order }];
     await onSetSort(selectedEntity, sort);
     onSubmitQuery();
   };
@@ -186,7 +183,7 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = (dispatch: any) => ({
   getModalItemAction: (entity: string, key: string, value: string | number) => dispatch(getItemByPrimaryKey(entity, key, value)),
   onSubmitQuery: () => dispatch(submitQuery()),
-  onSetSort: (entity: string, sort: Sort) => dispatch(setSortAction(entity, sort))
+  onSetSort: (entity: string, sort: Sort[]) => dispatch(setSortAction(entity, sort))
 });
 
 export default connect(
