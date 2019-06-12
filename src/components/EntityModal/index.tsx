@@ -126,7 +126,7 @@ class EntityModal extends React.Component<Props, {}> {
                     const { displayName, dataType, dataFormat, name } = column;
                     let value = item[name];
                     if (value == null || value.length === 0) {
-                        value = '';
+                        return;
                     } else if (dataType === 'DateTime' && dataFormat) {
                       value = (
                         <Moment format={dataFormat}>

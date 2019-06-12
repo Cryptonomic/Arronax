@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import muiStyled from '@material-ui/styles/styled';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
-import { ConseilSortDirection } from 'conseiljs';
+import { ConseilSortDirection, EntityDefinition } from 'conseiljs';
 import {
   getNetwork,
   getRows,
@@ -22,7 +22,7 @@ import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
 import EntityModal from '../../components/EntityModal';
-import { Sort, EntityDefinition } from '../../types';
+import { Sort } from '../../types';
 
 const TableContainer = muiStyled(Table)({
   width: '100%',

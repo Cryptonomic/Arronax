@@ -4,7 +4,7 @@ import {
   ConseilQueryBuilder,
   ConseilOperator,
   ConseilOutput,
-  ConseilSortDirection
+  ConseilSortDirection, EntityDefinition, AttributeDefinition
 } from 'conseiljs';
 import base64url from 'base64url';
 import {
@@ -24,7 +24,7 @@ import {
   setTabAction
 } from './actions';
 import { getConfigs } from '../../utils/getconfig';
-import { Config, AttributeDefinition, Sort, Filter, EntityDefinition } from '../../types';
+import { Config, Sort, Filter } from '../../types';
 
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
@@ -137,10 +137,7 @@ export const fetchInitEntityAction = (
       attributes.forEach(attribute => columns.push(attribute));
     }
 
-    sort = { // TODO: read multiple
-      orderBy: orderBy[0].field,
-      order: orderBy[0].direction
-      };
+    sort = orderBy.map(o => { return { orderBy: o.field, order: o.direction } });
 
     // initFilters
     filters = predicates.map(predicate => {
@@ -187,7 +184,7 @@ export const fetchInitEntityAction = (
     };
   } else {
     columns = [...attributes];
-    const levelColumn = columns.find(column => column.name === 'level' || column.name === 'block_level') || columns[0];
+    const levelColumn = columns.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || columns[0];
     sort = {
       orderBy: levelColumn.name,
       order: ConseilSortDirection.DESC
@@ -219,11 +216,11 @@ export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispat
     if (config.entities && config.entities.length > 0) {
         let filteredEntities: EntityDefinition[] = [];
         config.entities.forEach(e => {
-            if (e === 'rolls') { return; }
             let match = entities.find(i => i.name === e);
             if (!!match) { filteredEntities.push(match); }
         });
         entities.forEach(e => {
+            if (e.name === 'rolls') { return; }
             if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
         });
         entities = filteredEntities;
@@ -269,7 +266,7 @@ export const fetchAttributes = (
   await dispatch(setAttributesAction(entity, attributes));
 };
 
-const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], sort: Sort) => {
+const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], sorts: Sort[]) => {
   let query = addFields(blankQuery(), ...attributeNames);
   selectedFilters.forEach((filter: Filter) => {
     if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN || filter.operator === 'notin') && filter.values.length === 1) {
@@ -301,12 +298,14 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], sort:
 
     query = addPredicate(query, filter.name, operator, filter.values, isInvert);
   });
-  // Add this to set ordering
-  query = addOrdering(
-    query,
-    sort.orderBy,
-    sort.order
-  );
+
+  sorts.forEach(sort=> {
+    query = addOrdering(
+      query,
+      sort.orderBy,
+      sort.order
+    );
+  }); 
 
   return query;
 }
@@ -331,10 +330,7 @@ export const shareReport = () => async (dispatch, state) => {
 export const exportCsvData = () => async (dispatch, state) => {
   const { selectedEntity, platform, network, columns, sort, selectedFilters } = state().app;
   const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
@@ -364,7 +360,6 @@ export const submitQuery = () => async (dispatch, state) => {
 
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
-
   const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
   await dispatch(setFilterCountAction(selectedFilters[selectedEntity].length));
   await dispatch(setItemsAction(selectedEntity, items));
@@ -375,13 +370,11 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
   dispatch(setLoadingAction(true));
 
   const network = state().app.network;
-  const sort = state().app.sort;
   const config = getConfig(network);
   const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   let query = blankQuery();
   query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
-  query = addOrdering(query, sort[entity].orderBy, sort[entity].order);
   query = setLimit(query, 1);
 
   const items = await executeEntityQuery(serverInfo, state().app.platform, network, entity, query);

@@ -21,7 +21,8 @@ import {
   INIT_FILTER
 } from './types';
 
-import { AttributeDefinition, Sort, Filter, EntityDefinition } from '../../types';
+import { AttributeDefinition, EntityDefinition } from 'conseiljs';
+import { Sort, Filter } from '../../types';
 
 export function setItemsAction(entity: string, items: any[]) {
   return {

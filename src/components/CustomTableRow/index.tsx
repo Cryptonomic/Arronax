@@ -8,8 +8,8 @@ import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import Circle from '@material-ui/icons/FiberManualRecord';
 import ContentCopy from '@material-ui/icons/FileCopyOutlined';
 import Clipboard from 'react-clipboard.js';
+import { AttributeDefinition, AttrbuteDataType } from 'conseiljs';
 import { getShortColumn } from '../../utils/general';
-import { AttributeDefinition } from '../../types';
 
 const TableRowWrapper = styled(TableRow)`
   &&& {
@@ -107,7 +107,7 @@ const formatValueForDisplay = (
   if (dataType === 'Boolean') {
       const svalue = value.toString();
       return svalue.charAt(0).toUpperCase() + svalue.slice(1);
-  } else if (dataType === 'DateTime') {
+  } else if (dataType === AttrbuteDataType.DATETIME) {
     if (!dataFormat) {
       return value;
     }

@@ -4,6 +4,7 @@
   "description": "Blockchain analytics and business intelligence tool for the Tezos chain.",
   "author": "Cryptonomic",
   "license": "GPL-3.0",
+  "homepage" : "https://arronax-beta.cryptonomic.tech",
   "repository": {
     "type": "git",
     "url": "https://github.com/Cryptonomic/Arronax"

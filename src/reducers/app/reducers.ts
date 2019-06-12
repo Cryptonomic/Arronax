@@ -21,8 +21,8 @@ import {
   INIT_FILTER
 } from './types';
 
-import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
-import { Filter, EntityDefinition } from '../../types';
+import { ConseilQueryBuilder, ConseilQuery, EntityDefinition } from 'conseiljs';
+import { Filter } from '../../types';
 import { getLocalAttributes } from '../../utils/attributes';
 
 const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
