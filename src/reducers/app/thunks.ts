@@ -220,7 +220,7 @@ export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispat
             if (!!match) { filteredEntities.push(match); }
         });
         entities.forEach(e => {
-            if (e.name === 'rolls') { return; }
+            if (e.name === 'rolls') { return; } // TODO
             if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
         });
         entities = filteredEntities;
