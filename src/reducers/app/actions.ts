@@ -18,7 +18,8 @@ import {
   SET_SORT,
   SET_ENTITIES,
   INIT_ENTITY_PROPERTIES,
-  INIT_FILTER
+  INIT_FILTER,
+  INIT_MAIN_PARAMS
 } from './types';
 
 import { AttributeDefinition, EntityDefinition } from 'conseiljs';
@@ -170,5 +171,14 @@ export function initFilterAction(entity: string, filters: Filter[]) {
     type: INIT_FILTER,
     entity,
     filters
+  }
+}
+
+export function initMainParamsAction(platform: string, network: string, entity: string) {
+  return {
+    type: INIT_MAIN_PARAMS,
+    platform,
+    network,
+    entity
   }
 }

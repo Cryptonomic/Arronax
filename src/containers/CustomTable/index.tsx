@@ -34,6 +34,12 @@ const Overflow = styled.div`
   overflow-x: auto;
 `;
 
+const PrimaryKeyList: any = {
+  blocks: ['hash', 'level'],
+  accounts: ['account_id'],
+  operations: ['operation_group_hash']
+};
+
 interface Props {
   rowsPerPage: number;
   items: any[];
@@ -46,6 +52,7 @@ interface Props {
   isLoading: boolean;
   selectedSort: Sort;
   entities: EntityDefinition[];
+  isModalUrl?: boolean,
   onExportCsv: () => void;
   getModalItemAction: (entity: string, key: string, value: string | number) => void;
   onSubmitQuery: () => void;
@@ -70,6 +77,18 @@ class CustomTable extends React.Component<Props, State> {
       selectedPrimaryValue: '',
       referenceEntity: props.selectedEntity
     };
+  }
+
+  componentDidMount() {
+    const { selectedEntity, isModalUrl, selectedColumns, items } = this.props;
+    const uniqueKeys = PrimaryKeyList[selectedEntity];
+    if(isModalUrl && uniqueKeys) {
+      const uniqueEntity = selectedColumns.find(entity => uniqueKeys.includes(entity.name));
+      if (uniqueEntity) {
+        const uniqueValue = items[0][uniqueEntity.name];
+        this.onOpenModal(selectedEntity, uniqueEntity.name, uniqueValue);
+      }
+    }
   }
 
   handleChangePage = (page: number) => {
