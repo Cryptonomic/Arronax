@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
+import { RootState } from '../index';
 
-export const getAppState = state => state.app;
+export const getAppState = (state: RootState) => state.app;
 
 export const getItems = createSelector(
   getAppState,
@@ -89,5 +90,5 @@ export const getModalItem = createSelector(
 
 export const getSort = createSelector(
   getAppState,
-  apps => apps.sort[apps.selectedEntity]
+  apps => apps.sort[apps.selectedEntity][0]
 );

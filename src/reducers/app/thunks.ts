@@ -4,17 +4,9 @@ import {
   ConseilQueryBuilder,
   ConseilOperator,
   ConseilOutput,
-  ConseilSortDirection
+  ConseilSortDirection, EntityDefinition, AttributeDefinition
 } from 'conseiljs';
 import base64url from 'base64url';
-const { executeEntityQuery } = ConseilDataClient;
-const {
-  blankQuery,
-  addOrdering,
-  addFields,
-  setLimit,
-  addPredicate,
-} = ConseilQueryBuilder;
 import {
   setAvailableValuesAction,
   setItemsAction,
@@ -29,25 +21,35 @@ import {
   setEntitiesAction,
   initEntityPropertiesAction,
   initFilterAction,
-  setTabAction
+  setTabAction,
+  initMainParamsAction
 } from './actions';
-import getConfigs from '../../utils/getconfig';
-import { Config, AttributeDefinition, Sort, Filter } from '../../types';
+import { getConfigs } from '../../utils/getconfig';
+import { Config, Sort, Filter } from '../../types';
 
-import { getTimeStampFromLocal, saveAttributes } from '../../utils/attributes';
+import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
 import { getOperatorType } from '../../utils/general';
 
+const { executeEntityQuery } = ConseilDataClient;
+const {
+  blankQuery,
+  addOrdering,
+  addFields,
+  setLimit,
+  addPredicate,
+} = ConseilQueryBuilder;
+
 const CACHE_TIME = 432000000; // 5*24*3600*1000
 
-let InitProperties = {};
+let InitProperties: any = {};
 
 const configs: Config[] = getConfigs();
 const { getAttributes, getAttributeValues, getEntities } = ConseilMetadataClient;
 
-const getConfig = val => configs.find(conf => conf.network === val);
+const getConfig = (val: string) => configs.find(conf => conf.network === val);
 
-const getAttributeNames = attributes => attributes.map(attr => attr.name);
+const getAttributeNames = (attributes: AttributeDefinition[]) => attributes.map(attr => attr.name);
 
 export const fetchValues = (attribute: string) => async (dispatch, state) => {
   const { selectedEntity, network, platform } = state().app;
@@ -109,20 +111,21 @@ export const resetFilters = () => async (dispatch, state) => {
 };
 
 export const fetchInitEntityAction = (
-  platform,
+  platform: string,
   entity: string,
   network: string,
   serverInfo: any,
   attributes: AttributeDefinition[],
   urlEntity: string,
   urlQuery: string
-) => async dispatch => {
+) => async (dispatch: any) => {
   const defaultQuery = urlEntity === entity && urlQuery ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
-  let columns = [];
-  let sort: Sort;
+  let columns: any[] = [];
+  let sorts: Sort[];
   let filters: Filter[] = [];
-  let cardinalityPromises = [];
+  let cardinalityPromises: any[] = [];
   let query = blankQuery();
+  const levelColumn = attributes.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || columns[0];
 
   if (defaultQuery) {
     const { fields, predicates, orderBy } = defaultQuery;
@@ -136,15 +139,20 @@ export const fetchInitEntityAction = (
       attributes.forEach(attribute => columns.push(attribute));
     }
 
-    sort = { // TODO: read multiple
-      orderBy: orderBy[0].field,
-      order: orderBy[0].direction
-      };
-
+    if(orderBy.length > 0) {
+      sorts = orderBy.map(o => { return { orderBy: o.field, order: o.direction } });
+    } else {
+      // adding the default sort
+      sorts = [{
+        orderBy: levelColumn.name,
+        order: ConseilSortDirection.DESC
+      }];
+      query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
+    }
     // initFilters
     filters = predicates.map(predicate => {
       const selectedAttribute = attributes.find(attr => attr.name === predicate.field);
-      const isLowCardinality = selectedAttribute.cardinality < CARDINALITY_NUMBER && selectedAttribute.cardinality !== null;
+      const isLowCardinality = selectedAttribute.cardinality !== undefined && selectedAttribute.cardinality < CARDINALITY_NUMBER;
       if (isLowCardinality) {
         cardinalityPromises.push(
           dispatch(initCardinalityValues(platform, entity, network, selectedAttribute.name, serverInfo))
@@ -185,16 +193,14 @@ export const fetchInitEntityAction = (
       [entity]: initProperty
     };
   } else {
-    columns = [...attributes];
-    const levelColumn = columns.find(column => column.name === 'level' || column.name === 'block_level') || columns[0];
-    sort = {
+    sorts = [{
       orderBy: levelColumn.name,
       order: ConseilSortDirection.DESC
-      };
-    const attributeNames = getAttributeNames(columns);
+    }];
+    const attributeNames = getAttributeNames(attributes);
     query = addFields(query, ...attributeNames);
     query = setLimit(query, 5000);
-    query = addOrdering(query, sort.orderBy, sort.order);
+    query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
   }
 
   const items = await executeEntityQuery(
@@ -205,60 +211,77 @@ export const fetchInitEntityAction = (
     query
   );
   
-  await dispatch(initEntityPropertiesAction(entity, filters, sort, columns, items));
+  await dispatch(initEntityPropertiesAction(entity, filters, sorts, columns, items));
   await Promise.all(cardinalityPromises);
 };
 
-export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispatch, state) => {
+export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispatch, state) => {
+  let urlEntity = '';
+  if (urlParams && urlQuery) {
+    const params = urlParams.split('/');
+    urlEntity = params[2];
+    await dispatch(initMainParamsAction(params[0], params[1], params[2]));
+  }
   const { network, platform } = state().app;
   const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
-  const entities = await getEntities(serverInfo, platform, network);
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
+
+  let entities = await getEntities(serverInfo, platform, network);
+    if (config.entities && config.entities.length > 0) {
+        let filteredEntities: EntityDefinition[] = [];
+        config.entities.forEach(e => {
+            if (e === 'rolls') { return; }
+            let match = entities.find(i => i.name === e);
+            if (!!match) { filteredEntities.push(match); }
+        });
+        entities.forEach(e => {
+            if (e.name === 'rolls') { return; } // TODO
+            if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
+        });
+        entities = filteredEntities;
+    }
+
+    entities.forEach(e => { if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) { e.displayNamePlural = e.displayName}}); // TODO: remove
+
   dispatch(setEntitiesAction(entities));
-  if (urlEntity && urlQuery) {
-    dispatch(setTabAction(urlEntity));
-  }
+  validateCache(2);
   const localDate = getTimeStampFromLocal();
   const currentDate = Date.now();
   if (currentDate - localDate > CACHE_TIME) {
     const attrPromises = entities.map(entity => dispatch(fetchAttributes(platform, entity.name, network, serverInfo)));
     await Promise.all(attrPromises);
     const { attributes } = state().app;
-    saveAttributes(attributes, currentDate);
+    saveAttributes(attributes, currentDate, 2);
   }
-  const { attributes } = state().app;
-  const promises = entities.map(entity => dispatch(
+  const { attributes, selectedEntity } = state().app;
+  await dispatch(
     fetchInitEntityAction(
       platform,
-      entity.name,
+      selectedEntity,
       network,
       serverInfo,
-      attributes[entity.name],
+      attributes[selectedEntity],
       urlEntity,
       urlQuery
-    ))
+    )
   );
-  await Promise.all(promises);
   dispatch(completeFullLoadAction(true));
 };
 
 export const fetchAttributes = (
-  platform,
-  entity,
-  network,
-  serverInfo
+  platform: string,
+  entity: string,
+  network: string,
+  serverInfo: any
 ) => async dispatch => {
   const attributes = await getAttributes(serverInfo, platform, network, entity);
   await dispatch(setAttributesAction(entity, attributes));
 };
 
-const getMainQuery = (attributeNames, selectedFilters, sort) => {
+const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], ordering: Sort[]) => {
   let query = addFields(blankQuery(), ...attributeNames);
-  selectedFilters.forEach(filter => {
-    if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN) && filter.values.length === 1) {
+  selectedFilters.forEach((filter: Filter) => {
+    if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN || filter.operator === 'notin') && filter.values.length === 1) {
       return true;
     }
 
@@ -267,7 +290,7 @@ const getMainQuery = (attributeNames, selectedFilters, sort) => {
     }
 
     let isInvert = false;
-    let operator = filter.operator;
+    let operator: any = filter.operator;
     if (filter.operator === 'isnotnull') {
       isInvert = true;
       operator = ConseilOperator.ISNULL;
@@ -287,25 +310,21 @@ const getMainQuery = (attributeNames, selectedFilters, sort) => {
 
     query = addPredicate(query, filter.name, operator, filter.values, isInvert);
   });
-  // Add this to set ordering
-  query = addOrdering(
-    query,
-    sort.orderBy,
-    sort.order
-  );
+
+  query = addOrdering(query, ordering[0].orderBy, ordering[0].order);
 
   return query;
 }
 
 export const shareReport = () => async (dispatch, state) => {
-  const { selectedEntity, columns, sort, selectedFilters } = state().app;
+  const { selectedEntity, columns, sort, selectedFilters, platform, network } = state().app;
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
   const serializedQuery = JSON.stringify(query);
   const hostUrl = window.location.origin;
   const encodedUrl = base64url(serializedQuery);
-  const shareLink = `${hostUrl}?e=${selectedEntity}&q=${encodedUrl}`;
+  const shareLink = `${hostUrl}?e=${platform}/${network}/${selectedEntity}&q=${encodedUrl}`;
   const textField = document.createElement('textarea')
   textField.innerText = shareLink;
   document.body.appendChild(textField);
@@ -317,10 +336,7 @@ export const shareReport = () => async (dispatch, state) => {
 export const exportCsvData = () => async (dispatch, state) => {
   const { selectedEntity, platform, network, columns, sort, selectedFilters } = state().app;
   const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
@@ -350,28 +366,38 @@ export const submitQuery = () => async (dispatch, state) => {
 
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
-
   const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
   await dispatch(setFilterCountAction(selectedFilters[selectedEntity].length));
   await dispatch(setItemsAction(selectedEntity, items));
   dispatch(setLoadingAction(false));
 };
 
-export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: string | number) => async (dispatch, state) => {
+export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: string | number) => async (dispatch: any, state: any) => {
   dispatch(setLoadingAction(true));
 
   const network = state().app.network;
-  const sort = state().app.sort;
   const config = getConfig(network);
   const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   let query = blankQuery();
   query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
-  query = addOrdering(query, sort[entity].orderBy, sort[entity].order);
   query = setLimit(query, 1);
 
   const items = await executeEntityQuery(serverInfo, state().app.platform, network, entity, query);
 
   await dispatch(setModalItemAction(items[0]));
   dispatch(setLoadingAction(false));
+};
+
+export const changeTab = (entity: string) => async (dispatch, state) => {
+  const { network, platform, attributes, items } = state().app;
+  const config = getConfig(network);
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
+
+  if(!items[entity] || (items[entity] && items[entity].length === 0)) {
+    dispatch(setLoadingAction(true));
+    await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[entity], '', ''));
+    dispatch(setLoadingAction(false));
+  }
+  dispatch(setTabAction(entity));
 };

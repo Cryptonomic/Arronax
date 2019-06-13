@@ -1,11 +1,15 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { RouteProps, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
+import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import HTML5Backend from 'react-dnd-html5-backend';
+import { DragDropContext } from 'react-dnd';
+import { EntityDefinition } from 'conseiljs';
 import {
   getLoading,
   getNetwork,
@@ -21,21 +25,20 @@ import {
   initLoad,
   submitQuery,
   exportCsvData,
-  shareReport
+  shareReport,
+  changeTab
 } from '../../reducers/app/thunks';
 import {
-  setTabAction,
   removeAllFiltersAction,
 } from '../../reducers/app/actions';
-import Header from 'components/Header';
-import SettingsPanel from 'components/SettingsPanel';
-import Footer from 'components/Footer';
-import Toolbar from 'components/Toolbar';
+import Header from '../../components/Header';
+import SettingsPanel from '../../components/SettingsPanel';
+import Footer from '../../components/Footer';
+import Toolbar from '../../components/Toolbar';
 import CustomTable from '../CustomTable';
 
-import { ToolType, EntityDefinition } from '../../types';
-
-import * as octopusSrc from 'assets/sadOctopus.svg';
+import { ToolType } from '../../types';
+import octopusSrc from '../../assets/sadOctopus.svg';
 
 const Container = styled.div`
   padding: 50px 0;
@@ -60,30 +63,9 @@ const LoadingContainer = styled.div`
   z-index: 100;
 `;
 
-const TabsWrapper = styled(Tabs)`
-  &&& {
-    padding: 0 15px;
-    width: 100%;
-    span[class*='MuiPrivateTabIndicator-root'] {
-      background-color: #a6dfe2;
-      height: 5px;
-    }
-  }
-`;
-
 const TabContainer = styled.div`
   padding: 0px 15px;
   width: 100%;
-`;
-
-const TabItem = styled.div`
-  color: #2e3b6c;
-  font-size: 24px;
-  letter-spacing: 3px;
-  font-weight: ${({ isSelected }) => (isSelected ? 'normal' : 300)};
-  margin-right: 50px;
-  margin-bottom: 7px;
-  cursor: pointer;
 `;
 
 const NoResultContainer = styled.div`
@@ -146,6 +128,34 @@ const TryButton = styled(CustomButton)`
   margin-left: 22px;
 `;
 
+const TabsWrapper = withStyles({
+  root: {
+    borderBottom: 'none',
+  },
+  indicator: {
+    backgroundColor: '#a6dfe2',
+    height: '5px'
+  },
+})(Tabs);
+
+const TabWrapper = withStyles({
+  root: {
+    textTransform: 'capitalize',
+    padding: 0,
+    minWidth: '50px',
+    fontWeight: 300,
+    color: '#2e3b6c',
+    fontSize: '24px',
+    letterSpacing: '3px',
+    maxWidth: '500px',
+    marginRight: '50px',
+    '&$selected': {
+      fontWeight: 'normal',
+    },
+  },
+  selected: {},
+})(Tab);
+
 export interface Props extends RouteProps {
   isLoading: boolean;
   network: string;
@@ -158,7 +168,7 @@ export interface Props extends RouteProps {
   removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
-  initLoad: (e: string, q: string) => void;
+  initLoad: (e: string | null, q: string | null) => void;
   submitQuery: () => void;
   exportCsvData: ()=> void;
   shareReport: ()=> void;
@@ -166,40 +176,50 @@ export interface Props extends RouteProps {
 
 export interface States {
   isSettingCollapsed: boolean;
-  selectedTool: string
+  selectedTool: string;
+  isModalUrl: boolean;
 }
 
 class Arronax extends React.Component<Props, States> {
-  static defaultProps = {
+  static defaultProps: any = {
     items: []
   };
-  settingRef = null;
+  settingRef: any = null;
   constructor(props: Props) {
     super(props);
     this.state = {
       isSettingCollapsed: false,
-      selectedTool: ToolType.FILTER
+      selectedTool: ToolType.FILTER,
+      isModalUrl: false
     };
 
     this.settingRef = React.createRef();
   }
 
   componentDidMount() {
-    const { initLoad } = this.props;
-    const search = new URLSearchParams(this.props.location.search);
-    const e = search.get('e');
-    const q = search.get('q');
-    initLoad(e, q);
+    const { initLoad, location } = this.props;
+    if (location) {
+      const search = new URLSearchParams(location.search);
+      const e = search.get('e');
+      const q = search.get('q');
+      const m = search.get('m');
+      if (m && m === 'true') {
+        this.setState({isModalUrl: true});
+      }
+      initLoad(e, q);
+    } else {
+      initLoad('', '');
+    }
+    
   }
 
-  onChangeNetwork = event => {
+  onChangeNetwork = (event: any) => {
     const { changeNetwork } = this.props;
     changeNetwork(event.target.value);
   };
 
   onChangeTab = async (value: string) => {
     const { changeTab } = this.props;
-    changeTab(value);
     await changeTab(value);
     this.settingRef.current.onChangeHeight();
   };
@@ -269,7 +289,7 @@ class Arronax extends React.Component<Props, States> {
       selectedColumns,
       entities
     } = this.props;
-    const { isSettingCollapsed, selectedTool } = this.state;
+    const { isSettingCollapsed, selectedTool, isModalUrl } = this.state;
     const isRealLoading = isLoading || !isFullLoaded;
     return (
       <MainContainer>
@@ -277,19 +297,16 @@ class Arronax extends React.Component<Props, States> {
         <Container>
           {isFullLoaded && (
             <React.Fragment>
-              <TabsWrapper value={selectedEntity} variant="scrollable">
+              <TabsWrapper
+                value={selectedEntity}
+                variant="scrollable"
+                onChange={(event, newValue) => this.onChangeTab(newValue)}
+              >
                 {entities.map((entity, index) => (
-                  <Tab
+                  <TabWrapper
                     key={index}
                     value={entity.name}
-                    component={() => (
-                      <TabItem
-                        isSelected={selectedEntity === entity.name}
-                        onClick={() => this.onChangeTab(entity.name)}
-                      >
-                        {entity.displayName}
-                      </TabItem>
-                    )}
+                    label={entity.displayNamePlural}
                   />
                 ))}
               </TabsWrapper>
@@ -309,8 +326,8 @@ class Arronax extends React.Component<Props, States> {
                 onSubmit={this.onSubmit}
                 onClose={this.onCloseFilter}
               />
-              <TabContainer component="div">
-                {items.length > 0 && <CustomTable isLoading={isLoading} items={items} onExportCsv={this.onExportCsv} /> }
+              <TabContainer>
+                {items.length > 0 && <CustomTable isModalUrl={isModalUrl} isLoading={isLoading} items={items} onExportCsv={this.onExportCsv} /> }
                 {items.length === 0 && isFullLoaded && (
                   <NoResultContainer>
                     <OctopusImg src={octopusSrc} />
@@ -350,11 +367,11 @@ const mapStateToProps = (state: any) => ({
   entities: getEntities(state)
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: any) => ({
   removeAllFilters: (selectedEntity: string) =>
     dispatch(removeAllFiltersAction(selectedEntity)),
   changeNetwork: (network: string) => dispatch(changeNetwork(network)),
-  changeTab: (type: string) => dispatch(setTabAction(type)),
+  changeTab: (type: string) => dispatch(changeTab(type)),
   initLoad: (e: string, q: string) => dispatch(initLoad(e, q)),
   submitQuery: () => dispatch(submitQuery()),
   exportCsvData: () => dispatch(exportCsvData()),
@@ -362,6 +379,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
+  DragDropContext(HTML5Backend),
   withRouter,
   connect(
     mapStateToProps,

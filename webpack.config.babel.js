@@ -1,14 +1,12 @@
-let path = require('path');
-let HtmlWebpackPlugin = require('html-webpack-plugin');
-let MiniCssExtractPlugin = require('mini-css-extract-plugin');
-let webpack = require('webpack');
-var TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
+const GitRevisionPlugin = require('git-revision-webpack-plugin');
+const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
 
+const gitRevisionPlugin = new GitRevisionPlugin();
 var basePath = __dirname;
-
-const defs = {
-  ISWEB: true
-};
 
 module.exports = {
   context: path.join(basePath, 'src'),
@@ -124,7 +122,11 @@ module.exports = {
       filename: "[name].css",
       chunkFilename: "[id].css"
     }),
-    new webpack.NamedModulesPlugin()
+    new webpack.NamedModulesPlugin(),
+    new webpack.DefinePlugin({
+        'VERSION': JSON.stringify(gitRevisionPlugin.version()),
+        'COMMITHASH': JSON.stringify(gitRevisionPlugin.commithash())
+      })
   ],
   node: {
     // handle "Can't resolve 'fs'" issue

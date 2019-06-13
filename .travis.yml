@@ -5,12 +5,12 @@ matrix:
       osx_image: xcode9.4
       language: node_js
       node_js:
-        - 8
+        - 10
     - os: linux
       services: docker
       language: node_js
       node_js:
-        - 8
+        - 10
       addons:
         apt:
           sources:
@@ -57,4 +57,5 @@ before_script:
 
 script:
   - node --version
+  - unset CI
   - npm run build

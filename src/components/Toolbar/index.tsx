@@ -1,6 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import ArronaxIcon from '../ArronaxIcon';
+import Tooltip from '@material-ui/core/Tooltip';
+import { ArronaxIcon } from '../ArronaxIcon';
 import { ToolType } from '../../types';
 
 const Container = styled.div`
@@ -41,7 +42,7 @@ const ToolItem = styled.div`
   }
 `;
 
-const FilterTool = styled(ToolItem)`
+const FilterTool = styled(ToolItem)<{isactive: boolean}>`
   width: 126px;
   border-radius: 5px 0px 0px 5px;
   padding-left: 13px;
@@ -55,7 +56,7 @@ const FilterTool = styled(ToolItem)`
   }
 `;
 
-const ColumnsTool = styled(ToolItem)`
+const ColumnsTool = styled(ToolItem)<{isactive: boolean}>`
   width: 153px;
   left: 155px;
   padding-left: 12px;
@@ -72,9 +73,6 @@ const ExportTool = styled(ToolItem)`
   width: 149px;
   left: 307px;
   padding-left: 18px;
-  &:after {
-    background: ${({ isactive }) => (isactive ? 'rgb(166, 223, 226)' : 'transparent')};
-  }
 `;
 
 const ShareTool = styled(ToolItem)`
@@ -82,9 +80,6 @@ const ShareTool = styled(ToolItem)`
   border-radius: 0px 5px 5px 0px;
   left: 455px;
   padding-left: 18px;
-  &:after {
-    background: ${({ isactive }) => (isactive ? 'rgb(166, 223, 226)' : 'transparent')};
-  }
 `;
 
 const FilterIcon = styled(ArronaxIcon)`
@@ -113,19 +108,27 @@ interface Props {
   onShareReport: () => void;
 }
 
-const Toolbar: React.StatelessComponent<Props> = props => {
+const Toolbar: React.FC<Props> = props => {
   const { isCollapsed, selectedTool, filterCount, columnsCount, onChangeTool, onExportCsv, onShareReport } = props;
+  const [open, setOpen] = React.useState(false);
+  function shareReport() {
+    setOpen(true);
+    onShareReport();
+    setTimeout(() => {
+      setOpen(false);
+    }, 2000);
+  }
   return (
     <Container>
       <FilterTool
-        isactive={isCollapsed && selectedTool === ToolType.FILTER ? 1 : 0}
+        isactive={isCollapsed && selectedTool === ToolType.FILTER}
         onClick={() => onChangeTool(ToolType.FILTER)}
       >
         <FilterIcon size="20px" color="#4a4a4a" iconName="icon-filter" />
         Filter {filterCount > 0 ? "(" + filterCount + ")" : "" }
       </FilterTool>
       <ColumnsTool
-        isactive={isCollapsed && selectedTool === ToolType.COLUMN ? 1 : 0}
+        isactive={isCollapsed && selectedTool === ToolType.COLUMN}
         onClick={() => onChangeTool(ToolType.COLUMN)}
       >
         <ColumnIcon size="20px" color="#4a4a4a" iconName="icon-columns" />
@@ -135,9 +138,11 @@ const Toolbar: React.StatelessComponent<Props> = props => {
         <ExportIcon size="20px" color="#4a4a4a" iconName="icon-export" />
         Export CSV
       </ExportTool>
-      <ShareTool onClick={onShareReport}>
-        Share Report
-      </ShareTool>
+      <Tooltip title="Copied!" placement="right-start" open={open}>
+        <ShareTool onClick={shareReport}>
+          Share Report
+        </ShareTool>
+      </Tooltip>
     </Container>
   );
 };

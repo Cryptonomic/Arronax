@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const FooterContainer = styled.div`
@@ -15,13 +15,22 @@ const LinkItem = styled.div`
   line-height: 45px;
   max-width: 500px;
 `;
+const Link = styled.a`
+  color: #56c2d9;
+  text-decoration: none;
+`;
 
-const Footer: React.StatelessComponent<{}> = () => {
+declare var VERSION: string, COMMITHASH: string;
+
+const Footer: React.FC<{}> = () => {
+  const version: string = VERSION;
+  const commitLink: string = `https://github.com/Cryptonomic/Arronax/tree/${COMMITHASH}`;
   return (
     <FooterContainer>
-      <LinkItem>An <a href="https://github.com/Cryptonomic/Arronax" target="_blank">open-source</a> product by <a href="https://cryptonomic.tech" target="_blank">Cryptonomic</a></LinkItem>
-      <LinkItem>Powered by <a href="https://github.com/Cryptonomic/Conseil" target="_blank">Conseil</a></LinkItem>
-      <LinkItem>Built with <a href="https://github.com/Cryptonomic/ConseilJS" target="_blank">ConseilJS</a></LinkItem>
+      <LinkItem>An <Link href="https://github.com/Cryptonomic/Arronax" target="_blank" rel="noopener noreferrer">open-source</Link> product by <Link href="https://cryptonomic.tech" target="_blank" rel="noopener noreferrer">Cryptonomic</Link></LinkItem>
+      <LinkItem>Powered by <Link href="https://github.com/Cryptonomic/Conseil" target="_blank" rel="noopener noreferrer">Conseil</Link></LinkItem>
+      <LinkItem>Built with <Link href="https://github.com/Cryptonomic/ConseilJS" target="_blank" rel="noopener noreferrer">ConseilJS</Link></LinkItem>
+      <LinkItem>Version <Link href={commitLink} target="_blank" rel="noopener noreferrer">{version}</Link></LinkItem>
     </FooterContainer>
   );
 }

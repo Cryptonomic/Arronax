@@ -1,13 +1,14 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
 
 const Container = styled.div``;
 
-const ButtonShell = styled(Button)`
+const ButtonShell = styled(Button)<{isactive: string; iscapital: number}>`
   &&& {
     height: 52px;
     display: flex;
@@ -20,22 +21,10 @@ const ButtonShell = styled(Button)`
   }
 `;
 
-const NestedTitle = styled.div`
-  cursor: default;
-  flex-shrink: 0;
-  outline: none;
-  padding: 5px 25px 0 25px;
-  color: #9b9b9b;
-  font-size: 20px;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-transform: capitalize;
-`;
-
 const ArrowIcon = styled(KeyboardArrowDown)`
   color: #56c2d9;
   margin-left: 7px;
-`;
+` as React.ComponentType<SvgIconProps>;
 
 const MenuContainer = styled.div`
   height: 100%;
@@ -110,17 +99,20 @@ interface Props {
 }
 
 type States = {
-  anchorEl: boolean;
+  anchorEl: any;
   isFadeBottom: boolean;
   isFadeTop: boolean;
 };
 
 class FilterSelect extends React.Component<Props, States> {
-  state = {
-    anchorEl: null,
-    isFadeBottom: false,
-    isFadeTop: false,
-  };
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      anchorEl: null,
+      isFadeBottom: false,
+      isFadeTop: false,
+    };
+  }
 
   componentDidMount() {
     const { items } = this.props;
@@ -131,7 +123,7 @@ class FilterSelect extends React.Component<Props, States> {
     }
   }
 
-  handleChange = item => {
+  handleChange = (item: any) => {
     const { onChange } = this.props;
     onChange(item);
     this.setState({ anchorEl: null });
@@ -141,11 +133,11 @@ class FilterSelect extends React.Component<Props, States> {
     this.setState({ anchorEl: null });
   };
 
-  handleClick = event => {
+  handleClick = (event: any) => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  handleScroll = event => {
+  handleScroll = (event: any) => {
     const { items } = this.props;
     const pos = event.target.scrollTop;
     const remainCount = items.length - 8;

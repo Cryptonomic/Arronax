@@ -1,7 +1,8 @@
 
 import styled from 'styled-components';
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import PlusIcon from '@material-ui/icons/Add';
-import ArronaxIcon from 'components/ArronaxIcon';
+import { ArronaxIcon } from '../ArronaxIcon';
 
 export const Container = styled.div`
   width: 100%;
@@ -33,7 +34,7 @@ export const FilterItemGr = styled.div`
   display: flex;
 `;
 
-export const AddFilterFooter = styled.div`
+export const AddFilterFooter = styled.div<{isFilters: boolean}>`
   width: 100%;
   height: ${({ isFilters }) => (isFilters ? '67px' : '93px')};
   display: flex;
@@ -43,7 +44,7 @@ export const AddFilterFooter = styled.div`
   margin-top: ${({ isFilters }) => (isFilters ? '18px' : '0')};
 `;
 
-export const AddFilterButton = styled.div`
+export const AddFilterButton = styled.div<{isDisabled: boolean}>`
   color: #56c2d9;
   font-size: 18px;
   font-weight: bold;
@@ -59,7 +60,7 @@ export const PlusIconWrapper = styled(PlusIcon)`
     color: #56c2d9;
     font-size: 27px;
   }
-`;
+` as React.ComponentType<SvgIconProps>;
 
 export const FilterExpTxt = styled.div`
   color: #9b9b9b;

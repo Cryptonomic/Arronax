@@ -1,9 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import muiStyled from '@material-ui/styles/styled';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
-import { ConseilSortDirection } from 'conseiljs';
+import { ConseilSortDirection, EntityDefinition } from 'conseiljs';
 import {
   getNetwork,
   getRows,
@@ -20,14 +21,14 @@ import { setSortAction } from '../../reducers/app/actions';
 import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
-import EntityModal from 'components/EntityModal';
-import { Sort, EntityDefinition } from '../../types';
+import EntityModal from '../../components/EntityModal';
+import { Sort } from '../../types';
 
-const TableContainer = styled(Table)`
-  width: 100%;
-  background: #fff;
-  border-radius: 4px;
-`;
+const TableContainer = muiStyled(Table)({
+  width: '100%',
+  background: '#fff',
+  borderRadius: '4px'
+});
 
 const Overflow = styled.div`
   overflow-x: auto;
@@ -41,14 +42,15 @@ interface Props {
   platform: string;
   selectedEntity: string;
   selectedModalItem: object;
-  attributes: object;
+  attributes: any;
   isLoading: boolean;
   selectedSort: Sort;
   entities: EntityDefinition[];
+  isModalUrl?: boolean,
   onExportCsv: () => void;
   getModalItemAction: (entity: string, key: string, value: string | number) => void;
   onSubmitQuery: () => void;
-  onSetSort: (entity: string, sort: Sort) => void;
+  onSetSort: (entity: string, sorts: Sort[]) => void;
 }
 
 interface State {
@@ -71,7 +73,18 @@ class CustomTable extends React.Component<Props, State> {
     };
   }
 
-  handleChangePage = page => {
+  componentDidMount() {
+    const { selectedEntity, isModalUrl, selectedColumns, items } = this.props;
+    if(isModalUrl) {
+      const uniqueAttribute = selectedColumns.find(attribute => attribute.keyType === 'UniqueKey');
+      if (uniqueAttribute) {
+        const uniqueValue = items[0][uniqueAttribute.name];
+        this.onOpenModal(selectedEntity, uniqueAttribute.name, uniqueValue);
+      }
+    }
+  }
+
+  handleChangePage = (page: number) => {
     this.setState({ page });
   };
 
@@ -81,17 +94,14 @@ class CustomTable extends React.Component<Props, State> {
     if (selectedSort.orderBy === orderBy && selectedSort.order === 'desc') {
       order = ConseilSortDirection.ASC;
     }
-    const sort: Sort = {
-      orderBy,
-      order
-    };
-    await onSetSort(selectedEntity, sort);
+    const sorts: Sort[] = [{ orderBy, order }];
+    await onSetSort(selectedEntity, sorts);
     onSubmitQuery();
   };
 
   onCloseModal = () => this.setState({isOpenedModal: false});
 
-  onOpenModal = (entity, key, value) => {
+  onOpenModal = (entity: string, key: string, value: string | number) => {
     const { selectedPrimaryKey, selectedPrimaryValue } = this.state;
     const { getModalItemAction } = this.props;
     if (selectedPrimaryKey !== key || selectedPrimaryValue !== value) {
@@ -182,10 +192,10 @@ const mapStateToProps = (state: any) => ({
   entities: getEntities(state)
 });
 
-const mapDispatchToProps = dispatch => ({
-  getModalItemAction: (entity, key, value) => dispatch(getItemByPrimaryKey(entity, key, value)),
+const mapDispatchToProps = (dispatch: any) => ({
+  getModalItemAction: (entity: string, key: string, value: string | number) => dispatch(getItemByPrimaryKey(entity, key, value)),
   onSubmitQuery: () => dispatch(submitQuery()),
-  onSetSort: (entity: string, sort: Sort) => dispatch(setSortAction(entity, sort))
+  onSetSort: (entity: string, sorts: Sort[]) => dispatch(setSortAction(entity, sorts))
 });
 
 export default connect(

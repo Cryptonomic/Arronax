@@ -5,18 +5,32 @@
       "components/*": ["src/components/*"],
       "assets/*": ["src/assets/*"]
     },
-    "target": "es6",
-    "module": "commonjs",
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
     "moduleResolution": "node",
-    "declaration": false,
-    "noImplicitAny": false,
-    "sourceMap": true,
-    "jsx": "react",
-    "noLib": false,
-    "suppressImplicitAnyIndexErrors": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve",
+    "noImplicitAny": false
   },
+  "include": [
+    "src"
+  ],
+  "typeRoots": [
+    "../node_modules/@types"
+  ],
   "compileOnSave": false,
   "exclude": [
     "node_modules"

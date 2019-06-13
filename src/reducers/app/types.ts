@@ -21,3 +21,5 @@ export const SET_SORT = 'SET_SORT';
 export const SET_ENTITIES = 'SET_ENTITIES';
 export const INIT_ENTITY_PROPERTIES = 'INIT_ENTITY_PROPERTIES';
 export const INIT_FILTER = 'INIT_FILTER';
+
+export const INIT_MAIN_PARAMS = 'INIT_MAIN_PARAMS';

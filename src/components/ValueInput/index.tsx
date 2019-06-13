@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import TextField from '@material-ui/core/TextField';
+import TextField, { TextFieldProps } from '@material-ui/core/TextField';
 import { ConseilOperator } from 'conseiljs';
 
 const Container = styled.div``;
@@ -32,7 +32,8 @@ const TextInput = styled(TextField)`
   letter-spacing: 0;
   line-height: 17px;
   width: 300px;
-`;
+` as React.ComponentType<TextFieldProps>;
+
 interface Props {
   operator: string;
   InputProps?: object;
@@ -40,7 +41,7 @@ interface Props {
   onChange: (value: string, index: number) => void;
 }
 
-const ValueInput: React.StatelessComponent<Props> = props => {
+const ValueInput: React.FC<Props> = props => {
     const {
       InputProps,
       operator,
@@ -50,7 +51,7 @@ const ValueInput: React.StatelessComponent<Props> = props => {
     let input;
 
     // Render specific input type based on operators
-    if (operator === ConseilOperator.BETWEEN || operator === ConseilOperator.IN) {
+    if (operator === ConseilOperator.BETWEEN || operator === ConseilOperator.IN || operator === 'notin') {
       input = (
         <React.Fragment>
           <Container>

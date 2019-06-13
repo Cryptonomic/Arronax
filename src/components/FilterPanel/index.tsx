@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
 import { ConseilOperator } from 'conseiljs';
-import ArronaxIcon from 'components/ArronaxIcon';
+import { ArronaxIcon } from '../ArronaxIcon';
 import { fetchValues, resetFilters } from '../../reducers/app/thunks';
 import {
   getAvailableValues,
@@ -25,14 +25,12 @@ import { getOperatorType } from '../../utils/general';
 
 import {
   Container,
-  HeaderTxt,
   MainContainer,
   FilterItemContainer,
   FilterItemGr,
   AddFilterFooter,
   AddFilterButton,
   PlusIconWrapper,
-  FilterExpTxt,
   HR,
   RefreshIcon,
   ButtonContainer,
@@ -41,7 +39,7 @@ import {
 } from './style';
 
 type Props = {
-  availableValues: object;
+  availableValues: any;
   selectedEntity: string;
   attributes: any[];
   filters: Array<Filter>;
@@ -50,7 +48,7 @@ type Props = {
   fetchValues: (value: string) => void;
   addFilter: (entity: string) => void;
   removeFilter: (entity: string, index: number) => void;
-  changeFilter: (entity: string, filter: object, index: number) => void;
+  changeFilter: (entity: string, filter: Filter, index: number) => void;
   resetFilters: () => void;
   onSubmit: () => void;
 };
@@ -62,7 +60,7 @@ class FilterPanel extends React.Component<Props, {}> {
     swipeRef.updateHeight();
   };
 
-  onRemoveFilter = (index) => {
+  onRemoveFilter = (index: number) => {
     const {
       removeFilter,
       selectedEntity,
@@ -70,7 +68,7 @@ class FilterPanel extends React.Component<Props, {}> {
     removeFilter(selectedEntity, index);
   };
 
-  onFilterNameChange = (attr, index) => {
+  onFilterNameChange = (attr: any, index: number) => {
     const {
       selectedEntity,
       changeFilter,
@@ -94,14 +92,14 @@ class FilterPanel extends React.Component<Props, {}> {
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
-  onFilterOperatorChange = (operator, index) => {
+  onFilterOperatorChange = (operator: any, index: number) => {
     const {
       filters,
       selectedEntity,
       changeFilter,
     } = this.props;
 
-    const selectedFilter = {
+    const selectedFilter: any = {
       ...filters[index],
       operator: operator.name,
       values: ['']
@@ -109,15 +107,27 @@ class FilterPanel extends React.Component<Props, {}> {
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
-  onFilterValueChange = (value, index, pos) => {
+  onInputValueChange = (value: any, index: number, pos: number) => {
     const {
       filters,
       selectedEntity,
       changeFilter
     } = this.props;
 
-    const selectedFilter: Filter = {...filters[index]};
+    const selectedFilter: any = {...filters[index]};
     selectedFilter.values[pos] = value;
+    changeFilter(selectedEntity, selectedFilter, index);
+  };
+
+  onCardinalityValueChange = (values: string[], index: number) => {
+    const {
+      filters,
+      selectedEntity,
+      changeFilter
+    } = this.props;
+
+    const selectedFilter: any = {...filters[index]};
+    selectedFilter.values = values;
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
@@ -144,7 +154,7 @@ class FilterPanel extends React.Component<Props, {}> {
       disableAddFilter = false;
     } else if (lastFilter.operator === ConseilOperator.ISNULL || lastFilter.operator === 'isnotnull') {
       disableAddFilter = false;
-    } else if(lastFilter.operator === ConseilOperator.BETWEEN || lastFilter.operator === ConseilOperator.IN) {
+    } else if(lastFilter.operator === ConseilOperator.BETWEEN) {
       disableAddFilter = lastFilter.values.length !== 2;
     } else if (lastFilter.values[0]) {
       disableAddFilter = false;
@@ -177,33 +187,13 @@ class FilterPanel extends React.Component<Props, {}> {
                     />
                   )}
                   {filter.operator && <HR />}
-                  {filter.operator && (filter.operator === ConseilOperator.EQ ||  filter.operator === 'noteq') && filter.isLowCardinality && (
-                      <ValueSelect
-                        placeholder='Select Value'
-                        selectedValue={filter.values[0]}
-                        values={availableValues[filter.name]}
-                        onChange={value => this.onFilterValueChange(value, index, 0)}
-                      />
-                  )}
-                  {filter.operator &&
-                        (filter.operator === ConseilOperator.STARTSWITH || filter.operator === 'notstartWith'
-                         || filter.operator === ConseilOperator.ENDSWITH || filter.operator === 'notendWith')
-                        && filter.isLowCardinality && (
-                    <ValueInput
-                      values={filter.values}
+                  {filter.operator && filter.isLowCardinality && (
+                    <ValueSelect
+                      placeholder='Select Value'
                       operator={filter.operator}
-                      InputProps={{ disableUnderline: true }}
-                      onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
-                    />
-                  )}
-                  {filter.operator &&
-                        (filter.operator === ConseilOperator.IN || filter.operator === 'notin')
-                        && filter.isLowCardinality && (
-                    <ValueInput
-                      values={filter.values}
-                      operator={filter.operator}
-                      InputProps={{ disableUnderline: true }}
-                      onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
+                      selectedValues={filter.values}
+                      values={availableValues[filter.name]}
+                      onChange={values => this.onCardinalityValueChange(values, index)}
                     />
                   )}
                   {filter.operator && !filter.isLowCardinality && (
@@ -211,7 +201,7 @@ class FilterPanel extends React.Component<Props, {}> {
                       values={filter.values}
                       operator={filter.operator}
                       InputProps={{ disableUnderline: true }}
-                      onChange={(value, pos) => this.onFilterValueChange(value, index, pos)}
+                      onChange={(value, pos) => this.onInputValueChange(value, index, pos)}
                     />
                   )}
                 </FilterItemGr>
@@ -249,7 +239,7 @@ class FilterPanel extends React.Component<Props, {}> {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any) => ({
   filters: getSelectedFilters(state),
   availableValues: getAvailableValues(state),
   operators: getOperators(state),
@@ -257,12 +247,12 @@ const mapStateToProps = state => ({
   selectedEntity: getEntity(state)
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: any) => ({
   fetchValues: (value: string) => dispatch(fetchValues(value)),
   addFilter: (entity: string) => dispatch(addFilterAction(entity)),
   removeFilter: (entity: string, index: number) =>
     dispatch(removeFilterAction(entity, index)),
-  changeFilter: (entity: string, filter: object, index: number) =>
+  changeFilter: (entity: string, filter: Filter, index: number) =>
     dispatch(changeFilterAction(entity, filter, index)),
   resetFilters: () =>
     dispatch(resetFilters()),

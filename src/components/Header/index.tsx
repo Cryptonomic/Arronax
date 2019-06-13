@@ -1,17 +1,15 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import FormControl from '@material-ui/core/FormControl';
-import SelectField from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import SelectField, { SelectProps} from '@material-ui/core/Select';
+import MenuItem, { MenuItemProps } from '@material-ui/core/MenuItem';
 import Radio from '@material-ui/core/Radio';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import ArrowDropDown from '@material-ui/icons/KeyboardArrowDown';
-import InputBase from '@material-ui/core/InputBase';
-import IconButton from '@material-ui/core/IconButton';
-import SearchIcon from '@material-ui/icons/Search';
-import ArronaxIcon from '../ArronaxIcon';
-import getConfigs from '../../utils/getconfig';
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
+import { ArronaxIcon } from '../ArronaxIcon';
+import { getConfigs } from '../../utils/getconfig';
 import { Config } from '../../types';
 
 const configs: Config[] = getConfigs();
@@ -74,42 +72,13 @@ const SelectWrapper = styled(SelectField)`
     letter-spacing: 2.57px;
     color: #fffffe;
   }
-`;
+` as React.ComponentType<SelectProps>;
 
 const DownIcon = styled(ArrowDropDown)`
   &&& {
     color: white;
   }
-`;
-
-const SearchContainer = styled.div`
-  width: 602px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 5px 5px 5px 5px;
-  display: flex;
-  padding: 0 0 0 29px;
-  align-items: center;
-  margin-left: 30px;
-`;
-
-const InputContainer = styled(InputBase)`
-  &&& {
-    flex: 1;
-    color: #ffffff;
-    letter-spacing: 0.75px;
-    font-size: 18px;
-    font-weight: bold;
-  }
-`;
-
-const RevertSearchIcon = styled(SearchIcon)`
-  &&& {
-    color: #ffffff;
-    transform: rotateY(180deg);
-    font-size: 35px;
-  }
-`;
+` as React.ComponentType<SvgIconProps>;
 
 const MenuHeaderItem = styled(MenuItem)`
   &&& {
@@ -119,7 +88,7 @@ const MenuHeaderItem = styled(MenuItem)`
     opacity: 1;
     font-size: 16px;
   }
-`;
+` as React.ComponentType<MenuItemProps>;
 
 const MainMenuItem = styled(MenuItem)`
   &&& {
@@ -130,26 +99,26 @@ const MainMenuItem = styled(MenuItem)`
       background-color: rgba(101,  200, 206, 0.1);
     }
   }
-`;
+` as React.ComponentType<MenuItemProps>;
 
 const UncheckedIcon = styled(RadioButtonUncheckedIcon)`
   &&& {
     font-size: 18px;
   }
-`;
+` as React.ComponentType<SvgIconProps>;
 
 const CheckedIcon = styled(RadioButtonCheckedIcon)`
   &&& {
     font-size: 18px;
     color: #00c4dc;
   }
-`;
+` as React.ComponentType<SvgIconProps>;
 
 const MenuContent = styled.span``;
 
 const SelectRenderWrapper = styled.div``;
 
-const getConfig = val => {
+const getConfig = (val: string) => {
   return configs.find(conf => conf.network === val);
 };
 
@@ -158,7 +127,7 @@ interface Props {
   onChangeNetwork(event: any): void;
 }
 
-const Header: React.StatelessComponent<Props> = props => {
+const Header: React.FC<Props> = props => {
   const { network, onChangeNetwork } = props;
   return (
     <HeaderContainer>
@@ -171,7 +140,7 @@ const Header: React.StatelessComponent<Props> = props => {
           value={network}
           onChange={onChangeNetwork}
           IconComponent={DownIcon}
-          renderValue={value => {
+          renderValue={(value: string) => {
             const config = getConfig(value);
             return <SelectRenderWrapper>{config.displayName}</SelectRenderWrapper>;
           }}
@@ -183,7 +152,6 @@ const Header: React.StatelessComponent<Props> = props => {
             <MainMenuItem
               key={config.network}
               value={config.network}
-              component="div"
             >
               <Radio
                 checked={network === config.network}

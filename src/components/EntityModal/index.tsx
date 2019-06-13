@@ -1,12 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Modal from '@material-ui/core/Modal';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Moment from 'react-moment';
 import 'moment-timezone';
-import ArronaxIcon from '../ArronaxIcon';
-
-const ModalWrapper = styled(Modal)``;
+import { ArronaxIcon } from '../ArronaxIcon';
 
 const ScrollContainer = styled.div`
   width: 100%;
@@ -104,7 +102,7 @@ type Props = {
 };
 
 class EntityModal extends React.Component<Props, {}> {
-  onClickModal = (event) => {
+  onClickModal = (event: any) => {
     event.stopPropagation();
   }
   render() {
@@ -117,19 +115,17 @@ class EntityModal extends React.Component<Props, {}> {
       title
     } = this.props;
     return (
-      <ModalWrapper open={open}>
+      <Modal open={open}>
         <ScrollContainer onClick={onClose}>
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
             <ModalTitle>{title} Details</ModalTitle>
               {!isLoading && (
                 <ListContainer>
-                  {attributes.map((column, index) => {
+                  {attributes.filter(c => (item[c.name] != null && item[c.name].length > 0)).map((column, index) => {
                     const { displayName, dataType, dataFormat, name } = column;
                     let value = item[name];
-                    if (value == null || value.length === 0) {
-                        value = '';
-                    } else if (dataType === 'DateTime' && dataFormat) {
+                    if (dataType === 'DateTime' && dataFormat) {
                       value = (
                         <Moment format={dataFormat}>
                           {value}
@@ -169,7 +165,7 @@ class EntityModal extends React.Component<Props, {}> {
           </ModalContainer>
         </ScrollContainer>
         
-      </ModalWrapper>
+      </Modal>
     );
   }
 };

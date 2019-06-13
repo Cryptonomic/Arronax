@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import TableCell from '@material-ui/core/TableCell';
+import TableCell, { TableCellProps } from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
@@ -13,7 +13,7 @@ const TableCellWrapper = styled(TableCell)`
     letter-spacing: 1.95px;
     border: none;
   }
-`;
+` as React.ComponentType<TableCellProps>;
 
 interface Props {
   order: 'asc' | 'desc';
@@ -22,7 +22,7 @@ interface Props {
   createSortHandler(key: string): void;
 }
 
-const TableHeader: React.StatelessComponent<Props> = props => {
+const TableHeader: React.FC<Props> = props => {
   const { rows, order, orderBy, createSortHandler } = props;
   return (
     <TableHead>
