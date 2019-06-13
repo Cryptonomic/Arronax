@@ -18,7 +18,8 @@ import {
   SET_SORT,
   SET_ENTITIES,
   INIT_ENTITY_PROPERTIES,
-  INIT_FILTER
+  INIT_FILTER,
+  INIT_MAIN_PARAMS
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery, EntityDefinition } from 'conseiljs';
@@ -186,7 +187,7 @@ export const app = (state = initialState, action) => {
     }
     case SET_ENTITIES: {
       const entities = action.entities;
-      const selectedEntity = entities[0].name;
+      const selectedEntity = state.selectedEntity ? state.selectedEntity : entities[0].name;
       return { ...state, entities, selectedEntity };
     }
     case INIT_ENTITY_PROPERTIES: {
@@ -211,6 +212,14 @@ export const app = (state = initialState, action) => {
       const selectedFilters = {...state.selectedFilters, [action.entity]: action.filters};
       const filterCount = { ...state.filterCount, [action.entity]: action.filters.length };
       return { ...state, selectedFilters, filterCount };
+    }
+    case INIT_MAIN_PARAMS: {
+      return {
+        ...state,
+        platform: action.platform,
+        network: action.network,
+        selectedEntity: action.entity
+      }
     }
   }
   return state;

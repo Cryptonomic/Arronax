@@ -176,7 +176,8 @@ export interface Props extends RouteProps {
 
 export interface States {
   isSettingCollapsed: boolean;
-  selectedTool: string
+  selectedTool: string;
+  isModalUrl: boolean;
 }
 
 class Arronax extends React.Component<Props, States> {
@@ -188,7 +189,8 @@ class Arronax extends React.Component<Props, States> {
     super(props);
     this.state = {
       isSettingCollapsed: false,
-      selectedTool: ToolType.FILTER
+      selectedTool: ToolType.FILTER,
+      isModalUrl: false
     };
 
     this.settingRef = React.createRef();
@@ -200,6 +202,10 @@ class Arronax extends React.Component<Props, States> {
       const search = new URLSearchParams(location.search);
       const e = search.get('e');
       const q = search.get('q');
+      const m = search.get('m');
+      if (m && m === 'true') {
+        this.setState({isModalUrl: true});
+      }
       initLoad(e, q);
     } else {
       initLoad('', '');
@@ -283,7 +289,7 @@ class Arronax extends React.Component<Props, States> {
       selectedColumns,
       entities
     } = this.props;
-    const { isSettingCollapsed, selectedTool } = this.state;
+    const { isSettingCollapsed, selectedTool, isModalUrl } = this.state;
     const isRealLoading = isLoading || !isFullLoaded;
     return (
       <MainContainer>
@@ -321,7 +327,7 @@ class Arronax extends React.Component<Props, States> {
                 onClose={this.onCloseFilter}
               />
               <TabContainer>
-                {items.length > 0 && <CustomTable isLoading={isLoading} items={items} onExportCsv={this.onExportCsv} /> }
+                {items.length > 0 && <CustomTable isModalUrl={isModalUrl} isLoading={isLoading} items={items} onExportCsv={this.onExportCsv} /> }
                 {items.length === 0 && isFullLoaded && (
                   <NoResultContainer>
                     <OctopusImg src={octopusSrc} />

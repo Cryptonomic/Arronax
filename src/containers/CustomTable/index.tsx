@@ -46,6 +46,7 @@ interface Props {
   isLoading: boolean;
   selectedSort: Sort;
   entities: EntityDefinition[];
+  isModalUrl?: boolean,
   onExportCsv: () => void;
   getModalItemAction: (entity: string, key: string, value: string | number) => void;
   onSubmitQuery: () => void;
@@ -70,6 +71,17 @@ class CustomTable extends React.Component<Props, State> {
       selectedPrimaryValue: '',
       referenceEntity: props.selectedEntity
     };
+  }
+
+  componentDidMount() {
+    const { selectedEntity, isModalUrl, selectedColumns, items } = this.props;
+    if(isModalUrl) {
+      const uniqueAttribute = selectedColumns.find(attribute => attribute.keyType === 'UniqueKey');
+      if (uniqueAttribute) {
+        const uniqueValue = items[0][uniqueAttribute.name];
+        this.onOpenModal(selectedEntity, uniqueAttribute.name, uniqueValue);
+      }
+    }
   }
 
   handleChangePage = (page: number) => {

@@ -21,7 +21,8 @@ import {
   setEntitiesAction,
   initEntityPropertiesAction,
   initFilterAction,
-  setTabAction
+  setTabAction,
+  initMainParamsAction
 } from './actions';
 import { getConfigs } from '../../utils/getconfig';
 import { Config, Sort, Filter } from '../../types';
@@ -214,7 +215,13 @@ export const fetchInitEntityAction = (
   await Promise.all(cardinalityPromises);
 };
 
-export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispatch, state) => {
+export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispatch, state) => {
+  let urlEntity = '';
+  if (urlParams && urlQuery) {
+    const params = urlParams.split('/');
+    urlEntity = params[2];
+    await dispatch(initMainParamsAction(params[0], params[1], params[2]));
+  }
   const { network, platform } = state().app;
   const config = getConfig(network);
   const serverInfo = { url: config.url, apiKey: config.apiKey };
@@ -237,9 +244,6 @@ export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispat
     entities.forEach(e => { if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) { e.displayNamePlural = e.displayName}}); // TODO: remove
 
   dispatch(setEntitiesAction(entities));
-  if (urlEntity && urlQuery) {
-    dispatch(setTabAction(urlEntity));
-  }
   validateCache(2);
   const localDate = getTimeStampFromLocal();
   const currentDate = Date.now();
@@ -313,14 +317,14 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
 }
 
 export const shareReport = () => async (dispatch, state) => {
-  const { selectedEntity, columns, sort, selectedFilters } = state().app;
+  const { selectedEntity, columns, sort, selectedFilters, platform, network } = state().app;
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
   const serializedQuery = JSON.stringify(query);
   const hostUrl = window.location.origin;
   const encodedUrl = base64url(serializedQuery);
-  const shareLink = `${hostUrl}?e=${selectedEntity}&q=${encodedUrl}`;
+  const shareLink = `${hostUrl}?e=${platform}/${network}/${selectedEntity}&q=${encodedUrl}`;
   const textField = document.createElement('textarea')
   textField.innerText = shareLink;
   document.body.appendChild(textField);
