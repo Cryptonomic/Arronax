@@ -122,12 +122,10 @@ class EntityModal extends React.Component<Props, {}> {
             <ModalTitle>{title} Details</ModalTitle>
               {!isLoading && (
                 <ListContainer>
-                  {attributes.map((column, index) => {
+                  {attributes.filter(c => (item[c.name] != null && item[c.name].length > 0)).map((column, index) => {
                     const { displayName, dataType, dataFormat, name } = column;
                     let value = item[name];
-                    if (value == null || value.length === 0) {
-                        return;
-                    } else if (dataType === 'DateTime' && dataFormat) {
+                    if (dataType === 'DateTime' && dataFormat) {
                       value = (
                         <Moment format={dataFormat}>
                           {value}
