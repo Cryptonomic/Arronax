@@ -143,12 +143,8 @@ export function setModalItemAction(item: any) {
   }
 }
 
-export function setSortAction(entity: string, sort: Sort) {
-  return {
-    type: SET_SORT,
-    entity,
-    sort
-  }
+export function setSortAction(entity: string, sorts: Sort[]) {
+  return { type: SET_SORT, entity, sorts };
 }
 
 export function setEntitiesAction(entities: EntityDefinition[]) {
@@ -158,12 +154,12 @@ export function setEntitiesAction(entities: EntityDefinition[]) {
   }
 }
 
-export function initEntityPropertiesAction(entity: string, filters: Filter[], sort: Sort, columns: any[], items: any[]) {
+export function initEntityPropertiesAction(entity: string, filters: Filter[], sorts: Sort[], columns: any[], items: any[]) {
   return {
     type: INIT_ENTITY_PROPERTIES,
     entity,
     filters,
-    sort,
+    sorts,
     columns,
     items
   }

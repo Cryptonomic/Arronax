@@ -90,5 +90,5 @@ export const getModalItem = createSelector(
 
 export const getSort = createSelector(
   getAppState,
-  apps => apps.sort[apps.selectedEntity]
+  apps => apps.sort[apps.selectedEntity][0]
 );

@@ -181,7 +181,7 @@ export const app = (state = initialState, action) => {
     case SET_MODAL_ITEM:
       return { ...state, selectedModalItem: action.item };
     case SET_SORT: {
-      const sort = {...state.sort, [action.entity]: action.sort};
+      const sort = {...state.sort, [action.entity]: action.sorts};
       return { ...state, sort };
     }
     case SET_ENTITIES: {
@@ -191,7 +191,7 @@ export const app = (state = initialState, action) => {
     }
     case INIT_ENTITY_PROPERTIES: {
       const filterCount = { ...state.filterCount, [action.entity]: action.filters.length };
-      const sort = { ...state.sort, [action.entity]: action.sort};
+      const sort = { ...state.sort, [action.entity]: action.sorts};
       const columns = { ...state.columns, [action.entity]: action.columns };
       const items = { ...state.items, [action.entity]: action.items };
       const selectedFilters = { ...state.selectedFilters, [action.entity]: action.filters };
