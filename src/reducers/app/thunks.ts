@@ -210,7 +210,11 @@ export const fetchInitEntityAction = (
     network,
     entity,
     query
-  );
+  ).catch(err => {
+    const message = `There are some issues, when get the items of ${entity}.`;
+    dispatch(createMessageAction(message, true));
+    return [];
+  });
   
   await dispatch(initEntityPropertiesAction(entity, filters, sorts, columns, items));
   await Promise.all(cardinalityPromises);
@@ -241,12 +245,12 @@ export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispat
   if (config.entities && config.entities.length > 0) {
       let filteredEntities: EntityDefinition[] = [];
       config.entities.forEach(e => {
-          if (e === 'rolls') { return; }
+          // if (e === 'rolls') { return; }
           let match = entities.find(i => i.name === e);
           if (!!match) { filteredEntities.push(match); }
       });
       entities.forEach(e => {
-          if (e.name === 'rolls') { return; } // TODO
+          // if (e.name === 'rolls') { return; } // TODO
           if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
       });
       entities = filteredEntities;
