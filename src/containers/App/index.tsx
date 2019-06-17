@@ -7,7 +7,6 @@ import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -134,6 +133,11 @@ const TryButton = styled(CustomButton)`
   color: white;
   background: rgb(86, 194, 217);
   margin-left: 22px;
+`;
+
+const DismissButton = styled(CustomButton)`
+  color: white;
+  background: rgb(86, 194, 217);
 `;
 
 const TabsWrapper = withStyles({
@@ -382,9 +386,7 @@ class Arronax extends React.Component<Props, States> {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleErrorClose} color="primary" autoFocus>
-              Dismiss
-            </Button>
+            <DismissButton onClick={this.handleErrorClose}>Dismiss</DismissButton>
           </DialogActions>
         </Dialog>
       </MainContainer>
