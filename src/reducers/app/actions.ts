@@ -19,7 +19,8 @@ import {
   SET_ENTITIES,
   INIT_ENTITY_PROPERTIES,
   INIT_FILTER,
-  INIT_MAIN_PARAMS
+  INIT_MAIN_PARAMS,
+  INIT_ATTRIBUTES
 } from './types';
 
 import { AttributeDefinition, EntityDefinition } from 'conseiljs';
@@ -180,5 +181,12 @@ export function initMainParamsAction(platform: string, network: string, entity: 
     platform,
     network,
     entity
+  }
+}
+
+export function initATttributesAction(attributes) {
+  return {
+    type: INIT_ATTRIBUTES,
+    attributes
   }
 }
