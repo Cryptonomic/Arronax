@@ -7,9 +7,20 @@ import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 import { EntityDefinition } from 'conseiljs';
+import Header from '../../components/Header';
+import SettingsPanel from '../../components/SettingsPanel';
+import Footer from '../../components/Footer';
+import Toolbar from '../../components/Toolbar';
+import CustomTable from '../CustomTable';
+
 import {
   getLoading,
   getNetwork,
@@ -20,6 +31,7 @@ import {
   getColumns,
   getEntities
 } from '../../reducers/app/selectors';
+import { getErrorState, getMessageTxt } from '../../reducers/message/selectors';
 import {
   changeNetwork,
   initLoad,
@@ -28,14 +40,9 @@ import {
   shareReport,
   changeTab
 } from '../../reducers/app/thunks';
-import {
-  removeAllFiltersAction,
-} from '../../reducers/app/actions';
-import Header from '../../components/Header';
-import SettingsPanel from '../../components/SettingsPanel';
-import Footer from '../../components/Footer';
-import Toolbar from '../../components/Toolbar';
-import CustomTable from '../CustomTable';
+import { removeAllFiltersAction } from '../../reducers/app/actions';
+import { clearMessageAction } from '../../reducers/message/actions';
+
 
 import { ToolType } from '../../types';
 import octopusSrc from '../../assets/sadOctopus.svg';
@@ -128,6 +135,11 @@ const TryButton = styled(CustomButton)`
   margin-left: 22px;
 `;
 
+const DismissButton = styled(CustomButton)`
+  color: white;
+  background: rgb(86, 194, 217);
+`;
+
 const TabsWrapper = withStyles({
   root: {
     borderBottom: 'none',
@@ -165,6 +177,8 @@ export interface Props extends RouteProps {
   filterCount: number;
   selectedColumns: EntityDefinition[];
   entities: EntityDefinition[];
+  isError: boolean;
+  message: string;
   removeAllFilters: (entity: string) => void;
   changeNetwork(network: string): void;
   changeTab: (type: string) => void;
@@ -172,6 +186,7 @@ export interface Props extends RouteProps {
   submitQuery: () => void;
   exportCsvData: ()=> void;
   shareReport: ()=> void;
+  initMessage: ()=> void;
 }
 
 export interface States {
@@ -278,6 +293,11 @@ class Arronax extends React.Component<Props, States> {
     shareReport();
   }
 
+  handleErrorClose = () => {
+    const { initMessage } = this.props;
+    initMessage();
+  }
+
   render() {
     const {
       isLoading,
@@ -287,7 +307,9 @@ class Arronax extends React.Component<Props, States> {
       isFullLoaded,
       filterCount,
       selectedColumns,
-      entities
+      entities,
+      isError,
+      message
     } = this.props;
     const { isSettingCollapsed, selectedTool, isModalUrl } = this.state;
     const isRealLoading = isLoading || !isFullLoaded;
@@ -351,6 +373,22 @@ class Arronax extends React.Component<Props, States> {
             <CircularProgress />
           </LoadingContainer>
         )}
+        <Dialog
+          open={isError}
+          onClose={this.handleErrorClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">Error</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {message}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <DismissButton onClick={this.handleErrorClose}>Dismiss</DismissButton>
+          </DialogActions>
+        </Dialog>
       </MainContainer>
     );
   }
@@ -364,7 +402,9 @@ const mapStateToProps = (state: any) => ({
   items: getItems(state),
   isFullLoaded: getIsFullLoaded(state),
   selectedColumns: getColumns(state),
-  entities: getEntities(state)
+  entities: getEntities(state),
+  isError: getErrorState(state),
+  message: getMessageTxt(state)
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -375,7 +415,8 @@ const mapDispatchToProps = (dispatch: any) => ({
   initLoad: (e: string, q: string) => dispatch(initLoad(e, q)),
   submitQuery: () => dispatch(submitQuery()),
   exportCsvData: () => dispatch(exportCsvData()),
-  shareReport: () => dispatch(shareReport())
+  shareReport: () => dispatch(shareReport()),
+  initMessage: () => dispatch(clearMessageAction())
 });
 
 export default compose(

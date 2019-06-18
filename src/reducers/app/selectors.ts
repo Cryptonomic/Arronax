@@ -15,7 +15,7 @@ export const getLoading = createSelector(
 
 export const getColumns = createSelector(
   getAppState,
-  apps => apps.columns[apps.selectedEntity]
+  apps => apps.selectedEntity && apps.columns[apps.selectedEntity] || []
 );
 
 export const getFilter = createSelector(
@@ -40,7 +40,7 @@ export const getEntities = createSelector(
 
 export const getAttributes = createSelector(
   getAppState,
-  apps => apps.attributes[apps.selectedEntity]
+  apps => apps.attributes[apps.selectedEntity] || []
 );
 
 export const getAttributesAll = createSelector(
@@ -55,7 +55,7 @@ export const getOperators = createSelector(
 
 export const getSelectedFilters = createSelector(
   getAppState,
-  apps => apps.selectedFilters[apps.selectedEntity]
+  apps => apps.selectedFilters[apps.selectedEntity] || []
 );
 
 export const getAvailableValues = createSelector(

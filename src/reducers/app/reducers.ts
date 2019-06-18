@@ -19,7 +19,8 @@ import {
   SET_ENTITIES,
   INIT_ENTITY_PROPERTIES,
   INIT_FILTER,
-  INIT_MAIN_PARAMS
+  INIT_MAIN_PARAMS,
+  INIT_ATTRIBUTES
 } from './types';
 
 import { ConseilQueryBuilder, ConseilQuery, EntityDefinition } from 'conseiljs';
@@ -219,6 +220,12 @@ export const app = (state = initialState, action) => {
         platform: action.platform,
         network: action.network,
         selectedEntity: action.entity
+      }
+    }
+    case INIT_ATTRIBUTES: {
+      return {
+        ...state,
+        attributes: action.attributes
       }
     }
   }

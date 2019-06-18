@@ -14,7 +14,7 @@ import {
   setLoadingAction,
   setNetworkAction,
   setColumnsAction,
-  setAttributesAction,
+  initATttributesAction,
   completeFullLoadAction,
   setFilterCountAction,
   setModalItemAction,
@@ -24,6 +24,7 @@ import {
   setTabAction,
   initMainParamsAction
 } from './actions';
+import { createMessageAction } from '../message/actions';
 import { getConfigs } from '../../utils/getconfig';
 import { Config, Sort, Filter } from '../../types';
 
@@ -209,7 +210,11 @@ export const fetchInitEntityAction = (
     network,
     entity,
     query
-  );
+  ).catch(err => {
+    const message = `There are some issues, when get the items of ${entity}.`;
+    dispatch(createMessageAction(message, true));
+    return [];
+  });
   
   await dispatch(initEntityPropertiesAction(entity, filters, sorts, columns, items));
   await Promise.all(cardinalityPromises);
@@ -226,32 +231,58 @@ export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispat
   const config = getConfig(network);
   const serverInfo = { url: config.url, apiKey: config.apiKey };
 
-  let entities = await getEntities(serverInfo, platform, network);
-    if (config.entities && config.entities.length > 0) {
-        let filteredEntities: EntityDefinition[] = [];
-        config.entities.forEach(e => {
-            if (e === 'rolls') { return; }
-            let match = entities.find(i => i.name === e);
-            if (!!match) { filteredEntities.push(match); }
-        });
-        entities.forEach(e => {
-            if (e.name === 'rolls') { return; } // TODO
-            if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
-        });
-        entities = filteredEntities;
-    }
+  let message = '';
 
-    entities.forEach(e => { if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) { e.displayNamePlural = e.displayName}}); // TODO: remove
+  let entities: any[] = await getEntities(serverInfo, platform, network).catch(err => {
+    message = 'There are some issues, when get the entities.'
+    dispatch(createMessageAction(message, true));
+    return [];
+  });
+  if (entities.length === 0) {
+    dispatch(completeFullLoadAction(true));
+    return;
+  }
+  if (config.entities && config.entities.length > 0) {
+      let filteredEntities: EntityDefinition[] = [];
+      config.entities.forEach(e => {
+          // if (e === 'rolls') { return; }
+          let match = entities.find(i => i.name === e);
+          if (!!match) { filteredEntities.push(match); }
+      });
+      entities.forEach(e => {
+          // if (e.name === 'rolls') { return; } // TODO
+          if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
+      });
+      entities = filteredEntities;
+  }
+
+  entities.forEach(e => { if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) { e.displayNamePlural = e.displayName}}); // TODO: remove
 
   dispatch(setEntitiesAction(entities));
   validateCache(2);
   const localDate = getTimeStampFromLocal();
   const currentDate = Date.now();
   if (currentDate - localDate > CACHE_TIME) {
-    const attrPromises = entities.map(entity => dispatch(fetchAttributes(platform, entity.name, network, serverInfo)));
-    await Promise.all(attrPromises);
-    const { attributes } = state().app;
-    saveAttributes(attributes, currentDate, 2);
+    const attrPromises = entities.map(entity => fetchAttributes(platform, entity.name, network, serverInfo));
+    const attrObjsList = await Promise.all(attrPromises).catch(err => {
+      message = `There are some issues, when get the attributes of ${err}.`;
+      dispatch(createMessageAction(message, true));
+      return [];
+    });
+    if (attrObjsList.length > 0) {
+      let attributes = {};
+      attrObjsList.forEach(obj => {
+        attributes = {
+          ...attributes,
+          [obj.entity]: obj.attributes
+        }
+      });
+      await dispatch(initATttributesAction(attributes));
+      saveAttributes(attributes, currentDate, 2);
+    } else {
+      dispatch(completeFullLoadAction(true));
+      return;
+    }
   }
   const { attributes, selectedEntity } = state().app;
   await dispatch(
@@ -268,14 +299,19 @@ export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispat
   dispatch(completeFullLoadAction(true));
 };
 
-export const fetchAttributes = (
+export const fetchAttributes = async (
   platform: string,
   entity: string,
   network: string,
   serverInfo: any
-) => async dispatch => {
-  const attributes = await getAttributes(serverInfo, platform, network, entity);
-  await dispatch(setAttributesAction(entity, attributes));
+) => {
+  const attributes = await getAttributes(serverInfo, platform, network, entity).catch(err => {
+    throw entity;
+  });
+  return {
+    entity,
+    attributes
+  };
 };
 
 const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], ordering: Sort[]) => {
