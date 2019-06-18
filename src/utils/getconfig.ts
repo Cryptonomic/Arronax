@@ -12,7 +12,7 @@ const dumbConfigs: Config[] = [
 export function getConfigs() {
   try {
     const configs = require('../config');
-    return configs.default;
+    return configs;
   } catch (err) {
     return dumbConfigs;
   }

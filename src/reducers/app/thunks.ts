@@ -4,7 +4,7 @@ import {
   ConseilQueryBuilder,
   ConseilOperator,
   ConseilOutput,
-  ConseilSortDirection
+  ConseilSortDirection, EntityDefinition, AttributeDefinition
 } from 'conseiljs';
 import base64url from 'base64url';
 import {
@@ -14,17 +14,19 @@ import {
   setLoadingAction,
   setNetworkAction,
   setColumnsAction,
-  setAttributesAction,
+  initATttributesAction,
   completeFullLoadAction,
   setFilterCountAction,
   setModalItemAction,
   setEntitiesAction,
   initEntityPropertiesAction,
   initFilterAction,
-  setTabAction
+  setTabAction,
+  initMainParamsAction
 } from './actions';
+import { createMessageAction } from '../message/actions';
 import { getConfigs } from '../../utils/getconfig';
-import { Config, AttributeDefinition, Sort, Filter } from '../../types';
+import { Config, Sort, Filter } from '../../types';
 
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
@@ -120,10 +122,11 @@ export const fetchInitEntityAction = (
 ) => async (dispatch: any) => {
   const defaultQuery = urlEntity === entity && urlQuery ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
   let columns: any[] = [];
-  let sort: Sort;
+  let sorts: Sort[];
   let filters: Filter[] = [];
   let cardinalityPromises: any[] = [];
   let query = blankQuery();
+  const levelColumn = attributes.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || columns[0];
 
   if (defaultQuery) {
     const { fields, predicates, orderBy } = defaultQuery;
@@ -137,15 +140,20 @@ export const fetchInitEntityAction = (
       attributes.forEach(attribute => columns.push(attribute));
     }
 
-    sort = { // TODO: read multiple
-      orderBy: orderBy[0].field,
-      order: orderBy[0].direction
-      };
-
+    if(orderBy.length > 0) {
+      sorts = orderBy.map(o => { return { orderBy: o.field, order: o.direction } });
+    } else {
+      // adding the default sort
+      sorts = [{
+        orderBy: levelColumn.name,
+        order: ConseilSortDirection.DESC
+      }];
+      query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
+    }
     // initFilters
     filters = predicates.map(predicate => {
       const selectedAttribute = attributes.find(attr => attr.name === predicate.field);
-      const isLowCardinality = selectedAttribute.cardinality < CARDINALITY_NUMBER && selectedAttribute.cardinality !== null;
+      const isLowCardinality = selectedAttribute.cardinality !== undefined && selectedAttribute.cardinality < CARDINALITY_NUMBER;
       if (isLowCardinality) {
         cardinalityPromises.push(
           dispatch(initCardinalityValues(platform, entity, network, selectedAttribute.name, serverInfo))
@@ -186,16 +194,14 @@ export const fetchInitEntityAction = (
       [entity]: initProperty
     };
   } else {
-    columns = [...attributes];
-    const levelColumn = columns.find(column => column.name === 'level' || column.name === 'block_level') || columns[0];
-    sort = {
+    sorts = [{
       orderBy: levelColumn.name,
       order: ConseilSortDirection.DESC
-    };
-    const attributeNames = getAttributeNames(columns);
+    }];
+    const attributeNames = getAttributeNames(attributes);
     query = addFields(query, ...attributeNames);
     query = setLimit(query, 5000);
-    query = addOrdering(query, sort.orderBy, sort.order);
+    query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
   }
 
   const items = await executeEntityQuery(
@@ -204,77 +210,111 @@ export const fetchInitEntityAction = (
     network,
     entity,
     query
-  );
+  ).catch(err => {
+    const message = `There are some issues, when get the items of ${entity}.`;
+    dispatch(createMessageAction(message, true));
+    return [];
+  });
   
-  await dispatch(initEntityPropertiesAction(entity, filters, sort, columns, items));
+  await dispatch(initEntityPropertiesAction(entity, filters, sorts, columns, items));
   await Promise.all(cardinalityPromises);
 };
 
-export const initLoad = (urlEntity?: string, urlQuery?: string) => async (dispatch, state) => {
+export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispatch, state) => {
+  let urlEntity = '';
+  if (urlParams && urlQuery) {
+    const params = urlParams.split('/');
+    urlEntity = params[2];
+    await dispatch(initMainParamsAction(params[0], params[1], params[2]));
+  }
   const { network, platform } = state().app;
   const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
 
-  let entitiesFromServer = await getEntities(serverInfo, platform, network);
-  let entities = [];
-  entitiesFromServer.forEach(entity => {
-    if (entity.name !== 'rolls') entities.push(entity);
+  let message = '';
+
+  let entities: any[] = await getEntities(serverInfo, platform, network).catch(err => {
+    message = 'There are some issues, when get the entities.'
+    dispatch(createMessageAction(message, true));
+    return [];
   });
+  if (entities.length === 0) {
+    dispatch(completeFullLoadAction(true));
+    return;
+  }
   if (config.entities && config.entities.length > 0) {
-      let filteredEntities = [];
+      let filteredEntities: EntityDefinition[] = [];
       config.entities.forEach(e => {
+          // if (e === 'rolls') { return; }
           let match = entities.find(i => i.name === e);
           if (!!match) { filteredEntities.push(match); }
       });
       entities.forEach(e => {
+          // if (e.name === 'rolls') { return; } // TODO
           if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
       });
       entities = filteredEntities;
   }
 
+  entities.forEach(e => { if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) { e.displayNamePlural = e.displayName}}); // TODO: remove
+
   dispatch(setEntitiesAction(entities));
-  if (urlEntity && urlQuery) {
-    dispatch(setTabAction(urlEntity));
-  }
   validateCache(2);
   const localDate = getTimeStampFromLocal();
   const currentDate = Date.now();
   if (currentDate - localDate > CACHE_TIME) {
-    const attrPromises = entities.map(entity => dispatch(fetchAttributes(platform, entity.name, network, serverInfo)));
-    await Promise.all(attrPromises);
-    const { attributes } = state().app;
-    saveAttributes(attributes, currentDate, 2);
+    const attrPromises = entities.map(entity => fetchAttributes(platform, entity.name, network, serverInfo));
+    const attrObjsList = await Promise.all(attrPromises).catch(err => {
+      message = `There are some issues, when get the attributes of ${err}.`;
+      dispatch(createMessageAction(message, true));
+      return [];
+    });
+    if (attrObjsList.length > 0) {
+      let attributes = {};
+      attrObjsList.forEach(obj => {
+        attributes = {
+          ...attributes,
+          [obj.entity]: obj.attributes
+        }
+      });
+      await dispatch(initATttributesAction(attributes));
+      saveAttributes(attributes, currentDate, 2);
+    } else {
+      dispatch(completeFullLoadAction(true));
+      return;
+    }
   }
-  const { attributes } = state().app;
-  const promises = entities.map(entity => dispatch(
+  const { attributes, selectedEntity } = state().app;
+  await dispatch(
     fetchInitEntityAction(
       platform,
-      entity.name,
+      selectedEntity,
       network,
       serverInfo,
-      attributes[entity.name],
+      attributes[selectedEntity],
       urlEntity,
       urlQuery
-    ))
+    )
   );
-  await Promise.all(promises);
   dispatch(completeFullLoadAction(true));
 };
 
-export const fetchAttributes = (
+export const fetchAttributes = async (
   platform: string,
   entity: string,
   network: string,
   serverInfo: any
-) => async dispatch => {
-  const attributes = await getAttributes(serverInfo, platform, network, entity);
-  await dispatch(setAttributesAction(entity, attributes));
+) => {
+  const attributes = await getAttributes(serverInfo, platform, network, entity).catch(err => {
+    throw entity;
+  });
+  return {
+    entity,
+    attributes
+  };
 };
 
-const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], sort: Sort) => {
+const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], ordering: Sort[]) => {
   let query = addFields(blankQuery(), ...attributeNames);
   selectedFilters.forEach((filter: Filter) => {
     if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN || filter.operator === 'notin') && filter.values.length === 1) {
@@ -306,25 +346,21 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], sort:
 
     query = addPredicate(query, filter.name, operator, filter.values, isInvert);
   });
-  // Add this to set ordering
-  query = addOrdering(
-    query,
-    sort.orderBy,
-    sort.order
-  );
+
+  query = addOrdering(query, ordering[0].orderBy, ordering[0].order);
 
   return query;
 }
 
 export const shareReport = () => async (dispatch, state) => {
-  const { selectedEntity, columns, sort, selectedFilters } = state().app;
+  const { selectedEntity, columns, sort, selectedFilters, platform, network } = state().app;
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
   const serializedQuery = JSON.stringify(query);
   const hostUrl = window.location.origin;
   const encodedUrl = base64url(serializedQuery);
-  const shareLink = `${hostUrl}?e=${selectedEntity}&q=${encodedUrl}`;
+  const shareLink = `${hostUrl}?e=${platform}/${network}/${selectedEntity}&q=${encodedUrl}`;
   const textField = document.createElement('textarea')
   textField.innerText = shareLink;
   document.body.appendChild(textField);
@@ -336,10 +372,7 @@ export const shareReport = () => async (dispatch, state) => {
 export const exportCsvData = () => async (dispatch, state) => {
   const { selectedEntity, platform, network, columns, sort, selectedFilters } = state().app;
   const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
@@ -369,7 +402,6 @@ export const submitQuery = () => async (dispatch, state) => {
 
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
-
   const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
   await dispatch(setFilterCountAction(selectedFilters[selectedEntity].length));
   await dispatch(setItemsAction(selectedEntity, items));
@@ -380,17 +412,28 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
   dispatch(setLoadingAction(true));
 
   const network = state().app.network;
-  const sort = state().app.sort;
   const config = getConfig(network);
   const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   let query = blankQuery();
   query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
-  query = addOrdering(query, sort[entity].orderBy, sort[entity].order);
   query = setLimit(query, 1);
 
   const items = await executeEntityQuery(serverInfo, state().app.platform, network, entity, query);
 
   await dispatch(setModalItemAction(items[0]));
   dispatch(setLoadingAction(false));
+};
+
+export const changeTab = (entity: string) => async (dispatch, state) => {
+  const { network, platform, attributes, items } = state().app;
+  const config = getConfig(network);
+  const serverInfo = { url: config.url, apiKey: config.apiKey };
+
+  if(!items[entity] || (items[entity] && items[entity].length === 0)) {
+    dispatch(setLoadingAction(true));
+    await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[entity], '', ''));
+    dispatch(setLoadingAction(false));
+  }
+  dispatch(setTabAction(entity));
 };

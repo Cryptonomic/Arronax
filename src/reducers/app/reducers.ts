@@ -18,11 +18,13 @@ import {
   SET_SORT,
   SET_ENTITIES,
   INIT_ENTITY_PROPERTIES,
-  INIT_FILTER
+  INIT_FILTER,
+  INIT_MAIN_PARAMS,
+  INIT_ATTRIBUTES
 } from './types';
 
-import { ConseilQueryBuilder, ConseilQuery } from 'conseiljs';
-import { Filter, EntityDefinition } from '../../types';
+import { ConseilQueryBuilder, ConseilQuery, EntityDefinition } from 'conseiljs';
+import { Filter } from '../../types';
 import { getLocalAttributes } from '../../utils/attributes';
 
 const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
@@ -51,7 +53,7 @@ export interface AppState {
 const initialState: AppState = {
   filters: emptyFilters,
   platform: 'tezos',
-  network: 'alphanet',
+  network: 'mainnet',
   entities: [],
   attributes: attributes,
   items: {},
@@ -181,17 +183,17 @@ export const app = (state = initialState, action) => {
     case SET_MODAL_ITEM:
       return { ...state, selectedModalItem: action.item };
     case SET_SORT: {
-      const sort = {...state.sort, [action.entity]: action.sort};
+      const sort = {...state.sort, [action.entity]: action.sorts};
       return { ...state, sort };
     }
     case SET_ENTITIES: {
       const entities = action.entities;
-      const selectedEntity = entities[0].name;
+      const selectedEntity = state.selectedEntity ? state.selectedEntity : entities[0].name;
       return { ...state, entities, selectedEntity };
     }
     case INIT_ENTITY_PROPERTIES: {
       const filterCount = { ...state.filterCount, [action.entity]: action.filters.length };
-      const sort = { ...state.sort, [action.entity]: action.sort};
+      const sort = { ...state.sort, [action.entity]: action.sorts};
       const columns = { ...state.columns, [action.entity]: action.columns };
       const items = { ...state.items, [action.entity]: action.items };
       const selectedFilters = { ...state.selectedFilters, [action.entity]: action.filters };
@@ -211,6 +213,20 @@ export const app = (state = initialState, action) => {
       const selectedFilters = {...state.selectedFilters, [action.entity]: action.filters};
       const filterCount = { ...state.filterCount, [action.entity]: action.filters.length };
       return { ...state, selectedFilters, filterCount };
+    }
+    case INIT_MAIN_PARAMS: {
+      return {
+        ...state,
+        platform: action.platform,
+        network: action.network,
+        selectedEntity: action.entity
+      }
+    }
+    case INIT_ATTRIBUTES: {
+      return {
+        ...state,
+        attributes: action.attributes
+      }
     }
   }
   return state;

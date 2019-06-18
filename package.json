@@ -4,6 +4,7 @@
   "description": "Blockchain analytics and business intelligence tool for the Tezos chain.",
   "author": "Cryptonomic",
   "license": "GPL-3.0",
+  "homepage": "https://arronax-beta.cryptonomic.tech",
   "repository": {
     "type": "git",
     "url": "https://github.com/Cryptonomic/Arronax"
@@ -17,7 +18,7 @@
     "@types/react": "16.8.19",
     "@types/react-dom": "16.8.4",
     "base64url": "^3.0.1",
-    "conseiljs": "beta",
+    "conseiljs": "git://github.com/Cryptonomic/ConseilJS.git#anonymoussprocket-patch-1",
     "moment": "^2.23.0",
     "moment-timezone": "^0.5.25",
     "rc-tooltip": "^3.7.3",
@@ -30,7 +31,6 @@
     "react-moment": "^0.9.2",
     "react-redux": "^7.0.3",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "3.0.1",
     "react-swipeable-views": "^0.13.3",
     "redux": "^4.0.1",
     "redux-devtools-extension": "^2.13.8",
@@ -40,11 +40,10 @@
     "typescript": "3.5.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "serve": "BROWSER=none react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --mode development --inline --hot --open",
+    "serve": "webpack-dev-server --mode development --inline --hot",
+    "build": "webpack --mode development"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -64,6 +63,32 @@
   "devDependencies": {
     "@types/react-redux": "^7.0.9",
     "@types/react-router-dom": "^4.3.3",
-    "@types/styled-components": "^4.1.16"
+    "@types/styled-components": "^4.1.16",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-add-module-exports": "^1.0.2",
+    "babel-plugin-dev-expression": "^0.2.1",
+    "babel-plugin-flow-runtime": "^0.19.0",
+    "babel-plugin-polished": "^1.1.0",
+    "babel-plugin-styled-components": "^1.10.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-classes": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-react-optimize": "^1.0.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "cross-env": "^5.2.0",
+    "css-loader": "^3.0.0",
+    "file-loader": "^4.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.7.0",
+    "style-loader": "^0.23.1",
+    "url-loader": "^2.0.0",
+    "webpack": "^4.33.0",
+    "webpack-cli": "^3.3.4",
+    "webpack-dev-server": "^3.7.1",
+    "git-revision-webpack-plugin": "^3.0.3"
   }
 }

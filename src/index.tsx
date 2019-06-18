@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import { Route, BrowserRouter } from 'react-router-dom';
 import App from './containers/App';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import * as serviceWorker from './serviceWorker';
+import '!file-loader?name=[name].[ext]!./assets/favicon.ico';
 
 ReactDOM.render(
   <Provider store={store}>

@@ -1,7 +1,7 @@
-import { createMessage } from './actions';
+import { createMessageAction } from './actions';
 
 export const addMessage = (message: string, isError: boolean) => {
   return (dispatch: any) => {
-    dispatch(createMessage(message, isError));
+    dispatch(createMessageAction(message, isError));
   };
 }

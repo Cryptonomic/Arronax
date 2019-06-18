@@ -18,10 +18,13 @@ import {
   SET_SORT,
   SET_ENTITIES,
   INIT_ENTITY_PROPERTIES,
-  INIT_FILTER
+  INIT_FILTER,
+  INIT_MAIN_PARAMS,
+  INIT_ATTRIBUTES
 } from './types';
 
-import { AttributeDefinition, Sort, Filter, EntityDefinition } from '../../types';
+import { AttributeDefinition, EntityDefinition } from 'conseiljs';
+import { Sort, Filter } from '../../types';
 
 export function setItemsAction(entity: string, items: any[]) {
   return {
@@ -142,12 +145,8 @@ export function setModalItemAction(item: any) {
   }
 }
 
-export function setSortAction(entity: string, sort: Sort) {
-  return {
-    type: SET_SORT,
-    entity,
-    sort
-  }
+export function setSortAction(entity: string, sorts: Sort[]) {
+  return { type: SET_SORT, entity, sorts };
 }
 
 export function setEntitiesAction(entities: EntityDefinition[]) {
@@ -157,12 +156,12 @@ export function setEntitiesAction(entities: EntityDefinition[]) {
   }
 }
 
-export function initEntityPropertiesAction(entity: string, filters: Filter[], sort: Sort, columns: any[], items: any[]) {
+export function initEntityPropertiesAction(entity: string, filters: Filter[], sorts: Sort[], columns: any[], items: any[]) {
   return {
     type: INIT_ENTITY_PROPERTIES,
     entity,
     filters,
-    sort,
+    sorts,
     columns,
     items
   }
@@ -173,5 +172,21 @@ export function initFilterAction(entity: string, filters: Filter[]) {
     type: INIT_FILTER,
     entity,
     filters
+  }
+}
+
+export function initMainParamsAction(platform: string, network: string, entity: string) {
+  return {
+    type: INIT_MAIN_PARAMS,
+    platform,
+    network,
+    entity
+  }
+}
+
+export function initATttributesAction(attributes) {
+  return {
+    type: INIT_ATTRIBUTES,
+    attributes
   }
 }

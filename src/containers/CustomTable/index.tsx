@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import muiStyled from '@material-ui/styles/styled';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
-import { ConseilSortDirection } from 'conseiljs';
+import { ConseilSortDirection, EntityDefinition } from 'conseiljs';
 import {
   getNetwork,
   getRows,
@@ -22,7 +22,7 @@ import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
 import EntityModal from '../../components/EntityModal';
-import { Sort, EntityDefinition } from '../../types';
+import { Sort } from '../../types';
 
 const TableContainer = muiStyled(Table)({
   width: '100%',
@@ -46,10 +46,11 @@ interface Props {
   isLoading: boolean;
   selectedSort: Sort;
   entities: EntityDefinition[];
+  isModalUrl?: boolean,
   onExportCsv: () => void;
   getModalItemAction: (entity: string, key: string, value: string | number) => void;
   onSubmitQuery: () => void;
-  onSetSort: (entity: string, sort: Sort) => void;
+  onSetSort: (entity: string, sorts: Sort[]) => void;
 }
 
 interface State {
@@ -72,6 +73,17 @@ class CustomTable extends React.Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+    const { selectedEntity, isModalUrl, selectedColumns, items } = this.props;
+    if(isModalUrl) {
+      const uniqueAttribute = selectedColumns.find(attribute => attribute.keyType === 'UniqueKey');
+      if (uniqueAttribute) {
+        const uniqueValue = items[0][uniqueAttribute.name];
+        this.onOpenModal(selectedEntity, uniqueAttribute.name, uniqueValue);
+      }
+    }
+  }
+
   handleChangePage = (page: number) => {
     this.setState({ page });
   };
@@ -82,11 +94,8 @@ class CustomTable extends React.Component<Props, State> {
     if (selectedSort.orderBy === orderBy && selectedSort.order === 'desc') {
       order = ConseilSortDirection.ASC;
     }
-    const sort: Sort = {
-      orderBy,
-      order
-    };
-    await onSetSort(selectedEntity, sort);
+    const sorts: Sort[] = [{ orderBy, order }];
+    await onSetSort(selectedEntity, sorts);
     onSubmitQuery();
   };
 
@@ -186,7 +195,7 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = (dispatch: any) => ({
   getModalItemAction: (entity: string, key: string, value: string | number) => dispatch(getItemByPrimaryKey(entity, key, value)),
   onSubmitQuery: () => dispatch(submitQuery()),
-  onSetSort: (entity: string, sort: Sort) => dispatch(setSortAction(entity, sort))
+  onSetSort: (entity: string, sorts: Sort[]) => dispatch(setSortAction(entity, sorts))
 });
 
 export default connect(
