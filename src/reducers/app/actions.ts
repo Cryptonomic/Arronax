@@ -4,7 +4,6 @@ import {
   SET_TAB,
   SET_LOADING,
   INIT_DATA,
-  SET_NETWORK,
   SET_COLUMNS,
   SET_ATTRIBUTES,
   ADD_FILTER,
@@ -20,11 +19,14 @@ import {
   INIT_ENTITY_PROPERTIES,
   INIT_FILTER,
   INIT_MAIN_PARAMS,
-  INIT_ATTRIBUTES
+  INIT_ATTRIBUTES,
+  SET_CONFIG,
+  ADD_CONFIG,
+  REMOVE_CONFIG
 } from './types';
 
 import { AttributeDefinition, EntityDefinition } from 'conseiljs';
-import { Sort, Filter } from '../../types';
+import { Sort, Filter, Config } from '../../types';
 
 export function setItemsAction(entity: string, items: any[]) {
   return {
@@ -69,10 +71,25 @@ export function initDataAction() {
   }
 }
 
-export function setNetworkAction(network: string) {
+export function setConfigAction(config: Config) {
   return {
-    type: SET_NETWORK,
-    network
+    type: SET_CONFIG,
+    config
+  }
+}
+
+export function addConfigAction(config: Config, isUse: boolean) {
+  return {
+    type: ADD_CONFIG,
+    config,
+    isUse
+  }
+}
+
+export function removeConfigAction(index: number) {
+  return {
+    type: REMOVE_CONFIG,
+    index
   }
 }
 

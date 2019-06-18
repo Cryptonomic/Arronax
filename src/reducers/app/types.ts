@@ -4,7 +4,6 @@ export const SET_FILTER = 'SET_FILTER';
 export const SET_TAB = 'SET_TAB';
 export const SET_LOADING = 'SET_LOADING';
 export const INIT_DATA = 'INIT_DATA';
-export const SET_NETWORK = 'SET_NETWORK';
 export const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
 export const ADD_FILTER = 'ADD_FILTER';
 export const REMOVE_FILTER = 'REMOVE_FILTER';
@@ -24,3 +23,7 @@ export const INIT_FILTER = 'INIT_FILTER';
 
 export const INIT_MAIN_PARAMS = 'INIT_MAIN_PARAMS';
 export const INIT_ATTRIBUTES = 'INIT_ATTRIBUTES';
+
+export const SET_CONFIG = 'SET_CONFIG';
+export const ADD_CONFIG = 'ADD_CONFIG';
+export const REMOVE_CONFIG = 'REMOVE_CONFIG';

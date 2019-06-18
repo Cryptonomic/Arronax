@@ -4,7 +4,9 @@ import {
   SET_TAB,
   SET_LOADING,
   INIT_DATA,
-  SET_NETWORK,
+  SET_CONFIG,
+  ADD_CONFIG,
+  REMOVE_CONFIG,
   SET_COLUMNS,
   SET_ATTRIBUTES,
   ADD_FILTER,
@@ -23,18 +25,16 @@ import {
   INIT_ATTRIBUTES
 } from './types';
 
-import { ConseilQueryBuilder, ConseilQuery, EntityDefinition } from 'conseiljs';
-import { Filter } from '../../types';
+import { EntityDefinition } from 'conseiljs';
+import { Filter, Config } from '../../types';
 import { getLocalAttributes } from '../../utils/attributes';
+import { getConfigs, saveConfigs } from '../../utils/getconfig';
 
-const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
 const attributes = getLocalAttributes();
+const configs = getConfigs();
 
 export interface AppState {
-  platform: string;
-  network: string;
-  entities: EntityDefinition[],
-  filters: ConseilQuery;
+  entities: EntityDefinition[];
   availableValues: object;
   columns: object;
   attributes: object;
@@ -48,14 +48,15 @@ export interface AppState {
   filterCount: object;
   selectedModalItem: object;
   sort: object;
+  configs: Config[];
+  selectedConfig: Config;
 }
 
-const initialState: AppState = {
-  filters: emptyFilters,
-  platform: 'tezos',
-  network: 'mainnet',
+let initialState: AppState = {
+  configs,
+  selectedConfig: configs[0],
   entities: [],
-  attributes: attributes,
+  attributes,
   items: {},
   selectedFilters: {},
   operators: {
@@ -122,8 +123,29 @@ export const app = (state = initialState, action) => {
       return { ...state, selectedEntity: action.entity };
     case SET_LOADING:
       return { ...state, isLoading: action.isLoading };
-    case SET_NETWORK:
-      return { ...state, network: action.network };
+    case SET_CONFIG:
+      return { ...state, selectedConfig: action.config };
+    case ADD_CONFIG: {
+      let selectedConfig = state.selectedConfig;
+      const configs = state.configs;
+      if (action.isUse) {
+        selectedConfig = action.config;
+      }
+      const newConfigs = [...configs, action.config];
+      initialState = {
+        ...initialState,
+        configs: newConfigs
+      };
+      saveConfigs(newConfigs);
+      return { ...state, selectedConfig, configs: newConfigs };
+    }
+    case REMOVE_CONFIG: {
+      let configs = state.configs;
+      configs.splice(action.index, 1);
+      initialState = { ...initialState, configs };
+      saveConfigs(configs);
+      return { ...state, configs };
+    }
     case INIT_DATA:
       return { ...state, ...initialState };
     case SET_ATTRIBUTES: {
