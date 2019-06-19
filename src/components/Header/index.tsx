@@ -195,39 +195,48 @@ const Header: React.FC<Props> = props => {
           <MenuHeaderItem value="" disabled>
             Select Preferred Tezos Network
           </MenuHeaderItem>
-          {mainConfigs.map(config => (
-            <MainMenuItem
-              key={config.network}
-              onClick={() => changeNetwork(config)}
-            >
-              <Radio
-                checked={selectedConfig.network === config.network}
-                icon={<UncheckedIcon fontSize="small" />}
-                checkedIcon={<CheckedIcon fontSize="small" />}
-              />
-              {config.displayName}
-            </MainMenuItem>
-          ))}
-          {localConfigs.length > 0 && <Divider />}
-          {localConfigs.map((config, index) => (
-            <MainMenuItem
-              key={config.network}
-              onClick={() => changeNetwork(config)}
-            >
-              <Radio
-                checked={selectedConfig.network === config.network}
-                icon={<UncheckedIcon fontSize="small" />}
-                checkedIcon={<CheckedIcon fontSize="small" />}
-              />
-              {config.displayName}
-              <IconBtnWrapper
-                aria-label="Delete"
-                onClick={(event) => removeConfig(event, mainConfigs.length + index)}
+          {mainConfigs.map(config => {
+            const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&
+              selectedConfig.url === config.url && selectedConfig.apiKey === config.apiKey;
+            return (
+              <MainMenuItem
+                key={config.network}
+                onClick={() => changeNetwork(config)}
               >
-                <ArronaxIcon size="37px" color="#d8d8d8" iconName="icon-delete" />
-              </IconBtnWrapper>
-            </MainMenuItem>
-          ))}
+                <Radio
+                  checked={isSelected}
+                  icon={<UncheckedIcon fontSize="small" />}
+                  checkedIcon={<CheckedIcon fontSize="small" />}
+                />
+                {config.displayName}
+              </MainMenuItem>
+            );
+          })}
+          {localConfigs.length > 0 && <Divider />}
+          {localConfigs.map((config, index) => {
+            const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&
+              selectedConfig.url === config.url && selectedConfig.apiKey === config.apiKey;
+            return (
+              <MainMenuItem
+                key={config.network}
+                onClick={() => changeNetwork(config)}
+              >
+                <Radio
+                  checked={isSelected}
+                  icon={<UncheckedIcon fontSize="small" />}
+                  checkedIcon={<CheckedIcon fontSize="small" />}
+                />
+                {config.displayName}
+                <IconBtnWrapper
+                  aria-label="Delete"
+                  disabled={isSelected}
+                  onClick={(event) => removeConfig(event, mainConfigs.length + index)}
+                >
+                  <ArronaxIcon size="37px" color="#d8d8d8" iconName="icon-delete" />
+                </IconBtnWrapper>
+              </MainMenuItem>
+            );
+          })}
           <AddButton onClick={openConfigModal}>Add Network</AddButton>
         </Menu>
       </SelectContainer>

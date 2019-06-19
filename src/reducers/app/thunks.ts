@@ -84,7 +84,9 @@ const initCardinalityValues = (
 // need to modify
 export const changeNetwork = (config: Config) => async (dispatch, state) => {
   const oldConfig = state().app.selectedConfig;
-  if (oldConfig.network === config.network) return;
+  const isSame = oldConfig.network === config.network && oldConfig.platform === config.platform &&
+    oldConfig.url === config.url && oldConfig.apiKey === config.apiKey;
+  if (isSame) return;
   localStorage.setItem('timestamp', '0');
   await dispatch(initDataAction());
   await dispatch(setConfigAction(config));
