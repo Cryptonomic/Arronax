@@ -358,7 +358,7 @@ export const shareReport = () => async (dispatch, state) => {
   const hostUrl = window.location.origin;
   const encodedUrl = base64url(serializedQuery);
   const shareLink = `${hostUrl}?e=${platform}/${network}/${selectedEntity}&q=${encodedUrl}`;
-  const textField = document.createElement('textarea')
+  const textField = document.createElement('textarea');
   textField.innerText = shareLink;
   document.body.appendChild(textField);
   textField.select();
