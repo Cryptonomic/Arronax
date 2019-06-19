@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { RouteProps, withRouter } from 'react-router-dom';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -12,7 +12,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import TextField from '@material-ui/core/TextField';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 import { EntityDefinition } from 'conseiljs';
@@ -21,6 +20,7 @@ import SettingsPanel from '../../components/SettingsPanel';
 import Footer from '../../components/Footer';
 import Toolbar from '../../components/Toolbar';
 import CustomTable from '../CustomTable';
+import ConfigModal from '../../components/ConfigModal';
 
 import {
   getLoading,
@@ -44,7 +44,6 @@ import {
 } from '../../reducers/app/thunks';
 import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../../reducers/app/actions';
 import { clearMessageAction } from '../../reducers/message/actions';
-
 
 import { ToolType, Config } from '../../types';
 import octopusSrc from '../../assets/sadOctopus.svg';
@@ -142,38 +141,6 @@ const DismissButton = styled(CustomButton)`
   background: rgb(86, 194, 217);
 `;
 
-const DisableCss = css`
-  opacity: 0.5;
-  pointer-events: none;
-`;
-const AddButton = styled(DismissButton)<{isDisable: boolean}>`
-  &&&{
-    margin-left: 22px;
-  }
-  ${({ isDisable }) => (isDisable && DisableCss)};
-`;
-
-const RowContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-`;
-
-const TextWrapper = withStyles({
-  root: {
-    width: '47%',
-    '& label.Mui-focused': {
-      color: '#5571a7',
-    },
-    '& .MuiInput-underline:after': {
-      borderBottomColor: '#2c7df7',
-    },
-    '& .MuiInput-underline:hover:before': {
-      borderBottomColor: '#2c7df7',
-    }
-  }
-})(TextField);
-
 const TabsWrapper = withStyles({
   root: {
     borderBottom: 'none',
@@ -231,11 +198,6 @@ export interface States {
   selectedTool: string;
   isModalUrl: boolean;
   isOpenConfigMdoal: boolean;
-  configPlatform: string;
-  configNetwork: string;
-  configDisplayName: string;
-  configUrl: string;
-  configApiKey: string;
 }
 
 class Arronax extends React.Component<Props, States> {
@@ -249,12 +211,7 @@ class Arronax extends React.Component<Props, States> {
       isSettingCollapsed: false,
       selectedTool: ToolType.FILTER,
       isModalUrl: false,
-      isOpenConfigMdoal: false,
-      configPlatform: '',
-      configNetwork: '',
-      configDisplayName: '',
-      configUrl: '',
-      configApiKey: ''
+      isOpenConfigMdoal: false
     };
 
     this.settingRef = React.createRef();
@@ -347,36 +304,12 @@ class Arronax extends React.Component<Props, States> {
     initMessage();
   }
 
-  closeConfigModal = () => {
-    this.setState({
-      isOpenConfigMdoal: false,
-      configPlatform: '',
-      configNetwork: '',
-      configDisplayName: '',
-      configUrl: '',
-      configApiKey: ''
-    });
-  }
+  closeConfigModal = () => this.setState({isOpenConfigMdoal: false});
 
   openConfigModal = () => this.setState({isOpenConfigMdoal: true});
 
-  onChangeConfigForm = (event: any) => {
-    const keyName: string = event.target.name;
-    this.setState<never>({[keyName]: event.target.value});
-  }
-
-  onAddConfig = (isUse: boolean) => {
+  onAddConfig = (config: Config, isUse: boolean) => {
     const { addConfig } = this.props;
-    const { configPlatform, configNetwork, configUrl, configApiKey, configDisplayName } = this.state;
-    const config = {
-      platform: configPlatform,
-      network: configNetwork,
-      url: configUrl,
-      apiKey: configApiKey,
-      displayName: configDisplayName,
-      isLocal: true
-    };
-
     addConfig(config, isUse);
     this.closeConfigModal();
   }
@@ -397,11 +330,10 @@ class Arronax extends React.Component<Props, States> {
       removeConfig
     } = this.props;
     const {
-      isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal,
-      configPlatform, configNetwork, configUrl, configApiKey, configDisplayName
+      isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal
     } = this.state;
     const isRealLoading = isLoading || !isFullLoaded;
-    const isAddActive = configPlatform && configNetwork && configUrl && configApiKey && configDisplayName;
+    
     return (
       <MainContainer>
         <Header
@@ -484,64 +416,11 @@ class Arronax extends React.Component<Props, States> {
             <DismissButton onClick={this.handleErrorClose}>Dismiss</DismissButton>
           </DialogActions>
         </Dialog>
-        <Dialog
+        <ConfigModal
           open={isOpenConfigMdoal}
           onClose={this.closeConfigModal}
-          aria-labelledby='form-dialog-title'
-          maxWidth='md'
-          fullWidth
-        >
-          <DialogTitle id='form-dialog-title'>Add Network</DialogTitle>
-          <DialogContent>
-            <RowContainer>
-              <TextWrapper
-                autoFocus
-                id='platform'
-                name='configPlatform'
-                label='Platform'
-                value={configPlatform}
-                onChange={this.onChangeConfigForm}
-              />
-              <TextWrapper
-                id='network'
-                name='configNetwork'
-                label='network'
-                value={configNetwork}
-                onChange={this.onChangeConfigForm}
-              />
-            </RowContainer>
-            <RowContainer>
-              <TextWrapper
-                id='displayName'
-                name='configDisplayName'
-                label='Display Name'
-                value={configDisplayName}
-                onChange={this.onChangeConfigForm}
-              />
-              <TextWrapper
-                id='url'
-                name='configUrl'
-                label='Url'
-                value={configUrl}
-                onChange={this.onChangeConfigForm}
-              />
-            </RowContainer>
-            <RowContainer>
-              <TextWrapper
-                id='apiKey'
-                name='configApiKey'
-                label='Api Key'
-                value={configApiKey}
-                onChange={this.onChangeConfigForm}
-              />
-            </RowContainer>
-          </DialogContent>
-          <DialogActions>
-            <ClearButton>Cancel</ClearButton>
-            <AddButton isDisable={!isAddActive} onClick={() => this.onAddConfig(true)}>Use</AddButton>
-            <AddButton isDisable={!isAddActive} onClick={() => this.onAddConfig(false)}>Add</AddButton>
-          </DialogActions>
-        </Dialog>
+          addConfig={this.onAddConfig}
+        />
       </MainContainer>
     );
   }
