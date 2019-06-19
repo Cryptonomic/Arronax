@@ -18,16 +18,6 @@ export const getColumns = createSelector(
   apps => apps.selectedEntity && apps.columns[apps.selectedEntity] || []
 );
 
-export const getFilter = createSelector(
-  getAppState,
-  apps => apps.filters
-);
-
-export const getNetwork = createSelector(
-  getAppState,
-  apps => apps.network
-);
-
 export const getEntity = createSelector(
   getAppState,
   apps => apps.selectedEntity
@@ -78,11 +68,6 @@ export const getIsFullLoaded = createSelector(
   apps => apps.isFullLoaded
 );
 
-export const getPlatform = createSelector(
-  getAppState,
-  apps => apps.platform
-);
-
 export const getModalItem = createSelector(
   getAppState,
   apps => apps.selectedModalItem
@@ -91,4 +76,14 @@ export const getModalItem = createSelector(
 export const getSort = createSelector(
   getAppState,
   apps => apps.sort[apps.selectedEntity][0]
+);
+
+export const getConfigs = createSelector(
+  getAppState,
+  apps => apps.configs
+);
+
+export const getSelectedConfig = createSelector(
+  getAppState,
+  apps => apps.selectedConfig
 );

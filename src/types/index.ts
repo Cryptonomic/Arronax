@@ -21,6 +21,7 @@ export interface Config {
   network: string;
   displayName: string;
   entities?: string[];
+  isLocal?: boolean;
 };
 
 export interface Sort {

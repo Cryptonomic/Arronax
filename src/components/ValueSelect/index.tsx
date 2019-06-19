@@ -172,7 +172,7 @@ class ValueSelect extends React.Component<Props, States> {
     return (
       <Container>
         <ButtonShell
-          aria-owns={anchorEl ? 'simple-menu' : undefined}
+          aria-controls="simple-menu"
           aria-haspopup="true"
           isactive={selectedValues.length > 0 ? 1 : 0 }
           onClick={this.handleClick}
@@ -186,12 +186,6 @@ class ValueSelect extends React.Component<Props, States> {
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={this.cancelChange}
-            PaperProps={{
-              style: {
-                position: 'relative',
-                width: 300,
-              },
-            }}
           >
             <MenuContents>
               {values.map((value, index) => {

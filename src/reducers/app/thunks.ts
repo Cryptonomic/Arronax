@@ -12,7 +12,7 @@ import {
   setItemsAction,
   initDataAction,
   setLoadingAction,
-  setNetworkAction,
+  setConfigAction,
   setColumnsAction,
   initATttributesAction,
   completeFullLoadAction,
@@ -25,7 +25,6 @@ import {
   initMainParamsAction
 } from './actions';
 import { createMessageAction } from '../message/actions';
-import { getConfigs } from '../../utils/getconfig';
 import { Config, Sort, Filter } from '../../types';
 
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
@@ -45,21 +44,15 @@ const CACHE_TIME = 432000000; // 5*24*3600*1000
 
 let InitProperties: any = {};
 
-const configs: Config[] = getConfigs();
 const { getAttributes, getAttributeValues, getEntities } = ConseilMetadataClient;
-
-const getConfig = (val: string) => configs.find(conf => conf.network === val);
 
 const getAttributeNames = (attributes: AttributeDefinition[]) => attributes.map(attr => attr.name);
 
 export const fetchValues = (attribute: string) => async (dispatch, state) => {
-  const { selectedEntity, network, platform } = state().app;
+  const { selectedEntity, selectedConfig } = state().app;
+  const { network, platform, url, apiKey } = selectedConfig;
   dispatch(setLoadingAction(true));
-  const config = getConfig(network);
-  const serverInfo = {
-    url: config.url,
-    apiKey: config.apiKey,
-  };
+  const serverInfo = { url, apiKey };
   const values = await getAttributeValues(
     serverInfo,
     platform,
@@ -88,12 +81,15 @@ const initCardinalityValues = (
   await dispatch(setAvailableValuesAction(entity, attribute, values));
 };
 
-export const changeNetwork = (network: string) => async (dispatch, state) => {
-  const oldNetwork = state().app.network;
-  if (oldNetwork === network) return;
+// need to modify
+export const changeNetwork = (config: Config) => async (dispatch, state) => {
+  const oldConfig = state().app.selectedConfig;
+  const isSame = oldConfig.network === config.network && oldConfig.platform === config.platform &&
+    oldConfig.url === config.url && oldConfig.apiKey === config.apiKey;
+  if (isSame) return;
   localStorage.setItem('timestamp', '0');
   await dispatch(initDataAction());
-  await dispatch(setNetworkAction(network));
+  await dispatch(setConfigAction(config));
   await dispatch(initLoad());
 };
 
@@ -133,11 +129,12 @@ export const fetchInitEntityAction = (
     query = defaultQuery;
     // initColumns
     if (fields.length > 0) {
-      attributes.forEach(attribute => {
-        if (fields.indexOf(attribute.name) >= 0) { columns.push(attribute); }
+      fields.forEach(field=> {
+        const column = attributes.find(attr => attr.name === field);
+        if (column) { columns.push(column); }
       });
     } else {
-      attributes.forEach(attribute => columns.push(attribute));
+      columns = attributes;
     }
 
     if(orderBy.length > 0) {
@@ -227,10 +224,9 @@ export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispat
     urlEntity = params[2];
     await dispatch(initMainParamsAction(params[0], params[1], params[2]));
   }
-  const { network, platform } = state().app;
-  const config = getConfig(network);
-  const serverInfo = { url: config.url, apiKey: config.apiKey };
-
+  const { selectedConfig } = state().app;
+  const { platform, network, url, apiKey } = selectedConfig;
+  const serverInfo = { url, apiKey };
   let message = '';
 
   let entities: any[] = await getEntities(serverInfo, platform, network).catch(err => {
@@ -242,16 +238,16 @@ export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispat
     dispatch(completeFullLoadAction(true));
     return;
   }
-  if (config.entities && config.entities.length > 0) {
+  if (selectedConfig.entities && selectedConfig.entities.length > 0) {
       let filteredEntities: EntityDefinition[] = [];
-      config.entities.forEach(e => {
-          // if (e === 'rolls') { return; }
+      selectedConfig.entities.forEach(e => {
+          if (e === 'rolls') { return; }
           let match = entities.find(i => i.name === e);
           if (!!match) { filteredEntities.push(match); }
       });
       entities.forEach(e => {
-          // if (e.name === 'rolls') { return; } // TODO
-          if (!config.entities.includes(e.name)) { filteredEntities.push(e); }
+          if (e.name === 'rolls') { return; } // TODO
+          if (!selectedConfig.entities.includes(e.name)) { filteredEntities.push(e); }
       });
       entities = filteredEntities;
   }
@@ -353,7 +349,8 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
 }
 
 export const shareReport = () => async (dispatch, state) => {
-  const { selectedEntity, columns, sort, selectedFilters, platform, network } = state().app;
+  const { selectedEntity, columns, sort, selectedFilters, selectedConfig } = state().app;
+  const { network, platform } = selectedConfig;
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
@@ -370,13 +367,14 @@ export const shareReport = () => async (dispatch, state) => {
 }
 
 export const exportCsvData = () => async (dispatch, state) => {
-  const { selectedEntity, platform, network, columns, sort, selectedFilters } = state().app;
-  const config = getConfig(network);
-  const serverInfo = { url: config.url, apiKey: config.apiKey };
+  const { selectedEntity, columns, sort, selectedFilters, selectedConfig } = state().app;
+  const { platform, network, url, apiKey } = selectedConfig;
+  const serverInfo = { url, apiKey };
 
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
+  query = ConseilQueryBuilder.setLimit(query, 50000);
 
   const result: any = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
   let blob = new Blob([result]);
@@ -394,11 +392,10 @@ export const exportCsvData = () => async (dispatch, state) => {
 
 export const submitQuery = () => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
-  const { selectedEntity, selectedFilters, platform, network, columns, sort } = state().app;
-
-  const config = getConfig(network);
+  const { selectedEntity, selectedFilters, selectedConfig, columns, sort } = state().app;
+  const { platform, network, url, apiKey } = selectedConfig;
+  const serverInfo = { url, apiKey };
   const attributeNames = getAttributeNames(columns[selectedEntity]);
-  const serverInfo = { url: config.url, apiKey: config.apiKey };
 
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
@@ -410,25 +407,23 @@ export const submitQuery = () => async (dispatch, state) => {
 
 export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: string | number) => async (dispatch: any, state: any) => {
   dispatch(setLoadingAction(true));
-
-  const network = state().app.network;
-  const config = getConfig(network);
-  const serverInfo = { url: config.url, apiKey: config.apiKey };
+  const { network, platform, url, apiKey } = state().app.selectedConfig;
+  const serverInfo = { url, apiKey };
 
   let query = blankQuery();
   query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
   query = setLimit(query, 1);
 
-  const items = await executeEntityQuery(serverInfo, state().app.platform, network, entity, query);
+  const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
 
   await dispatch(setModalItemAction(items[0]));
   dispatch(setLoadingAction(false));
 };
 
 export const changeTab = (entity: string) => async (dispatch, state) => {
-  const { network, platform, attributes, items } = state().app;
-  const config = getConfig(network);
-  const serverInfo = { url: config.url, apiKey: config.apiKey };
+  const { selectedConfig, attributes, items } = state().app;
+  const { network, platform, url, apiKey } = selectedConfig;
+  const serverInfo = { url, apiKey };
 
   if(!items[entity] || (items[entity] && items[entity].length === 0)) {
     dispatch(setLoadingAction(true));

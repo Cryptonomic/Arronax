@@ -20,10 +20,12 @@ import SettingsPanel from '../../components/SettingsPanel';
 import Footer from '../../components/Footer';
 import Toolbar from '../../components/Toolbar';
 import CustomTable from '../CustomTable';
+import ConfigModal from '../../components/ConfigModal';
 
 import {
   getLoading,
-  getNetwork,
+  getConfigs,
+  getSelectedConfig,
   getEntity,
   getItems,
   getIsFullLoaded,
@@ -40,11 +42,10 @@ import {
   shareReport,
   changeTab
 } from '../../reducers/app/thunks';
-import { removeAllFiltersAction } from '../../reducers/app/actions';
+import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../../reducers/app/actions';
 import { clearMessageAction } from '../../reducers/message/actions';
 
-
-import { ToolType } from '../../types';
+import { ToolType, Config } from '../../types';
 import octopusSrc from '../../assets/sadOctopus.svg';
 
 const Container = styled.div`
@@ -170,7 +171,8 @@ const TabWrapper = withStyles({
 
 export interface Props extends RouteProps {
   isLoading: boolean;
-  network: string;
+  configs: Config[];
+  selectedConfig: Config;
   selectedEntity: string;
   items: object[];
   isFullLoaded: boolean;
@@ -180,19 +182,22 @@ export interface Props extends RouteProps {
   isError: boolean;
   message: string;
   removeAllFilters: (entity: string) => void;
-  changeNetwork(network: string): void;
+  changeNetwork(config: Config): void;
   changeTab: (type: string) => void;
   initLoad: (e: string | null, q: string | null) => void;
   submitQuery: () => void;
   exportCsvData: ()=> void;
   shareReport: ()=> void;
   initMessage: ()=> void;
+  addConfig: (config: Config, isUse: boolean) => void;
+  removeConfig: (index: number) => void;
 }
 
 export interface States {
   isSettingCollapsed: boolean;
   selectedTool: string;
   isModalUrl: boolean;
+  isOpenConfigMdoal: boolean;
 }
 
 class Arronax extends React.Component<Props, States> {
@@ -205,7 +210,8 @@ class Arronax extends React.Component<Props, States> {
     this.state = {
       isSettingCollapsed: false,
       selectedTool: ToolType.FILTER,
-      isModalUrl: false
+      isModalUrl: false,
+      isOpenConfigMdoal: false
     };
 
     this.settingRef = React.createRef();
@@ -228,9 +234,9 @@ class Arronax extends React.Component<Props, States> {
     
   }
 
-  onChangeNetwork = (event: any) => {
+  onChangeNetwork = (config: Config) => {
     const { changeNetwork } = this.props;
-    changeNetwork(event.target.value);
+    changeNetwork(config);
   };
 
   onChangeTab = async (value: string) => {
@@ -298,10 +304,21 @@ class Arronax extends React.Component<Props, States> {
     initMessage();
   }
 
+  closeConfigModal = () => this.setState({isOpenConfigMdoal: false});
+
+  openConfigModal = () => this.setState({isOpenConfigMdoal: true});
+
+  onAddConfig = (config: Config, isUse: boolean) => {
+    const { addConfig } = this.props;
+    addConfig(config, isUse);
+    this.closeConfigModal();
+  }
+
   render() {
     const {
       isLoading,
-      network,
+      configs,
+      selectedConfig,
       selectedEntity,
       items,
       isFullLoaded,
@@ -309,19 +326,29 @@ class Arronax extends React.Component<Props, States> {
       selectedColumns,
       entities,
       isError,
-      message
+      message,
+      removeConfig
     } = this.props;
-    const { isSettingCollapsed, selectedTool, isModalUrl } = this.state;
+    const {
+      isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal
+    } = this.state;
     const isRealLoading = isLoading || !isFullLoaded;
+    
     return (
       <MainContainer>
-        <Header network={network} onChangeNetwork={this.onChangeNetwork} />
+        <Header
+          selectedConfig={selectedConfig}
+          configs={configs}
+          onChangeNetwork={this.onChangeNetwork}
+          openModal={this.openConfigModal}
+          onRemoveConfig={removeConfig}
+        />
         <Container>
           {isFullLoaded && (
             <React.Fragment>
               <TabsWrapper
                 value={selectedEntity}
-                variant="scrollable"
+                variant='scrollable'
                 onChange={(event, newValue) => this.onChangeTab(newValue)}
               >
                 {entities.map((entity, index) => (
@@ -376,12 +403,12 @@ class Arronax extends React.Component<Props, States> {
         <Dialog
           open={isError}
           onClose={this.handleErrorClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
+          aria-labelledby='alert-dialog-title'
+          aria-describedby='alert-dialog-description'
         >
-          <DialogTitle id="alert-dialog-title">Error</DialogTitle>
+          <DialogTitle id='alert-dialog-title'>Error</DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
+            <DialogContentText id='alert-dialog-description'>
               {message}
             </DialogContentText>
           </DialogContent>
@@ -389,6 +416,11 @@ class Arronax extends React.Component<Props, States> {
             <DismissButton onClick={this.handleErrorClose}>Dismiss</DismissButton>
           </DialogActions>
         </Dialog>
+        <ConfigModal
+          open={isOpenConfigMdoal}
+          onClose={this.closeConfigModal}
+          addConfig={this.onAddConfig}
+        />
       </MainContainer>
     );
   }
@@ -397,7 +429,8 @@ class Arronax extends React.Component<Props, States> {
 const mapStateToProps = (state: any) => ({
   filterCount: getFilterCount(state),
   isLoading: getLoading(state),
-  network: getNetwork(state),
+  configs: getConfigs(state),
+  selectedConfig: getSelectedConfig(state),
   selectedEntity: getEntity(state),
   items: getItems(state),
   isFullLoaded: getIsFullLoaded(state),
@@ -410,13 +443,15 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = (dispatch: any) => ({
   removeAllFilters: (selectedEntity: string) =>
     dispatch(removeAllFiltersAction(selectedEntity)),
-  changeNetwork: (network: string) => dispatch(changeNetwork(network)),
+  changeNetwork: (config: Config) => dispatch(changeNetwork(config)),
   changeTab: (type: string) => dispatch(changeTab(type)),
   initLoad: (e: string, q: string) => dispatch(initLoad(e, q)),
   submitQuery: () => dispatch(submitQuery()),
   exportCsvData: () => dispatch(exportCsvData()),
   shareReport: () => dispatch(shareReport()),
-  initMessage: () => dispatch(clearMessageAction())
+  initMessage: () => dispatch(clearMessageAction()),
+  addConfig: (config: Config, isUse: boolean) => dispatch(addConfigAction(config, isUse)),
+  removeConfig: (index: number) => dispatch(removeConfigAction(index))
 });
 
 export default compose(
