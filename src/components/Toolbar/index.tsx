@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import Tooltip from '@material-ui/core/Tooltip';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import { ArronaxIcon } from '../ArronaxIcon';
 import { ToolType } from '../../types';
 
@@ -69,17 +71,11 @@ const ColumnsTool = styled(ToolItem)<{isactive: boolean}>`
   }
 `;
 
-const ExportTool = styled(ToolItem)`
-  width: 149px;
+const ShareTool = styled(ToolItem)`
+  width: 120px;
   left: 307px;
   padding-left: 18px;
-`;
-
-const ShareTool = styled(ToolItem)`
-  width: 149px;
   border-radius: 0px 5px 5px 0px;
-  left: 455px;
-  padding-left: 18px;
 `;
 
 const FilterIcon = styled(ArronaxIcon)`
@@ -111,12 +107,27 @@ interface Props {
 const Toolbar: React.FC<Props> = props => {
   const { isCollapsed, selectedTool, filterCount, columnsCount, onChangeTool, onExportCsv, onShareReport } = props;
   const [open, setOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
   function shareReport() {
     setOpen(true);
-    onShareReport();
+    setAnchorEl(null);
+    setTimeout(() => {
+      onShareReport();
+    });
     setTimeout(() => {
       setOpen(false);
     }, 2000);
+  }
+
+  function openShareMenu(event) {
+    setAnchorEl(event.currentTarget);
+  }
+  function closeShareMenu() {
+    setAnchorEl(null);
+  }
+  function exportCsv() {
+    setAnchorEl(null);
+    onExportCsv();
   }
   return (
     <Container>
@@ -134,15 +145,22 @@ const Toolbar: React.FC<Props> = props => {
         <ColumnIcon size="20px" color="#4a4a4a" iconName="icon-columns" />
         Columns ({columnsCount})
       </ColumnsTool>
-      <ExportTool onClick={onExportCsv}>
+      <ShareTool aria-controls="share-menu" aria-haspopup="true" onClick={openShareMenu}>
         <ExportIcon size="20px" color="#4a4a4a" iconName="icon-export" />
-        Export CSV
-      </ExportTool>
-      <Tooltip title="Copied!" placement="right-start" open={open}>
-        <ShareTool onClick={shareReport}>
-          Share Report
-        </ShareTool>
-      </Tooltip>
+        Share
+      </ShareTool>
+      <Menu
+        id="share-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={closeShareMenu}
+      >
+        <MenuItem onClick={exportCsv}>Export CSV</MenuItem>
+        <Tooltip title="Copied!" placement="right-start" open={open}>
+          <MenuItem onClick={shareReport}>Share Report</MenuItem>
+        </Tooltip>
+      </Menu>
     </Container>
   );
 };
