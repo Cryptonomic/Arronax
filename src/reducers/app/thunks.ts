@@ -129,11 +129,12 @@ export const fetchInitEntityAction = (
     query = defaultQuery;
     // initColumns
     if (fields.length > 0) {
-      attributes.forEach(attribute => {
-        if (fields.indexOf(attribute.name) >= 0) { columns.push(attribute); }
+      fields.forEach(field=> {
+        const column = attributes.find(attr => attr.name === field);
+        if (column) { columns.push(column); }
       });
     } else {
-      attributes.forEach(attribute => columns.push(attribute));
+      columns = attributes;
     }
 
     if(orderBy.length > 0) {
