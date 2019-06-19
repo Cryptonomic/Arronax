@@ -227,13 +227,15 @@ const Header: React.FC<Props> = props => {
                   checkedIcon={<CheckedIcon fontSize="small" />}
                 />
                 {config.displayName}
-                <IconBtnWrapper
-                  aria-label="Delete"
-                  disabled={isSelected}
-                  onClick={(event) => removeConfig(event, mainConfigs.length + index)}
-                >
-                  <ArronaxIcon size="37px" color="#d8d8d8" iconName="icon-delete" />
-                </IconBtnWrapper>
+                {!isSelected && (
+                  <IconBtnWrapper
+                    aria-label="Delete"
+                    disabled={isSelected}
+                    onClick={(event) => removeConfig(event, mainConfigs.length + index)}
+                  >
+                    <ArronaxIcon size="37px" color="#d8d8d8" iconName="icon-delete" />
+                  </IconBtnWrapper>
+                )}                
               </MainMenuItem>
             );
           })}
