@@ -374,6 +374,7 @@ export const exportCsvData = () => async (dispatch, state) => {
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
+  query = ConseilQueryBuilder.setLimit(query, 50000);
 
   const result: any = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
   let blob = new Blob([result]);
