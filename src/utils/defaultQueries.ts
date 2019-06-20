@@ -42,6 +42,12 @@ export const defaultQueries = {
         predicates: [{ field: 'block_level', set: [418201], operation: 'gt', inverse: false }],
         orderBy: [],
         limit: 5000
+    },
+    delegates: {
+        fields: ["block_level", "pkh", "balance", "staking_balance"],
+        predicates: [],
+        orderBy: [{ field: "staking_balance", direction: "desc" }],
+        limit: 5000
     }
 };
 

@@ -201,7 +201,7 @@ export function initMainParamsAction(platform: string, network: string, entity: 
   }
 }
 
-export function initATttributesAction(attributes) {
+export function initAttributesAction(attributes) {
   return {
     type: INIT_ATTRIBUTES,
     attributes

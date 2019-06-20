@@ -14,7 +14,7 @@ import {
   setLoadingAction,
   setConfigAction,
   setColumnsAction,
-  initATttributesAction,
+  initAttributesAction,
   completeFullLoadAction,
   setFilterCountAction,
   setModalItemAction,
@@ -191,27 +191,21 @@ export const fetchInitEntityAction = (
       [entity]: initProperty
     };
   } else {
-    sorts = [{
-      orderBy: levelColumn.name,
-      order: ConseilSortDirection.DESC
-    }];
     const attributeNames = getAttributeNames(attributes);
     query = addFields(query, ...attributeNames);
     query = setLimit(query, 5000);
-    query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
+
+    if (levelColumn !== undefined) {
+        sorts = [{ orderBy: levelColumn.name, order: ConseilSortDirection.DESC }];
+        query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
+    }
   }
 
-  const items = await executeEntityQuery(
-    serverInfo,
-    platform,
-    network,
-    entity,
-    query
-  ).catch(err => {
-    const message = `There are some issues, when get the items of ${entity}.`;
-    dispatch(createMessageAction(message, true));
-    return [];
-  });
+  const items = await executeEntityQuery(serverInfo, platform, network, entity, query)
+            .catch(() => {
+            dispatch(createMessageAction(`Unable to retrive data for ${entity} request.`, true));
+            return [];
+        });
   
   await dispatch(initEntityPropertiesAction(entity, filters, sorts, columns, items));
   await Promise.all(cardinalityPromises);
@@ -230,8 +224,7 @@ export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispat
   let message = '';
 
   let entities: any[] = await getEntities(serverInfo, platform, network).catch(err => {
-    message = 'There are some issues, when get the entities.'
-    dispatch(createMessageAction(message, true));
+    dispatch(createMessageAction(`Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`, true));
     return [];
   });
   if (entities.length === 0) {
@@ -273,7 +266,7 @@ export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispat
           [obj.entity]: obj.attributes
         }
       });
-      await dispatch(initATttributesAction(attributes));
+      await dispatch(initAttributesAction(attributes));
       saveAttributes(attributes, currentDate, 2);
     } else {
       dispatch(completeFullLoadAction(true));
