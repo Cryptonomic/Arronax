@@ -317,9 +317,11 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
   });
 
   ordering.forEach(o => {
-    if (query.aggregation !== undefined && query.aggregation.length > 0 && query.fields.includes(o.orderBy)) {
-        const f = aggregations.find(i => i.name === o.orderBy).function;
-        query = addOrdering(query, `${f}_${o.orderBy}`, o.order);
+    if (query.aggregation !== undefined && query.aggregation.length > 0) {
+        const a = aggregations.find(i => i.name === o.orderBy);
+        if (a !== undefined && query.fields.includes(o.orderBy)) {
+            query = addOrdering(query, `${a.function}_${o.orderBy}`, o.order);
+        }
     } else {
         query = addOrdering(query, o.orderBy, o.order);
     }
@@ -379,6 +381,9 @@ export const submitQuery = () => async (dispatch, state) => {
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
   query = setLimit(query, 5000);
   const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
+
+  
+
   await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length, aggregations[selectedEntity].length))
   dispatch(setLoadingAction(false));
 };
