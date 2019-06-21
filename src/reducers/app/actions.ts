@@ -22,11 +22,17 @@ import {
   INIT_ATTRIBUTES,
   SET_CONFIG,
   ADD_CONFIG,
-  REMOVE_CONFIG
+  REMOVE_CONFIG,
+  ADD_AGGREGATION,
+  REMOVE_AGGREGATION,
+  CHANGE_AGGREGATION,
+  INIT_AGGREGATION,
+  SET_AGGREGATION_COUNT,
+  SET_SUBMIT
 } from './types';
 
 import { AttributeDefinition, EntityDefinition } from 'conseiljs';
-import { Sort, Filter, Config } from '../../types';
+import { Sort, Filter, Config, Aggregation } from '../../types';
 
 export function setItemsAction(entity: string, items: any[]) {
   return {
@@ -200,5 +206,53 @@ export function initAttributesAction(attributes) {
   return {
     type: INIT_ATTRIBUTES,
     attributes
+  }
+}
+
+export function addAggregationAction(entity: string) {
+  return {
+    type: ADD_AGGREGATION,
+    entity
+  }
+}
+
+export function removeAggregationAction(entity: string, index: number) {
+  return {
+    type: REMOVE_AGGREGATION,
+    entity,
+    index
+  }
+}
+
+export function changeAggregationAction(entity: string, aggregation: Aggregation, index: number) {
+  return {
+    type: CHANGE_AGGREGATION,
+    entity,
+    aggregation,
+    index
+  }
+}
+
+export function initAggregationAction(entity: string) {
+  return {
+    type: INIT_AGGREGATION,
+    entity
+  }
+}
+
+export function setAggCountAction(count: number) {
+  return {
+    type: SET_AGGREGATION_COUNT,
+    count
+  }
+}
+
+export function setSubmitAction(entity: string, items: any[], filterCount: number, aggCount: number) {
+  return {
+    type: SET_SUBMIT,
+    entity,
+    items,
+    filterCount,
+    aggCount
   }
 }

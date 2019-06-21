@@ -31,7 +31,8 @@ import {
   getIsFullLoaded,
   getFilterCount,
   getColumns,
-  getEntities
+  getEntities,
+  getAggCount
 } from '../../reducers/app/selectors';
 import { getErrorState, getMessageTxt } from '../../reducers/message/selectors';
 import {
@@ -177,6 +178,7 @@ export interface Props extends RouteProps {
   items: object[];
   isFullLoaded: boolean;
   filterCount: number;
+  aggCount: number;
   selectedColumns: EntityDefinition[];
   entities: EntityDefinition[];
   isError: boolean;
@@ -318,6 +320,7 @@ class Arronax extends React.Component<Props, States> {
       items,
       isFullLoaded,
       filterCount,
+      aggCount,
       selectedColumns,
       entities,
       isError,
@@ -358,6 +361,7 @@ class Arronax extends React.Component<Props, States> {
                 isCollapsed={isSettingCollapsed}
                 selectedTool={selectedTool}
                 filterCount={filterCount}
+                aggCount={aggCount}
                 columnsCount={selectedColumns.length}
                 onChangeTool={this.onChangeTool}
                 onExportCsv={this.onExportCsv}
@@ -432,7 +436,8 @@ const mapStateToProps = (state: any) => ({
   selectedColumns: getColumns(state),
   entities: getEntities(state),
   isError: getErrorState(state),
-  message: getMessageTxt(state)
+  message: getMessageTxt(state),
+  aggCount: getAggCount(state)
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

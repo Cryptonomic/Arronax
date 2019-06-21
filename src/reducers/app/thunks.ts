@@ -12,23 +12,22 @@ import {
 
 import {
   setAvailableValuesAction,
-  setItemsAction,
   initDataAction,
   setLoadingAction,
   setConfigAction,
   setColumnsAction,
   initAttributesAction,
   completeFullLoadAction,
-  setFilterCountAction,
   setModalItemAction,
   setEntitiesAction,
   initEntityPropertiesAction,
   initFilterAction,
   setTabAction,
-  initMainParamsAction
+  initMainParamsAction,
+  setSubmitAction
 } from './actions';
 import { createMessageAction } from '../message/actions';
-import { Config, Sort, Filter } from '../../types';
+import { Config, Sort, Filter, Aggregation } from '../../types';
 
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
@@ -41,6 +40,7 @@ const {
   addFields,
   setLimit,
   addPredicate,
+  addAggregationFunction
 } = ConseilQueryBuilder;
 
 const CACHE_TIME = 432000000; // 5*24*3600*1000
@@ -299,7 +299,7 @@ export const fetchAttributes = async (
   };
 };
 
-const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], ordering: Sort[]) => {
+const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], ordering: Sort[], aggregations: Aggregation[]) => {
   let query = addFields(blankQuery(), ...attributeNames);
   selectedFilters.forEach((filter: Filter) => {
     if ((filter.operator === ConseilOperator.BETWEEN || filter.operator === ConseilOperator.IN || filter.operator === 'notin') && filter.values.length === 1) {
@@ -332,15 +332,26 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
     query = addPredicate(query, filter.name, operator, filter.values, isInvert);
   });
 
-  query = addOrdering(query, ordering[0].orderBy, ordering[0].order);
+  aggregations.forEach((agg: Aggregation) => {
+    if (!agg.function) return;
+    query = addAggregationFunction(query, agg.name, agg.function);
+  });
+
+  ordering.forEach(o => {
+    if (query.aggregation !== undefined && query.aggregation.length > 0) {
+        if (!query.fields.includes(o.orderBy)) { return; }
+    }
+
+    query = addOrdering(query, o.orderBy, o.order);
+  });
 
   return query;
 }
 
 export const shareReport = () => async (dispatch, state) => {
-  const { selectedEntity, columns, sort, selectedFilters, selectedConfig } = state().app;
+  const { selectedEntity, columns, sort, selectedFilters, selectedConfig, aggregations } = state().app;
   const attributeNames = getAttributeNames(columns[selectedEntity]);
-  let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
+  let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
   query = setLimit(query, 5000);
   const serializedQuery = JSON.stringify(query);
   const hostUrl = window.location.origin;
@@ -355,12 +366,12 @@ export const shareReport = () => async (dispatch, state) => {
 }
 
 export const exportCsvData = () => async (dispatch, state) => {
-  const { selectedEntity, columns, sort, selectedFilters, selectedConfig } = state().app;
+  const { selectedEntity, columns, sort, selectedFilters, selectedConfig, aggregations } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey };
 
   const attributeNames = getAttributeNames(columns[selectedEntity]);
-  let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
+  let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
   query = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
   query = ConseilQueryBuilder.setLimit(query, 50000);
 
@@ -380,16 +391,15 @@ export const exportCsvData = () => async (dispatch, state) => {
 
 export const submitQuery = () => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
-  const { selectedEntity, selectedFilters, selectedConfig, columns, sort } = state().app;
+  const { selectedEntity, selectedFilters, selectedConfig, columns, sort, aggregations } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey };
   const attributeNames = getAttributeNames(columns[selectedEntity]);
 
-  let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
+  let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
   query = setLimit(query, 5000);
   const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
-  await dispatch(setFilterCountAction(selectedFilters[selectedEntity].length));
-  await dispatch(setItemsAction(selectedEntity, items));
+  await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length, aggregations[selectedEntity].length))
   dispatch(setLoadingAction(false));
 };
 
