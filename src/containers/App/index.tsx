@@ -223,17 +223,12 @@ class Arronax extends React.Component<Props, States> {
     const { initLoad, location } = this.props;
     if (location) {
       const search = new URLSearchParams(location.search);
-      const e = search.get('e');
-      const q = search.get('q');
-      const m = search.get('m');
-      if (m && m === 'true') {
-        this.setState({isModalUrl: true});
-      }
-      initLoad(e, q);
+      const modal = search.get('m');
+      if (modal && modal === 'true') { this.setState({isModalUrl: true}); }
+      initLoad(search.get('e'), search.get('q'));
     } else {
       initLoad('', '');
     }
-    
   }
 
   onChangeNetwork = (config: Config) => {

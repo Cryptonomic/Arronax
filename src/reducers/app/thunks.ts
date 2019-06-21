@@ -1,3 +1,6 @@
+
+import base64url from 'base64url';
+
 import {
   ConseilMetadataClient,
   ConseilDataClient,
@@ -6,14 +9,14 @@ import {
   ConseilOutput,
   ConseilSortDirection, EntityDefinition, AttributeDefinition
 } from 'conseiljs';
-import base64url from 'base64url';
+
 import {
   setAvailableValuesAction,
   initDataAction,
   setLoadingAction,
   setConfigAction,
   setColumnsAction,
-  initATttributesAction,
+  initAttributesAction,
   completeFullLoadAction,
   setModalItemAction,
   setEntitiesAction,
@@ -81,7 +84,7 @@ const initCardinalityValues = (
   await dispatch(setAvailableValuesAction(entity, attribute, values));
 };
 
-// need to modify
+// TODO need to modify
 export const changeNetwork = (config: Config) => async (dispatch, state) => {
   const oldConfig = state().app.selectedConfig;
   const isSame = oldConfig.network === config.network && oldConfig.platform === config.platform &&
@@ -191,47 +194,41 @@ export const fetchInitEntityAction = (
       [entity]: initProperty
     };
   } else {
-    sorts = [{
-      orderBy: levelColumn.name,
-      order: ConseilSortDirection.DESC
-    }];
     const attributeNames = getAttributeNames(attributes);
     query = addFields(query, ...attributeNames);
     query = setLimit(query, 5000);
-    query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
+
+    if (levelColumn !== undefined) {
+        sorts = [{ orderBy: levelColumn.name, order: ConseilSortDirection.DESC }];
+        query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
+    }
   }
 
-  const items = await executeEntityQuery(
-    serverInfo,
-    platform,
-    network,
-    entity,
-    query
-  ).catch(err => {
-    const message = `There are some issues, when get the items of ${entity}.`;
-    dispatch(createMessageAction(message, true));
-    return [];
-  });
+  const items = await executeEntityQuery(serverInfo, platform, network, entity, query)
+            .catch(() => {
+            dispatch(createMessageAction(`Unable to retrieve data for ${entity} request.`, true));
+            return [];
+        });
   
   await dispatch(initEntityPropertiesAction(entity, filters, sorts, columns, items));
   await Promise.all(cardinalityPromises);
 };
 
-export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispatch, state) => {
+export const initLoad = (environmentInfo?: string, query?: string) => async (dispatch, state) => {
   let urlEntity = '';
-  if (urlParams && urlQuery) {
-    const params = urlParams.split('/');
-    urlEntity = params[2];
-    await dispatch(initMainParamsAction(params[0], params[1], params[2]));
+  if (environmentInfo && query) {
+      const environmentName = environmentInfo.split('/')[0];
+      const urlEntity = environmentInfo.split('/')[1];
+
+      await dispatch(initMainParamsAction(environmentName, urlEntity));
   }
-  const { selectedConfig } = state().app;
+  const selectedConfig: Config = state().app.selectedConfig;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey };
   let message = '';
 
   let entities: any[] = await getEntities(serverInfo, platform, network).catch(err => {
-    message = 'There are some issues, when get the entities.'
-    dispatch(createMessageAction(message, true));
+    dispatch(createMessageAction(`Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`, true));
     return [];
   });
   if (entities.length === 0) {
@@ -252,7 +249,7 @@ export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispat
       entities = filteredEntities;
   }
 
-  entities.forEach(e => { if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) { e.displayNamePlural = e.displayName}}); // TODO: remove
+  entities.forEach(e => { if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) { e.displayNamePlural = e.displayName}}); // TODO: remove, use metadata when available
 
   dispatch(setEntitiesAction(entities));
   validateCache(2);
@@ -273,7 +270,7 @@ export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispat
           [obj.entity]: obj.attributes
         }
       });
-      await dispatch(initATttributesAction(attributes));
+      await dispatch(initAttributesAction(attributes));
       saveAttributes(attributes, currentDate, 2);
     } else {
       dispatch(completeFullLoadAction(true));
@@ -282,15 +279,7 @@ export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispat
   }
   const { attributes, selectedEntity } = state().app;
   await dispatch(
-    fetchInitEntityAction(
-      platform,
-      selectedEntity,
-      network,
-      serverInfo,
-      attributes[selectedEntity],
-      urlEntity,
-      urlQuery
-    )
+    fetchInitEntityAction(platform, selectedEntity, network, serverInfo, attributes[selectedEntity], urlEntity, query)
   );
   dispatch(completeFullLoadAction(true));
 };
@@ -361,14 +350,13 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
 
 export const shareReport = () => async (dispatch, state) => {
   const { selectedEntity, columns, sort, selectedFilters, selectedConfig, aggregations } = state().app;
-  const { network, platform } = selectedConfig;
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
   query = setLimit(query, 5000);
   const serializedQuery = JSON.stringify(query);
   const hostUrl = window.location.origin;
   const encodedUrl = base64url(serializedQuery);
-  const shareLink = `${hostUrl}?e=${platform}/${network}/${selectedEntity}&q=${encodedUrl}`;
+  const shareLink = `${hostUrl}?e=${encodeURIComponent(selectedConfig.displayName)}/${encodeURIComponent(selectedEntity)}&q=${encodedUrl}`;
   const textField = document.createElement('textarea');
   textField.innerText = shareLink;
   document.body.appendChild(textField);
