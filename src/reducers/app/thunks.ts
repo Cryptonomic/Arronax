@@ -348,7 +348,13 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
     query = addAggregationFunction(query, agg.name, agg.function);
   });
 
-  query = addOrdering(query, ordering[0].orderBy, ordering[0].order);
+  ordering.forEach(o => {
+    if (query.aggregation !== undefined && query.aggregation.length > 0) {
+        if (!query.fields.includes(o.orderBy)) { return; }
+    }
+
+    query = addOrdering(query, o.orderBy, o.order);
+  });
 
   return query;
 }
