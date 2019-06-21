@@ -45,7 +45,7 @@ export const defaultQueries = {
     },
     delegates: {
         fields: ["block_level", "pkh", "balance", "staking_balance"],
-        predicates: [],
+        predicates: [{ field: 'deactivated', set: [false], operation: 'eq', inverse: false }],
         orderBy: [{ field: "staking_balance", direction: "desc" }],
         limit: 5000
     }
