@@ -210,7 +210,6 @@ export const initLoad = (environmentInfo?: string, query?: string) => async (dis
   const selectedConfig: Config = state().app.selectedConfig;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey };
-  let message = '';
 
   let entities: any[] = await getEntities(serverInfo, platform, network).catch(err => {
     dispatch(createMessageAction(`Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`, true));
@@ -245,8 +244,7 @@ export const initLoad = (environmentInfo?: string, query?: string) => async (dis
   if (currentDate - localDate > CACHE_TIME) {
     const attrPromises = entities.map(entity => fetchAttributes(platform, entity.name, network, serverInfo));
     const attrObjsList = await Promise.all(attrPromises).catch(err => {
-      message = `There are some issues, when get the attributes of ${err}.`;
-      dispatch(createMessageAction(message, true));
+      dispatch(createMessageAction(`Unable to load attribute data: ${err}.`, true));
       return [];
     });
     if (attrObjsList.length > 0) {
@@ -381,8 +379,6 @@ export const submitQuery = () => async (dispatch, state) => {
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
   query = setLimit(query, 5000);
   const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
-
-  
 
   await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length, aggregations[selectedEntity].length))
   dispatch(setLoadingAction(false));
