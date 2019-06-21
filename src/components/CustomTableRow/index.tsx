@@ -9,7 +9,7 @@ import Circle from '@material-ui/icons/FiberManualRecord';
 import ContentCopy from '@material-ui/icons/FileCopyOutlined';
 import Clipboard from 'react-clipboard.js';
 import { AttributeDefinition, AttrbuteDataType } from 'conseiljs';
-import { getShortColumn } from '../../utils/general';
+import { truncateHash } from '../../utils/general';
 
 const TableRowWrapper = styled(TableRow)`
   &&& {
@@ -123,7 +123,7 @@ const formatValueForDisplay = (
       <React.Fragment>
         <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
         <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
-        {formatValueForPrimary(attribute, getShortColumn(value), value, onClickPrimaryKey)}
+        {formatValueForPrimary(attribute, truncateHash(value), value, onClickPrimaryKey)}
         <ClipboardWrapper data-clipboard-text={value}>
           <CopyIcon />
         </ClipboardWrapper>
@@ -132,7 +132,7 @@ const formatValueForDisplay = (
 } else if (dataType === 'Hash') {
     return (
       <React.Fragment>
-        {formatValueForPrimary(attribute, getShortColumn(value), value, onClickPrimaryKey)}
+        {formatValueForPrimary(attribute, truncateHash(value), value, onClickPrimaryKey)}
         <ClipboardWrapper data-clipboard-text={value}>
           <CopyIcon />
         </ClipboardWrapper>

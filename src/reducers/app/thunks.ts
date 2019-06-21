@@ -32,7 +32,7 @@ import { Config, Sort, Filter } from '../../types';
 
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
-import { getOperatorType } from '../../utils/general';
+import { getOperatorType, sortAttributes } from '../../utils/general';
 
 const { executeEntityQuery } = ConseilDataClient;
 const {
@@ -186,22 +186,21 @@ export const fetchInitEntityAction = (
     });
 
     // These values are used when reset columns or filters
-    const initProperty = {
-      columns, filters
-    };
-    InitProperties = {
-      ...InitProperties,
-      [entity]: initProperty
-    };
+    const initProperty = { columns, filters };
+    InitProperties = { ...InitProperties, [entity]: initProperty };
   } else {
-    const attributeNames = getAttributeNames(attributes);
-    query = addFields(query, ...attributeNames);
+    const sortedAttributes = sortAttributes(attributes);
+
+    query = addFields(query, ...getAttributeNames(sortedAttributes));
+    columns = sortedAttributes;
+    //attributeNames.forEach(a => query = addFields(query, a));
     query = setLimit(query, 5000);
 
     if (levelColumn !== undefined) {
         sorts = [{ orderBy: levelColumn.name, order: ConseilSortDirection.DESC }];
         query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
     }
+    console.log(query);
   }
 
   const items = await executeEntityQuery(serverInfo, platform, network, entity, query)
@@ -284,12 +283,7 @@ export const initLoad = (environmentInfo?: string, query?: string) => async (dis
   dispatch(completeFullLoadAction(true));
 };
 
-export const fetchAttributes = async (
-  platform: string,
-  entity: string,
-  network: string,
-  serverInfo: any
-) => {
+export const fetchAttributes = async (platform: string, entity: string, network: string, serverInfo: any) => {
   const attributes = await getAttributes(serverInfo, platform, network, entity).catch(err => {
     throw entity;
   });
