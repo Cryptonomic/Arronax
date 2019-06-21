@@ -192,13 +192,8 @@ export function initFilterAction(entity: string, filters: Filter[]) {
   }
 }
 
-export function initMainParamsAction(platform: string, network: string, entity: string) {
-  return {
-    type: INIT_MAIN_PARAMS,
-    platform,
-    network,
-    entity
-  }
+export function initMainParamsAction(configName: string, entity: string) {
+  return { type: INIT_MAIN_PARAMS, configName, entity }
 }
 
 export function initAttributesAction(attributes) {

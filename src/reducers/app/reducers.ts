@@ -132,10 +132,7 @@ export const app = (state = initialState, action) => {
         selectedConfig = action.config;
       }
       const newConfigs = [...configs, action.config];
-      initialState = {
-        ...initialState,
-        configs: newConfigs
-      };
+      initialState = { ...initialState, configs: newConfigs };
       saveConfigs(newConfigs);
       return { ...state, selectedConfig, configs: newConfigs };
     }
@@ -237,12 +234,15 @@ export const app = (state = initialState, action) => {
       return { ...state, selectedFilters, filterCount };
     }
     case INIT_MAIN_PARAMS: {
-      return {
-        ...state,
-        platform: action.platform,
-        network: action.network,
-        selectedEntity: action.entity
-      }
+        const config = configs.filter(c => c.displayName === action.configName)[0];
+        // TODO: error handling
+        return {
+            ...state,
+            platform: action.platform,
+            network: action.network,
+            selectedConfig: config,
+            selectedEntity: action.entity
+        };
     }
     case INIT_ATTRIBUTES: {
       return {

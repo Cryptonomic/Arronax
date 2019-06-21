@@ -1,3 +1,6 @@
+
+import base64url from 'base64url';
+
 import {
   ConseilMetadataClient,
   ConseilDataClient,
@@ -6,7 +9,7 @@ import {
   ConseilOutput,
   ConseilSortDirection, EntityDefinition, AttributeDefinition
 } from 'conseiljs';
-import base64url from 'base64url';
+
 import {
   setAvailableValuesAction,
   setItemsAction,
@@ -81,7 +84,7 @@ const initCardinalityValues = (
   await dispatch(setAvailableValuesAction(entity, attribute, values));
 };
 
-// need to modify
+// TODO need to modify
 export const changeNetwork = (config: Config) => async (dispatch, state) => {
   const oldConfig = state().app.selectedConfig;
   const isSame = oldConfig.network === config.network && oldConfig.platform === config.platform &&
@@ -203,7 +206,7 @@ export const fetchInitEntityAction = (
 
   const items = await executeEntityQuery(serverInfo, platform, network, entity, query)
             .catch(() => {
-            dispatch(createMessageAction(`Unable to retrive data for ${entity} request.`, true));
+            dispatch(createMessageAction(`Unable to retrieve data for ${entity} request.`, true));
             return [];
         });
   
@@ -211,14 +214,15 @@ export const fetchInitEntityAction = (
   await Promise.all(cardinalityPromises);
 };
 
-export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispatch, state) => {
+export const initLoad = (environmentInfo?: string, query?: string) => async (dispatch, state) => {
   let urlEntity = '';
-  if (urlParams && urlQuery) {
-    const params = urlParams.split('/');
-    urlEntity = params[2];
-    await dispatch(initMainParamsAction(params[0], params[1], params[2]));
+  if (environmentInfo && query) {
+      const environmentName = environmentInfo.split('/')[0];
+      const urlEntity = environmentInfo.split('/')[1];
+
+      await dispatch(initMainParamsAction(environmentName, urlEntity));
   }
-  const { selectedConfig } = state().app;
+  const selectedConfig: Config = state().app.selectedConfig;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey };
   let message = '';
@@ -245,7 +249,7 @@ export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispat
       entities = filteredEntities;
   }
 
-  entities.forEach(e => { if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) { e.displayNamePlural = e.displayName}}); // TODO: remove
+  entities.forEach(e => { if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) { e.displayNamePlural = e.displayName}}); // TODO: remove, use metadata when available
 
   dispatch(setEntitiesAction(entities));
   validateCache(2);
@@ -275,15 +279,7 @@ export const initLoad = (urlParams?: string, urlQuery?: string) => async (dispat
   }
   const { attributes, selectedEntity } = state().app;
   await dispatch(
-    fetchInitEntityAction(
-      platform,
-      selectedEntity,
-      network,
-      serverInfo,
-      attributes[selectedEntity],
-      urlEntity,
-      urlQuery
-    )
+    fetchInitEntityAction(platform, selectedEntity, network, serverInfo, attributes[selectedEntity], urlEntity, query)
   );
   dispatch(completeFullLoadAction(true));
 };
@@ -343,14 +339,13 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
 
 export const shareReport = () => async (dispatch, state) => {
   const { selectedEntity, columns, sort, selectedFilters, selectedConfig } = state().app;
-  const { network, platform } = selectedConfig;
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity]);
   query = setLimit(query, 5000);
   const serializedQuery = JSON.stringify(query);
   const hostUrl = window.location.origin;
   const encodedUrl = base64url(serializedQuery);
-  const shareLink = `${hostUrl}?e=${platform}/${network}/${selectedEntity}&q=${encodedUrl}`;
+  const shareLink = `${hostUrl}?e=${encodeURIComponent(selectedConfig.displayName)}/${encodeURIComponent(selectedEntity)}&q=${encodedUrl}`;
   const textField = document.createElement('textarea');
   textField.innerText = shareLink;
   document.body.appendChild(textField);
