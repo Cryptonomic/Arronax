@@ -333,10 +333,15 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
 
   ordering.forEach(o => {
     if (query.aggregation !== undefined && query.aggregation.length > 0) {
-        if (!query.fields.includes(o.orderBy)) { return; }
+        if (!query.fields.includes(o.orderBy)) {
+            return;
+        } else {
+            const f = aggregations.find(i => i.name === o.orderBy).function;
+            query = addOrdering(query, `${f}_${o.orderBy}`, o.order);
+        }
+    } else {
+        query = addOrdering(query, o.orderBy, o.order);
     }
-
-    query = addOrdering(query, o.orderBy, o.order);
   });
 
   return query;

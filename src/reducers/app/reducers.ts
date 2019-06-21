@@ -121,14 +121,16 @@ let initialState: AppState = {
       { name: 'sum', displayName: 'Sum' },
       { name: 'avg', displayName: 'Average' },
       { name: 'min', displayName: 'Min' },
-      { name: 'max', displayName: 'Max' }
+      { name: 'max', displayName: 'Max' },
+      { name: 'count', displayName: 'Count' }
     ],
     string: [
       { name: 'count', displayName: 'Count' }
     ],
     dateTime: [
       { name: 'min', displayName: 'Min' },
-      { name: 'max', displayName: 'Max' }
+      { name: 'max', displayName: 'Max' },
+      { name: 'count', displayName: 'Count' }
     ]
   },
   aggCount: {},
