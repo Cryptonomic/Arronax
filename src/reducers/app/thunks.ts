@@ -56,24 +56,12 @@ export const fetchValues = (attribute: string) => async (dispatch, state) => {
   const { network, platform, url, apiKey } = selectedConfig;
   dispatch(setLoadingAction(true));
   const serverInfo = { url, apiKey };
-  const values = await getAttributeValues(
-    serverInfo,
-    platform,
-    network,
-    selectedEntity,
-    attribute
-  );
+  const values = await getAttributeValues(serverInfo, platform, network, selectedEntity, attribute);
   dispatch(setAvailableValuesAction(selectedEntity, attribute, values));
   dispatch(setLoadingAction(false));
 };
 
-const initCardinalityValues = (
-  platform: string,
-  entity: string,
-  network: string,
-  attribute: string,
-  serverInfo: any
-) => async dispatch => {
+const initCardinalityValues = (platform: string, entity: string, network: string, attribute: string, serverInfo: any) => async dispatch => {
   const values = await getAttributeValues(
     serverInfo,
     platform,
@@ -119,7 +107,7 @@ export const fetchInitEntityAction = (
   urlEntity: string,
   urlQuery: string
 ) => async (dispatch: any) => {
-  const defaultQuery = urlEntity === entity && urlQuery ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
+  const defaultQuery = (urlEntity === entity && urlQuery) ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
   let columns: any[] = [];
   let sorts: Sort[];
   let filters: Filter[] = [];
@@ -140,7 +128,7 @@ export const fetchInitEntityAction = (
       columns = attributes;
     }
 
-    if(orderBy.length > 0) {
+    if (orderBy.length > 0) {
       sorts = orderBy.map(o => { return { orderBy: o.field, order: o.direction } });
     } else {
       // adding the default sort
@@ -193,14 +181,12 @@ export const fetchInitEntityAction = (
 
     query = addFields(query, ...getAttributeNames(sortedAttributes));
     columns = sortedAttributes;
-    //attributeNames.forEach(a => query = addFields(query, a));
     query = setLimit(query, 5000);
 
     if (levelColumn !== undefined) {
         sorts = [{ orderBy: levelColumn.name, order: ConseilSortDirection.DESC }];
         query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
     }
-    console.log(query);
   }
 
   const items = await executeEntityQuery(serverInfo, platform, network, entity, query)
@@ -217,7 +203,7 @@ export const initLoad = (environmentInfo?: string, query?: string) => async (dis
   let urlEntity = '';
   if (environmentInfo && query) {
       const environmentName = environmentInfo.split('/')[0];
-      const urlEntity = environmentInfo.split('/')[1];
+      urlEntity = environmentInfo.split('/')[1];
 
       await dispatch(initMainParamsAction(environmentName, urlEntity));
   }
@@ -230,10 +216,12 @@ export const initLoad = (environmentInfo?: string, query?: string) => async (dis
     dispatch(createMessageAction(`Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`, true));
     return [];
   });
+
   if (entities.length === 0) {
     dispatch(completeFullLoadAction(true));
     return;
   }
+
   if (selectedConfig.entities && selectedConfig.entities.length > 0) {
       let filteredEntities: EntityDefinition[] = [];
       selectedConfig.entities.forEach(e => {
@@ -287,10 +275,7 @@ export const fetchAttributes = async (platform: string, entity: string, network:
   const attributes = await getAttributes(serverInfo, platform, network, entity).catch(err => {
     throw entity;
   });
-  return {
-    entity,
-    attributes
-  };
+  return { entity, attributes };
 };
 
 const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], ordering: Sort[], aggregations: Aggregation[]) => {
