@@ -22,11 +22,17 @@ import {
   INIT_ENTITY_PROPERTIES,
   INIT_FILTER,
   INIT_MAIN_PARAMS,
-  INIT_ATTRIBUTES
+  INIT_ATTRIBUTES,
+  ADD_AGGREGATION,
+  REMOVE_AGGREGATION,
+  CHANGE_AGGREGATION,
+  INIT_AGGREGATION,
+  SET_AGGREGATION_COUNT,
+  SET_SUBMIT
 } from './types';
 
 import { EntityDefinition } from 'conseiljs';
-import { Filter, Config } from '../../types';
+import { Filter, Config, Aggregation } from '../../types';
 import { getLocalAttributes } from '../../utils/attributes';
 import { getConfigs, saveConfigs } from '../../utils/getconfig';
 
@@ -50,6 +56,9 @@ export interface AppState {
   sort: object;
   configs: Config[];
   selectedConfig: Config;
+  aggregations: object;
+  aggFunctions: object;
+  aggCount: object;
 }
 
 let initialState: AppState = {
@@ -105,7 +114,24 @@ let initialState: AppState = {
   rowCount: 50,
   filterCount: {},
   selectedModalItem: {},
-  sort: {}
+  sort: {},
+  aggregations: {},
+  aggFunctions: {
+    numeric: [
+      { name: 'sum', displayName: 'Sum' },
+      { name: 'avg', displayName: 'Average' },
+      { name: 'min', displayName: 'Min' },
+      { name: 'max', displayName: 'Max' }
+    ],
+    string: [
+      { name: 'count', displayName: 'Count' }
+    ],
+    dateTime: [
+      { name: 'min', displayName: 'Min' },
+      { name: 'max', displayName: 'Max' }
+    ]
+  },
+  aggCount: {},
 };
 
 export const app = (state = initialState, action) => {
@@ -220,6 +246,8 @@ export const app = (state = initialState, action) => {
       const items = { ...state.items, [action.entity]: action.items };
       const selectedFilters = { ...state.selectedFilters, [action.entity]: action.filters };
       const availableValues = { ...state.availableValues, [action.entity]: {} };
+      const aggCount = { ...state.aggCount, [action.entity]: 0 };
+      const aggregations = { ...state.aggregations, [action.entity]: [] };
 
       return {
         ...state,
@@ -228,7 +256,9 @@ export const app = (state = initialState, action) => {
         selectedFilters,
         availableValues,
         columns,
-        items
+        items,
+        aggCount,
+        aggregations
       };
     }
     case INIT_FILTER: {
@@ -249,6 +279,47 @@ export const app = (state = initialState, action) => {
         ...state,
         attributes: action.attributes
       }
+    }
+    case ADD_AGGREGATION: {
+      const aggregations = {...state.aggregations};
+      let entityAggs = aggregations[action.entity];
+      const emptyAgg: Aggregation = {
+        name: '',
+        type: ''
+      };
+      entityAggs = entityAggs.concat(emptyAgg);
+      aggregations[action.entity] = entityAggs;
+      return { ...state, aggregations };
+    }
+    case REMOVE_AGGREGATION: {
+      const aggregations = {...state.aggregations};
+      let entityAggs = aggregations[action.entity];
+      entityAggs.splice(action.index, 1);
+      aggregations[action.entity] = [...entityAggs];
+      return { ...state, aggregations };
+    }
+    case CHANGE_AGGREGATION: {
+      const aggregations = {...state.aggregations};
+      let entityAggs = aggregations[action.entity];
+      entityAggs[action.index] = action.aggregation;
+      aggregations[action.entity] = [...entityAggs];
+      return { ...state, aggregations };
+    }
+    case SET_AGGREGATION_COUNT: {
+      const selectedEntity = state.selectedEntity;
+      const aggCount = { ...state.aggCount, [selectedEntity]: action.count };
+      return { ...state, aggCount };
+    }
+    case INIT_AGGREGATION: {
+      const aggregations = {...state.aggregations, [action.entity]: []};
+      const aggCount = { ...state.aggCount, [action.entity]: 0 };
+      return { ...state, aggregations, aggCount };
+    }
+    case SET_SUBMIT: {
+      const items = { ...state.items, [action.entity]: action.items };
+      const filterCount = { ...state.filterCount, [action.entity]: action.filterCount };
+      const aggCount = { ...state.aggCount, [action.entity]: action.aggCount };
+      return { ...state, items, filterCount, aggCount };
     }
   }
   return state;

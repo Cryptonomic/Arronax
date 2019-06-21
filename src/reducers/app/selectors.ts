@@ -87,3 +87,18 @@ export const getSelectedConfig = createSelector(
   getAppState,
   apps => apps.selectedConfig
 );
+
+export const getAggregations = createSelector(
+  getAppState,
+  apps => apps.aggregations[apps.selectedEntity] || []
+);
+
+export const getAggFunctions = createSelector(
+  getAppState,
+  apps => apps.aggFunctions
+);
+
+export const getAggCount = createSelector(
+  getAppState,
+  apps => apps.aggCount[apps.selectedEntity]
+);
