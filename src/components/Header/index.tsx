@@ -200,7 +200,7 @@ const Header: React.FC<Props> = props => {
               selectedConfig.url === config.url && selectedConfig.apiKey === config.apiKey;
             return (
               <MainMenuItem
-                key={config.network}
+                key={config.displayName}
                 onClick={() => changeNetwork(config)}
               >
                 <Radio
