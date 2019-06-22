@@ -86,9 +86,9 @@ export const changeNetwork = (config: Config) => async (dispatch, state) => {
 };
 
 function clearSortAndAggregations(columns: AttributeDefinition[], sort: Sort, aggregations: Aggregation[]) {
-  const sortedColum = columns.find(col => col.name === sort.orderBy);
+  const sortedColumn = columns.find(col => col.name === sort.orderBy);
   let newSort = [sort];
-  if (!sortedColum) {
+  if (!sortedColumn) {
     const levelColumn = columns.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || columns[0];
     newSort = [{
       orderBy: levelColumn.name,
