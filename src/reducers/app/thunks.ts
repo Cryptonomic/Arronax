@@ -85,11 +85,43 @@ export const changeNetwork = (config: Config) => async (dispatch, state) => {
   await dispatch(initLoad());
 };
 
+function clearSortAndAggregations(columns: AttributeDefinition[], sort: Sort, aggregations: Aggregation[]) {
+  const sortedColum = columns.find(col => col.name === sort.orderBy);
+  let newSort = [sort];
+  if (!sortedColum) {
+    const levelColumn = columns.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || columns[0];
+    newSort = [{
+      orderBy: levelColumn.name,
+      order: ConseilSortDirection.DESC
+    }];
+  }
+  const newAggs = [];
+  aggregations.forEach(agg => {
+    const colIndex = columns.findIndex(col => col.name === agg.field);
+    if (colIndex > -1) {
+      newAggs.push(agg);
+    } 
+  });
+
+  return {
+    sorts: newSort,
+    aggs: newAggs
+  };
+}
+
+export const setColumnsThunk = (columns: AttributeDefinition[]) => async (dispatch, state) => {
+  const { selectedEntity, sort, aggregations } = state().app;
+  const { sorts, aggs } = clearSortAndAggregations(columns, sort[selectedEntity], aggregations[selectedEntity]);
+  
+  await dispatch(setColumnsAction(selectedEntity, columns, sorts, aggs));
+};
+
 export const resetColumns = () => async (dispatch, state) => {
-  const { selectedEntity } = state().app;
+  const { selectedEntity, sort, aggregations, attributes } = state().app;
   const initProperty = InitProperties[selectedEntity];
-  const columns = initProperty ? initProperty.columns : [];
-  await dispatch(setColumnsAction(selectedEntity, columns));
+  const columns = initProperty ? initProperty.columns : sortAttributes(attributes[selectedEntity]);
+  const { sorts, aggs } = clearSortAndAggregations(columns, sort[selectedEntity], aggregations[selectedEntity]);
+  await dispatch(setColumnsAction(selectedEntity, columns, sorts, aggs));
 };
 
 export const resetFilters = () => async (dispatch, state) => {
@@ -122,7 +154,8 @@ export const fetchInitEntityAction = (
   let aggregations: Aggregation[] = [];
   let cardinalityPromises: any[] = [];
   let query = blankQuery();
-  const levelColumn = attributes.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || columns[0];
+  const sortedAttributes = sortAttributes(attributes);
+  const levelColumn = attributes.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || sortedAttributes[0];
 
   if (defaultQuery) {
     const { fields, predicates, orderBy } = defaultQuery;
@@ -134,7 +167,7 @@ export const fetchInitEntityAction = (
         if (column) { columns.push(column); }
       });
     } else {
-      columns = attributes;
+      columns = sortedAttributes;
     }
 
     if (orderBy.length > 0) {
@@ -194,23 +227,17 @@ export const fetchInitEntityAction = (
     const initProperty = { columns, filters, aggregations };
     InitProperties = { ...InitProperties, [entity]: initProperty };
   } else {
-    const sortedAttributes = sortAttributes(attributes);
-
     query = addFields(query, ...getAttributeNames(sortedAttributes));
     columns = sortedAttributes;
     query = setLimit(query, 5000);
-
-    if (levelColumn !== undefined) {
-      sorts = [{ orderBy: levelColumn.name, order: ConseilSortDirection.DESC }];
-      query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
-    }
+    sorts = [{ orderBy: levelColumn.name, order: ConseilSortDirection.DESC }];
+    query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
   }
 
-  const items = await executeEntityQuery(serverInfo, platform, network, entity, query)
-            .catch(() => {
-            dispatch(createMessageAction(`Unable to retrieve data for ${entity} request.`, true));
-            return [];
-        });
+  const items = await executeEntityQuery(serverInfo, platform, network, entity, query).catch(() => {
+    dispatch(createMessageAction(`Unable to retrieve data for ${entity} request.`, true));
+    return [];
+  });
   
   await dispatch(initEntityPropertiesAction(entity, filters, sorts, columns, items, aggregations));
   await Promise.all(cardinalityPromises);
@@ -328,7 +355,7 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
 
   aggregations.forEach((agg: Aggregation) => {
     query = addAggregationFunction(query, agg.field, agg.function);
-  });
+  });  
 
   ordering.forEach(o => {
     query = addOrdering(query, o.orderBy, o.order);

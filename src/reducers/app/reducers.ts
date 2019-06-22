@@ -138,8 +138,10 @@ export const app = (state = initialState, action) => {
       const items = { ...state.items, [action.entity]: action.items };
       return { ...state, items };
     case SET_COLUMNS: {
-      const columns = {...state.columns, [action.entity]: action.items};
-      return { ...state, columns };
+      const columns = {...state.columns, [action.entity]: action.columns};
+      const sort = {...state.sort, [action.entity]: action.sorts};
+      const aggregations = {...state.aggregations, [action.entity]: action.aggregations};
+      return { ...state, columns, sort, aggregations };
     }
     case SET_TAB:
       return { ...state, selectedEntity: action.entity };

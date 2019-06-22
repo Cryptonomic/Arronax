@@ -38,11 +38,13 @@ export function setItemsAction(entity: string, items: any[]) {
   }
 }
 
-export function setColumnsAction(entity: string, items: any[]) {
+export function setColumnsAction(entity: string, columns: AttributeDefinition[], sorts: Sort[], aggregations: Aggregation[]) {
   return {
     type: SET_COLUMNS,
     entity,
-    items
+    columns,
+    sorts,
+    aggregations
   }
 }
 
