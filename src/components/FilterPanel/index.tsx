@@ -231,7 +231,7 @@ class FilterPanel extends React.Component<Props, {}> {
             Reset
           </ResetButton>
           <RunButton onClick={onSubmit}>
-            Run
+            Apply
           </RunButton>
         </ButtonContainer>
       </Container>

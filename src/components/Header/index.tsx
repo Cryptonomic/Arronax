@@ -175,7 +175,7 @@ const Header: React.FC<Props> = props => {
     <HeaderContainer>
       <HeaderLogo>ARRONAX beta</HeaderLogo>
       <IconContainer>
-        <ArronaxIcon size="22px" color="#FFFFFF" iconName="icon-tz" />
+        <ArronaxIcon size="22px" color="#FFFFFF" iconName="icon-octopus-logo" />
       </IconContainer>
       <SelectContainer>
         <MenuBtn
@@ -193,7 +193,7 @@ const Header: React.FC<Props> = props => {
           onClose={handleClose}
         >
           <MenuHeaderItem value="" disabled>
-            Select Preferred Tezos Network
+            Select Preferred Network
           </MenuHeaderItem>
           {mainConfigs.map(config => {
             const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&

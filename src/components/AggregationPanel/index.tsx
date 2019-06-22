@@ -181,7 +181,7 @@ class AggregationPanel extends React.Component<Props, States> {
             Reset
           </ResetButton>
           <RunButton onClick={this.handleSubmit}>
-            Run
+            Apply
           </RunButton>
         </ButtonContainer>
       </Container>
@@ -197,8 +197,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  setAggregations: (entity: string, aggregations: Aggregation[]) =>
-    dispatch(setAggregationAction(entity, aggregations)),
+  setAggregations: (entity: string, aggregations: Aggregation[]) => dispatch(setAggregationAction(entity, aggregations)),
   resetAggregations: () => dispatch(resetAggregations()),
 });
 
