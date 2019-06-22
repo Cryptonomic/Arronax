@@ -22,11 +22,13 @@ import {
   INIT_ATTRIBUTES,
   SET_CONFIG,
   ADD_CONFIG,
-  REMOVE_CONFIG
+  REMOVE_CONFIG,
+  SET_AGGREGATIONS,
+  SET_SUBMIT
 } from './types';
 
 import { AttributeDefinition, EntityDefinition } from 'conseiljs';
-import { Sort, Filter, Config } from '../../types';
+import { Sort, Filter, Config, Aggregation } from '../../types';
 
 export function setItemsAction(entity: string, items: any[]) {
   return {
@@ -36,11 +38,13 @@ export function setItemsAction(entity: string, items: any[]) {
   }
 }
 
-export function setColumnsAction(entity: string, items: any[]) {
+export function setColumnsAction(entity: string, columns: AttributeDefinition[], sorts: Sort[], aggregations: Aggregation[]) {
   return {
     type: SET_COLUMNS,
     entity,
-    items
+    columns,
+    sorts,
+    aggregations
   }
 }
 
@@ -173,14 +177,15 @@ export function setEntitiesAction(entities: EntityDefinition[]) {
   }
 }
 
-export function initEntityPropertiesAction(entity: string, filters: Filter[], sorts: Sort[], columns: any[], items: any[]) {
+export function initEntityPropertiesAction(entity: string, filters: Filter[], sorts: Sort[], columns: any[], items: any[], aggregations: Aggregation[]) {
   return {
     type: INIT_ENTITY_PROPERTIES,
     entity,
     filters,
     sorts,
     columns,
-    items
+    items,
+    aggregations
   }
 }
 
@@ -192,18 +197,31 @@ export function initFilterAction(entity: string, filters: Filter[]) {
   }
 }
 
-export function initMainParamsAction(platform: string, network: string, entity: string) {
-  return {
-    type: INIT_MAIN_PARAMS,
-    platform,
-    network,
-    entity
-  }
+export function initMainParamsAction(configName: string, entity: string) {
+  return { type: INIT_MAIN_PARAMS, configName, entity }
 }
 
-export function initATttributesAction(attributes) {
+export function initAttributesAction(attributes) {
   return {
     type: INIT_ATTRIBUTES,
     attributes
+  }
+}
+
+export function setAggregationAction(entity: string, aggregations: Aggregation[]) {
+  return {
+    type: SET_AGGREGATIONS,
+    entity,
+    aggregations
+  }
+}
+
+
+export function setSubmitAction(entity: string, items: any[], filterCount: number) {
+  return {
+    type: SET_SUBMIT,
+    entity,
+    items,
+    filterCount
   }
 }

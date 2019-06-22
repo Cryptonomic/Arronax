@@ -13,7 +13,8 @@ import {
   getAttributesAll,
   getModalItem,
   getSort,
-  getEntities
+  getEntities,
+  getAggregations
 } from '../../reducers/app/selectors';
 import { getItemByPrimaryKey, submitQuery } from '../../reducers/app/thunks';
 import { setSortAction } from '../../reducers/app/actions';
@@ -21,7 +22,7 @@ import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
 import EntityModal from '../../components/EntityModal';
-import { Sort, Config } from '../../types';
+import { Sort, Config, Aggregation } from '../../types';
 
 const TableContainer = muiStyled(Table)({
   width: '100%',
@@ -44,7 +45,8 @@ interface Props {
   isLoading: boolean;
   selectedSort: Sort;
   entities: EntityDefinition[];
-  isModalUrl?: boolean,
+  isModalUrl?: boolean;
+  aggregations: Aggregation[];
   onExportCsv: () => void;
   getModalItemAction: (entity: string, key: string, value: string | number) => void;
   onSubmitQuery: () => void;
@@ -121,6 +123,7 @@ class CustomTable extends React.Component<Props, State> {
       selectedSort,
       isLoading,
       entities,
+      aggregations,
       onExportCsv
     } = this.props;
     const { page, referenceEntity, isOpenedModal} = this.state;
@@ -137,6 +140,7 @@ class CustomTable extends React.Component<Props, State> {
           <TableContainer>
             <CustomTableHeader
               rows={selectedColumns}
+              aggregations={aggregations}
               order={selectedSort.order}
               orderBy={selectedSort.orderBy}
               createSortHandler={this.handleRequestSort}
@@ -150,6 +154,7 @@ class CustomTable extends React.Component<Props, State> {
                     key={index}
                     item={row}
                     platform={platform}
+                    aggregations={aggregations}
                     selectedEntity={selectedEntity}
                     onClickPrimaryKey={this.onOpenModal}
                   />
@@ -186,7 +191,8 @@ const mapStateToProps = (state: any) => ({
   selectedModalItem: getModalItem(state),
   attributes: getAttributesAll(state),
   selectedSort: getSort(state),
-  entities: getEntities(state)
+  entities: getEntities(state),
+  aggregations: getAggregations(state)
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

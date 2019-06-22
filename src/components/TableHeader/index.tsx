@@ -1,48 +1,75 @@
 import React from 'react';
-import styled from 'styled-components';
-import TableCell, { TableCellProps } from '@material-ui/core/TableCell';
+import muiStyled from '@material-ui/styles/styled';
+import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
+import { Aggregation } from '../../types';
 
-const TableCellWrapper = styled(TableCell)`
-  &&& {
-    color: #4a4a4a;
-    font-size: 16px;
-    font-weight: 400;
-    letter-spacing: 1.95px;
-    border: none;
-  }
-` as React.ComponentType<TableCellProps>;
+const TableCellWrapper = muiStyled(TableCell)({
+  color: '#4a4a4a',
+  fontSize: '16px',
+  fontWeight: 400,
+  letterSpacing: '1.95px',
+  border: 'none'
+});
+
+const SortLabelWrapper = muiStyled(TableSortLabel)({
+  textTransform: 'capitalize'
+});
 
 interface Props {
   order: 'asc' | 'desc';
   orderBy: string;
   rows: any[];
+  aggregations: Aggregation[];
   createSortHandler(key: string): void;
 }
 
 const TableHeader: React.FC<Props> = props => {
-  const { rows, order, orderBy, createSortHandler } = props;
+  const { rows, aggregations, order, orderBy, createSortHandler } = props;
+
   return (
     <TableHead>
       <TableRow>
-        {rows.map((row, index) => {
-          return (
-            <TableCellWrapper
-              key={index}
-              sortDirection={orderBy === row.name ? order : false}
-              align="left"
-            >
-              <TableSortLabel
-                active={orderBy === row.name}
-                direction={order}
-                onClick={() => createSortHandler(row.name)}
+        {rows.map(row => {
+          const selectedAggs = aggregations.filter(agg => agg.field === row.name);
+          if (selectedAggs.length > 0) {
+            return selectedAggs.map(agg=> {
+              const keyName = `${agg.function}_${agg.field}`;
+              return (
+                <TableCellWrapper
+                  key={keyName}
+                  sortDirection={orderBy === keyName ? order : false}
+                  align="left"
+                >
+                  <SortLabelWrapper
+                    active={orderBy === keyName}
+                    direction={order}
+                    onClick={() => createSortHandler(keyName)}
+                  >
+                    {agg.function}{' '}{row.displayName}
+                  </SortLabelWrapper>
+                </TableCellWrapper>
+              );
+            });
+          } else {
+            return (
+              <TableCellWrapper
+                key={row.name}
+                sortDirection={orderBy === row.name ? order : false}
+                align="left"
               >
-                {row.displayName}
-              </TableSortLabel>
-            </TableCellWrapper>
-          );
+                <SortLabelWrapper
+                  active={orderBy === row.name}
+                  direction={order}
+                  onClick={() => createSortHandler(row.name)}
+                >
+                  {row.displayName}
+                </SortLabelWrapper>
+              </TableCellWrapper>
+            );
+          }
         })}
       </TableRow>
     </TableHead>

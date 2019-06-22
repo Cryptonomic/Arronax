@@ -11,10 +11,7 @@ import {
   getAttributes,
   getEntity
 } from '../../reducers/app/selectors';
-import {
-  setColumnsAction
-} from '../../reducers/app/actions';
-import { resetColumns } from '../../reducers/app/thunks';
+import { resetColumns, setColumnsThunk } from '../../reducers/app/thunks';
 
 const Container = styled.div<{ count: number }>`
   width: ${({ count }) => count*372 + 'px' };
@@ -75,7 +72,7 @@ type Props = {
   selectedEntity: string;
   attributes: AttributeDefinition[];
   onSubmit: () => void;
-  setColumns: (entity: string, columns: AttributeDefinition[]) => void;
+  setColumns: (columns: AttributeDefinition[]) => void;
   onResetColumns: () => void;
 };
 
@@ -107,7 +104,7 @@ class ColumnsPanel extends React.Component<Props, States> {
   handleSubmit = async () => {
     const { selected } = this.state;
     const { selectedEntity, setColumns, onSubmit } = this.props;
-    await setColumns(selectedEntity, selected);
+    await setColumns(selected);
     await onSubmit();
   };
 
@@ -197,10 +194,8 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  setColumns: (entity: string, columns: object[]) =>
-    dispatch(setColumnsAction(entity, columns)),
-  onResetColumns: () =>
-    dispatch(resetColumns())
+  setColumns: (columns: AttributeDefinition[]) => dispatch(setColumnsThunk(columns)),
+  onResetColumns: () => dispatch(resetColumns())
 });
 
 export default connect(

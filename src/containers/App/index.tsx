@@ -31,7 +31,8 @@ import {
   getIsFullLoaded,
   getFilterCount,
   getColumns,
-  getEntities
+  getEntities,
+  getAggregations
 } from '../../reducers/app/selectors';
 import { getErrorState, getMessageTxt } from '../../reducers/message/selectors';
 import {
@@ -177,6 +178,7 @@ export interface Props extends RouteProps {
   items: object[];
   isFullLoaded: boolean;
   filterCount: number;
+  aggCount: number;
   selectedColumns: EntityDefinition[];
   entities: EntityDefinition[];
   isError: boolean;
@@ -221,17 +223,12 @@ class Arronax extends React.Component<Props, States> {
     const { initLoad, location } = this.props;
     if (location) {
       const search = new URLSearchParams(location.search);
-      const e = search.get('e');
-      const q = search.get('q');
-      const m = search.get('m');
-      if (m && m === 'true') {
-        this.setState({isModalUrl: true});
-      }
-      initLoad(e, q);
+      const modal = search.get('m');
+      if (modal && modal === 'true') { this.setState({isModalUrl: true}); }
+      initLoad(search.get('e'), search.get('q'));
     } else {
       initLoad('', '');
     }
-    
   }
 
   onChangeNetwork = (config: Config) => {
@@ -323,6 +320,7 @@ class Arronax extends React.Component<Props, States> {
       items,
       isFullLoaded,
       filterCount,
+      aggCount,
       selectedColumns,
       entities,
       isError,
@@ -363,6 +361,7 @@ class Arronax extends React.Component<Props, States> {
                 isCollapsed={isSettingCollapsed}
                 selectedTool={selectedTool}
                 filterCount={filterCount}
+                aggCount={aggCount}
                 columnsCount={selectedColumns.length}
                 onChangeTool={this.onChangeTool}
                 onExportCsv={this.onExportCsv}
@@ -437,7 +436,8 @@ const mapStateToProps = (state: any) => ({
   selectedColumns: getColumns(state),
   entities: getEntities(state),
   isError: getErrorState(state),
-  message: getMessageTxt(state)
+  message: getMessageTxt(state),
+  aggCount: getAggregations(state).length
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

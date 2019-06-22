@@ -27,3 +27,5 @@ export const INIT_ATTRIBUTES = 'INIT_ATTRIBUTES';
 export const SET_CONFIG = 'SET_CONFIG';
 export const ADD_CONFIG = 'ADD_CONFIG';
 export const REMOVE_CONFIG = 'REMOVE_CONFIG';
+export const SET_AGGREGATIONS = 'SET_AGGREGATIONS';
+export const SET_SUBMIT = 'SET_SUBMIT';

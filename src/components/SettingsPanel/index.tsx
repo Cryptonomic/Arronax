@@ -6,6 +6,7 @@ import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import SwipeableViews from 'react-swipeable-views';
 import FilterPanel from '../FilterPanel';
 import ColumnsPanel from '../ColumnsPanel';
+import AggregationPanel from '../AggregationPanel';
 import { ToolType } from '../../types';
 
 const Container = styled.div`
@@ -64,7 +65,13 @@ class SettingsPanel extends React.Component<Props, {}> {
       onClose,
       onSubmit
     } = this.props;
-    const activeIndex = selectedTool === ToolType.FILTER ? 0 : 1;
+    // const activeIndex = selectedTool === ToolType.FILTER ? 0 : 1;
+    let activeIndex = 0;
+    if (selectedTool === ToolType.COLUMN) {
+      activeIndex = 1;
+    } else if (selectedTool === ToolType.AGGREGATION) {
+      activeIndex = 2;
+    }
     return (
       <Collapse in={isCollapsed}>
         <Container>
@@ -80,6 +87,7 @@ class SettingsPanel extends React.Component<Props, {}> {
           >
             <FilterPanel onSubmit={onSubmit} swipeRef={this.swipeableActions} />
             <ColumnsPanel onSubmit={onSubmit} />
+            <AggregationPanel onSubmit={onSubmit} swipeRef={this.swipeableActions} />
           </SwipeableViewsWrapper>
         </Container>
       </Collapse>
