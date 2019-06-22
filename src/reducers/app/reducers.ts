@@ -23,11 +23,7 @@ import {
   INIT_FILTER,
   INIT_MAIN_PARAMS,
   INIT_ATTRIBUTES,
-  ADD_AGGREGATION,
-  REMOVE_AGGREGATION,
-  CHANGE_AGGREGATION,
-  INIT_AGGREGATION,
-  SET_AGGREGATION_COUNT,
+  SET_AGGREGATIONS,
   SET_SUBMIT
 } from './types';
 
@@ -58,7 +54,6 @@ export interface AppState {
   selectedConfig: Config;
   aggregations: object;
   aggFunctions: object;
-  aggCount: object;
 }
 
 let initialState: AppState = {
@@ -132,8 +127,7 @@ let initialState: AppState = {
       { name: 'max', displayName: 'Max' },
       { name: 'count', displayName: 'Count' }
     ]
-  },
-  aggCount: {},
+  }
 };
 
 export const app = (state = initialState, action) => {
@@ -245,8 +239,7 @@ export const app = (state = initialState, action) => {
       const items = { ...state.items, [action.entity]: action.items };
       const selectedFilters = { ...state.selectedFilters, [action.entity]: action.filters };
       const availableValues = { ...state.availableValues, [action.entity]: {} };
-      const aggCount = { ...state.aggCount, [action.entity]: 0 };
-      const aggregations = { ...state.aggregations, [action.entity]: [] };
+      const aggregations = { ...state.aggregations, [action.entity]: action.aggregations };
 
       return {
         ...state,
@@ -256,7 +249,6 @@ export const app = (state = initialState, action) => {
         availableValues,
         columns,
         items,
-        aggCount,
         aggregations
       };
     }
@@ -266,15 +258,15 @@ export const app = (state = initialState, action) => {
       return { ...state, selectedFilters, filterCount };
     }
     case INIT_MAIN_PARAMS: {
-        const config = configs.filter(c => c.displayName === action.configName)[0];
-        // TODO: error handling
-        return {
-            ...state,
-            platform: action.platform,
-            network: action.network,
-            selectedConfig: config,
-            selectedEntity: action.entity
-        };
+      const config = configs.filter(c => c.displayName === action.configName)[0];
+      // TODO: error handling
+      return {
+        ...state,
+        platform: action.platform,
+        network: action.network,
+        selectedConfig: config,
+        selectedEntity: action.entity
+      };
     }
     case INIT_ATTRIBUTES: {
       return {
@@ -282,46 +274,15 @@ export const app = (state = initialState, action) => {
         attributes: action.attributes
       }
     }
-    case ADD_AGGREGATION: {
-      const aggregations = {...state.aggregations};
-      let entityAggs = aggregations[action.entity];
-      const emptyAgg: Aggregation = {
-        name: '',
-        type: ''
-      };
-      entityAggs = entityAggs.concat(emptyAgg);
-      aggregations[action.entity] = entityAggs;
+    case SET_AGGREGATIONS: {
+      const aggregations = {...state.aggregations, [action.entity]: action.aggregations};
       return { ...state, aggregations };
     }
-    case REMOVE_AGGREGATION: {
-      const aggregations = {...state.aggregations};
-      let entityAggs = aggregations[action.entity];
-      entityAggs.splice(action.index, 1);
-      aggregations[action.entity] = [...entityAggs];
-      return { ...state, aggregations };
-    }
-    case CHANGE_AGGREGATION: {
-      const aggregations = {...state.aggregations};
-      let entityAggs = aggregations[action.entity];
-      entityAggs[action.index] = action.aggregation;
-      aggregations[action.entity] = [...entityAggs];
-      return { ...state, aggregations };
-    }
-    case SET_AGGREGATION_COUNT: {
-      const selectedEntity = state.selectedEntity;
-      const aggCount = { ...state.aggCount, [selectedEntity]: action.count };
-      return { ...state, aggCount };
-    }
-    case INIT_AGGREGATION: {
-      const aggregations = {...state.aggregations, [action.entity]: []};
-      const aggCount = { ...state.aggCount, [action.entity]: 0 };
-      return { ...state, aggregations, aggCount };
-    }
+    
     case SET_SUBMIT: {
       const items = { ...state.items, [action.entity]: action.items };
       const filterCount = { ...state.filterCount, [action.entity]: action.filterCount };
-      const aggCount = { ...state.aggCount, [action.entity]: action.aggCount };
-      return { ...state, items, filterCount, aggCount };
+      return { ...state, items, filterCount };
     }
   }
   return state;

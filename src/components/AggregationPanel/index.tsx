@@ -9,12 +9,8 @@ import {
   getColumns,
   getEntity
 } from '../../reducers/app/selectors';
-import {
-  addAggregationAction,
-  removeAggregationAction,
-  changeAggregationAction,
-  initAggregationAction
-} from '../../reducers/app/actions';
+import { setAggregationAction } from '../../reducers/app/actions';
+import { resetAggregations } from '../../reducers/app/thunks';
 import FilterSelect from '../FilterSelect';
 import { Aggregation } from '../../types';
 import { getOperatorType } from '../../utils/general';
@@ -40,93 +36,115 @@ type Props = {
   aggregations: Aggregation[];
   aggFunctions: any;
   swipeRef: any;
-  addAggregation: (entity: string) => void;
-  removeAggregation: (entity: string, index: number) => void;
-  changeAggregation: (entity: string, aggregation: Aggregation, index: number) => void;
+  setAggregations: (entity: string, aggregations: Aggregation[]) => void;
   resetAggregations: () => void;
   onSubmit: () => void;
 };
 
-class AggregationPanel extends React.Component<Props, {}> {
+type States = {
+  localAggs: Aggregation[];
+  prevPropsAggs: Aggregation[];
+};
+
+class AggregationPanel extends React.Component<Props, States> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      localAggs: [],
+      prevPropsAggs: []
+    };
+  }
+
+  static getDerivedStateFromProps(props: Props, state: States) {
+    if (props.aggregations !== state.prevPropsAggs) {
+      return {
+        prevPropsAggs: props.aggregations,
+        localAggs: props.aggregations
+      };
+    }
+    return null;
+  }
+
   onAddAggregation = async () => {
-    const { addAggregation, selectedEntity, swipeRef } = this.props;
-    await addAggregation(selectedEntity);
-    swipeRef.updateHeight();
+    const { swipeRef } = this.props;
+    const { localAggs } = this.state;
+    const newAgg: Aggregation = { field: '', type: '' };
+    this.setState({localAggs: [...localAggs, newAgg]});
+    setTimeout(() => {
+      swipeRef.updateHeight();
+    });
   };
 
   onRemoveAggregation = (index: number) => {
-    const {
-      removeAggregation,
-      selectedEntity,
-    } = this.props;
-    removeAggregation(selectedEntity, index);
+    const { localAggs } = this.state;
+    localAggs.splice(index, 1);
+    this.setState({localAggs});
   };
 
   onAggregationNameChange = (attr: any, index: number) => {
-    const {
-      selectedEntity,
-      changeAggregation,
-      aggFunctions
-    } = this.props;
-
+    const { aggFunctions } = this.props;
+    const { localAggs } = this.state;
     const type = getOperatorType(attr.dataType);
     const aggregation = {
-      name: attr.name,
+      field: attr.name,
       type,
       function: aggFunctions[type][0].name
     };
-    changeAggregation(selectedEntity, aggregation, index);
+    localAggs[index] = aggregation;
+    this.setState({localAggs});
   };
 
   onFunctionChange = (func: any, index: number) => {
-    const {
-      aggregations,
-      selectedEntity,
-      changeAggregation,
-    } = this.props;
-
+    const { localAggs } = this.state;
     const aggregation: any = {
-      ...aggregations[index],
+      ...localAggs[index],
       function: func.name
     };
-    changeAggregation(selectedEntity, aggregation, index);
+    localAggs[index] = aggregation;
+    this.setState({localAggs});
   };
-
 
   onResetAggregations = () => {
     const { resetAggregations } = this.props;
     resetAggregations();
   };
 
+  handleSubmit = async () => {
+    const { localAggs } = this.state;
+    const { selectedEntity, setAggregations, onSubmit } = this.props;
+    const realAggs = localAggs.filter(agg => !!agg.function);
+    await setAggregations(selectedEntity, realAggs);
+    await onSubmit();
+  };
+
   render() {
     const {
       selectedEntity,
       columns,
-      aggregations,
-      aggFunctions,
-      onSubmit
+      aggFunctions
     } = this.props;
+    const { localAggs } = this.state;
     const entityName = selectedEntity.replace(/_/gi, ' ').slice(0, -1);
 
-    const aggLength = aggregations.length;
-    const lastAgg: Aggregation = aggLength > 0 ? aggregations[aggLength - 1] : {name: '', type: ''};
+    const aggLength = localAggs.length;
+    const lastAgg: Aggregation = aggLength > 0 ? localAggs[aggLength - 1] : {field: '', type: ''};
     let disableAddAgg = aggLength > 0 && !lastAgg.function;
 
     return (
       <Container>
         <MainContainer>
-          {aggregations.map((agg: Aggregation, index) => {
+          {localAggs.map((agg: Aggregation, index) => {
             return (
               <AggItemContainer key={index}>
                 <AggItemGr>
                   <FilterSelect
-                    value={agg.name}
+                    value={agg.field}
                     placeholder={`Select ${entityName} Attribute`}
                     items={columns}
                     onChange={attr => this.onAggregationNameChange(attr, index)}
                   />
-                  {agg.name && <HR />}
-                  {agg.name && (
+                  {agg.field && <HR />}
+                  {agg.field && (
                     <FilterSelect
                       value={agg.function}
                       placeholder='Select Function'
@@ -147,7 +165,7 @@ class AggregationPanel extends React.Component<Props, {}> {
             );
           })}
 
-          <AddAggFooter isFilters={aggregations.length > 0}>
+          <AddAggFooter isFilters={localAggs.length > 0}>
             <AddButton
               onClick={this.onAddAggregation}
               isDisabled={disableAddAgg}
@@ -162,7 +180,7 @@ class AggregationPanel extends React.Component<Props, {}> {
             <RefreshIcon size="23px" color="#56c2d9" iconName="icon-reset"/>
             Reset
           </ResetButton>
-          <RunButton onClick={onSubmit}>
+          <RunButton onClick={this.handleSubmit}>
             Run
           </RunButton>
         </ButtonContainer>
@@ -179,13 +197,9 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  addAggregation: (entity: string) => dispatch(addAggregationAction(entity)),
-  removeAggregation: (entity: string, index: number) =>
-    dispatch(removeAggregationAction(entity, index)),
-  changeAggregation: (entity: string, aggregation: Aggregation, index: number) =>
-    dispatch(changeAggregationAction(entity, aggregation, index)),
-  resetAggregations: (entity: string) =>
-    dispatch(initAggregationAction(entity)),
+  setAggregations: (entity: string, aggregations: Aggregation[]) =>
+    dispatch(setAggregationAction(entity, aggregations)),
+  resetAggregations: () => dispatch(resetAggregations()),
 });
 
 export default connect(

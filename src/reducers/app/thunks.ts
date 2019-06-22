@@ -24,7 +24,8 @@ import {
   initFilterAction,
   setTabAction,
   initMainParamsAction,
-  setSubmitAction
+  setSubmitAction,
+  setAggregationAction
 } from './actions';
 import { createMessageAction } from '../message/actions';
 import { Config, Sort, Filter, Aggregation } from '../../types';
@@ -98,6 +99,13 @@ export const resetFilters = () => async (dispatch, state) => {
   await dispatch(initFilterAction(selectedEntity, filters));
 };
 
+export const resetAggregations = () => async (dispatch, state) => {
+  const { selectedEntity } = state().app;
+  const initProperty = InitProperties[selectedEntity];
+  const aggregations = initProperty ? initProperty.aggregations : [];
+  await dispatch(setAggregationAction(selectedEntity, aggregations));
+};
+
 export const fetchInitEntityAction = (
   platform: string,
   entity: string,
@@ -111,6 +119,7 @@ export const fetchInitEntityAction = (
   let columns: any[] = [];
   let sorts: Sort[];
   let filters: Filter[] = [];
+  let aggregations: Aggregation[] = [];
   let cardinalityPromises: any[] = [];
   let query = blankQuery();
   const levelColumn = attributes.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || columns[0];
@@ -161,7 +170,7 @@ export const fetchInitEntityAction = (
           operator = 'notendWith';
         } else if (predicate.operation === ConseilOperator.IN) {
             operator = 'notin';
-          }
+        }
       }
 
       return {
@@ -173,8 +182,16 @@ export const fetchInitEntityAction = (
       };
     });
 
+    if (!!query.aggregation && query.aggregation.length > 0) {
+      aggregations = query.aggregation.map(agg => {
+        const selectedAttribute = attributes.find(attr => attr.name === agg.field);
+        const type = getOperatorType(selectedAttribute.dataType);
+        return {...agg, type};
+      });
+    }
+
     // These values are used when reset columns or filters
-    const initProperty = { columns, filters };
+    const initProperty = { columns, filters, aggregations };
     InitProperties = { ...InitProperties, [entity]: initProperty };
   } else {
     const sortedAttributes = sortAttributes(attributes);
@@ -184,8 +201,8 @@ export const fetchInitEntityAction = (
     query = setLimit(query, 5000);
 
     if (levelColumn !== undefined) {
-        sorts = [{ orderBy: levelColumn.name, order: ConseilSortDirection.DESC }];
-        query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
+      sorts = [{ orderBy: levelColumn.name, order: ConseilSortDirection.DESC }];
+      query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
     }
   }
 
@@ -195,7 +212,7 @@ export const fetchInitEntityAction = (
             return [];
         });
   
-  await dispatch(initEntityPropertiesAction(entity, filters, sorts, columns, items));
+  await dispatch(initEntityPropertiesAction(entity, filters, sorts, columns, items, aggregations));
   await Promise.all(cardinalityPromises);
 };
 
@@ -298,33 +315,25 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
       operator = ConseilOperator.EQ;
       isInvert = true;
     } else if (filter.operator === 'notstartWith') {
-        operator = ConseilOperator.STARTSWITH;
-        isInvert = true;
+      operator = ConseilOperator.STARTSWITH;
+      isInvert = true;
     } else if (filter.operator === 'notendWith') {
-        operator = ConseilOperator.ENDSWITH;
-        isInvert = true;
+      operator = ConseilOperator.ENDSWITH;
+      isInvert = true;
     } else if (filter.operator === 'notin') {
-        operator = ConseilOperator.IN;
-        isInvert = true;
+      operator = ConseilOperator.IN;
+      isInvert = true;
     }
 
     query = addPredicate(query, filter.name, operator, filter.values, isInvert);
   });
 
   aggregations.forEach((agg: Aggregation) => {
-    if (!agg.function) return;
-    query = addAggregationFunction(query, agg.name, agg.function);
+    query = addAggregationFunction(query, agg.field, agg.function);
   });
 
   ordering.forEach(o => {
-    if (query.aggregation !== undefined && query.aggregation.length > 0) {
-        const a = aggregations.find(i => i.name === o.orderBy);
-        if (a !== undefined && query.fields.includes(o.orderBy)) {
-            query = addOrdering(query, `${a.function}_${o.orderBy}`, o.order);
-        }
-    } else {
-        query = addOrdering(query, o.orderBy, o.order);
-    }
+    query = addOrdering(query, o.orderBy, o.order);
   });
 
   return query;
@@ -382,9 +391,7 @@ export const submitQuery = () => async (dispatch, state) => {
   query = setLimit(query, 5000);
   const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
 
-  
-
-  await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length, aggregations[selectedEntity].length))
+  await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length))
   dispatch(setLoadingAction(false));
 };
 

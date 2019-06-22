@@ -31,7 +31,7 @@ export interface Sort {
 }
 
 export interface Aggregation {
-  name: string;
+  field: string;
   function?: ConseilFunction;
   type: string;
 }

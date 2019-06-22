@@ -32,7 +32,7 @@ import {
   getFilterCount,
   getColumns,
   getEntities,
-  getAggCount
+  getAggregations
 } from '../../reducers/app/selectors';
 import { getErrorState, getMessageTxt } from '../../reducers/message/selectors';
 import {
@@ -437,7 +437,7 @@ const mapStateToProps = (state: any) => ({
   entities: getEntities(state),
   isError: getErrorState(state),
   message: getMessageTxt(state),
-  aggCount: getAggCount(state)
+  aggCount: getAggregations(state).length
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

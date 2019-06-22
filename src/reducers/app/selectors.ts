@@ -97,8 +97,3 @@ export const getAggFunctions = createSelector(
   getAppState,
   apps => apps.aggFunctions
 );
-
-export const getAggCount = createSelector(
-  getAppState,
-  apps => apps.aggCount[apps.selectedEntity]
-);

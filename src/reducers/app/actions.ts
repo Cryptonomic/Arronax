@@ -23,11 +23,7 @@ import {
   SET_CONFIG,
   ADD_CONFIG,
   REMOVE_CONFIG,
-  ADD_AGGREGATION,
-  REMOVE_AGGREGATION,
-  CHANGE_AGGREGATION,
-  INIT_AGGREGATION,
-  SET_AGGREGATION_COUNT,
+  SET_AGGREGATIONS,
   SET_SUBMIT
 } from './types';
 
@@ -179,14 +175,15 @@ export function setEntitiesAction(entities: EntityDefinition[]) {
   }
 }
 
-export function initEntityPropertiesAction(entity: string, filters: Filter[], sorts: Sort[], columns: any[], items: any[]) {
+export function initEntityPropertiesAction(entity: string, filters: Filter[], sorts: Sort[], columns: any[], items: any[], aggregations: Aggregation[]) {
   return {
     type: INIT_ENTITY_PROPERTIES,
     entity,
     filters,
     sorts,
     columns,
-    items
+    items,
+    aggregations
   }
 }
 
@@ -209,50 +206,20 @@ export function initAttributesAction(attributes) {
   }
 }
 
-export function addAggregationAction(entity: string) {
+export function setAggregationAction(entity: string, aggregations: Aggregation[]) {
   return {
-    type: ADD_AGGREGATION,
-    entity
-  }
-}
-
-export function removeAggregationAction(entity: string, index: number) {
-  return {
-    type: REMOVE_AGGREGATION,
+    type: SET_AGGREGATIONS,
     entity,
-    index
+    aggregations
   }
 }
 
-export function changeAggregationAction(entity: string, aggregation: Aggregation, index: number) {
-  return {
-    type: CHANGE_AGGREGATION,
-    entity,
-    aggregation,
-    index
-  }
-}
 
-export function initAggregationAction(entity: string) {
-  return {
-    type: INIT_AGGREGATION,
-    entity
-  }
-}
-
-export function setAggCountAction(count: number) {
-  return {
-    type: SET_AGGREGATION_COUNT,
-    count
-  }
-}
-
-export function setSubmitAction(entity: string, items: any[], filterCount: number, aggCount: number) {
+export function setSubmitAction(entity: string, items: any[], filterCount: number) {
   return {
     type: SET_SUBMIT,
     entity,
     items,
-    filterCount,
-    aggCount
+    filterCount
   }
 }

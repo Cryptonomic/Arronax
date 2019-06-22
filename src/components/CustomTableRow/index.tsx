@@ -10,6 +10,7 @@ import ContentCopy from '@material-ui/icons/FileCopyOutlined';
 import Clipboard from 'react-clipboard.js';
 import { AttributeDefinition, AttrbuteDataType } from 'conseiljs';
 import { truncateHash } from '../../utils/general';
+import { Aggregation } from '../../types';
 
 const TableRowWrapper = styled(TableRow)`
   &&& {
@@ -76,7 +77,8 @@ interface Props {
   selectedColumns: any[];
   network: string;
   platform: string;
-  selectedEntity: string,
+  selectedEntity: string;
+  aggregations: Aggregation[];
   onClickPrimaryKey: (entity: string, key: any, value: any) => void;
 }
 
@@ -100,13 +102,14 @@ const formatValueForDisplay = (
   entity: string,
   value: any,
   attribute: AttributeDefinition,
+  isAgg: boolean,
   onClickPrimaryKey: (entity: string, key: string, value: string | number) => void
 ) => {
   if (value == null || value.length === 0) { return ''; }
   const {dataFormat, dataType} = attribute;
   if (dataType === 'Boolean') {
-      const svalue = value.toString();
-      return svalue.charAt(0).toUpperCase() + svalue.slice(1);
+    const svalue = value.toString();
+    return svalue.charAt(0).toUpperCase() + svalue.slice(1);
   } else if (dataType === AttrbuteDataType.DATETIME) {
     if (!dataFormat) {
       return value;
@@ -119,63 +122,83 @@ const formatValueForDisplay = (
   } else if (dataType === 'AccountAddress') {
     if (value == null || value.length === 0) { return ''; }
     let colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255)/74)).toString('hex');
+    const convertedVal = truncateHash(value);
+    const realVal = isAgg ? convertedVal : formatValueForPrimary(attribute, convertedVal, value, onClickPrimaryKey);
     return (
       <React.Fragment>
         <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
         <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
-        {formatValueForPrimary(attribute, truncateHash(value), value, onClickPrimaryKey)}
+        {realVal}
         <ClipboardWrapper data-clipboard-text={value}>
           <CopyIcon />
         </ClipboardWrapper>
       </React.Fragment>
     );
-} else if (dataType === 'Hash') {
+  } else if (dataType === 'Hash') {
+    const convertedVal = truncateHash(value);
+    const realVal = isAgg ? convertedVal : formatValueForPrimary(attribute, convertedVal, value, onClickPrimaryKey);
     return (
       <React.Fragment>
-        {formatValueForPrimary(attribute, truncateHash(value), value, onClickPrimaryKey)}
+        {realVal}
         <ClipboardWrapper data-clipboard-text={value}>
           <CopyIcon />
         </ClipboardWrapper>
       </React.Fragment>
     );
-} else if (dataType === 'Decimal') {
+  } else if (dataType === 'Decimal') {
     if (attribute.scale && attribute.scale !== 0) {
-        const n = Number(value);
-        const d = n/Math.pow(10, attribute.scale);
-        if (n < 10000) { return d.toFixed(4); }
+      const n = Number(value);
+      const d = n/Math.pow(10, attribute.scale);
+      if (n < 10000) { return d.toFixed(4); }
 
-        return d.toFixed(2);
+      return d.toFixed(2);
     } else {
-        return value;
+      return value;
     }
-} else if (dataType === 'String' && value.length > 100) {
+  } else if (dataType === 'String' && value.length > 100) {
     return (
-        <React.Fragment>
-          {value.substring(0, 100)}
-          <ClipboardWrapper data-clipboard-text={value}>
-            <CopyIcon />
-          </ClipboardWrapper>
-        </React.Fragment>
-      );
-} else if (dataType === 'String' && value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
+      <React.Fragment>
+        {value.substring(0, 100)}
+        <ClipboardWrapper data-clipboard-text={value}>
+          <CopyIcon />
+        </ClipboardWrapper>
+      </React.Fragment>
+    );
+  } else if (dataType === 'String' && value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
     return value.split('_').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
-} else {
-    return formatValueForPrimary(attribute, value, value, onClickPrimaryKey);
-}
+  } else {
+    const realVal = isAgg ? value : formatValueForPrimary(attribute, value, value, onClickPrimaryKey);
+    return realVal;
+  }
 };
 
 const CustomTableRow: React.FC<Props> = props => {
-  const { selectedColumns, item, network, platform, selectedEntity, onClickPrimaryKey } = props;
+  const { selectedColumns, aggregations, item, network, platform, selectedEntity, onClickPrimaryKey } = props;
   return (
     <TableRowWrapper>
-      {selectedColumns.map((column, index) => {
-        return (
-          <StyledCell key={index}>
-            <SpanContainer>
-              {formatValueForDisplay(platform, network, selectedEntity, item[column.name], column, onClickPrimaryKey)}
-            </SpanContainer>
-          </StyledCell>
-        );
+      {selectedColumns.map(column => {
+        const selectedAggs = aggregations.filter(agg => agg.field === column.name);
+        if (selectedAggs.length > 0) {
+          return selectedAggs.map(agg=> {
+            const keyName = `${agg.function}_${agg.field}`;
+            return (
+              <StyledCell key={keyName}>
+                <SpanContainer>
+                  {formatValueForDisplay(platform, network, selectedEntity, item[keyName], column, true, onClickPrimaryKey)}
+                </SpanContainer>
+              </StyledCell>
+            );
+          });
+
+        } else {
+          return (
+            <StyledCell key={column.name}>
+              <SpanContainer>
+                {formatValueForDisplay(platform, network, selectedEntity, item[column.name], column, false, onClickPrimaryKey)}
+              </SpanContainer>
+            </StyledCell>
+          );
+        }
       })}
     </TableRowWrapper>
   );

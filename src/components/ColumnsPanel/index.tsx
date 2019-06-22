@@ -11,9 +11,7 @@ import {
   getAttributes,
   getEntity
 } from '../../reducers/app/selectors';
-import {
-  setColumnsAction
-} from '../../reducers/app/actions';
+import { setColumnsAction } from '../../reducers/app/actions';
 import { resetColumns } from '../../reducers/app/thunks';
 
 const Container = styled.div<{ count: number }>`
@@ -199,8 +197,7 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = (dispatch: any) => ({
   setColumns: (entity: string, columns: object[]) =>
     dispatch(setColumnsAction(entity, columns)),
-  onResetColumns: () =>
-    dispatch(resetColumns())
+  onResetColumns: () => dispatch(resetColumns())
 });
 
 export default connect(
