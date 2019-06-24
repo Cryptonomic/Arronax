@@ -37,7 +37,7 @@ export const getOperatorType = (dataType: string) => {
 }
 
 export const sortAttributes = (attributes: AttributeDefinition[]) => {
-    return attributes.sort((a, b) => {
+    return attributes.concat().sort((a, b) => {
     if (a.displayOrder === undefined && b.displayOrder === undefined) {
         if(a.displayName < b.displayName) { return -1; }
         if(a.displayName > b.displayName) { return 1; }
