@@ -108,48 +108,48 @@ class EntityModal extends React.Component<Props, {}> {
     const { open, item, attributes, isLoading, onClose, title } = this.props;
 
     const formattedValues = attributes
-                                .filter(c => item[c.name] != null && item[c.name] !== undefined)
-                                .sort((a, b) => {
-                                    if (a.displayOrder === undefined && b.displayOrder === undefined) {
-                                        if(a.displayName < b.displayName) { return -1; }
-                                        if(a.displayName > b.displayName) { return 1; }
-                                    }
+      .filter(c => item[c.name] != null && item[c.name] !== undefined)
+      .sort((a, b) => {
+          if (a.displayOrder === undefined && b.displayOrder === undefined) {
+              if(a.displayName < b.displayName) { return -1; }
+              if(a.displayName > b.displayName) { return 1; }
+          }
 
-                                    if (a.displayOrder === undefined && b.displayOrder !== undefined){
-                                        return 1;
-                                    }
+          if (a.displayOrder === undefined && b.displayOrder !== undefined){
+              return 1;
+          }
 
-                                    if (a.displayOrder !== undefined && b.displayOrder === undefined){
-                                        return -1;
-                                    }
+          if (a.displayOrder !== undefined && b.displayOrder === undefined){
+              return -1;
+          }
 
-                                    return a.displayOrder - b.displayOrder;
-                                })
-                                .map(c => {
-                                    let v = {displayName: '', value: undefined};
-                                    v['displayName'] = c.displayName;
-                                    if (c.dataType === 'DateTime' && c.dataFormat) {
-                                        v['value'] = moment(item[c.name]).format(c.dataFormat);
-                                    } else if (c.dataType === 'Decimal' && c.scale && c.scale !== 0) {
-                                        const n = Number(item[c.name]);
-                                        const d = n/Math.pow(10, c.scale);
-                                        if (n < 10000) {
-                                        v.value = d.toFixed(4);
-                                        } else {
-                                        v.value = d.toFixed(2);
-                                        }
-                                    } else if (c.dataType === 'Boolean') {
-                                        v.value = item[c.name].toString();
-                                        v.value = v.value.charAt(0).toUpperCase() + v.value.substring(1);
-                                    } else {
-                                        v.value = item[c.name].toString();
-                                        if (v.value.length > 0 && c.cardinality && c.cardinality < 20) {
-                                            v.value = v.value.split('_').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
-                                        }
-                                    }
+          return a.displayOrder - b.displayOrder;
+      })
+      .map(c => {
+          let v = {displayName: '', value: undefined};
+          v['displayName'] = c.displayName;
+          if (c.dataType === 'DateTime' && c.dataFormat) {
+              v['value'] = moment(item[c.name]).format(c.dataFormat);
+          } else if (c.dataType === 'Decimal' && c.scale && c.scale !== 0) {
+              const n = Number(item[c.name]);
+              const d = n/Math.pow(10, c.scale);
+              if (n < 10000) {
+              v.value = d.toFixed(4);
+              } else {
+              v.value = d.toFixed(2);
+              }
+          } else if (c.dataType === 'Boolean') {
+              v.value = item[c.name].toString();
+              v.value = v.value.charAt(0).toUpperCase() + v.value.substring(1);
+          } else {
+              v.value = item[c.name].toString();
+              if (v.value.length > 0 && c.cardinality && c.cardinality < 20) {
+                  v.value = v.value.split('_').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+              }
+          }
 
-                                    return v;
-                                });
+          return v;
+      });
 
     return (
       <Modal open={open}>

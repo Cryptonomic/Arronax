@@ -103,7 +103,7 @@ class ColumnsPanel extends React.Component<Props, States> {
 
   handleSubmit = async () => {
     const { selected } = this.state;
-    const { selectedEntity, setColumns, onSubmit } = this.props;
+    const { setColumns, onSubmit } = this.props;
     await setColumns(selected);
     await onSubmit();
   };

@@ -166,8 +166,9 @@ export const fetchInitEntityAction = (
         const column = attributes.find(attr => attr.name === field);
         if (column) { columns.push(column); }
       });
+      console.log('columnscolumns', JSON.stringify(columns));
     } else {
-      columns = sortedAttributes;
+      columns = [...sortedAttributes];
     }
 
     if (orderBy.length > 0) {
@@ -228,7 +229,7 @@ export const fetchInitEntityAction = (
     InitProperties = { ...InitProperties, [entity]: initProperty };
   } else {
     query = addFields(query, ...getAttributeNames(sortedAttributes));
-    columns = sortedAttributes;
+    columns = [...sortedAttributes];
     query = setLimit(query, 5000);
     sorts = [{ orderBy: levelColumn.name, order: ConseilSortDirection.DESC }];
     query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
