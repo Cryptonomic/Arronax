@@ -87,24 +87,30 @@ export const changeNetwork = (config: Config) => async (dispatch, state) => {
 
 function clearSortAndAggregations(columns: AttributeDefinition[], sort: Sort, aggregations: Aggregation[]) {
   const sortedColumn = columns.find(col => col.name === sort.orderBy);
-  let newSort = [sort];
+  let newSort = { ...sort};
   if (!sortedColumn) {
     const levelColumn = columns.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || columns[0];
-    newSort = [{
+    newSort = {
       orderBy: levelColumn.name,
       order: ConseilSortDirection.DESC
-    }];
+    };
   }
   const newAggs = [];
   aggregations.forEach(agg => {
     const colIndex = columns.findIndex(col => col.name === agg.field);
     if (colIndex > -1) {
       newAggs.push(agg);
+      if (agg.field === newSort.orderBy) {
+        newSort = {
+          ...newSort,
+          orderBy: `${agg.function}_${newSort.orderBy}`
+        };
+      }
     } 
   });
 
   return {
-    sorts: newSort,
+    sorts: [newSort],
     aggs: newAggs
   };
 }
@@ -166,7 +172,6 @@ export const fetchInitEntityAction = (
         const column = attributes.find(attr => attr.name === field);
         if (column) { columns.push(column); }
       });
-      console.log('columnscolumns', JSON.stringify(columns));
     } else {
       columns = [...sortedAttributes];
     }
