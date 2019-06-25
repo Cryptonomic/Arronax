@@ -1,18 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-import FormControl from '@material-ui/core/FormControl';
-import SelectField, { SelectProps} from '@material-ui/core/Select';
-import MenuItem, { MenuItemProps } from '@material-ui/core/MenuItem';
+import muiStyled from '@material-ui/styles/styled';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import Button from '@material-ui/core/Button';
 import Radio from '@material-ui/core/Radio';
+import IconButton from '@material-ui/core/IconButton';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import ArrowDropDown from '@material-ui/icons/KeyboardArrowDown';
-import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import { ArronaxIcon } from '../ArronaxIcon';
-import { getConfigs } from '../../utils/getconfig';
 import { Config } from '../../types';
-
-const configs: Config[] = getConfigs();
 
 const HeaderContainer = styled.div`
   width: 100%;
@@ -50,118 +48,199 @@ const IconContainer = styled.div`
   margin-left: auto;
 `;
 
-const SelectContainer = styled(FormControl)`
-  &&& {
-    margin-left: 12px;
-  }
+const SelectContainer = styled.div`
+  margin-left: 12px;
 `;
 
-const SelectWrapper = styled(SelectField)`
-  &&& {
-    &:before {
-      border-bottom: 0;
-    }
-    &:after {
-      border-bottom: 0;
-    }
-    &:hover:before {
-      border-bottom: 0 !important;
-    }
-    font-size: 24px;
-    font-weight: 300;
-    letter-spacing: 2.57px;
-    color: #fffffe;
+const DownIcon = muiStyled(ArrowDropDown)({
+  color: 'white',
+  marginLeft: '10px'
+});
+
+const MenuHeaderItem = muiStyled(MenuItem)({
+  color: '#9b9b9b',
+  boxSizing: 'border-box',
+  padding: '5px 25px',
+  opacity: 1,
+  fontSize: '16px'
+});
+
+const MainMenuItem = muiStyled(MenuItem)({
+  '&[class*="selected"]': {
+    backgroundColor: 'rgba(101,  200, 206, 0.13)'
+  },
+  '&:hover': {
+    backgroundColor: 'rgba(101,  200, 206, 0.1)'
   }
-` as React.ComponentType<SelectProps>;
+});
 
-const DownIcon = styled(ArrowDropDown)`
-  &&& {
-    color: white;
-  }
-` as React.ComponentType<SvgIconProps>;
+const UncheckedIcon = muiStyled(RadioButtonUncheckedIcon)({
+  fontSize: '18px'
+});
 
-const MenuHeaderItem = styled(MenuItem)`
-  &&& {
-    color: #9b9b9b;
-    box-sizing: border-box;
-    padding: 5px 25px;
-    opacity: 1;
-    font-size: 16px;
-  }
-` as React.ComponentType<MenuItemProps>;
+const CheckedIcon = muiStyled(RadioButtonCheckedIcon)({
+  fontSize: '18px',
+  color: '#00c4dc'
+});
 
-const MainMenuItem = styled(MenuItem)`
-  &&& {
-    &[class*='selected'] {
-      background-color: rgba(101,  200, 206, 0.13);
-    }
-    &:hover {
-      background-color: rgba(101,  200, 206, 0.1);
-    }
-  }
-` as React.ComponentType<MenuItemProps>;
+const MenuBtn = muiStyled(Button)({
+  height: '52px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '24px',
+  fontWeight: 300,
+  letterSpacing: '2.57px',
+  cursor: 'pointer',
+  color: '#fffffe',
+  textTransform: 'capitalize'
+});
 
-const UncheckedIcon = styled(RadioButtonUncheckedIcon)`
-  &&& {
-    font-size: 18px;
-  }
-` as React.ComponentType<SvgIconProps>;
+const IconBtnWrapper = muiStyled(IconButton)({
+  marginLeft: 'auto'
+});
 
-const CheckedIcon = styled(RadioButtonCheckedIcon)`
-  &&& {
-    font-size: 18px;
-    color: #00c4dc;
-  }
-` as React.ComponentType<SvgIconProps>;
+const AddButton = styled.div`
+  cursor: pointer;
+  border-radius: 9px;
+  height: 42px;
+  width: 158px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+  background: rgb(86, 194, 217);
+  margin: 10px auto 0 auto;
+`;
 
-const MenuContent = styled.span``;
-
-const SelectRenderWrapper = styled.div``;
-
-const getConfig = (val: string) => {
-  return configs.find(conf => conf.network === val);
-};
+const Divider = styled.div`
+  width: 85%;
+  height: 1px;
+  background-color: #ccc;
+  padding: 0 16px;
+  margin: 0 auto;
+`;
 
 interface Props {
-  network: string;
-  onChangeNetwork(event: any): void;
+  selectedConfig: Config;
+  configs: Config[];
+  onChangeNetwork(config: Config): void;
+  openModal(): void;
+  onRemoveConfig(index: number): void;
 }
 
 const Header: React.FC<Props> = props => {
-  const { network, onChangeNetwork } = props;
+  const { selectedConfig, configs } = props;
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const localConfigs = [];
+  const mainConfigs = [];
+  configs.forEach(config => {
+    if (config.isLocal) {
+      localConfigs.push(config);
+    } else {
+      mainConfigs.push(config);
+    }
+  });
+
+  function handleClick(event) {
+    setAnchorEl(event.currentTarget);
+  }
+
+  function handleClose() {
+    setAnchorEl(null);
+  }
+
+  function changeNetwork(config: Config) {
+    const { onChangeNetwork } = props;
+    onChangeNetwork(config);
+    setAnchorEl(null);
+  }
+
+  function openConfigModal() {
+    const { openModal } = props;
+    setAnchorEl(null);
+    openModal();
+  }
+
+  function removeConfig(event: any, index: number) {
+    const { onRemoveConfig } = props;
+    onRemoveConfig(index);
+    setAnchorEl(null);
+    event.stopPropagation();
+  }
+
   return (
     <HeaderContainer>
       <HeaderLogo>ARRONAX beta</HeaderLogo>
       <IconContainer>
-        <ArronaxIcon size="22px" color="#FFFFFF" iconName="icon-tz" />
+        <ArronaxIcon size="22px" color="#FFFFFF" iconName="icon-octopus-logo" />
       </IconContainer>
       <SelectContainer>
-        <SelectWrapper
-          value={network}
-          onChange={onChangeNetwork}
-          IconComponent={DownIcon}
-          renderValue={(value: string) => {
-            const config = getConfig(value);
-            return <SelectRenderWrapper>{config.displayName}</SelectRenderWrapper>;
-          }}
+        <MenuBtn
+          aria-controls="simple-menu"
+          aria-haspopup="true"
+          onClick={handleClick}
+        >
+          {selectedConfig.displayName}
+          <DownIcon />
+        </MenuBtn>
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
         >
           <MenuHeaderItem value="" disabled>
-            Select Preferred Tezos Network
+            Select Preferred Network
           </MenuHeaderItem>
-          {configs.map(config => (
-            <MainMenuItem
-              key={config.network}
-              value={config.network}
-            >
-              <Radio
-                checked={network === config.network}
-                icon={<UncheckedIcon fontSize="small" />}
-                checkedIcon={<CheckedIcon fontSize="small" />}
-              />
-              <MenuContent>{config.displayName}</MenuContent>
-            </MainMenuItem>
-          ))}
-        </SelectWrapper>
+          {mainConfigs.map(config => {
+            const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&
+              selectedConfig.url === config.url && selectedConfig.apiKey === config.apiKey;
+            return (
+              <MainMenuItem
+                key={config.displayName}
+                onClick={() => changeNetwork(config)}
+              >
+                <Radio
+                  checked={isSelected}
+                  icon={<UncheckedIcon fontSize="small" />}
+                  checkedIcon={<CheckedIcon fontSize="small" />}
+                />
+                {config.displayName}
+              </MainMenuItem>
+            );
+          })}
+          {localConfigs.length > 0 && <Divider />}
+          {localConfigs.map((config, index) => {
+            const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&
+              selectedConfig.url === config.url && selectedConfig.apiKey === config.apiKey;
+            return (
+              <MainMenuItem
+                key={config.network}
+                onClick={() => changeNetwork(config)}
+              >
+                <Radio
+                  checked={isSelected}
+                  icon={<UncheckedIcon fontSize="small" />}
+                  checkedIcon={<CheckedIcon fontSize="small" />}
+                />
+                {config.displayName}
+                {!isSelected && (
+                  <IconBtnWrapper
+                    aria-label="Delete"
+                    disabled={isSelected}
+                    onClick={(event) => removeConfig(event, mainConfigs.length + index)}
+                  >
+                    <ArronaxIcon size="37px" color="#d8d8d8" iconName="icon-delete" />
+                  </IconBtnWrapper>
+                )}                
+              </MainMenuItem>
+            );
+          })}
+          <AddButton onClick={openConfigModal}>Add Network</AddButton>
+        </Menu>
       </SelectContainer>
     </HeaderContainer>
   );

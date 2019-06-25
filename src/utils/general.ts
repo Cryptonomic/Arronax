@@ -1,3 +1,6 @@
+
+import { AttributeDefinition } from 'conseiljs';
+
 export const convertValue = (value: string) => {
   if (value) {
     return value.replace(/(^|_)./g, s =>
@@ -11,7 +14,7 @@ export const convertValue = (value: string) => {
   }
 };
 
-export const getShortColumn = (value) => {
+export const truncateHash = (value) => {
   if (Number(value)) { return value; }
   if (!value || value.length < 6) { return ''; }
 
@@ -31,4 +34,23 @@ export const getOperatorType = (dataType: string) => {
     return 'boolean';
   }
   return 'dateTime';
+}
+
+export const sortAttributes = (attributes: AttributeDefinition[]) => {
+    return attributes.concat().sort((a, b) => {
+    if (a.displayOrder === undefined && b.displayOrder === undefined) {
+        if(a.displayName < b.displayName) { return -1; }
+        if(a.displayName > b.displayName) { return 1; }
+    }
+
+    if (a.displayOrder === undefined && b.displayOrder !== undefined){
+        return 1;
+    }
+
+    if (a.displayOrder !== undefined && b.displayOrder === undefined){
+        return -1;
+    }
+
+    return a.displayOrder - b.displayOrder;
+    });
 }

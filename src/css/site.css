@@ -152,11 +152,17 @@ body {
 }
 
 body {
-  min-height: 100%;
   margin: 0;
   padding: 0;
   font-family: 'Roboto', sans-serif;
   font-weight: 300;
+  overflow: hidden;
+}
+
+#root {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100vh;
 }
 
 .limit-tooltip .rc-tooltip-inner {

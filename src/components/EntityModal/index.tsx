@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Modal from '@material-ui/core/Modal';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Moment from 'react-moment';
-import 'moment-timezone';
+import moment from 'moment';
 import { ArronaxIcon } from '../ArronaxIcon';
 
 const ScrollContainer = styled.div`
@@ -106,14 +105,52 @@ class EntityModal extends React.Component<Props, {}> {
     event.stopPropagation();
   }
   render() {
-    const {
-      open,
-      item,
-      attributes,
-      isLoading,
-      onClose,
-      title
-    } = this.props;
+    const { open, item, attributes, isLoading, onClose, title } = this.props;
+
+    const formattedValues = attributes
+      .filter(c => item[c.name] != null && item[c.name] !== undefined)
+      .sort((a, b) => {
+          if (a.displayOrder === undefined && b.displayOrder === undefined) {
+              if(a.displayName < b.displayName) { return -1; }
+              if(a.displayName > b.displayName) { return 1; }
+          }
+
+          if (a.displayOrder === undefined && b.displayOrder !== undefined){
+              return 1;
+          }
+
+          if (a.displayOrder !== undefined && b.displayOrder === undefined){
+              return -1;
+          }
+
+          return a.displayOrder - b.displayOrder;
+      })
+      .map(c => {
+          let v = {displayName: '', value: undefined};
+          v['displayName'] = c.displayName;
+          if (c.dataType === 'DateTime' && c.dataFormat) {
+              v['value'] = moment(item[c.name]).format(c.dataFormat);
+          } else if (c.dataType === 'Decimal' && c.scale && c.scale !== 0) {
+              const n = Number(item[c.name]);
+              const d = n/Math.pow(10, c.scale);
+              if (n < 10000) {
+              v.value = d.toFixed(4);
+              } else {
+              v.value = d.toFixed(2);
+              }
+          } else if (c.dataType === 'Boolean') {
+              v.value = item[c.name].toString();
+              v.value = v.value.charAt(0).toUpperCase() + v.value.substring(1);
+          } else {
+              v.value = item[c.name].toString();
+              if (v.value.length > 0 && c.cardinality && c.cardinality < 20) {
+                  v.value = v.value.split('_').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+              }
+          }
+
+          return v;
+      });
+
     return (
       <Modal open={open}>
         <ScrollContainer onClick={onClose}>
@@ -122,27 +159,8 @@ class EntityModal extends React.Component<Props, {}> {
             <ModalTitle>{title} Details</ModalTitle>
               {!isLoading && (
                 <ListContainer>
-                  {attributes.filter(c => (item[c.name] != null && item[c.name].length > 0)).map((column, index) => {
-                    const { displayName, dataType, dataFormat, name } = column;
-                    let value = item[name];
-                    if (dataType === 'DateTime' && dataFormat) {
-                      value = (
-                        <Moment format={dataFormat}>
-                          {value}
-                        </Moment>
-                      );
-                    } else if (dataType === 'Decimal' && column.scale && column.scale !== 0) {
-                        const n = Number(value);
-                        const d = n/Math.pow(10, column.scale);
-                        if (n < 10000) {
-                            value = d.toFixed(4);
-                        } else {
-                            value = d.toFixed(2);
-                        }
-                    } else if (dataType === 'Boolean') {
-                        value = value.toString();
-                        value = value.charAt(0).toUpperCase() + value.substring(1);
-                    }
+                  {formattedValues.map((item, index) => {
+                    const { displayName, value } = item;
                     return (
                       <RowContainer key={index}>
                         <TitleTxt>{displayName}</TitleTxt>

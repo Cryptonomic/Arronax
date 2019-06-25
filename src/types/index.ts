@@ -1,4 +1,4 @@
-import { ConseilSortDirection } from 'conseiljs';
+import { ConseilSortDirection, ConseilFunction } from 'conseiljs';
 
 export interface Filter {
   name: string;
@@ -11,7 +11,8 @@ export interface Filter {
 export enum ToolType {
   FILTER = 'filter',
   COLUMN = 'column',
-  EXPORT = 'export'
+  EXPORT = 'export',
+  AGGREGATION = 'aggregation'
 }
 
 export interface Config {
@@ -21,9 +22,16 @@ export interface Config {
   network: string;
   displayName: string;
   entities?: string[];
+  isLocal?: boolean;
 };
 
 export interface Sort {
   order: ConseilSortDirection;
   orderBy: string;
+}
+
+export interface Aggregation {
+  field: string;
+  function?: ConseilFunction;
+  type: string;
 }

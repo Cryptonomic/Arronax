@@ -1,9 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import TextField, { TextFieldProps } from '@material-ui/core/TextField';
 import { ConseilOperator } from 'conseiljs';
+import InputItem from '../ValueInputItem';
 
-const Container = styled.div``;
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 const HR = styled.div`
   width: 1px;
@@ -22,30 +25,18 @@ const AndBlock = styled.div`
   padding-left: 10px;
 `;
 
-const TextInput = styled(TextField)`
-  margin-top: 10px !important;
-  margin-left: 10px !important;
-  color: #9b9b9b;
-  font-size: 18px;
-  font-weight: normal;
-  height: 17px;
-  letter-spacing: 0;
-  line-height: 17px;
-  width: 300px;
-` as React.ComponentType<TextFieldProps>;
-
 interface Props {
+  type: string;
   operator: string;
-  InputProps?: object;
   values: Array<string>;
-  onChange: (value: string, index: number) => void;
+  onChange: (value: string | number, index: number) => void;
 }
 
 const ValueInput: React.FC<Props> = props => {
     const {
-      InputProps,
       operator,
       values,
+      type,
       onChange
     } = props;
     let input;
@@ -55,23 +46,21 @@ const ValueInput: React.FC<Props> = props => {
       input = (
         <React.Fragment>
           <Container>
-            <TextInput
+            <InputItem
+              type={type}
               value={values[0]}
-              InputProps={InputProps}
-              placeholder='Insert Value'
-              onChange={event => onChange(event.target.value, 0)}
+              onChange={val => onChange(val, 0)}
             />
           </Container>
           <HR />
           <AndBlock>and</AndBlock>
           <HR />
           <Container>
-            <TextInput
+            <InputItem
+              type={type}
               disabled={!values[0]}
               value={values[1] ? values[1] : ''}
-              InputProps={InputProps}
-              placeholder='Insert Value'
-              onChange={event => onChange(event.target.value, 1)}
+              onChange={val => onChange(val, 1)}
             />
           </Container>
         </React.Fragment>
@@ -81,11 +70,10 @@ const ValueInput: React.FC<Props> = props => {
     } else {
       input = (
         <Container>
-          <TextInput
+          <InputItem
+            type={type}
             value={values[0]}
-            InputProps={InputProps}
-            placeholder='Insert Value'
-            onChange={event => onChange(event.target.value, 0)}
+            onChange={val => onChange(val, 0)}
           />
         </Container>
       );

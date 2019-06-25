@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
-import { ConseilOperator } from 'conseiljs';
+import { ConseilOperator, AttributeDefinition } from 'conseiljs';
 import { ArronaxIcon } from '../ArronaxIcon';
 import { fetchValues, resetFilters } from '../../reducers/app/thunks';
 import {
@@ -41,8 +41,8 @@ import {
 type Props = {
   availableValues: any;
   selectedEntity: string;
-  attributes: any[];
-  filters: Array<Filter>;
+  attributes: AttributeDefinition[];
+  filters: Filter[];
   operators: any;
   swipeRef: any;
   fetchValues: (value: string) => void;
@@ -198,9 +198,9 @@ class FilterPanel extends React.Component<Props, {}> {
                   )}
                   {filter.operator && !filter.isLowCardinality && (
                     <ValueInput
+                      type={filter.operatorType}
                       values={filter.values}
                       operator={filter.operator}
-                      InputProps={{ disableUnderline: true }}
                       onChange={(value, pos) => this.onInputValueChange(value, index, pos)}
                     />
                   )}
@@ -231,7 +231,7 @@ class FilterPanel extends React.Component<Props, {}> {
             Reset
           </ResetButton>
           <RunButton onClick={onSubmit}>
-            Run
+            Apply
           </RunButton>
         </ButtonContainer>
       </Container>

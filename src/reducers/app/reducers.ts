@@ -4,7 +4,9 @@ import {
   SET_TAB,
   SET_LOADING,
   INIT_DATA,
-  SET_NETWORK,
+  SET_CONFIG,
+  ADD_CONFIG,
+  REMOVE_CONFIG,
   SET_COLUMNS,
   SET_ATTRIBUTES,
   ADD_FILTER,
@@ -19,21 +21,22 @@ import {
   SET_ENTITIES,
   INIT_ENTITY_PROPERTIES,
   INIT_FILTER,
-  INIT_MAIN_PARAMS
+  INIT_MAIN_PARAMS,
+  INIT_ATTRIBUTES,
+  SET_AGGREGATIONS,
+  SET_SUBMIT
 } from './types';
 
-import { ConseilQueryBuilder, ConseilQuery, EntityDefinition } from 'conseiljs';
-import { Filter } from '../../types';
+import { EntityDefinition } from 'conseiljs';
+import { Filter, Config, Aggregation } from '../../types';
 import { getLocalAttributes } from '../../utils/attributes';
+import { getConfigs, saveConfigs } from '../../utils/getconfig';
 
-const emptyFilters: ConseilQuery = ConseilQueryBuilder.blankQuery();
 const attributes = getLocalAttributes();
+const configs = getConfigs();
 
 export interface AppState {
-  platform: string;
-  network: string;
-  entities: EntityDefinition[],
-  filters: ConseilQuery;
+  entities: EntityDefinition[];
   availableValues: object;
   columns: object;
   attributes: object;
@@ -47,14 +50,17 @@ export interface AppState {
   filterCount: object;
   selectedModalItem: object;
   sort: object;
+  configs: Config[];
+  selectedConfig: Config;
+  aggregations: object;
+  aggFunctions: object;
 }
 
-const initialState: AppState = {
-  filters: emptyFilters,
-  platform: 'tezos',
-  network: 'mainnet',
+let initialState: AppState = {
+  configs,
+  selectedConfig: configs[0],
   entities: [],
-  attributes: attributes,
+  attributes,
   items: {},
   selectedFilters: {},
   operators: {
@@ -103,7 +109,25 @@ const initialState: AppState = {
   rowCount: 50,
   filterCount: {},
   selectedModalItem: {},
-  sort: {}
+  sort: {},
+  aggregations: {},
+  aggFunctions: {
+    numeric: [
+      { name: 'sum', displayName: 'Sum' },
+      { name: 'avg', displayName: 'Average' },
+      { name: 'min', displayName: 'Min' },
+      { name: 'max', displayName: 'Max' },
+      { name: 'count', displayName: 'Count' }
+    ],
+    string: [
+      { name: 'count', displayName: 'Count' }
+    ],
+    dateTime: [
+      { name: 'min', displayName: 'Min' },
+      { name: 'max', displayName: 'Max' },
+      { name: 'count', displayName: 'Count' }
+    ]
+  }
 };
 
 export const app = (state = initialState, action) => {
@@ -114,15 +138,35 @@ export const app = (state = initialState, action) => {
       const items = { ...state.items, [action.entity]: action.items };
       return { ...state, items };
     case SET_COLUMNS: {
-      const columns = {...state.columns, [action.entity]: action.items};
-      return { ...state, columns };
+      const columns = {...state.columns, [action.entity]: action.columns};
+      const sort = {...state.sort, [action.entity]: action.sorts};
+      const aggregations = {...state.aggregations, [action.entity]: action.aggregations};
+      return { ...state, columns, sort, aggregations };
     }
     case SET_TAB:
       return { ...state, selectedEntity: action.entity };
     case SET_LOADING:
       return { ...state, isLoading: action.isLoading };
-    case SET_NETWORK:
-      return { ...state, network: action.network };
+    case SET_CONFIG:
+      return { ...state, selectedConfig: action.config };
+    case ADD_CONFIG: {
+      let selectedConfig = state.selectedConfig;
+      const configs = state.configs;
+      if (action.isUse) {
+        selectedConfig = action.config;
+      }
+      const newConfigs = [...configs, action.config];
+      initialState = { ...initialState, configs: newConfigs };
+      saveConfigs(newConfigs);
+      return { ...state, selectedConfig, configs: newConfigs };
+    }
+    case REMOVE_CONFIG: {
+      let configs = state.configs;
+      configs.splice(action.index, 1);
+      initialState = { ...initialState, configs };
+      saveConfigs(configs);
+      return { ...state, configs };
+    }
     case INIT_DATA:
       return { ...state, ...initialState };
     case SET_ATTRIBUTES: {
@@ -197,6 +241,7 @@ export const app = (state = initialState, action) => {
       const items = { ...state.items, [action.entity]: action.items };
       const selectedFilters = { ...state.selectedFilters, [action.entity]: action.filters };
       const availableValues = { ...state.availableValues, [action.entity]: {} };
+      const aggregations = { ...state.aggregations, [action.entity]: action.aggregations };
 
       return {
         ...state,
@@ -205,7 +250,8 @@ export const app = (state = initialState, action) => {
         selectedFilters,
         availableValues,
         columns,
-        items
+        items,
+        aggregations
       };
     }
     case INIT_FILTER: {
@@ -214,12 +260,42 @@ export const app = (state = initialState, action) => {
       return { ...state, selectedFilters, filterCount };
     }
     case INIT_MAIN_PARAMS: {
+      const config = configs.filter(c => c.displayName === action.configName)[0];
+      // TODO: error handling
       return {
         ...state,
         platform: action.platform,
         network: action.network,
+        selectedConfig: config,
         selectedEntity: action.entity
+      };
+    }
+    case INIT_ATTRIBUTES: {
+      return {
+        ...state,
+        attributes: action.attributes
       }
+    }
+    case SET_AGGREGATIONS: {
+      const { sort } = state;
+      let newSort = {...sort};
+      let selectedSorts = [...sort[action.entity]];
+      const sortAgg = action.aggregations.find(agg => agg.field === selectedSorts[0].orderBy);
+      if (sortAgg) {
+        const sortItem = {
+          ...selectedSorts[0],
+          orderBy: `${sortAgg.function}_${selectedSorts[0].orderBy}`
+        }
+        newSort[action.entity] = [sortItem];
+      }
+      const aggregations = {...state.aggregations, [action.entity]: action.aggregations};
+      return { ...state, aggregations, sort: newSort };
+    }
+    
+    case SET_SUBMIT: {
+      const items = { ...state.items, [action.entity]: action.items };
+      const filterCount = { ...state.filterCount, [action.entity]: action.filterCount };
+      return { ...state, items, filterCount };
     }
   }
   return state;

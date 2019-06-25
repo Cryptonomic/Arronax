@@ -7,19 +7,34 @@ import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 import { EntityDefinition } from 'conseiljs';
+import Header from '../../components/Header';
+import SettingsPanel from '../../components/SettingsPanel';
+import Footer from '../../components/Footer';
+import Toolbar from '../../components/Toolbar';
+import CustomTable from '../CustomTable';
+import ConfigModal from '../../components/ConfigModal';
+
 import {
   getLoading,
-  getNetwork,
+  getConfigs,
+  getSelectedConfig,
   getEntity,
   getItems,
   getIsFullLoaded,
   getFilterCount,
   getColumns,
-  getEntities
+  getEntities,
+  getAggregations
 } from '../../reducers/app/selectors';
+import { getErrorState, getMessageTxt } from '../../reducers/message/selectors';
 import {
   changeNetwork,
   initLoad,
@@ -28,16 +43,10 @@ import {
   shareReport,
   changeTab
 } from '../../reducers/app/thunks';
-import {
-  removeAllFiltersAction,
-} from '../../reducers/app/actions';
-import Header from '../../components/Header';
-import SettingsPanel from '../../components/SettingsPanel';
-import Footer from '../../components/Footer';
-import Toolbar from '../../components/Toolbar';
-import CustomTable from '../CustomTable';
+import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../../reducers/app/actions';
+import { clearMessageAction } from '../../reducers/message/actions';
 
-import { ToolType } from '../../types';
+import { ToolType, Config } from '../../types';
 import octopusSrc from '../../assets/sadOctopus.svg';
 
 const Container = styled.div`
@@ -128,6 +137,11 @@ const TryButton = styled(CustomButton)`
   margin-left: 22px;
 `;
 
+const DismissButton = styled(CustomButton)`
+  color: white;
+  background: rgb(86, 194, 217);
+`;
+
 const TabsWrapper = withStyles({
   root: {
     borderBottom: 'none',
@@ -158,26 +172,34 @@ const TabWrapper = withStyles({
 
 export interface Props extends RouteProps {
   isLoading: boolean;
-  network: string;
+  configs: Config[];
+  selectedConfig: Config;
   selectedEntity: string;
   items: object[];
   isFullLoaded: boolean;
   filterCount: number;
+  aggCount: number;
   selectedColumns: EntityDefinition[];
   entities: EntityDefinition[];
+  isError: boolean;
+  message: string;
   removeAllFilters: (entity: string) => void;
-  changeNetwork(network: string): void;
+  changeNetwork(config: Config): void;
   changeTab: (type: string) => void;
   initLoad: (e: string | null, q: string | null) => void;
   submitQuery: () => void;
   exportCsvData: ()=> void;
   shareReport: ()=> void;
+  initMessage: ()=> void;
+  addConfig: (config: Config, isUse: boolean) => void;
+  removeConfig: (index: number) => void;
 }
 
 export interface States {
   isSettingCollapsed: boolean;
   selectedTool: string;
   isModalUrl: boolean;
+  isOpenConfigMdoal: boolean;
 }
 
 class Arronax extends React.Component<Props, States> {
@@ -190,7 +212,8 @@ class Arronax extends React.Component<Props, States> {
     this.state = {
       isSettingCollapsed: false,
       selectedTool: ToolType.FILTER,
-      isModalUrl: false
+      isModalUrl: false,
+      isOpenConfigMdoal: false
     };
 
     this.settingRef = React.createRef();
@@ -200,22 +223,17 @@ class Arronax extends React.Component<Props, States> {
     const { initLoad, location } = this.props;
     if (location) {
       const search = new URLSearchParams(location.search);
-      const e = search.get('e');
-      const q = search.get('q');
-      const m = search.get('m');
-      if (m && m === 'true') {
-        this.setState({isModalUrl: true});
-      }
-      initLoad(e, q);
+      const modal = search.get('m');
+      if (modal && modal === 'true') { this.setState({isModalUrl: true}); }
+      initLoad(search.get('e'), search.get('q'));
     } else {
       initLoad('', '');
     }
-    
   }
 
-  onChangeNetwork = (event: any) => {
+  onChangeNetwork = (config: Config) => {
     const { changeNetwork } = this.props;
-    changeNetwork(event.target.value);
+    changeNetwork(config);
   };
 
   onChangeTab = async (value: string) => {
@@ -278,35 +296,64 @@ class Arronax extends React.Component<Props, States> {
     shareReport();
   }
 
+  handleErrorClose = () => {
+    const { initMessage } = this.props;
+    initMessage();
+  }
+
+  closeConfigModal = () => this.setState({isOpenConfigMdoal: false});
+
+  openConfigModal = () => this.setState({isOpenConfigMdoal: true});
+
+  onAddConfig = (config: Config, isUse: boolean) => {
+    const { addConfig } = this.props;
+    addConfig(config, isUse);
+    this.closeConfigModal();
+  }
+
   render() {
     const {
       isLoading,
-      network,
+      configs,
+      selectedConfig,
       selectedEntity,
       items,
       isFullLoaded,
       filterCount,
+      aggCount,
       selectedColumns,
-      entities
+      entities,
+      isError,
+      message,
+      removeConfig
     } = this.props;
-    const { isSettingCollapsed, selectedTool, isModalUrl } = this.state;
+    const {
+      isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal
+    } = this.state;
     const isRealLoading = isLoading || !isFullLoaded;
+    
     return (
       <MainContainer>
-        <Header network={network} onChangeNetwork={this.onChangeNetwork} />
+        <Header
+          selectedConfig={selectedConfig}
+          configs={configs}
+          onChangeNetwork={this.onChangeNetwork}
+          openModal={this.openConfigModal}
+          onRemoveConfig={removeConfig}
+        />
         <Container>
           {isFullLoaded && (
             <React.Fragment>
               <TabsWrapper
                 value={selectedEntity}
-                variant="scrollable"
+                variant='scrollable'
                 onChange={(event, newValue) => this.onChangeTab(newValue)}
               >
                 {entities.map((entity, index) => (
                   <TabWrapper
                     key={index}
                     value={entity.name}
-                    label={entity.displayNamePlural}
+                    label={entity.displayName}
                   />
                 ))}
               </TabsWrapper>
@@ -314,6 +361,7 @@ class Arronax extends React.Component<Props, States> {
                 isCollapsed={isSettingCollapsed}
                 selectedTool={selectedTool}
                 filterCount={filterCount}
+                aggCount={aggCount}
                 columnsCount={selectedColumns.length}
                 onChangeTool={this.onChangeTool}
                 onExportCsv={this.onExportCsv}
@@ -351,6 +399,27 @@ class Arronax extends React.Component<Props, States> {
             <CircularProgress />
           </LoadingContainer>
         )}
+        <Dialog
+          open={isError}
+          onClose={this.handleErrorClose}
+          aria-labelledby='alert-dialog-title'
+          aria-describedby='alert-dialog-description'
+        >
+          <DialogTitle id='alert-dialog-title'>Error</DialogTitle>
+          <DialogContent>
+            <DialogContentText id='alert-dialog-description'>
+              {message}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <DismissButton onClick={this.handleErrorClose}>Dismiss</DismissButton>
+          </DialogActions>
+        </Dialog>
+        <ConfigModal
+          open={isOpenConfigMdoal}
+          onClose={this.closeConfigModal}
+          addConfig={this.onAddConfig}
+        />
       </MainContainer>
     );
   }
@@ -359,23 +428,30 @@ class Arronax extends React.Component<Props, States> {
 const mapStateToProps = (state: any) => ({
   filterCount: getFilterCount(state),
   isLoading: getLoading(state),
-  network: getNetwork(state),
+  configs: getConfigs(state),
+  selectedConfig: getSelectedConfig(state),
   selectedEntity: getEntity(state),
   items: getItems(state),
   isFullLoaded: getIsFullLoaded(state),
   selectedColumns: getColumns(state),
-  entities: getEntities(state)
+  entities: getEntities(state),
+  isError: getErrorState(state),
+  message: getMessageTxt(state),
+  aggCount: getAggregations(state).length
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
   removeAllFilters: (selectedEntity: string) =>
     dispatch(removeAllFiltersAction(selectedEntity)),
-  changeNetwork: (network: string) => dispatch(changeNetwork(network)),
+  changeNetwork: (config: Config) => dispatch(changeNetwork(config)),
   changeTab: (type: string) => dispatch(changeTab(type)),
   initLoad: (e: string, q: string) => dispatch(initLoad(e, q)),
   submitQuery: () => dispatch(submitQuery()),
   exportCsvData: () => dispatch(exportCsvData()),
-  shareReport: () => dispatch(shareReport())
+  shareReport: () => dispatch(shareReport()),
+  initMessage: () => dispatch(clearMessageAction()),
+  addConfig: (config: Config, isUse: boolean) => dispatch(addConfigAction(config, isUse)),
+  removeConfig: (index: number) => dispatch(removeConfigAction(index))
 });
 
 export default compose(

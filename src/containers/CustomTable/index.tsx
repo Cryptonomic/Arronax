@@ -6,15 +6,15 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import { ConseilSortDirection, EntityDefinition } from 'conseiljs';
 import {
-  getNetwork,
+  getSelectedConfig,
   getRows,
   getColumns,
-  getPlatform,
   getEntity,
   getAttributesAll,
   getModalItem,
   getSort,
-  getEntities
+  getEntities,
+  getAggregations
 } from '../../reducers/app/selectors';
 import { getItemByPrimaryKey, submitQuery } from '../../reducers/app/thunks';
 import { setSortAction } from '../../reducers/app/actions';
@@ -22,7 +22,7 @@ import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
 import EntityModal from '../../components/EntityModal';
-import { Sort } from '../../types';
+import { Sort, Config, Aggregation } from '../../types';
 
 const TableContainer = muiStyled(Table)({
   width: '100%',
@@ -38,15 +38,15 @@ interface Props {
   rowsPerPage: number;
   items: any[];
   selectedColumns: any[];
-  network: string;
-  platform: string;
+  selectedConfig: Config;
   selectedEntity: string;
   selectedModalItem: object;
   attributes: any;
   isLoading: boolean;
   selectedSort: Sort;
   entities: EntityDefinition[];
-  isModalUrl?: boolean,
+  isModalUrl?: boolean;
+  aggregations: Aggregation[];
   onExportCsv: () => void;
   getModalItemAction: (entity: string, key: string, value: string | number) => void;
   onSubmitQuery: () => void;
@@ -114,16 +114,16 @@ class CustomTable extends React.Component<Props, State> {
   render() {
     const {
       items,
-      network,
+      selectedConfig,
       selectedColumns,
       rowsPerPage,
-      platform,
       selectedEntity,
       selectedModalItem,
       attributes,
       selectedSort,
       isLoading,
       entities,
+      aggregations,
       onExportCsv
     } = this.props;
     const { page, referenceEntity, isOpenedModal} = this.state;
@@ -133,12 +133,14 @@ class CustomTable extends React.Component<Props, State> {
       page * rowCount + rowCount
     );
     const selectedObjectEntity = entities.find(entity => entity.name === referenceEntity);
+    const { network, platform } = selectedConfig;
     return (
       <React.Fragment>
         <Overflow>
           <TableContainer>
             <CustomTableHeader
               rows={selectedColumns}
+              aggregations={aggregations}
               order={selectedSort.order}
               orderBy={selectedSort.orderBy}
               createSortHandler={this.handleRequestSort}
@@ -152,6 +154,7 @@ class CustomTable extends React.Component<Props, State> {
                     key={index}
                     item={row}
                     platform={platform}
+                    aggregations={aggregations}
                     selectedEntity={selectedEntity}
                     onClickPrimaryKey={this.onOpenModal}
                   />
@@ -182,14 +185,14 @@ class CustomTable extends React.Component<Props, State> {
 
 const mapStateToProps = (state: any) => ({
   rowsPerPage: getRows(state),
-  network: getNetwork(state),
+  selectedConfig: getSelectedConfig(state),
   selectedColumns: getColumns(state),
-  platform: getPlatform(state),
   selectedEntity: getEntity(state),
   selectedModalItem: getModalItem(state),
   attributes: getAttributesAll(state),
   selectedSort: getSort(state),
-  entities: getEntities(state)
+  entities: getEntities(state),
+  aggregations: getAggregations(state)
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
