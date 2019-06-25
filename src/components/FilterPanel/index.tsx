@@ -136,6 +136,21 @@ class FilterPanel extends React.Component<Props, {}> {
     resetFilters();
   };
 
+  onCheckAddFilter = (filters: Filter[]) => {
+    const filterLength = filters.length;
+    const lastFilter: any = filterLength > 0 ? filters[filterLength - 1] : {};
+    if (filterLength === 0) {
+      return false;
+    } else if (lastFilter.operator === ConseilOperator.ISNULL || lastFilter.operator === 'isnotnull') {
+      return false;
+    } else if(lastFilter.operator === ConseilOperator.BETWEEN) {
+      return lastFilter.values.length !== 2;
+    } else if (lastFilter.values[0]) {
+      return false;
+    }
+    return true;
+  }
+
   render() {
     const {
       selectedEntity,
@@ -146,19 +161,7 @@ class FilterPanel extends React.Component<Props, {}> {
       onSubmit
     } = this.props;
     const entityName = selectedEntity.replace(/_/gi, ' ').slice(0, -1);
-
-    const filterLength = filters.length;
-    let disableAddFilter = true;
-    const lastFilter: any = filterLength > 0 ? filters[filterLength - 1] : {};
-    if (filterLength === 0) {
-      disableAddFilter = false;
-    } else if (lastFilter.operator === ConseilOperator.ISNULL || lastFilter.operator === 'isnotnull') {
-      disableAddFilter = false;
-    } else if(lastFilter.operator === ConseilOperator.BETWEEN) {
-      disableAddFilter = lastFilter.values.length !== 2;
-    } else if (lastFilter.values[0]) {
-      disableAddFilter = false;
-    }
+    const disableAddFilter = this.onCheckAddFilter(filters);
 
     return (
       <Container>
