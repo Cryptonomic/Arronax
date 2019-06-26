@@ -208,11 +208,12 @@ export function initAttributesAction(attributes) {
   }
 }
 
-export function setAggregationAction(entity: string, aggregations: Aggregation[]) {
+export function setAggregationAction(entity: string, aggregations: Aggregation[], sorts: Sort[]) {
   return {
     type: SET_AGGREGATIONS,
     entity,
-    aggregations
+    aggregations,
+    sorts
   }
 }
 

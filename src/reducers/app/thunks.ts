@@ -115,6 +115,19 @@ function clearSortAndAggregations(columns: AttributeDefinition[], sort: Sort, ag
   };
 }
 
+export const setAggregationsThunk = (aggregations: Aggregation[]) => async (dispatch, state) => {
+  const { selectedEntity, sort, columns } = state().app;
+  let selectedSorts = sort[selectedEntity];
+  const selectedColumns = columns[selectedEntity];
+  const { sorts, aggs } = clearSortAndAggregations(selectedColumns, sort[selectedEntity], aggregations);
+  const sortColum = selectedColumns.find(col => col.name === selectedSorts[0].orderBy);
+  const sortAgg = aggregations.find(agg => selectedSorts[0].orderBy === `${agg.function}_${agg.field}`);
+  if (!sortColum && !sortAgg) {
+    selectedSorts = sorts;
+  }
+  await dispatch(setAggregationAction(selectedEntity, aggs, selectedSorts));
+};
+
 export const setColumnsThunk = (columns: AttributeDefinition[]) => async (dispatch, state) => {
   const { selectedEntity, sort, aggregations } = state().app;
   const { sorts, aggs } = clearSortAndAggregations(columns, sort[selectedEntity], aggregations[selectedEntity]);
@@ -138,10 +151,11 @@ export const resetFilters = () => async (dispatch, state) => {
 };
 
 export const resetAggregations = () => async (dispatch, state) => {
-  const { selectedEntity } = state().app;
+  const { selectedEntity, columns, sort } = state().app;
   const initProperty = InitProperties[selectedEntity];
   const aggregations = initProperty ? initProperty.aggregations : [];
-  await dispatch(setAggregationAction(selectedEntity, aggregations));
+  const { sorts } = clearSortAndAggregations(columns[selectedEntity], sort[selectedEntity], aggregations);
+  await dispatch(setAggregationAction(selectedEntity, aggregations, sorts));
 };
 
 export const fetchInitEntityAction = (
