@@ -156,7 +156,7 @@ class FilterPanel extends React.Component<Props, {}> {
       disableAddFilter = false;
     } else if(lastFilter.operator === ConseilOperator.BETWEEN) {
       disableAddFilter = lastFilter.values.length !== 2;
-    } else if (lastFilter.values[0]) {
+    } else if (lastFilter.values[0] !== '') {
       disableAddFilter = false;
     }
 
