@@ -240,8 +240,9 @@ export const app = (state = initialState, action) => {
       const columns = { ...state.columns, [action.entity]: action.columns };
       const items = { ...state.items, [action.entity]: action.items };
       const selectedFilters = { ...state.selectedFilters, [action.entity]: action.filters };
-      const availableValues = { ...state.availableValues, [action.entity]: {} };
       const aggregations = { ...state.aggregations, [action.entity]: action.aggregations };
+      const entityValues = {...state.availableValues[action.entity]} || {};
+      const availableValues = { ...state.availableValues, [action.entity]: entityValues };
 
       return {
         ...state,
