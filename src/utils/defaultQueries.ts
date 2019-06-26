@@ -51,4 +51,4 @@ export const defaultQueries = {
     }
 };
 
-export const CARDINALITY_NUMBER = 50;
+export const CARDINALITY_NUMBER = 25;
