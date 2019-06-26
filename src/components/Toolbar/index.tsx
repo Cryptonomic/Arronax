@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
+import { withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Badge from '@material-ui/core/Badge';
 import { ArronaxIcon } from '../ArronaxIcon';
 import { ToolType } from '../../types';
 
@@ -29,7 +31,7 @@ const ToolItem = styled.div`
     border-color: rgb(180, 231, 242);
     color: rgb(86, 194, 217);
     z-index: 4;
-    span {
+    & > span {
       color: rgb(86, 194, 217);
     }
   }
@@ -50,7 +52,7 @@ const FilterTool = styled(ToolItem)<{isactive: boolean}>`
   padding-left: 13px;
   left: 30px;
   color: ${({ isactive }) => (isactive ? 'rgb(86, 194, 217)' : 'rgb(74, 74, 74)')};
-  span {
+  & > span {
     color: ${({ isactive }) => (isactive ? 'rgb(86, 194, 217)' : 'rgb(74, 74, 74)')};
   }
   &:after {
@@ -63,7 +65,7 @@ const ColumnsTool = styled(ToolItem)<{isactive: boolean}>`
   left: 155px;
   padding-left: 12px;
   color: ${({ isactive }) => (isactive ? 'rgb(86, 194, 217)' : 'rgb(74, 74, 74)')};
-  span {
+  & > span {
     color: ${({ isactive }) => (isactive ? 'rgb(86, 194, 217)' : 'rgb(74, 74, 74)')};
   }
   &:after {
@@ -76,7 +78,7 @@ const AggTool = styled(ToolItem)<{isactive: boolean}>`
   padding-left: 13px;
   left: 307px;
   color: ${({ isactive }) => (isactive ? 'rgb(86, 194, 217)' : 'rgb(74, 74, 74)')};
-  span {
+  & > span {
     color: ${({ isactive }) => (isactive ? 'rgb(86, 194, 217)' : 'rgb(74, 74, 74)')};
   }
   &:after {
@@ -106,6 +108,15 @@ const ColumnIcon = styled(ArronaxIcon)`
   margin-right: 8px;
 `;
 
+const BadgeWrapper = withStyles({
+  badge: {
+    top: 3,
+    right: -10,
+    color: '#fff',
+    backgroundColor: 'rgb(86, 194, 217)',
+    boxShadow: '0px 0px 4px 0px rgba(0, 0, 0, 0.5)'
+  }
+})(Badge);
 
 interface Props {
   isCollapsed: boolean;
@@ -150,20 +161,26 @@ const Toolbar: React.FC<Props> = props => {
         onClick={() => onChangeTool(ToolType.FILTER)}
       >
         <FilterIcon size="20px" color="#4a4a4a" iconName="icon-filter" />
-        Filter {filterCount > 0 ? "(" + filterCount + ")" : "" }
+        <BadgeWrapper color="secondary" badgeContent={filterCount}>
+          Filter
+        </BadgeWrapper>
       </FilterTool>
       <ColumnsTool
         isactive={isCollapsed && selectedTool === ToolType.COLUMN}
         onClick={() => onChangeTool(ToolType.COLUMN)}
       >
         <ColumnIcon size="20px" color="#4a4a4a" iconName="icon-columns" />
-        Columns ({columnsCount})
+        <BadgeWrapper color="secondary" badgeContent={columnsCount}>
+          Columns
+        </BadgeWrapper>
       </ColumnsTool>
       <AggTool
         isactive={isCollapsed && selectedTool === ToolType.AGGREGATION}
         onClick={() => onChangeTool(ToolType.AGGREGATION)}
       >
-        Aggregation {aggCount > 0 ? "(" + aggCount + ")" : "" }
+        <BadgeWrapper color="secondary" badgeContent={aggCount}>
+          Aggregation
+        </BadgeWrapper>
       </AggTool>
       <ShareTool aria-controls="share-menu" aria-haspopup="true" onClick={openShareMenu}>
         <ExportIcon size="20px" color="#4a4a4a" iconName="icon-export" />
