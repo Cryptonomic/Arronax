@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { AttributeDefinition, AttrbuteDataType } from 'conseiljs';
 import muiStyled from '@material-ui/styles/styled';
 import InputBase from '@material-ui/core/InputBase';
 import DatePicker from 'react-datepicker';
@@ -26,7 +27,7 @@ const DatePickerWrapper = styled(DatePicker)`
 `;
 
 interface Props {
-  type: string;
+  attribute: AttributeDefinition;
   value: string;
   disabled?: boolean;
   onChange: (value: string | number) => void;
@@ -34,11 +35,11 @@ interface Props {
 
 const InputItem: React.FC<Props> = props => {
   const {
-    type,
+    attribute,
     value,
     onChange
   } = props;
-  if (type === 'dateTime') {
+  if (attribute.dataType === AttrbuteDataType.DATETIME) {
     const newValue = value? new Date(Number(value)) : '';
     return (
       <DatePickerWrapper

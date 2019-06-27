@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ConseilOperator } from 'conseiljs';
+import { ConseilOperator, AttributeDefinition } from 'conseiljs';
 import InputItem from '../ValueInputItem';
 
 const Container = styled.div`
@@ -26,7 +26,7 @@ const AndBlock = styled.div`
 `;
 
 interface Props {
-  type: string;
+  attribute: AttributeDefinition;
   operator: string;
   values: Array<string>;
   onChange: (value: string | number, index: number) => void;
@@ -36,7 +36,7 @@ const ValueInput: React.FC<Props> = props => {
     const {
       operator,
       values,
-      type,
+      attribute,
       onChange
     } = props;
     let input;
@@ -47,7 +47,7 @@ const ValueInput: React.FC<Props> = props => {
         <React.Fragment>
           <Container>
             <InputItem
-              type={type}
+              attribute={attribute}
               value={values[0]}
               onChange={val => onChange(val, 0)}
             />
@@ -57,7 +57,7 @@ const ValueInput: React.FC<Props> = props => {
           <HR />
           <Container>
             <InputItem
-              type={type}
+              attribute={attribute}
               disabled={!values[0]}
               value={values[1] ? values[1] : ''}
               onChange={val => onChange(val, 1)}
@@ -71,7 +71,7 @@ const ValueInput: React.FC<Props> = props => {
       input = (
         <Container>
           <InputItem
-            type={type}
+            attribute={attribute}
             value={values[0]}
             onChange={val => onChange(val, 0)}
           />
