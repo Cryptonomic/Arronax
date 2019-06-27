@@ -9,8 +9,7 @@ import {
   getColumns,
   getEntity
 } from '../../reducers/app/selectors';
-import { setAggregationAction } from '../../reducers/app/actions';
-import { resetAggregations } from '../../reducers/app/thunks';
+import { resetAggregations, setAggregationsThunk } from '../../reducers/app/thunks';
 import FilterSelect from '../FilterSelect';
 import { Aggregation } from '../../types';
 import { getOperatorType } from '../../utils/general';
@@ -36,7 +35,7 @@ type Props = {
   aggregations: Aggregation[];
   aggFunctions: any;
   swipeRef: any;
-  setAggregations: (entity: string, aggregations: Aggregation[]) => void;
+  setAggregations: (aggregations: Aggregation[]) => void;
   resetAggregations: () => void;
   onSubmit: () => void;
 };
@@ -111,9 +110,9 @@ class AggregationPanel extends React.Component<Props, States> {
 
   handleSubmit = async () => {
     const { localAggs } = this.state;
-    const { selectedEntity, setAggregations, onSubmit } = this.props;
+    const { setAggregations, onSubmit } = this.props;
     const realAggs = localAggs.filter(agg => !!agg.function);
-    await setAggregations(selectedEntity, realAggs);
+    await setAggregations(realAggs);
     await onSubmit();
   };
 
@@ -197,7 +196,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  setAggregations: (entity: string, aggregations: Aggregation[]) => dispatch(setAggregationAction(entity, aggregations)),
+  setAggregations: (aggregations: Aggregation[]) => dispatch(setAggregationsThunk(aggregations)),
   resetAggregations: () => dispatch(resetAggregations()),
 });
 

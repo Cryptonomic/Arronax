@@ -278,19 +278,9 @@ export const app = (state = initialState, action) => {
       }
     }
     case SET_AGGREGATIONS: {
-      const { sort } = state;
-      let newSort = {...sort};
-      let selectedSorts = [...sort[action.entity]];
-      const sortAgg = action.aggregations.find(agg => agg.field === selectedSorts[0].orderBy);
-      if (sortAgg) {
-        const sortItem = {
-          ...selectedSorts[0],
-          orderBy: `${sortAgg.function}_${selectedSorts[0].orderBy}`
-        }
-        newSort[action.entity] = [sortItem];
-      }
+      const sort = {...state.sort, [action.entity]: action.sorts};
       const aggregations = {...state.aggregations, [action.entity]: action.aggregations};
-      return { ...state, aggregations, sort: newSort };
+      return { ...state, aggregations, sort };
     }
     
     case SET_SUBMIT: {
