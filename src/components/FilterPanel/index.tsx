@@ -159,13 +159,13 @@ class FilterPanel extends React.Component<Props, {}> {
     } else if (lastFilter.values[0] !== '') {
       disableAddFilter = false;
     }
+    const newAttributes = attributes.filter((attr: any) => { return !attr.cardinality || attr.cardinality > 1; });
 
     return (
       <Container>
         <MainContainer>
           {filters.map((filter: Filter, index) => {
-            const newAttributes = attributes.filter((attr: any) => { return !attr.cardinality || attr.cardinality > 1; });
-
+            const filterAttr = newAttributes.find(attr => attr.name === filter.name);
             return (
               <FilterItemContainer key={index}>
                 <FilterItemGr>
@@ -198,7 +198,7 @@ class FilterPanel extends React.Component<Props, {}> {
                   )}
                   {filter.operator && !filter.isLowCardinality && (
                     <ValueInput
-                      type={filter.operatorType}
+                      attribute={filterAttr}
                       values={filter.values}
                       operator={filter.operator}
                       onChange={(value, pos) => this.onInputValueChange(value, index, pos)}
