@@ -101,9 +101,20 @@ const formatAggregatedValue = (attribute: AttributeDefinition, value: any) => {
         if (attribute.scale && attribute.scale !== 0) {
             const n = Number(value);
             const d = n/Math.pow(10, attribute.scale);
-            if (n < 10000) { return d.toFixed(4); }
+            let minimumFractionDigits = 0;
+            let maximumFractionDigits = 0;
+            if (n < 10000) {
+                minimumFractionDigits = 6;
+                maximumFractionDigits = 6;
+            } else if (n < 100000) {
+                minimumFractionDigits = 4;
+                maximumFractionDigits = 4;
+            } else if (n < 1000000) {
+                minimumFractionDigits = 2;
+                maximumFractionDigits = 2;
+            }
 
-            return d.toFixed(2);
+            return (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits, maximumFractionDigits })).format(d);
         } else {
             return value;
         }
@@ -155,9 +166,20 @@ const formatValueForDisplay = (platform: string, network: string, entity: string
         if (attribute.scale && attribute.scale !== 0) {
             const n = Number(value);
             const d = n/Math.pow(10, attribute.scale);
-            if (n < 10000) { return d.toFixed(4); }
+            let minimumFractionDigits = 0;
+            let maximumFractionDigits = 0;
+            if (n < 10000) {
+                minimumFractionDigits = 6;
+                maximumFractionDigits = 6;
+            } else if (n < 100000) {
+                minimumFractionDigits = 4;
+                maximumFractionDigits = 4;
+            } else if (n < 1000000) {
+                minimumFractionDigits = 2;
+                maximumFractionDigits = 2;
+            }
 
-            return d.toFixed(2);
+            return (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits, maximumFractionDigits })).format(d);
         } else {
             return value;
         }
