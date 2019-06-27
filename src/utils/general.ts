@@ -1,7 +1,13 @@
 
 import { AttributeDefinition } from 'conseiljs';
 
-export const convertValue = (value: string) => {
+export const convertValue = (value) => {
+  if (value === true) {
+    return 'True';
+  }
+  if (value === false) {
+    return 'False';
+  }
   if (value) {
     return value.replace(/(^|_)./g, s =>
       s
@@ -9,9 +15,8 @@ export const convertValue = (value: string) => {
         .map(s => s.charAt(0).toUpperCase() + s.substring(1))
         .join(' ')
     );
-  } else {
-    return 'Null';
   }
+  return 'Null';
 };
 
 export const truncateHash = (value) => {

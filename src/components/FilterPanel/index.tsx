@@ -145,7 +145,7 @@ class FilterPanel extends React.Component<Props, {}> {
       return false;
     } else if(lastFilter.operator === ConseilOperator.BETWEEN) {
       return lastFilter.values.length !== 2;
-    } else if (lastFilter.values[0]) {
+    } else if (lastFilter.values[0] !== '') {
       return false;
     }
     return true;
