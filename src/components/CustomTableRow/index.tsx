@@ -179,7 +179,7 @@ const formatValueForDisplay = (platform: string, network: string, entity: string
                 maximumFractionDigits = 2;
             }
 
-            return (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits, maximumFractionDigits })).format(d);
+            return String.fromCharCode(42793) + ' ' + (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits, maximumFractionDigits })).format(d);
         } else {
             return value;
         }

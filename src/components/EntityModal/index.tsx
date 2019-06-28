@@ -146,7 +146,7 @@ class EntityModal extends React.Component<Props, {}> {
                 maximumFractionDigits = 2;
             }
 
-            v.value = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits, maximumFractionDigits })).format(d);
+            v.value = String.fromCharCode(42793) + ' ' + (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits, maximumFractionDigits })).format(d);
           } else if (c.dataType === 'Boolean') {
               v.value = item[c.name].toString();
               v.value = v.value.charAt(0).toUpperCase() + v.value.substring(1);
