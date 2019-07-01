@@ -18,7 +18,7 @@
     "@types/react": "16.8.19",
     "@types/react-dom": "16.8.4",
     "base64url": "^3.0.1",
-    "conseiljs": "^0.2.5",
+    "conseiljs": "^0.2.6",
     "moment": "^2.23.0",
     "moment-timezone": "^0.5.25",
     "rc-tooltip": "^3.7.3",

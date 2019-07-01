@@ -6,9 +6,11 @@ import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
 import Radio from '@material-ui/core/Radio';
 import IconButton from '@material-ui/core/IconButton';
+import InputBase from '@material-ui/core/InputBase';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import ArrowDropDown from '@material-ui/icons/KeyboardArrowDown';
+import SearchIcon from '@material-ui/icons/Search';
 import { ArronaxIcon } from '../ArronaxIcon';
 import { Config } from '../../types';
 
@@ -123,17 +125,44 @@ const Divider = styled.div`
   margin: 0 auto;
 `;
 
+const SearchContainer = styled.div`
+  width: 602px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 5px 5px 5px 5px;
+  display: flex;
+  padding: 0 0 0 29px;
+  align-items: center;
+  margin-left: 30px;
+`;
+
+const InputContainer = muiStyled(InputBase)({
+  flex: 1,
+  color: '#ffffff',
+  letterSpacing: '0.75px',
+  fontSize: '18px',
+  fontWeight: 'bold'
+});
+
+const RevertSearchIcon = muiStyled(SearchIcon)({
+  color: '#ffffff',
+  transform: 'rotateY(180deg)',
+  fontSize: 35
+});
+
 interface Props {
   selectedConfig: Config;
   configs: Config[];
   onChangeNetwork(config: Config): void;
   openModal(): void;
   onRemoveConfig(index: number): void;
+  onSearch(val: string | number): void;
 }
 
 const Header: React.FC<Props> = props => {
-  const { selectedConfig, configs } = props;
+  const { selectedConfig, configs, onSearch } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [searchKey, setSearchKey] = React.useState('');
   const localConfigs = [];
   const mainConfigs = [];
   configs.forEach(config => {
@@ -242,6 +271,21 @@ const Header: React.FC<Props> = props => {
           <AddButton onClick={openConfigModal}>Add Network</AddButton>
         </Menu>
       </SelectContainer>
+      <SearchContainer>	
+        <InputContainer
+          value={searchKey}
+          placeholder="Operation Group ID / Address / Block Level or Block Hash" 
+          onChange={ e => setSearchKey(e.target.value)}
+          onKeyPress= { e => {
+            if (e.key === 'Enter') {
+              onSearch(searchKey)
+            }
+          }}
+        />	
+        <IconButton aria-label="Search" onClick={() => onSearch(searchKey)}>	
+          <RevertSearchIcon />	
+        </IconButton>	
+      </SearchContainer>
     </HeaderContainer>
   );
 };

@@ -21,6 +21,7 @@ import Footer from '../../components/Footer';
 import Toolbar from '../../components/Toolbar';
 import CustomTable from '../CustomTable';
 import ConfigModal from '../../components/ConfigModal';
+import EntityModal from '../../components/EntityModal';
 
 import {
   getLoading,
@@ -32,7 +33,8 @@ import {
   getFilterCount,
   getColumns,
   getEntities,
-  getAggregations
+  getAggregations,
+  getAttributesAll
 } from '../../reducers/app/selectors';
 import { getErrorState, getMessageTxt } from '../../reducers/message/selectors';
 import {
@@ -41,7 +43,8 @@ import {
   submitQuery,
   exportCsvData,
   shareReport,
-  changeTab
+  changeTab,
+  searchByIdThunk
 } from '../../reducers/app/thunks';
 import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../../reducers/app/actions';
 import { clearMessageAction } from '../../reducers/message/actions';
@@ -183,6 +186,7 @@ export interface Props extends RouteProps {
   entities: EntityDefinition[];
   isError: boolean;
   message: string;
+  attributes: any;
   removeAllFilters: (entity: string) => void;
   changeNetwork(config: Config): void;
   changeTab: (type: string) => void;
@@ -193,6 +197,7 @@ export interface Props extends RouteProps {
   initMessage: ()=> void;
   addConfig: (config: Config, isUse: boolean) => void;
   removeConfig: (index: number) => void;
+  searchById: (id: string | number) => any;
 }
 
 export interface States {
@@ -200,6 +205,9 @@ export interface States {
   selectedTool: string;
   isModalUrl: boolean;
   isOpenConfigMdoal: boolean;
+  isOpenEntityModal: boolean;
+  searchedEntity: string;
+  searchedItem: any;
 }
 
 class Arronax extends React.Component<Props, States> {
@@ -207,16 +215,21 @@ class Arronax extends React.Component<Props, States> {
     items: []
   };
   settingRef: any = null;
+  tableRef = null;
   constructor(props: Props) {
     super(props);
     this.state = {
       isSettingCollapsed: false,
       selectedTool: ToolType.FILTER,
       isModalUrl: false,
-      isOpenConfigMdoal: false
+      isOpenConfigMdoal: false,
+      isOpenEntityModal: false,
+      searchedEntity: '',
+      searchedItem: {}
     };
 
     this.settingRef = React.createRef();
+    this.tableRef = React.createRef();
   }
 
   componentDidMount() {
@@ -311,6 +324,17 @@ class Arronax extends React.Component<Props, States> {
     this.closeConfigModal();
   }
 
+  onSearchById = async (val: string | number) => {
+    const { searchById } = this.props;
+    const realVal = !Number(val) ? val : Number(val);
+    const { entity, items } = await searchById(realVal);
+    if (items.length > 0 && entity) {
+      this.setState({searchedItem: items[0], searchedEntity: entity, isOpenEntityModal: true});
+    }
+  }
+
+  onCloseEntityModal = () => this.setState({isOpenEntityModal: false});
+
   render() {
     const {
       isLoading,
@@ -325,12 +349,15 @@ class Arronax extends React.Component<Props, States> {
       entities,
       isError,
       message,
-      removeConfig
+      removeConfig,
+      attributes
     } = this.props;
     const {
-      isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal
+      isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal, isOpenEntityModal,
+      searchedItem, searchedEntity
     } = this.state;
     const isRealLoading = isLoading || !isFullLoaded;
+    const selectedObjectEntity = entities.find(entity => entity.name === searchedEntity);
     
     return (
       <MainContainer>
@@ -340,6 +367,7 @@ class Arronax extends React.Component<Props, States> {
           onChangeNetwork={this.onChangeNetwork}
           openModal={this.openConfigModal}
           onRemoveConfig={removeConfig}
+          onSearch={this.onSearchById}
         />
         <Container>
           {isFullLoaded && (
@@ -420,6 +448,16 @@ class Arronax extends React.Component<Props, States> {
           onClose={this.closeConfigModal}
           addConfig={this.onAddConfig}
         />
+        {isOpenEntityModal && 
+          <EntityModal
+            open={isOpenEntityModal}
+            title={selectedObjectEntity.displayName}
+            attributes={attributes[searchedEntity]}
+            item={searchedItem}
+            isLoading={isLoading}
+            onClose={this.onCloseEntityModal}
+          />
+        }
       </MainContainer>
     );
   }
@@ -437,7 +475,8 @@ const mapStateToProps = (state: any) => ({
   entities: getEntities(state),
   isError: getErrorState(state),
   message: getMessageTxt(state),
-  aggCount: getAggregations(state).length
+  aggCount: getAggregations(state).length,
+  attributes: getAttributesAll(state)
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -451,7 +490,8 @@ const mapDispatchToProps = (dispatch: any) => ({
   shareReport: () => dispatch(shareReport()),
   initMessage: () => dispatch(clearMessageAction()),
   addConfig: (config: Config, isUse: boolean) => dispatch(addConfigAction(config, isUse)),
-  removeConfig: (index: number) => dispatch(removeConfigAction(index))
+  removeConfig: (index: number) => dispatch(removeConfigAction(index)),
+  searchById: (id: string | number) => dispatch(searchByIdThunk(id))
 });
 
 export default compose(

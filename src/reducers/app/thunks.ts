@@ -7,7 +7,8 @@ import {
   ConseilQueryBuilder,
   ConseilOperator,
   ConseilOutput,
-  ConseilSortDirection, EntityDefinition, AttributeDefinition
+  ConseilSortDirection, EntityDefinition, AttributeDefinition,
+  TezosConseilClient
 } from 'conseiljs';
 
 import {
@@ -466,4 +467,26 @@ export const changeTab = (entity: string) => async (dispatch, state) => {
     dispatch(setLoadingAction(false));
   }
   dispatch(setTabAction(entity));
+};
+
+export const searchByIdThunk = (id: string | number) => async (dispatch: any, state: any) => {
+  dispatch(setLoadingAction(true));
+  const { selectedEntity, selectedConfig } = state().app;
+  const { platform, network, url, apiKey } = selectedConfig;
+  const serverInfo = { url, apiKey };
+  let items = [];
+  let itemEntity = '';
+  try {
+    const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
+    itemEntity = entity;
+    items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
+  } catch(e) {
+    dispatch(createMessageAction(`You entered an invalid value.`, true));
+  }
+
+  dispatch(setLoadingAction(false));
+  return {
+    entity: itemEntity,
+    items
+  };
 };
