@@ -471,22 +471,22 @@ export const changeTab = (entity: string) => async (dispatch, state) => {
 
 export const searchByIdThunk = (id: string | number) => async (dispatch: any, state: any) => {
   dispatch(setLoadingAction(true));
-  const { selectedEntity, selectedConfig } = state().app;
+  const { selectedConfig } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey };
-  let items = [];
-  let itemEntity = '';
   try {
     const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
-    itemEntity = entity;
-    items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
-  } catch(e) {
-    dispatch(createMessageAction(`You entered an invalid value.`, true));
-  }
+    const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+    dispatch(setLoadingAction(false));
+    return { entity, items };
+  } catch (e) {
+      console.log(e);
+      if (e.message === 'Invalid id parameter') {
+        dispatch(createMessageAction(`Invalid id format entered.`, true));
+      } else {
+        dispatch(createMessageAction('Unable to load an object for the id', true));
+      }
 
-  dispatch(setLoadingAction(false));
-  return {
-    entity: itemEntity,
-    items
-  };
+      dispatch(setLoadingAction(false));
+  }
 };

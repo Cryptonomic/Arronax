@@ -126,14 +126,14 @@ const Divider = styled.div`
 `;
 
 const SearchContainer = styled.div`
-  width: 602px;
+  width: 540px;
   height: 60px;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 5px 5px 5px 5px;
   display: flex;
-  padding: 0 0 0 29px;
+  padding: 0 0 0 20px;
   align-items: center;
-  margin-left: 30px;
+  margin-left: auto;
 `;
 
 const InputContainer = muiStyled(InputBase)({
@@ -203,9 +203,21 @@ const Header: React.FC<Props> = props => {
   return (
     <HeaderContainer>
       <HeaderLogo>ARRONAX beta</HeaderLogo>
-      <IconContainer>
-        <ArronaxIcon size="22px" color="#FFFFFF" iconName="icon-octopus-logo" />
-      </IconContainer>
+      <SearchContainer>	
+        <InputContainer
+          value={searchKey}
+          placeholder="Block Level or Hash / Address / Operation Group" 
+          onChange={ e => setSearchKey(e.target.value)}
+          onKeyPress= { e => {
+            if (e.key === 'Enter') {
+              onSearch(searchKey)
+            }
+          }}
+        />	
+        <IconButton aria-label="Search" onClick={() => onSearch(searchKey)}>	
+          <RevertSearchIcon />	
+        </IconButton>	
+      </SearchContainer>
       <SelectContainer>
         <MenuBtn
           aria-controls="simple-menu"
@@ -271,21 +283,7 @@ const Header: React.FC<Props> = props => {
           <AddButton onClick={openConfigModal}>Add Network</AddButton>
         </Menu>
       </SelectContainer>
-      <SearchContainer>	
-        <InputContainer
-          value={searchKey}
-          placeholder="Operation Group ID / Address / Block Level or Block Hash" 
-          onChange={ e => setSearchKey(e.target.value)}
-          onKeyPress= { e => {
-            if (e.key === 'Enter') {
-              onSearch(searchKey)
-            }
-          }}
-        />	
-        <IconButton aria-label="Search" onClick={() => onSearch(searchKey)}>	
-          <RevertSearchIcon />	
-        </IconButton>	
-      </SearchContainer>
+      
     </HeaderContainer>
   );
 };
