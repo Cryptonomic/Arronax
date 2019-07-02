@@ -477,6 +477,7 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
   try {
     const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
     const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+    await dispatch(changeTab(entity));
     dispatch(setLoadingAction(false));
     return { entity, items };
   } catch (e) {
