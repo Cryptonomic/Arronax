@@ -3,7 +3,9 @@ import styled from 'styled-components';
 import Modal from '@material-ui/core/Modal';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import moment from 'moment';
+import { AttrbuteDataType } from 'conseiljs';
 import { ArronaxIcon } from '../ArronaxIcon';
+import { formatNumber } from '../../utils/general';
 
 const ScrollContainer = styled.div`
   width: 100%;
@@ -128,17 +130,11 @@ class EntityModal extends React.Component<Props, {}> {
       .map(c => {
           let v = {displayName: '', value: undefined};
           v['displayName'] = c.displayName;
-          if (c.dataType === 'DateTime' && c.dataFormat) {
+          if (c.dataType === AttrbuteDataType.DATETIME && c.dataFormat) {
               v['value'] = moment(item[c.name]).format(c.dataFormat);
-          } else if (c.dataType === 'Decimal' && c.scale && c.scale !== 0) {
-              const n = Number(item[c.name]);
-              const d = n/Math.pow(10, c.scale);
-              if (n < 10000) {
-              v.value = d.toFixed(4);
-              } else {
-              v.value = d.toFixed(2);
-              }
-          } else if (c.dataType === 'Boolean') {
+          } else if (c.dataType === AttrbuteDataType.DECIMAL || c.dataType === AttrbuteDataType.INT || c.dataType === AttrbuteDataType.CURRENCY) {
+              v.value = formatNumber(Number(item[c.name]), c);
+          } else if (c.dataType === AttrbuteDataType.BOOLEAN) {
               v.value = item[c.name].toString();
               v.value = v.value.charAt(0).toUpperCase() + v.value.substring(1);
           } else {

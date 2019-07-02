@@ -1,5 +1,5 @@
 
-import { AttributeDefinition } from 'conseiljs';
+import { AttributeDefinition, AttrbuteDataType } from 'conseiljs';
 
 export const convertValue = (value) => {
   if (value === true) {
@@ -28,14 +28,59 @@ export const truncateHash = (value) => {
   return `${firstHalf}...${secondHalf}`;
 }
 
+export const formatNumber = (value: number, attribute: AttributeDefinition, isAggregated: boolean = false) => {
+    if (value === undefined) { return ''; }
+
+    let t = '';
+    if (isAggregated && attribute.dataType === AttrbuteDataType.INT) {
+        t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 })).format(value);
+    } else if (attribute.dataType === AttrbuteDataType.INT) {
+        t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', useGrouping: false, minimumFractionDigits: 0, maximumFractionDigits: 1 })).format(value);
+    } else if (attribute.scale !== undefined && (attribute.dataType === AttrbuteDataType.DECIMAL || attribute.dataType === AttrbuteDataType.CURRENCY)) {
+        const d = value / Math.pow(10, attribute.scale);
+        let minimumFractionDigits = 0;
+        let maximumFractionDigits = 0;
+        if (value < 10000) {
+            minimumFractionDigits = 6;
+            maximumFractionDigits = 6;
+        } else if (value < 100000) {
+            minimumFractionDigits = 4;
+            maximumFractionDigits = 4;
+        } else if (value < 1000000) {
+            minimumFractionDigits = 2;
+            maximumFractionDigits = 2;
+        }
+
+        t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits, maximumFractionDigits })).format(d);
+    } else if (attribute.dataType === AttrbuteDataType.DECIMAL) {
+        if (Number.isInteger(value)) { // HACK: until accounts.block_level reports as 'Int'
+            t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', useGrouping: false, minimumFractionDigits: 0, maximumFractionDigits: 1 })).format(value);
+        } else {
+            t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits: 6, maximumFractionDigits: 6 })).format(value);
+        }
+    } else if (attribute.dataType === AttrbuteDataType.CURRENCY) {
+        t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits: 6, maximumFractionDigits: 6 })).format(value);
+    }
+
+    if (attribute.dataType === AttrbuteDataType.CURRENCY) {
+        if (attribute.currencySymbol !== undefined) {
+            t = `${attribute.currencySymbol} ${t}`;
+        } else if (attribute.currencySymbolCode !== undefined) {
+            t = `${String.fromCharCode(attribute.currencySymbolCode)} ${t}`;
+        }
+    }
+
+    return t;
+}
+
 export const getOperatorType = (dataType: string) => {
-  if (dataType === 'Int' || dataType === 'Decimal') {
+  if (dataType === AttrbuteDataType.INT || dataType === AttrbuteDataType.DECIMAL || dataType === AttrbuteDataType.CURRENCY) {
     return 'numeric';
   }
-  if (dataType === 'String' || dataType === 'AccountAddress' || dataType === 'Hash') {
+  if (dataType === AttrbuteDataType.STRING || dataType === AttrbuteDataType.ACCOUNT_ADDRESS || dataType === AttrbuteDataType.HASH) {
     return 'string';
   }
-  if (dataType === 'Boolean') {
+  if (dataType === AttrbuteDataType.BOOLEAN) {
     return 'boolean';
   }
   return 'dateTime';

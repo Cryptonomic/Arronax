@@ -7,7 +7,8 @@ import {
   ConseilQueryBuilder,
   ConseilOperator,
   ConseilOutput,
-  ConseilSortDirection, EntityDefinition, AttributeDefinition
+  ConseilSortDirection, EntityDefinition, AttributeDefinition,
+  TezosConseilClient
 } from 'conseiljs';
 
 import {
@@ -466,4 +467,26 @@ export const changeTab = (entity: string) => async (dispatch, state) => {
     dispatch(setLoadingAction(false));
   }
   dispatch(setTabAction(entity));
+};
+
+export const searchByIdThunk = (id: string | number) => async (dispatch: any, state: any) => {
+  dispatch(setLoadingAction(true));
+  const { selectedConfig } = state().app;
+  const { platform, network, url, apiKey } = selectedConfig;
+  const serverInfo = { url, apiKey };
+  try {
+    const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
+    const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+    await dispatch(changeTab(entity));
+    dispatch(setLoadingAction(false));
+    return { entity, items };
+  } catch (e) {
+      if (e.message === 'Invalid id parameter') {
+        dispatch(createMessageAction(`Invalid id format entered.`, true));
+      } else {
+        dispatch(createMessageAction('Unable to load an object for the id', true));
+      }
+
+      dispatch(setLoadingAction(false));
+  }
 };
