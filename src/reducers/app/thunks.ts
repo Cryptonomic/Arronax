@@ -481,7 +481,6 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
     dispatch(setLoadingAction(false));
     return { entity, items };
   } catch (e) {
-      console.log(e);
       if (e.message === 'Invalid id parameter') {
         dispatch(createMessageAction(`Invalid id format entered.`, true));
       } else {
