@@ -29,12 +29,14 @@ export const truncateHash = (value) => {
 }
 
 export const formatNumber = (value: number, attribute: AttributeDefinition, isAggregated: boolean = false) => {
+    if (value === undefined) { return ''; }
+
     let t = '';
 
     if (isAggregated && attribute.dataType === AttrbuteDataType.INT) {
         t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 })).format(value);
     } else if (attribute.dataType === AttrbuteDataType.INT) {
-        t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'integer' })).format(value);
+        t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', useGrouping: false, minimumFractionDigits: 0, maximumFractionDigits: 1 })).format(value);
     } else if (attribute.scale !== undefined && (attribute.dataType === AttrbuteDataType.DECIMAL || attribute.dataType === AttrbuteDataType.CURRENCY)) {
         const d = value / Math.pow(10, attribute.scale);
         let minimumFractionDigits = 0;
