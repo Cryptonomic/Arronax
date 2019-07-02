@@ -9,7 +9,7 @@ import Circle from '@material-ui/icons/FiberManualRecord';
 import ContentCopy from '@material-ui/icons/FileCopyOutlined';
 import Clipboard from 'react-clipboard.js';
 import { AttributeDefinition, AttrbuteDataType } from 'conseiljs';
-import { truncateHash } from '../../utils/general';
+import { truncateHash, formatNumber } from '../../utils/general';
 import { Aggregation } from '../../types';
 
 const TableRowWrapper = styled(TableRow)`
@@ -97,19 +97,7 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
 }
 
 const formatAggregatedValue = (attribute: AttributeDefinition, value: any) => {
-    if (attribute.dataType === AttrbuteDataType.INT || attribute.dataType === AttrbuteDataType.DECIMAL) {
-        if (attribute.scale && attribute.scale !== 0) {
-            const n = Number(value);
-            const d = n/Math.pow(10, attribute.scale);
-            if (n < 10000) { return d.toFixed(4); }
-
-            return d.toFixed(2);
-        } else {
-            return value;
-        }
-    } else {
-        return Number(value).toFixed(0);
-    }
+    return formatNumber(Number(value), attribute, true);
 }
 
 const formatValueForDisplay = (platform: string, network: string, entity: string, value: any, attribute: AttributeDefinition, isAgg: boolean, onClickPrimaryKey: (entity: string, key: string, value: string | number) => void) => {
@@ -118,7 +106,7 @@ const formatValueForDisplay = (platform: string, network: string, entity: string
 
     if (isAgg) { return formatAggregatedValue(attribute, value); }
 
-    if (dataType === 'Boolean') {
+    if (dataType === AttrbuteDataType.BOOLEAN) {
         const svalue = value.toString();
         return svalue.charAt(0).toUpperCase() + svalue.slice(1);
     } else if (dataType === AttrbuteDataType.DATETIME) {
@@ -129,7 +117,7 @@ const formatValueForDisplay = (platform: string, network: string, entity: string
             {value}
             </Moment>
         )
-    } else if (dataType === 'AccountAddress') {
+    } else if (dataType === AttrbuteDataType.ACCOUNT_ADDRESS) {
         const colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255)/74)).toString('hex');
 
         return (
@@ -142,7 +130,7 @@ const formatValueForDisplay = (platform: string, network: string, entity: string
             </ClipboardWrapper>
             </React.Fragment>
         );
-    } else if (dataType === 'Hash') {
+    } else if (dataType === AttrbuteDataType.HASH) {
         return (
             <React.Fragment>
             {formatReferenceValue(attribute, truncateHash(value), value, onClickPrimaryKey)}
@@ -151,17 +139,9 @@ const formatValueForDisplay = (platform: string, network: string, entity: string
             </ClipboardWrapper>
             </React.Fragment>
         );
-    } else if (dataType === 'Decimal') {
-        if (attribute.scale && attribute.scale !== 0) {
-            const n = Number(value);
-            const d = n/Math.pow(10, attribute.scale);
-            if (n < 10000) { return d.toFixed(4); }
-
-            return d.toFixed(2);
-        } else {
-            return value;
-        }
-    } else if (dataType === 'String' && value.length > 100) {
+    } else if (dataType === AttrbuteDataType.DECIMAL || dataType === AttrbuteDataType.INT, dataType === AttrbuteDataType.CURRENCY) {
+        return formatNumber(Number(value), attribute);
+    } else if (dataType === AttrbuteDataType.STRING && value.length > 100) {
         return (
             <React.Fragment>
             {value.substring(0, 100)}
@@ -170,7 +150,7 @@ const formatValueForDisplay = (platform: string, network: string, entity: string
             </ClipboardWrapper>
             </React.Fragment>
         );
-    } else if (dataType === 'String' && value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
+    } else if (dataType === AttrbuteDataType.STRING && value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
         return value.split('_').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
     } else {
         return formatReferenceValue(attribute, value, value, onClickPrimaryKey);
