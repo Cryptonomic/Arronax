@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ConseilOperator, AttributeDefinition } from 'conseiljs';
 import InputItem from '../ValueInputItem';
@@ -40,6 +41,7 @@ const ValueInput: React.FC<Props> = props => {
       onChange
     } = props;
     let input;
+    const { t } = useTranslation();
 
     // Render specific input type based on operators
     if (operator === ConseilOperator.BETWEEN || operator === ConseilOperator.IN || operator === 'notin') {
@@ -53,7 +55,7 @@ const ValueInput: React.FC<Props> = props => {
             />
           </Container>
           <HR />
-          <AndBlock>and</AndBlock>
+          <AndBlock>{t('components.valueInput.and')}</AndBlock>
           <HR />
           <Container>
             <InputItem

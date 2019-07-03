@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -133,6 +134,7 @@ const Toolbar: React.FC<Props> = props => {
   const { isCollapsed, selectedTool, filterCount, aggCount, columnsCount, onChangeTool, onExportCsv, onShareReport } = props;
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const { t } = useTranslation();
   function shareReport() {
     setOpen(true);
     setAnchorEl(null);
@@ -162,7 +164,7 @@ const Toolbar: React.FC<Props> = props => {
       >
         <FilterIcon size="20px" color="#4a4a4a" iconName="icon-filter" />
         <BadgeWrapper color="secondary" badgeContent={filterCount}>
-          Filter
+          {t('components.toolBar.filter')}
         </BadgeWrapper>
       </FilterTool>
       <ColumnsTool
@@ -171,7 +173,7 @@ const Toolbar: React.FC<Props> = props => {
       >
         <ColumnIcon size="20px" color="#4a4a4a" iconName="icon-columns" />
         <BadgeWrapper color="secondary" badgeContent={columnsCount}>
-          Columns
+          {t('components.toolBar.columns')}
         </BadgeWrapper>
       </ColumnsTool>
       <AggTool
@@ -179,12 +181,12 @@ const Toolbar: React.FC<Props> = props => {
         onClick={() => onChangeTool(ToolType.AGGREGATION)}
       >
         <BadgeWrapper color="secondary" badgeContent={aggCount}>
-          Aggregation
+          {t('components.toolBar.aggregation')}
         </BadgeWrapper>
       </AggTool>
       <ShareTool aria-controls="share-menu" aria-haspopup="true" onClick={openShareMenu}>
         <ExportIcon size="20px" color="#4a4a4a" iconName="icon-export" />
-        Share
+        {t('components.toolBar.share')}
       </ShareTool>
       <Menu
         id="share-menu"
@@ -193,9 +195,9 @@ const Toolbar: React.FC<Props> = props => {
         open={Boolean(anchorEl)}
         onClose={closeShareMenu}
       >
-        <MenuItem onClick={exportCsv}>Export CSV</MenuItem>
+        <MenuItem onClick={exportCsv}>{t('components.toolBar.export_csv')}</MenuItem>
         <Tooltip title="Copied!" placement="right-start" open={open}>
-          <MenuItem onClick={shareReport}>Share Report</MenuItem>
+          <MenuItem onClick={shareReport}>{t('components.toolBar.share_report')}</MenuItem>
         </Tooltip>
       </Menu>
     </Container>

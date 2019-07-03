@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
 import { ConseilOperator, AttributeDefinition } from 'conseiljs';
@@ -38,7 +39,7 @@ import {
   ResetButton
 } from './style';
 
-type Props = {
+type OwnProps = {
   availableValues: any;
   selectedEntity: string;
   attributes: AttributeDefinition[];
@@ -52,6 +53,8 @@ type Props = {
   resetFilters: () => void;
   onSubmit: () => void;
 };
+
+type Props = OwnProps & WithTranslation;
 
 class FilterPanel extends React.Component<Props, {}> {
   onAddFilter = async () => {
@@ -143,7 +146,8 @@ class FilterPanel extends React.Component<Props, {}> {
       filters,
       operators,
       availableValues,
-      onSubmit
+      onSubmit,
+      t
     } = this.props;
     const entityName = selectedEntity.replace(/_/gi, ' ').slice(0, -1);
 
@@ -171,7 +175,7 @@ class FilterPanel extends React.Component<Props, {}> {
                 <FilterItemGr>
                   <FilterSelect
                     value={filter.name}
-                    placeholder={`Select ${entityName} Attribute`}
+                    placeholder={t('components.aggregationPanel.select_attribute', { entityName })}
                     items={newAttributes}
                     onChange={attr => this.onFilterNameChange(attr, index)}
                   />
@@ -179,7 +183,7 @@ class FilterPanel extends React.Component<Props, {}> {
                   {filter.name && (
                     <FilterSelect
                       value={filter.operator}
-                      placeholder='Select Operator'
+                      placeholder={t('components.filterPanel.select_operator')}
                       items={operators[filter.operatorType]}
                       onChange={operator =>
                         this.onFilterOperatorChange(operator, index)
@@ -189,7 +193,7 @@ class FilterPanel extends React.Component<Props, {}> {
                   {filter.operator && <HR />}
                   {filter.operator && filter.isLowCardinality && (
                     <ValueSelect
-                      placeholder='Select Value'
+                      placeholder={t('components.filterPanel.select_value')}
                       operator={filter.operator}
                       selectedValues={filter.values}
                       values={availableValues[filter.name]}
@@ -221,17 +225,17 @@ class FilterPanel extends React.Component<Props, {}> {
               isDisabled={disableAddFilter}
             >
               <PlusIconWrapper />
-              Add Filter
+              {t('components.filterPanel.add_filter')}
             </AddFilterButton>
           </AddFilterFooter>
         </MainContainer>
         <ButtonContainer>
           <ResetButton onClick={this.onResetFilters}>
             <RefreshIcon size="23px" color="#56c2d9" iconName="icon-reset"/>
-            Reset
+            {t('general.verbs.reset')}
           </ResetButton>
           <RunButton onClick={onSubmit}>
-            Apply
+            {t('general.verbs.apply')}
           </RunButton>
         </ButtonContainer>
       </Container>
@@ -261,4 +265,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(FilterPanel);
+)(withTranslation()(FilterPanel));

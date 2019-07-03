@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
@@ -91,7 +92,7 @@ interface Item {
   name?: string | null;
 }
 
-interface Props {
+interface OwnProps {
   value: string;
   items: Array<Item>;
   placeholder?: string;
@@ -103,6 +104,8 @@ type States = {
   isFadeBottom: boolean;
   isFadeTop: boolean;
 };
+
+type Props = OwnProps & WithTranslation;
 
 class FilterSelect extends React.Component<Props, States> {
   constructor(props: Props) {
@@ -152,7 +155,7 @@ class FilterSelect extends React.Component<Props, States> {
 
   render() {
     const { anchorEl, isFadeBottom, isFadeTop } = this.state;
-    const { items, value, placeholder } = this.props;
+    const { items, value, placeholder, t } = this.props;
 
     const selectedItem: any = items.find((item: any) => item.name === value);
     const menuTitle = value ? selectedItem.displayName : placeholder;
@@ -164,7 +167,7 @@ class FilterSelect extends React.Component<Props, States> {
           aria-haspopup="true"
           isactive={value}
           onClick={this.handleClick}
-          iscapital={placeholder !== 'Select Operator'? 1 : 0}
+          iscapital={placeholder !== t('components.filterPanel.select_operator')? 1 : 0}
         >
           {menuTitle}
           <ArrowIcon />
@@ -202,4 +205,4 @@ class FilterSelect extends React.Component<Props, States> {
   }
 }
 
-export default FilterSelect;
+export default withTranslation()(FilterSelect);

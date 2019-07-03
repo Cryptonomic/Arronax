@@ -1,10 +1,11 @@
 import React from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Modal from '@material-ui/core/Modal';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import moment from 'moment';
 import { AttrbuteDataType } from 'conseiljs';
 import { ArronaxIcon } from '../ArronaxIcon';
+import Loader from '../Loader';
 import { formatNumber } from '../../utils/general';
 
 const ScrollContainer = styled.div`
@@ -65,26 +66,13 @@ const ContentTxt = styled.div`
   flex: 1;
 `;
 
-const LoadingContainer = styled.div`
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.3);
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 100;
-`;
-
-export const ButtonContainer = styled.div`
+const ButtonContainer = styled.div`
   display: flex;
   padding: 15px;
   justify-content: flex-end;
 `;
 
-export const CloseButton = styled.div`
+const CloseButton = styled.div`
   color: #56c2d9;
   font-size: 20px;
   font-weight: 700;
@@ -93,7 +81,7 @@ export const CloseButton = styled.div`
   align-items: center;
 `;
 
-type Props = {
+type OwnProps = {
   open: boolean;
   item: any;
   attributes: any[];
@@ -102,12 +90,14 @@ type Props = {
   onClose: () => void;
 };
 
+type Props = OwnProps & WithTranslation;
+
 class EntityModal extends React.Component<Props, {}> {
   onClickModal = (event: any) => {
     event.stopPropagation();
   }
   render() {
-    const { open, item, attributes, isLoading, onClose, title } = this.props;
+    const { open, item, attributes, isLoading, onClose, title, t } = this.props;
 
     const formattedValues = attributes
       .filter(c => item[c.name] != null && item[c.name] !== undefined)
@@ -152,7 +142,7 @@ class EntityModal extends React.Component<Props, {}> {
         <ScrollContainer onClick={onClose}>
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
-            <ModalTitle>{title} Details</ModalTitle>
+            <ModalTitle>{t('components.entityModal.details', {title})}</ModalTitle>
               {!isLoading && (
                 <ListContainer>
                   {formattedValues.map((item, index) => {
@@ -166,16 +156,12 @@ class EntityModal extends React.Component<Props, {}> {
                   })}
                   <ButtonContainer>
                     <CloseButton onClick={onClose}>
-                      Close
+                      {t('general.verbs.close')}
                     </CloseButton>
                   </ButtonContainer>
                 </ListContainer>
               )}
-              {isLoading && (
-                <LoadingContainer>
-                  <CircularProgress />
-                </LoadingContainer>
-              )}
+              {isLoading && <Loader />}
           </ModalContainer>
         </ScrollContainer>
         
@@ -184,4 +170,4 @@ class EntityModal extends React.Component<Props, {}> {
   }
 };
 
-export default EntityModal;
+export default withTranslation()(EntityModal);

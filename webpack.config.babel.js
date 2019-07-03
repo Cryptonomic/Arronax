@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
+const CopyPlugin = require('copy-webpack-plugin');
 
 const gitRevisionPlugin = new GitRevisionPlugin();
 var basePath = __dirname;
@@ -126,7 +127,11 @@ module.exports = {
     new webpack.DefinePlugin({
         'VERSION': JSON.stringify(gitRevisionPlugin.version()),
         'COMMITHASH': JSON.stringify(gitRevisionPlugin.commithash())
-      })
+      }),
+    new CopyPlugin([
+      { from: 'assets/locales', to: 'locales' },
+      { from: 'assets/favicon.ico', to: '' }
+    ])
   ],
   node: {
     // handle "Can't resolve 'fs'" issue

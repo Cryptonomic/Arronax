@@ -60,7 +60,7 @@ const AddButton = styled(CustomButton)<{isDisable: boolean}>`
   ${({ isDisable }) => (isDisable && DisableCss)};
 `;
 
-export interface States {
+interface States {
   platform: string;
   network: string;
   displayName: string;
@@ -70,9 +70,11 @@ export interface States {
 
 type Props = {
   open: boolean;
+  t: any;
   addConfig: (config: Config, isUse: boolean) => void
   onClose: () => void;
 };
+
 
 class ConfigModal extends React.Component<Props, States> {
   constructor(props: Props) {
@@ -126,7 +128,7 @@ class ConfigModal extends React.Component<Props, States> {
 
   render() {
     const {
-      open,
+      open, t
     } = this.props;
     const { platform, network, displayName, url, apiKey } = this.state;
     const isAddActive = platform && network && displayName && url && apiKey;
@@ -138,21 +140,21 @@ class ConfigModal extends React.Component<Props, States> {
         maxWidth='md'
         fullWidth
       >
-        <DialogTitle id='form-dialog-title'>Add Network</DialogTitle>
+        <DialogTitle id='form-dialog-title'>{t('components.configModal.add_network')}</DialogTitle>
         <DialogContent>
           <RowContainer>
             <TextWrapper
               autoFocus
               id='platform'
               name='platform'
-              label='Platform'
+              label={t('components.configModal.platform')}
               value={platform}
               onChange={this.onChangeConfigForm}
             />
             <TextWrapper
               id='network'
               name='network'
-              label='network'
+              label={t('components.configModal.network')}
               value={network}
               onChange={this.onChangeConfigForm}
             />
@@ -161,14 +163,14 @@ class ConfigModal extends React.Component<Props, States> {
             <TextWrapper
               id='displayName'
               name='displayName'
-              label='Display Name'
+              label={t('components.configModal.display_name')}
               value={displayName}
               onChange={this.onChangeConfigForm}
             />
             <TextWrapper
               id='url'
               name='url'
-              label='Url'
+              label={t('components.configModal.url')}
               value={url}
               onChange={this.onChangeConfigForm}
             />
@@ -177,16 +179,16 @@ class ConfigModal extends React.Component<Props, States> {
             <TextWrapper
               id='apiKey'
               name='apiKey'
-              label='Api Key'
+              label={t('components.configModal.api_key')}
               value={apiKey}
               onChange={this.onChangeConfigForm}
             />
           </RowContainer>
         </DialogContent>
         <DialogActions>
-          <ClearButton onClick={this.closeModal}>Cancel</ClearButton>
-          <AddButton isDisable={!isAddActive} onClick={() => this.onAdd(true)}>Use</AddButton>
-          <AddButton isDisable={!isAddActive} onClick={() => this.onAdd(false)}>Add</AddButton>
+          <ClearButton onClick={this.closeModal}>{t('general.verbs.cancel')}</ClearButton>
+          <AddButton isDisable={!isAddActive} onClick={() => this.onAdd(true)}>{t('general.verbs.use')}</AddButton>
+          <AddButton isDisable={!isAddActive} onClick={() => this.onAdd(false)}>{t('general.verbs.add')}</AddButton>
         </DialogActions>
       </Dialog>
     );
