@@ -168,7 +168,8 @@ export const fetchInitEntityAction = (
   urlEntity: string,
   urlQuery: string
 ) => async (dispatch: any) => {
-  const defaultQuery = (urlEntity === entity && urlQuery) ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
+  let defaultQuery = (urlEntity === entity && urlQuery) ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
+  defaultQuery = {...ConseilQueryBuilder.blankQuery(), ...defaultQuery};
   let columns: any[] = [];
   let sorts: Sort[];
   let filters: Filter[] = [];
