@@ -144,11 +144,13 @@ class AggregationPanel extends React.Component<Props, States> {
                     value={agg.field}
                     placeholder={t('components.aggregationPanel.select_attribute', { entityName })}
                     items={columns}
+                    type='attributes'
                     onChange={attr => this.onAggregationNameChange(attr, index)}
                   />
                   {agg.field && <HR />}
                   {agg.field && (
                     <FilterSelect
+                      type='aggFunctions'
                       value={agg.function}
                       placeholder={t('components.aggregationPanel.select_function')}
                       items={aggFunctions[agg.type]}

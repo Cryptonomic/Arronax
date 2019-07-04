@@ -120,10 +120,10 @@ export const setAggregationsThunk = (aggregations: Aggregation[]) => async (disp
   const { selectedEntity, sort, columns } = state().app;
   let selectedSorts = sort[selectedEntity];
   const selectedColumns = columns[selectedEntity];
-  const { sorts, aggs } = clearSortAndAggregations(selectedColumns, sort[selectedEntity], aggregations);
+  const { sorts, aggs } = clearSortAndAggregations(selectedColumns, selectedSorts, aggregations);
   const sortColum = selectedColumns.find(col => col.name === selectedSorts[0].orderBy);
-  const sortAgg = aggregations.find(agg => selectedSorts[0].orderBy === `${agg.function}_${agg.field}`);
-  if (!sortColum && !sortAgg) {
+  const sortAgg = aggregations.find(agg => selectedSorts[0].orderBy === `${agg.function}_${agg.field}` || selectedSorts[0].orderBy === agg.field);
+  if (!sortColum && !sortAgg || sortColum && sortAgg ) {
     selectedSorts = sorts;
   }
   await dispatch(setAggregationAction(selectedEntity, aggs, selectedSorts));

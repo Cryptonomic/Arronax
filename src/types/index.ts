@@ -35,3 +35,8 @@ export interface Aggregation {
   function?: ConseilFunction;
   type: string;
 }
+
+export interface Operator {
+  name: string;
+  displayName: string;
+}
