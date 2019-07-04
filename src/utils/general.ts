@@ -28,14 +28,11 @@ export const truncateHash = (value) => {
   return `${firstHalf}...${secondHalf}`;
 }
 
-export const formatNumber = (value: number, attribute: AttributeDefinition, isAggregated: boolean = false) => {
+export const formatNumber = (value: number, attribute: AttributeDefinition) => {
     if (value === undefined) { return ''; }
 
     let t = '';
-
-    if (isAggregated && attribute.dataType === AttrbuteDataType.INT) {
-        t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 })).format(value);
-    } else if (attribute.dataType === AttrbuteDataType.INT) {
+    if (attribute.dataType === AttrbuteDataType.INT) {
         t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', useGrouping: false, minimumFractionDigits: 0, maximumFractionDigits: 1 })).format(value);
     } else if (attribute.scale !== undefined && (attribute.dataType === AttrbuteDataType.DECIMAL || attribute.dataType === AttrbuteDataType.CURRENCY)) {
         const d = value / Math.pow(10, attribute.scale);
@@ -47,7 +44,7 @@ export const formatNumber = (value: number, attribute: AttributeDefinition, isAg
         } else if (value < 100000) {
             minimumFractionDigits = 4;
             maximumFractionDigits = 4;
-        } else if (value < 1000000) {
+        } else if (value < 1000000000) {
             minimumFractionDigits = 2;
             maximumFractionDigits = 2;
         }
