@@ -6,7 +6,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
-
 const Container = styled.div``;
 
 const ButtonShell = styled(Button)<{isactive: string; iscapital: number}>`
@@ -95,6 +94,7 @@ interface Item {
 interface OwnProps {
   value: string;
   items: Array<Item>;
+  type: string;
   placeholder?: string;
   onChange: (item: object) => void;
 }
@@ -155,10 +155,11 @@ class FilterSelect extends React.Component<Props, States> {
 
   render() {
     const { anchorEl, isFadeBottom, isFadeTop } = this.state;
-    const { items, value, placeholder, t } = this.props;
+    const { items, value, placeholder, type, t } = this.props;
+    const tranPrefix = type === 'attributes'? `${type}.${items[0].entity}.` : `${type}.`;
 
-    const selectedItem: any = items.find((item: any) => item.name === value);
-    const menuTitle = value ? selectedItem.displayName : placeholder;
+    const selectedItem = items.find(item => item.name === value);
+    const menuTitle = value ? t(`${tranPrefix}${selectedItem.name}`) : placeholder;
 
     return (
       <Container>
@@ -193,7 +194,7 @@ class FilterSelect extends React.Component<Props, States> {
                   key={index}
                   selected={value === item.name}
                 >
-                  {item.displayName}
+                  {t(`${tranPrefix}${item.name}`)}
                 </MainMenuItem>
               ))}
             </MenuContents>

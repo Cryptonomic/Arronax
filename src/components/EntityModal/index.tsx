@@ -118,8 +118,7 @@ class EntityModal extends React.Component<Props, {}> {
           return a.displayOrder - b.displayOrder;
       })
       .map(c => {
-          let v = {displayName: '', value: undefined};
-          v['displayName'] = c.displayName;
+          let v = {displayName: c.displayName, value: undefined, name: c.name, entity: c.entity};
           if (c.dataType === AttrbuteDataType.DATETIME && c.dataFormat) {
               v['value'] = moment(item[c.name]).format(c.dataFormat);
           } else if (c.dataType === AttrbuteDataType.DECIMAL || c.dataType === AttrbuteDataType.INT || c.dataType === AttrbuteDataType.CURRENCY) {
@@ -146,10 +145,10 @@ class EntityModal extends React.Component<Props, {}> {
               {!isLoading && (
                 <ListContainer>
                   {formattedValues.map((item, index) => {
-                    const { displayName, value } = item;
+                    const { displayName, value, entity, name } = item;
                     return (
                       <RowContainer key={index}>
-                        <TitleTxt>{displayName}</TitleTxt>
+                        <TitleTxt>{t(`attributes.${entity}.${name}`)}</TitleTxt>
                         <ContentTxt>{value}</ContentTxt>
                       </RowContainer>
                     );

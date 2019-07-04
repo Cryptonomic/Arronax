@@ -1,8 +1,8 @@
 {
   "general": {
     "verbs": {
-      "reset": "Reset",
-      "apply": "Apply",
+      "reset": "Reset ZH",
+      "apply": "Apply ZH",
       "cancel": "Cancel",
       "use": "Use",
       "add": "Add",
@@ -48,7 +48,7 @@
       "link_tran": "<0>An <1>open-source</1> product by <3>Cryptonomic</3></0> <1>Powered by <1>Conseil</1></1> <2>Built with <1>ConseilJS</1></2> <3>Version  <1>{{version}}</1></3>"
     },
     "header": {
-      "arronax_beta": "ARRONAX beta",
+      "arronax_beta": "ARRONAX ZH",
       "select_prefered_network": "Select Preferred Network",
       "input_placehoder": "Block Level or Hash / Address / Operation Group"
     },

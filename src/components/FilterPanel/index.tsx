@@ -177,6 +177,7 @@ class FilterPanel extends React.Component<Props, {}> {
                     value={filter.name}
                     placeholder={t('components.aggregationPanel.select_attribute', { entityName })}
                     items={newAttributes}
+                    type='attributes'
                     onChange={attr => this.onFilterNameChange(attr, index)}
                   />
                   {filter.name && <HR />}
@@ -185,6 +186,7 @@ class FilterPanel extends React.Component<Props, {}> {
                       value={filter.operator}
                       placeholder={t('components.filterPanel.select_operator')}
                       items={operators[filter.operatorType]}
+                      type='operators'
                       onChange={operator =>
                         this.onFilterOperatorChange(operator, index)
                       }
