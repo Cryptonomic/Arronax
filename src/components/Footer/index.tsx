@@ -51,11 +51,11 @@ const Footer: React.FC<{}> = () => {
         <LinkItem>Built with <Link href="https://github.com/Cryptonomic/ConseilJS" target="_blank" rel="noopener noreferrer">ConseilJS</Link></LinkItem>
         <LinkItem>Version <Link href={commitLink} target="_blank" rel="noopener noreferrer">{version}</Link></LinkItem>
       </Trans>
-      <LanguageContainer>
+      {/*<LanguageContainer>
         {langs.map((lang, index) => (
           <LanguageItem key={lang} isFirst={index === 0} onClick={() => changeLanguage(lang)}>{lang}</LanguageItem>
         ))}
-      </LanguageContainer>
+        </LanguageContainer>*/}
     </FooterContainer>
   );
 }

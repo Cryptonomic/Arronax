@@ -97,18 +97,18 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
 }
 
 const formatAggregatedValue = (attribute: AttributeDefinition, value: any, aggregation: ConseilFunction) => {
-    let aggationAttribute = { ...attribute };
+    let aggregationAttribute = { ...attribute };
 
     switch (aggregation) {
         case ConseilFunction.count: 
-            aggationAttribute.dataType = AttrbuteDataType.INT;
+            aggregationAttribute.dataType = AttrbuteDataType.INT;
             break;
         default:
-            aggationAttribute.dataType = attribute.dataType === AttrbuteDataType.CURRENCY ? AttrbuteDataType.CURRENCY : AttrbuteDataType.DECIMAL;
+            aggregationAttribute.dataType = attribute.dataType === AttrbuteDataType.CURRENCY ? AttrbuteDataType.CURRENCY : AttrbuteDataType.DECIMAL;
             break;
     }
 
-    return formatNumber(Number(value), aggationAttribute);
+    return formatNumber(Number(value), aggregationAttribute);
 }
 
 const formatValueForDisplay = (platform: string, network: string, entity: string, value: any, attribute: AttributeDefinition, onClickPrimaryKey: (entity: string, key: string, value: string | number) => void, aggregation?: ConseilFunction) => {
