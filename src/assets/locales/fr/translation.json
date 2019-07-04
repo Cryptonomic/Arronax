@@ -1,0 +1,232 @@
+{
+  "general": {
+    "verbs": {
+      "reset": "Reset fr",
+      "apply": "Apply fr",
+      "cancel": "Cancel",
+      "use": "Use",
+      "add": "Add",
+      "close": "Close",
+      "dismiss": "Dismiss"
+    },
+    "nouns": {
+      "error": "Error"
+    },
+    "errors": {
+      "no_hex_data": "The provided string doesn't look like hex data",
+      "no_ledger_detected": "Ledger disconnected"
+    }
+  },
+  "components": {
+    "aggregationPanel": {
+      "select_function": "Select Function",
+      "select_attribute": "Select {{entityName}} Attribute",
+      "add_aggregation": "Add Aggregation"
+    },
+    "columnsPanel": {},
+    "configModal": {
+      "add_network": "Add Network",
+      "platform": "Platform",
+      "network": "Network",
+      "display_name": "Display Name",
+      "url": "Url",
+      "api_key": "Api Key"
+    },
+    "customPaginator": {
+      "limit_query": "Queries on Arronax are limited to 5000 results. <1>Export to CSV</1> to get the full result set."
+    },
+    "entityModal": {
+      "details": "{{title}} Details"
+    },
+    "filterPanel": {
+      "select_value": "Select Value",
+      "select_operator": "Select Operator",
+      "add_filter": "Add Filter",
+      "add_aggregation": "Add Aggregation"
+    },
+    "footer": {
+      "link_tran": "<0>An <1>open-source</1> product by <3>Cryptonomic</3></0> <1>Powered by <1>Conseil</1></1> <2>Built with <1>ConseilJS</1></2> <3>Version  <1>{{version}}</1></3>"
+    },
+    "header": {
+      "arronax_beta": "ARRONAX FR",
+      "select_prefered_network": "Select Preferred Network",
+      "input_placehoder": "Block Level or Hash / Address / Operation Group"
+    },
+    "toolBar": {
+      "filter": "Filter",
+      "columns": "Columns",
+      "aggregation": "Aggregation",
+      "share": "Share",
+      "export_csv": "Export CSV",
+      "share_report": "Share Report"
+    },
+    "valueInput": {
+      "and": "and"
+    },
+    "valueInputItem": {
+      "select_date": "Select a date",
+      "insert_value": "Insert Value"
+    }
+  },
+  "containers": {
+    "arronax": {
+      "no_results": "Sorry, your filters returned no results.",
+      "try_combination": "Try a different filter combination.",
+      "clear_filters": "Clear Filters",
+      "try_again": "Try Again",
+      "blocks": "Block",
+      "operations": "Operation",
+      "accounts": "Account",
+      "delegates": "Baker",
+      "balance_updates": "Balance Update",
+      "ballots": "Ballot",
+      "fees": "Fee",
+      "operation_groups": "Operation Group",
+      "proposals": "Proposal"
+    }
+  },
+  "attributes": {
+    "accounts": {
+      "account_id": "Address",
+      "block_id": "Block Hash",
+      "manager": "Manager",
+      "spendable": "Spendable",
+      "delegate_setable": "Delegatable",
+      "delegate_value": "Delegate",
+      "counter": "Counter",
+      "script": "Script",
+      "storage": "Storage",
+      "balance": "Balance",
+      "block_level": "Block Level"
+    },
+    "balance_updates": {
+      "id": "Id",
+      "source": "Source",
+      "source_id": "Source id",
+      "source_hash": "Source Hash",
+      "kind": "Kind",
+      "contract": "Contract",
+      "change": "Change",
+      "level": "Level",
+      "delegate": "Delegate",
+      "category": "Category"
+    },
+    "ballots": {
+      "pkh": "Address",
+      "ballot": "Vote",
+      "block_id": "Block Hash",
+      "block_level": "Block Level"
+    },
+    "blocks": {
+      "active_proposal": "Active proposal",
+      "baker": "Baker",
+      "hash": "Block Hash",
+      "chain_id": "Chain Id",
+      "consumed_gas": "Consumed Gas",
+      "context": "Context",
+      "meta_cycle": "Cycle",
+      "meta_cycle_position": "Cycle Position",
+      "expected_commitment": "Expected Commitment",
+      "current_expected_quorum": "Expected Quorum",
+      "fitness": "Fitness",
+      "level": "Level",
+      "nonce_hash": "Nonce",
+      "operations_hash": "Operations Hash",
+      "meta_voting_period": "Period Index",
+      "meta_voting_period_position": "Period Position",
+      "predecessor": "Predecessor Hash",
+      "protocol": "Protocol Hash",
+      "proto": "Protocol Index",
+      "signature": "Signature",
+      "timestamp": "Timestamp",
+      "validation_pass": "Validation pass",
+      "period_kind": "Voting Period"
+    },
+    "delegates": {
+      "pkh": "Address",
+      "block_id": "Block Hash",
+      "balance": "Balance",
+      "frozen_balance": "Frozen Balance",
+      "staking_balance": "Staking Balance",
+      "delegated_balance": "Delegated Balance",
+      "deactivated": "Deactivated",
+      "grace_period": "Grace period",
+      "block_level": "Block Level"
+    },
+    "fees": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "timestamp": "Timestamp",
+      "kind": "Kind"
+    },
+    "operation_groups": {
+      "protocol": "Protocol",
+      "chain_id": "Chain id",
+      "hash": "Hash",
+      "branch": "Branch",
+      "signature": "Signature",
+      "block_id": "Block Hash"
+    },
+    "operations": {
+      "operation_group_hash": "Op Group Hash",
+      "kind": "Kind",
+      "level": "Level",
+      "delegate": "Delegate",
+      "slots": "Slots",
+      "nonce": "Nonce",
+      "pkh": "Pkh",
+      "secret": "Secret",
+      "source": "Source",
+      "fee": "Fee",
+      "counter": "Counter",
+      "gas_limit": "Gas Limit",
+      "storage_limit": "Storage Limit",
+      "public_key": "Public key",
+      "amount": "Amount",
+      "destination": "Destination",
+      "parameters": "Parameters",
+      "manager_pubkey": "Manager pubkey",
+      "balance": "Balance",
+      "spendable": "Spendable",
+      "delegatable": "Delegatable",
+      "script": "Script",
+      "storage": "Storage",
+      "status": "Status",
+      "consumed_gas": "Consumed Gas",
+      "block_hash": "Block Hash",
+      "block_level": "Block Level",
+      "timestamp": "Timestamp"
+    },
+    "proposals": {
+      "protocol_hash": "Protocol hash",
+      "block_id": "Block Hash",
+      "block_level": "Block level"
+    }
+  },
+  "operators": {
+    "eq": "is",
+    "noteq": "is not",
+    "in": "is in",
+    "notin": "is not in",
+    "between": "is between",
+    "lt": "is less than",
+    "gt": "is greater than",
+    "isnull": "is null",
+    "isnotnull": "isnotnull",
+    "like": "is like",
+    "startsWith": "starts with",
+    "notstartWith": "does not start with",
+    "endsWith": "ends with",
+    "notendWith": "does not end with",
+    "before": "is before",
+    "after": "is after"
+  },
+  "aggFunctions": {
+    "sum": "Sum",
+    "avg": "Average",
+    "min": "Min",
+    "max": "Max",
+    "count": "Count"
+  }
+}

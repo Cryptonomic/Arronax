@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import muiStyled from '@material-ui/styles/styled';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -163,6 +164,7 @@ const Header: React.FC<Props> = props => {
   const { selectedConfig, configs, onSearch } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [searchKey, setSearchKey] = React.useState('');
+  const { t } = useTranslation();
   const localConfigs = [];
   const mainConfigs = [];
   configs.forEach(config => {
@@ -202,11 +204,11 @@ const Header: React.FC<Props> = props => {
 
   return (
     <HeaderContainer>
-      <HeaderLogo>ARRONAX beta</HeaderLogo>
+      <HeaderLogo>{t('components.header.arronax_beta')}</HeaderLogo>
       <SearchContainer>	
         <InputContainer
           value={searchKey}
-          placeholder="Block Level or Hash / Address / Operation Group" 
+          placeholder={t('components.header.input_placehoder')}
           onChange={ e => setSearchKey(e.target.value)}
           onKeyPress= { e => {
             if (e.key === 'Enter') {
@@ -234,7 +236,7 @@ const Header: React.FC<Props> = props => {
           onClose={handleClose}
         >
           <MenuHeaderItem value="" disabled>
-            Select Preferred Network
+            {t('components.header.select_prefered_network')}
           </MenuHeaderItem>
           {mainConfigs.map(config => {
             const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&
@@ -280,7 +282,7 @@ const Header: React.FC<Props> = props => {
               </MainMenuItem>
             );
           })}
-          <AddButton onClick={openConfigModal}>Add Network</AddButton>
+          <AddButton onClick={openConfigModal}>{t('components.configModal.add_network')}</AddButton>
         </Menu>
       </SelectContainer>
       

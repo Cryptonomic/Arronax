@@ -120,10 +120,10 @@ export const setAggregationsThunk = (aggregations: Aggregation[]) => async (disp
   const { selectedEntity, sort, columns } = state().app;
   let selectedSorts = sort[selectedEntity];
   const selectedColumns = columns[selectedEntity];
-  const { sorts, aggs } = clearSortAndAggregations(selectedColumns, sort[selectedEntity], aggregations);
-  const sortColum = selectedColumns.find(col => col.name === selectedSorts[0].orderBy);
-  const sortAgg = aggregations.find(agg => selectedSorts[0].orderBy === `${agg.function}_${agg.field}`);
-  if (!sortColum && !sortAgg) {
+  const { sorts, aggs } = clearSortAndAggregations(selectedColumns, selectedSorts, aggregations);
+  const sortColumn = selectedColumns.find(col => col.name === selectedSorts[0].orderBy);
+  const sortAgg = aggregations.find(agg => selectedSorts[0].orderBy === `${agg.function}_${agg.field}` || selectedSorts[0].orderBy === agg.field);
+  if (!sortColumn && !sortAgg || sortColumn && sortAgg ) {
     selectedSorts = sorts;
   }
   await dispatch(setAggregationAction(selectedEntity, aggs, selectedSorts));
@@ -168,7 +168,8 @@ export const fetchInitEntityAction = (
   urlEntity: string,
   urlQuery: string
 ) => async (dispatch: any) => {
-  const defaultQuery = (urlEntity === entity && urlQuery) ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
+  let defaultQuery = (urlEntity === entity && urlQuery) ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
+  defaultQuery = {...ConseilQueryBuilder.blankQuery(), ...defaultQuery};
   let columns: any[] = [];
   let sorts: Sort[];
   let filters: Filter[] = [];

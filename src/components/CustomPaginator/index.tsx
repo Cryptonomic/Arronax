@@ -1,4 +1,5 @@
 import React from 'react';
+import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 import muiStyled from '@material-ui/styles/styled';
 import FormControl from '@material-ui/core/FormControl';
@@ -103,6 +104,7 @@ const TooltipContainer = styled.div`
 
 const ExportTxt = styled.span`
   color: #56c2d9;
+  cursor: pointer;
 `;
 
 const getList = (pageCount: number, balance: number, rowsPerPage: number) => {
@@ -136,7 +138,9 @@ const getList = (pageCount: number, balance: number, rowsPerPage: number) => {
 const getLimitTooltip = (onExportCsv: () => void) => {
   return (
     <TooltipContainer>
-      Queries on Arronax are limited to 5000 results. <ExportTxt onClick={onExportCsv}>Export to CSV</ExportTxt> to get the full result set.
+      <Trans i18nKey='components.customPaginator.limit_query'>
+        Queries on Arronax are limited to 5000 results. <ExportTxt onClick={onExportCsv}>Export to CSV</ExportTxt> to get the full result set.
+      </Trans>
     </TooltipContainer>
   );
 }

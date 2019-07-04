@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { RouteProps, withRouter } from 'react-router-dom';
@@ -6,7 +7,6 @@ import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -22,6 +22,7 @@ import Toolbar from '../../components/Toolbar';
 import CustomTable from '../CustomTable';
 import ConfigModal from '../../components/ConfigModal';
 import EntityModal from '../../components/EntityModal';
+import Loader from '../../components/Loader';
 
 import {
   getLoading,
@@ -60,19 +61,6 @@ const Container = styled.div`
 const MainContainer = styled.div`
   position: relative;
   min-height: 100vh;
-`;
-
-const LoadingContainer = styled.div`
-  position: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.3);
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  z-index: 100;
 `;
 
 const TabContainer = styled.div`
@@ -173,7 +161,7 @@ const TabWrapper = withStyles({
   selected: {},
 })(Tab);
 
-export interface Props extends RouteProps {
+interface OwnProps {
   isLoading: boolean;
   configs: Config[];
   selectedConfig: Config;
@@ -200,7 +188,7 @@ export interface Props extends RouteProps {
   searchById: (id: string | number) => any;
 }
 
-export interface States {
+interface States {
   isSettingCollapsed: boolean;
   selectedTool: string;
   isModalUrl: boolean;
@@ -209,6 +197,8 @@ export interface States {
   searchedEntity: string;
   searchedItem: any;
 }
+
+type Props = OwnProps & RouteProps & WithTranslation;
 
 class Arronax extends React.Component<Props, States> {
   static defaultProps: any = {
@@ -350,7 +340,8 @@ class Arronax extends React.Component<Props, States> {
       isError,
       message,
       removeConfig,
-      attributes
+      attributes,
+      t
     } = this.props;
     const {
       isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal, isOpenEntityModal,
@@ -381,7 +372,7 @@ class Arronax extends React.Component<Props, States> {
                   <TabWrapper
                     key={index}
                     value={entity.name}
-                    label={entity.displayName}
+                    label={t(`containers.arronax.${entity.name}`)}
                   />
                 ))}
               </TabsWrapper>
@@ -408,11 +399,11 @@ class Arronax extends React.Component<Props, States> {
                   <NoResultContainer>
                     <OctopusImg src={octopusSrc} />
                     <NoResultContent>
-                      <NoResultTxt>Sorry, your filters returned no results.</NoResultTxt>
-                      <TryTxt>Try a different filter combination.</TryTxt>
+                      <NoResultTxt>{t('containers.arronax.no_results')}</NoResultTxt>
+                      <TryTxt>{t('containers.arronax.try_combination')}</TryTxt>
                       <ButtonContainer>
-                        <ClearButton onClick={this.onClearFilter}>Clear Filters</ClearButton>
-                        <TryButton onClick={this.onSettingCollapse}>Try Again</TryButton>
+                        <ClearButton onClick={this.onClearFilter}>{t('containers.arronax.clear_filters')}</ClearButton>
+                        <TryButton onClick={this.onSettingCollapse}>{t('containers.arronax.try_again')}</TryButton>
                       </ButtonContainer>
                     </NoResultContent>
                   </NoResultContainer>
@@ -422,28 +413,25 @@ class Arronax extends React.Component<Props, States> {
           )}
         </Container>
         <Footer />
-        {isRealLoading && (
-          <LoadingContainer>
-            <CircularProgress />
-          </LoadingContainer>
-        )}
+        {isRealLoading && <Loader />}
         <Dialog
           open={isError}
           onClose={this.handleErrorClose}
           aria-labelledby='alert-dialog-title'
           aria-describedby='alert-dialog-description'
         >
-          <DialogTitle id='alert-dialog-title'>Error</DialogTitle>
+          <DialogTitle id='alert-dialog-title'>{t('general.nouns.error')}</DialogTitle>
           <DialogContent>
             <DialogContentText id='alert-dialog-description'>
               {message}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <DismissButton onClick={this.handleErrorClose}>Dismiss</DismissButton>
+            <DismissButton onClick={this.handleErrorClose}>{t('general.verbs.dismiss')}</DismissButton>
           </DialogActions>
         </Dialog>
         <ConfigModal
+          t={t}
           open={isOpenConfigMdoal}
           onClose={this.closeConfigModal}
           addConfig={this.onAddConfig}
@@ -495,6 +483,7 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default compose(
+  withTranslation(),
   DragDropContext(HTML5Backend),
   withRouter,
   connect(

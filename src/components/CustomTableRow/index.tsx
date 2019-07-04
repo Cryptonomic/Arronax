@@ -8,7 +8,7 @@ import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import Circle from '@material-ui/icons/FiberManualRecord';
 import ContentCopy from '@material-ui/icons/FileCopyOutlined';
 import Clipboard from 'react-clipboard.js';
-import { AttributeDefinition, AttrbuteDataType } from 'conseiljs';
+import { AttributeDefinition, AttrbuteDataType, ConseilFunction } from 'conseiljs';
 import { truncateHash, formatNumber } from '../../utils/general';
 import { Aggregation } from '../../types';
 
@@ -96,15 +96,26 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
   return displayValue;
 }
 
-const formatAggregatedValue = (attribute: AttributeDefinition, value: any) => {
-    return formatNumber(Number(value), attribute, true);
+const formatAggregatedValue = (attribute: AttributeDefinition, value: any, aggregation: ConseilFunction) => {
+    let aggregationAttribute = { ...attribute };
+
+    switch (aggregation) {
+        case ConseilFunction.count: 
+            aggregationAttribute.dataType = AttrbuteDataType.INT;
+            break;
+        default:
+            aggregationAttribute.dataType = attribute.dataType === AttrbuteDataType.CURRENCY ? AttrbuteDataType.CURRENCY : AttrbuteDataType.DECIMAL;
+            break;
+    }
+
+    return formatNumber(Number(value), aggregationAttribute);
 }
 
-const formatValueForDisplay = (platform: string, network: string, entity: string, value: any, attribute: AttributeDefinition, isAgg: boolean, onClickPrimaryKey: (entity: string, key: string, value: string | number) => void) => {
+const formatValueForDisplay = (platform: string, network: string, entity: string, value: any, attribute: AttributeDefinition, onClickPrimaryKey: (entity: string, key: string, value: string | number) => void, aggregation?: ConseilFunction) => {
     if (value == null || value.length === 0) { return ''; }
     const {dataFormat, dataType} = attribute;
 
-    if (isAgg) { return formatAggregatedValue(attribute, value); }
+    if (!!aggregation) { return formatAggregatedValue(attribute, value, aggregation); }
 
     if (dataType === AttrbuteDataType.BOOLEAN) {
         const svalue = value.toString();
@@ -164,12 +175,12 @@ const CustomTableRow: React.FC<Props> = props => {
       {selectedColumns.map(column => {
         const selectedAggs = aggregations.filter(agg => agg.field === column.name);
         if (selectedAggs.length > 0) {
-          return selectedAggs.map(agg=> {
+          return selectedAggs.map(agg => {
             const keyName = `${agg.function}_${agg.field}`;
             return (
               <StyledCell key={keyName}>
                 <SpanContainer>
-                  {formatValueForDisplay(platform, network, selectedEntity, item[keyName], column, true, onClickPrimaryKey)}
+                  {formatValueForDisplay(platform, network, selectedEntity, item[keyName], column, onClickPrimaryKey, agg.function)}
                 </SpanContainer>
               </StyledCell>
             );
@@ -179,7 +190,7 @@ const CustomTableRow: React.FC<Props> = props => {
           return (
             <StyledCell key={column.name}>
               <SpanContainer>
-                {formatValueForDisplay(platform, network, selectedEntity, item[column.name], column, false, onClickPrimaryKey)}
+                {formatValueForDisplay(platform, network, selectedEntity, item[column.name], column, onClickPrimaryKey, undefined)}
               </SpanContainer>
             </StyledCell>
           );

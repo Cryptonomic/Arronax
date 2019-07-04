@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { AttributeDefinition, AttrbuteDataType } from 'conseiljs';
 import muiStyled from '@material-ui/styles/styled';
@@ -39,12 +40,13 @@ const InputItem: React.FC<Props> = props => {
     value,
     onChange
   } = props;
+  const { t } = useTranslation();
   if (attribute.dataType === AttrbuteDataType.DATETIME) {
     const newValue = value? new Date(Number(value)) : '';
     return (
       <DatePickerWrapper
         selected={newValue}
-        placeholderText='Select a date'
+        placeholderText={t('components.valueInputItem.select_date')}
         showTimeSelect
         timeFormat='HH:mm'
         timeIntervals={15}
@@ -57,7 +59,7 @@ const InputItem: React.FC<Props> = props => {
   return (
     <TextInput
       value={value}
-      placeholder='Insert Value'
+      placeholder={t('components.valueInputItem.insert_value')}
       onChange={event => onChange(event.target.value)}
     />
   )
