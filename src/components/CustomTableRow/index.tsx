@@ -150,7 +150,7 @@ const formatValueForDisplay = (platform: string, network: string, entity: string
             </ClipboardWrapper>
             </React.Fragment>
         );
-    } else if (dataType === AttrbuteDataType.DECIMAL || dataType === AttrbuteDataType.INT, dataType === AttrbuteDataType.CURRENCY) {
+    } else if (dataType === AttrbuteDataType.DECIMAL || dataType === AttrbuteDataType.INT || dataType === AttrbuteDataType.CURRENCY) {
         return formatNumber(Number(value), attribute);
     } else if (dataType === AttrbuteDataType.STRING && value.length > 100) {
         return (

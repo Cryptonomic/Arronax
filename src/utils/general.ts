@@ -50,7 +50,13 @@ export const formatNumber = (value: number, attribute: AttributeDefinition) => {
         }
 
         t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits, maximumFractionDigits })).format(d);
-    } else if (attribute.dataType === AttrbuteDataType.DECIMAL || attribute.dataType === AttrbuteDataType.CURRENCY) {
+    } else if (attribute.dataType === AttrbuteDataType.DECIMAL) {
+        if (Number.isInteger(value)) { // HACK: until accounts.block_level reports as 'Int'
+            t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', useGrouping: false, minimumFractionDigits: 0, maximumFractionDigits: 1 })).format(value);
+        } else {
+            t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits: 6, maximumFractionDigits: 6 })).format(value);
+        }
+    } else if (attribute.dataType === AttrbuteDataType.CURRENCY) {
         t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits: 6, maximumFractionDigits: 6 })).format(value);
     }
 
@@ -66,13 +72,13 @@ export const formatNumber = (value: number, attribute: AttributeDefinition) => {
 }
 
 export const getOperatorType = (dataType: string) => {
-  if (dataType === 'Int' || dataType === 'Decimal') {
+  if (dataType === AttrbuteDataType.INT || dataType === AttrbuteDataType.DECIMAL || dataType === AttrbuteDataType.CURRENCY) {
     return 'numeric';
   }
-  if (dataType === 'String' || dataType === 'AccountAddress' || dataType === 'Hash') {
+  if (dataType === AttrbuteDataType.STRING || dataType === AttrbuteDataType.ACCOUNT_ADDRESS || dataType === AttrbuteDataType.HASH) {
     return 'string';
   }
-  if (dataType === 'Boolean') {
+  if (dataType === AttrbuteDataType.BOOLEAN) {
     return 'boolean';
   }
   return 'dateTime';
