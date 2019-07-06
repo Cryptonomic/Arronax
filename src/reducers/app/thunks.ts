@@ -251,7 +251,7 @@ export const fetchInitEntityAction = (
   } else {
     query = addFields(query, ...getAttributeNames(sortedAttributes));
     columns = [...sortedAttributes];
-    query = setLimit(query, 5000);
+    query = setLimit(query, 1000);
     sorts = [{ orderBy: levelColumn.name, order: ConseilSortDirection.DESC }];
     query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
   }
@@ -390,7 +390,7 @@ export const shareReport = () => async (dispatch, state) => {
   const { selectedEntity, columns, sort, selectedFilters, selectedConfig, aggregations } = state().app;
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
-  query = setLimit(query, 5000);
+  query = setLimit(query, 1000);
   const serializedQuery = JSON.stringify(query);
   const hostUrl = window.location.origin;
   const encodedUrl = base64url(serializedQuery);
@@ -435,7 +435,7 @@ export const submitQuery = () => async (dispatch, state) => {
   const attributeNames = getAttributeNames(columns[selectedEntity]);
 
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
-  query = setLimit(query, 5000);
+  query = setLimit(query, 1000);
   const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
 
   await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length))

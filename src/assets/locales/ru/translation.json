@@ -33,7 +33,7 @@
       "api_key": "Api Key"
     },
     "customPaginator": {
-      "limit_query": "Queries on Arronax are limited to 5000 results. <1>Export to CSV</1> to get the full result set."
+      "limit_query": "Queries on Arronax are limited to 1000 results. <1>Export to CSV</1> to get the full result set."
     },
     "entityModal": {
       "details": "{{title}} Details"
