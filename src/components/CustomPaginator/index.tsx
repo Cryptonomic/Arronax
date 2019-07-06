@@ -139,7 +139,7 @@ const getLimitTooltip = (onExportCsv: () => void) => {
   return (
     <TooltipContainer>
       <Trans i18nKey='components.customPaginator.limit_query'>
-        Queries on Arronax are limited to 5000 results. <ExportTxt onClick={onExportCsv}>Export to CSV</ExportTxt> to get the full result set.
+        Queries on Arronax are limited to 1000 results. <ExportTxt onClick={onExportCsv}>Export to CSV</ExportTxt> to get the full result set.
       </Trans>
     </TooltipContainer>
   );
@@ -171,7 +171,7 @@ const CustomPaginator: React.FC<Props> = props => {
         </SelectWrapper>
       </SelectContainer>
       <MainTxtWrapper>of {totalNumber}</MainTxtWrapper>
-      {totalNumber >= 5000 && (
+      {totalNumber >= 1000 && (
         <React.Fragment>
           <LimitTxt>limit</LimitTxt>
           <Tooltip
