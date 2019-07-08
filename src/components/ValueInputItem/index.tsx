@@ -31,7 +31,7 @@ interface Props {
   attribute: AttributeDefinition;
   value: string;
   disabled?: boolean;
-  onChange: (value: string | number) => void;
+  onChange: (value: string) => void;
 }
 
 const InputItem: React.FC<Props> = props => {
@@ -41,6 +41,7 @@ const InputItem: React.FC<Props> = props => {
     onChange
   } = props;
   const { t } = useTranslation();
+
   if (attribute.dataType === AttrbuteDataType.DATETIME) {
     const newValue = value? new Date(Number(value)) : '';
     return (
@@ -52,7 +53,7 @@ const InputItem: React.FC<Props> = props => {
         timeIntervals={15}
         dateFormat='MMMM d, yyyy h:mm aa'
         timeCaption='time'
-        onChange={(val) => onChange(new Date(val).getTime())}
+        onChange={(val) => onChange(String(new Date(val).getTime()))}
       />
     )
   }

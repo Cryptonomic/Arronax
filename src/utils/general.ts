@@ -102,3 +102,12 @@ export const sortAttributes = (attributes: AttributeDefinition[]) => {
     return a.displayOrder - b.displayOrder;
     });
 }
+
+export function removeBlank(str: string) {
+  let newStr = str;
+  while(newStr.charAt(0) === ' ')
+  {
+    newStr = newStr.substr(1);
+  }
+  return newStr;
+}

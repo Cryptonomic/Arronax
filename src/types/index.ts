@@ -5,7 +5,7 @@ export interface Filter {
   operator: string;
   operatorType: string;
   isLowCardinality?: boolean;
-  values: Array<string>;
+  values: string[];
 }
 
 export enum ToolType {

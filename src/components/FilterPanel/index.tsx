@@ -110,7 +110,7 @@ class FilterPanel extends React.Component<Props, {}> {
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
-  onInputValueChange = (value: any, index: number, pos: number) => {
+  onInputValueChange = (values: string[], index: number) => {
     const {
       filters,
       selectedEntity,
@@ -118,7 +118,7 @@ class FilterPanel extends React.Component<Props, {}> {
     } = this.props;
 
     const selectedFilter: any = {...filters[index]};
-    selectedFilter.values[pos] = value;
+    selectedFilter.values = values;
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
@@ -207,7 +207,7 @@ class FilterPanel extends React.Component<Props, {}> {
                       attribute={filterAttr}
                       values={filter.values}
                       operator={filter.operator}
-                      onChange={(value, pos) => this.onInputValueChange(value, index, pos)}
+                      onChange={(values) => this.onInputValueChange(values, index)}
                     />
                   )}
                 </FilterItemGr>
