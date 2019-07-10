@@ -9,16 +9,16 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const TextInput = muiStyled(InputBase)({
   color: '#9b9b9b',
-  fontSize: '18px',
+  fontSize: '16px',
   letterSpacing: 0,
   lineHeight: '17px',
-  width: '150px',
+  width: '200px',
   paddingLeft: '10px'
 });
 
 const DatePickerWrapper = styled(DatePicker)`
   color: #4A4A4A;
-  font-size: 18px;
+  font-size: 16px;
   letter-spacing: 0;
   line-height: 17px;
   width: 220px;
@@ -56,6 +56,16 @@ const InputItem: React.FC<Props> = props => {
         onChange={(val) => onChange(String(new Date(val).getTime()))}
       />
     )
+  }
+  if (attribute.dataType === AttrbuteDataType.STRING || attribute.dataType === AttrbuteDataType.HASH || attribute.dataType === AttrbuteDataType.ACCOUNT_ADDRESS) {
+    return (
+        <TextInput
+          style={{ width: 350 }}
+          value={value}
+          placeholder={t('components.valueInputItem.insert_value')}
+          onChange={event => onChange(event.target.value)}
+        />
+      )
   }
   return (
     <TextInput

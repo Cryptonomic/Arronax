@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ConseilOperator, AttributeDefinition } from 'conseiljs';
 import InputItem from '../ValueInputItem';
-import { removeBlank } from '../../utils/general';
 
 const Container = styled.div`
   display: flex;
@@ -35,24 +34,22 @@ interface Props {
 }
 
 const ValueInput: React.FC<Props> = props => {
-    const {
-      operator,
-      values,
-      attribute,
-      onChange
-    } = props;
+    const { operator, values, attribute, onChange } = props;
     let input;
     const { t } = useTranslation();
 
-    function changeByBetween(val: string, index: number) {
+    function changeSingle (val: string) {
+        const l = val.split(',').map(v => v.trim());
+        onChange([l[0]]);
+    }
+
+    function changeRange(val: string, index: number) {
       values[index] = val;
       onChange(values);
     }
 
-    function changeByOperator(val: string) {
-      const splitVals = val.split(',');
-      const newValues = splitVals.map(v => removeBlank(v));
-      onChange(newValues);
+    function changeList(val: string) {
+      onChange([...(new Set(val.split(',').map(v => v.trim())))]);
     }
 
     // Render specific input type based on operators
@@ -63,7 +60,7 @@ const ValueInput: React.FC<Props> = props => {
             <InputItem
               attribute={attribute}
               value={values[0]}
-              onChange={val => changeByBetween(val, 0)}
+              onChange={val => changeRange(val, 0)}
             />
           </Container>
           <HR />
@@ -74,32 +71,37 @@ const ValueInput: React.FC<Props> = props => {
               attribute={attribute}
               disabled={!values[0]}
               value={values[1] ? values[1] : ''}
-              onChange={val => changeByBetween(val, 1)}
+              onChange={val => changeRange(val, 1)}
             />
           </Container>
         </React.Fragment>
       );
     } else if (operator === ConseilOperator.ISNULL || operator === 'isnotnull') {
       input = null;
-    } else {
-      let newValue = '';
-      values.forEach((val, index) => {
-        if (index === 0) {
-          newValue = val;
-        } else {
-          newValue += `,${val}`;
-        }
-      });
+    } else if (operator === ConseilOperator.IN || operator === 'notin') {
+      const newValue = values.join(', ');
+
       input = (
         <Container>
           <InputItem
             attribute={attribute}
             value={newValue}
-            onChange={val => changeByOperator(val)}
+            onChange={val => changeList(val)}
           />
         </Container>
       );
+    } else {
+        input = (
+            <Container>
+              <InputItem
+                attribute={attribute}
+                value={values[0]}
+                onChange={val => changeSingle(val)}
+              />
+            </Container>
+          );
     }
+
     return <React.Fragment>{input}</React.Fragment>;
 }
 
