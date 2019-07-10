@@ -5,7 +5,7 @@ export interface Filter {
   operator: string;
   operatorType: string;
   isLowCardinality?: boolean;
-  values: Array<string>;
+  values: string[];
 }
 
 export enum ToolType {
@@ -34,4 +34,9 @@ export interface Aggregation {
   field: string;
   function?: ConseilFunction;
   type: string;
+}
+
+export interface Operator {
+  name: string;
+  displayName: string;
 }

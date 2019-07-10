@@ -1,6 +1,7 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { ConseilOperator } from 'conseiljs';
+import { ConseilOperator, AttributeDefinition } from 'conseiljs';
 import InputItem from '../ValueInputItem';
 
 const Container = styled.div`
@@ -26,58 +27,81 @@ const AndBlock = styled.div`
 `;
 
 interface Props {
-  type: string;
+  attribute: AttributeDefinition;
   operator: string;
-  values: Array<string>;
-  onChange: (value: string | number, index: number) => void;
+  values: string[];
+  onChange: (values: string[]) => void;
 }
 
 const ValueInput: React.FC<Props> = props => {
-    const {
-      operator,
-      values,
-      type,
-      onChange
-    } = props;
+    const { operator, values, attribute, onChange } = props;
     let input;
+    const { t } = useTranslation();
+
+    function changeSingle (val: string) {
+        const l = val.split(',').map(v => v.trim());
+        onChange([l[0]]);
+    }
+
+    function changeRange(val: string, index: number) {
+      values[index] = val;
+      onChange(values);
+    }
+
+    function changeList(val: string) {
+      onChange([...(new Set(val.split(',').map(v => v.trim())))]);
+    }
 
     // Render specific input type based on operators
-    if (operator === ConseilOperator.BETWEEN || operator === ConseilOperator.IN || operator === 'notin') {
+    if (operator === ConseilOperator.BETWEEN) {
       input = (
         <React.Fragment>
           <Container>
             <InputItem
-              type={type}
+              attribute={attribute}
               value={values[0]}
-              onChange={val => onChange(val, 0)}
+              onChange={val => changeRange(val, 0)}
             />
           </Container>
           <HR />
-          <AndBlock>and</AndBlock>
+          <AndBlock>{t('components.valueInput.and')}</AndBlock>
           <HR />
           <Container>
             <InputItem
-              type={type}
+              attribute={attribute}
               disabled={!values[0]}
               value={values[1] ? values[1] : ''}
-              onChange={val => onChange(val, 1)}
+              onChange={val => changeRange(val, 1)}
             />
           </Container>
         </React.Fragment>
       );
     } else if (operator === ConseilOperator.ISNULL || operator === 'isnotnull') {
       input = null;
-    } else {
+    } else if (operator === ConseilOperator.IN || operator === 'notin') {
+      const newValue = values.join(', ');
+
       input = (
         <Container>
           <InputItem
-            type={type}
-            value={values[0]}
-            onChange={val => onChange(val, 0)}
+            attribute={attribute}
+            value={newValue}
+            onChange={val => changeList(val)}
           />
         </Container>
       );
+    } else {
+        input = (
+            <Container>
+              <InputItem
+                attribute={attribute}
+                value={values[0]}
+                onChange={val => changeSingle(val)}
+              />
+            </Container>
+          );
     }
+
     return <React.Fragment>{input}</React.Fragment>;
 }
 

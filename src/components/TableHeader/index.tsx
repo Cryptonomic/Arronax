@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import muiStyled from '@material-ui/styles/styled';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
@@ -28,6 +29,7 @@ interface Props {
 
 const TableHeader: React.FC<Props> = props => {
   const { rows, aggregations, order, orderBy, createSortHandler } = props;
+  const { t } = useTranslation();
 
   return (
     <TableHead>
@@ -48,7 +50,7 @@ const TableHeader: React.FC<Props> = props => {
                     direction={order}
                     onClick={() => createSortHandler(keyName)}
                   >
-                    {agg.function}{' '}{row.displayName}
+                    {t(`aggFunctions.${agg.function}`)}{' '}{t(`attributes.${row.entity}.${row.name}`)}
                   </SortLabelWrapper>
                 </TableCellWrapper>
               );
@@ -65,7 +67,7 @@ const TableHeader: React.FC<Props> = props => {
                   direction={order}
                   onClick={() => createSortHandler(row.name)}
                 >
-                  {row.displayName}
+                  {t(`attributes.${row.entity}.${row.name}`)}
                 </SortLabelWrapper>
               </TableCellWrapper>
             );

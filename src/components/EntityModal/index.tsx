@@ -1,9 +1,12 @@
 import React from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Modal from '@material-ui/core/Modal';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import moment from 'moment';
+import { AttrbuteDataType } from 'conseiljs';
 import { ArronaxIcon } from '../ArronaxIcon';
+import Loader from '../Loader';
+import { formatNumber } from '../../utils/general';
 
 const ScrollContainer = styled.div`
   width: 100%;
@@ -63,26 +66,13 @@ const ContentTxt = styled.div`
   flex: 1;
 `;
 
-const LoadingContainer = styled.div`
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.3);
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 100;
-`;
-
-export const ButtonContainer = styled.div`
+const ButtonContainer = styled.div`
   display: flex;
   padding: 15px;
   justify-content: flex-end;
 `;
 
-export const CloseButton = styled.div`
+const CloseButton = styled.div`
   color: #56c2d9;
   font-size: 20px;
   font-weight: 700;
@@ -91,7 +81,7 @@ export const CloseButton = styled.div`
   align-items: center;
 `;
 
-type Props = {
+type OwnProps = {
   open: boolean;
   item: any;
   attributes: any[];
@@ -100,12 +90,14 @@ type Props = {
   onClose: () => void;
 };
 
+type Props = OwnProps & WithTranslation;
+
 class EntityModal extends React.Component<Props, {}> {
   onClickModal = (event: any) => {
     event.stopPropagation();
   }
   render() {
-    const { open, item, attributes, isLoading, onClose, title } = this.props;
+    const { open, item, attributes, isLoading, onClose, title, t } = this.props;
 
     const formattedValues = attributes
       .filter(c => item[c.name] != null && item[c.name] !== undefined)
@@ -126,19 +118,12 @@ class EntityModal extends React.Component<Props, {}> {
           return a.displayOrder - b.displayOrder;
       })
       .map(c => {
-          let v = {displayName: '', value: undefined};
-          v['displayName'] = c.displayName;
-          if (c.dataType === 'DateTime' && c.dataFormat) {
+          let v = {displayName: c.displayName, value: undefined, name: c.name, entity: c.entity};
+          if (c.dataType === AttrbuteDataType.DATETIME && c.dataFormat) {
               v['value'] = moment(item[c.name]).format(c.dataFormat);
-          } else if (c.dataType === 'Decimal' && c.scale && c.scale !== 0) {
-              const n = Number(item[c.name]);
-              const d = n/Math.pow(10, c.scale);
-              if (n < 10000) {
-              v.value = d.toFixed(4);
-              } else {
-              v.value = d.toFixed(2);
-              }
-          } else if (c.dataType === 'Boolean') {
+          } else if (c.dataType === AttrbuteDataType.DECIMAL || c.dataType === AttrbuteDataType.INT || c.dataType === AttrbuteDataType.CURRENCY) {
+              v.value = formatNumber(Number(item[c.name]), c);
+          } else if (c.dataType === AttrbuteDataType.BOOLEAN) {
               v.value = item[c.name].toString();
               v.value = v.value.charAt(0).toUpperCase() + v.value.substring(1);
           } else {
@@ -156,30 +141,26 @@ class EntityModal extends React.Component<Props, {}> {
         <ScrollContainer onClick={onClose}>
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
-            <ModalTitle>{title} Details</ModalTitle>
+            <ModalTitle>{t('components.entityModal.details', {title})}</ModalTitle>
               {!isLoading && (
                 <ListContainer>
                   {formattedValues.map((item, index) => {
-                    const { displayName, value } = item;
+                    const { displayName, value, entity, name } = item;
                     return (
                       <RowContainer key={index}>
-                        <TitleTxt>{displayName}</TitleTxt>
+                        <TitleTxt>{t(`attributes.${entity}.${name}`)}</TitleTxt>
                         <ContentTxt>{value}</ContentTxt>
                       </RowContainer>
                     );
                   })}
                   <ButtonContainer>
                     <CloseButton onClick={onClose}>
-                      Close
+                      {t('general.verbs.close')}
                     </CloseButton>
                   </ButtonContainer>
                 </ListContainer>
               )}
-              {isLoading && (
-                <LoadingContainer>
-                  <CircularProgress />
-                </LoadingContainer>
-              )}
+              {isLoading && <Loader />}
           </ModalContainer>
         </ScrollContainer>
         
@@ -188,4 +169,4 @@ class EntityModal extends React.Component<Props, {}> {
   }
 };
 
-export default EntityModal;
+export default withTranslation()(EntityModal);

@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
 import { AttributeDefinition } from 'conseiljs';
@@ -9,8 +10,7 @@ import {
   getColumns,
   getEntity
 } from '../../reducers/app/selectors';
-import { setAggregationAction } from '../../reducers/app/actions';
-import { resetAggregations } from '../../reducers/app/thunks';
+import { resetAggregations, setAggregationsThunk } from '../../reducers/app/thunks';
 import FilterSelect from '../FilterSelect';
 import { Aggregation } from '../../types';
 import { getOperatorType } from '../../utils/general';
@@ -30,16 +30,18 @@ import {
   ResetButton
 } from './style';
 
-type Props = {
+interface OwnProps {
   selectedEntity: string;
   columns: AttributeDefinition[];
   aggregations: Aggregation[];
   aggFunctions: any;
   swipeRef: any;
-  setAggregations: (entity: string, aggregations: Aggregation[]) => void;
+  setAggregations: (aggregations: Aggregation[]) => void;
   resetAggregations: () => void;
   onSubmit: () => void;
 };
+
+type Props = OwnProps & WithTranslation;
 
 type States = {
   localAggs: Aggregation[];
@@ -111,9 +113,9 @@ class AggregationPanel extends React.Component<Props, States> {
 
   handleSubmit = async () => {
     const { localAggs } = this.state;
-    const { selectedEntity, setAggregations, onSubmit } = this.props;
+    const { setAggregations, onSubmit } = this.props;
     const realAggs = localAggs.filter(agg => !!agg.function);
-    await setAggregations(selectedEntity, realAggs);
+    await setAggregations(realAggs);
     await onSubmit();
   };
 
@@ -121,7 +123,8 @@ class AggregationPanel extends React.Component<Props, States> {
     const {
       selectedEntity,
       columns,
-      aggFunctions
+      aggFunctions,
+      t
     } = this.props;
     const { localAggs } = this.state;
     const entityName = selectedEntity.replace(/_/gi, ' ').slice(0, -1);
@@ -139,15 +142,17 @@ class AggregationPanel extends React.Component<Props, States> {
                 <AggItemGr>
                   <FilterSelect
                     value={agg.field}
-                    placeholder={`Select ${entityName} Attribute`}
+                    placeholder={t('components.aggregationPanel.select_attribute', { entityName })}
                     items={columns}
+                    type='attributes'
                     onChange={attr => this.onAggregationNameChange(attr, index)}
                   />
                   {agg.field && <HR />}
                   {agg.field && (
                     <FilterSelect
+                      type='aggFunctions'
                       value={agg.function}
-                      placeholder='Select Function'
+                      placeholder={t('components.aggregationPanel.select_function')}
                       items={aggFunctions[agg.type]}
                       onChange={func =>
                         this.onFunctionChange(func, index)
@@ -171,17 +176,17 @@ class AggregationPanel extends React.Component<Props, States> {
               isDisabled={disableAddAgg}
             >
               <PlusIconWrapper />
-              Add Aggregation
+              {t('components.aggregationPanel.add_aggregation')}
             </AddButton>
           </AddAggFooter>
         </MainContainer>
         <ButtonContainer>
           <ResetButton onClick={this.onResetAggregations}>
             <RefreshIcon size="23px" color="#56c2d9" iconName="icon-reset"/>
-            Reset
+            {t('general.verbs.reset')}
           </ResetButton>
           <RunButton onClick={this.handleSubmit}>
-            Apply
+            {t('general.verbs.apply')}
           </RunButton>
         </ButtonContainer>
       </Container>
@@ -197,11 +202,11 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  setAggregations: (entity: string, aggregations: Aggregation[]) => dispatch(setAggregationAction(entity, aggregations)),
+  setAggregations: (aggregations: Aggregation[]) => dispatch(setAggregationsThunk(aggregations)),
   resetAggregations: () => dispatch(resetAggregations()),
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(AggregationPanel);
+)(withTranslation()(AggregationPanel));

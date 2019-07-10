@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { Route, BrowserRouter } from 'react-router-dom';
-import App from './containers/App';
+import Arronax from './containers/App';
+import Loader from './components/Loader';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import * as serviceWorker from './serviceWorker';
-import '!file-loader?name=[name].[ext]!./assets/favicon.ico';
+import './utils/i18n';
+
+function App() {
+  return (
+    <Suspense fallback={<Loader />}>
+      <Arronax />
+    </Suspense>
+  );
+}
 
 ReactDOM.render(
   <Provider store={store}>

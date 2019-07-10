@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
 import { ConseilOperator, AttributeDefinition } from 'conseiljs';
@@ -38,7 +39,7 @@ import {
   ResetButton
 } from './style';
 
-type Props = {
+type OwnProps = {
   availableValues: any;
   selectedEntity: string;
   attributes: AttributeDefinition[];
@@ -52,6 +53,8 @@ type Props = {
   resetFilters: () => void;
   onSubmit: () => void;
 };
+
+type Props = OwnProps & WithTranslation;
 
 class FilterPanel extends React.Component<Props, {}> {
   onAddFilter = async () => {
@@ -107,7 +110,7 @@ class FilterPanel extends React.Component<Props, {}> {
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
-  onInputValueChange = (value: any, index: number, pos: number) => {
+  onInputValueChange = (values: string[], index: number) => {
     const {
       filters,
       selectedEntity,
@@ -115,7 +118,7 @@ class FilterPanel extends React.Component<Props, {}> {
     } = this.props;
 
     const selectedFilter: any = {...filters[index]};
-    selectedFilter.values[pos] = value;
+    selectedFilter.values = values;
     changeFilter(selectedEntity, selectedFilter, index);
   };
 
@@ -143,7 +146,8 @@ class FilterPanel extends React.Component<Props, {}> {
       filters,
       operators,
       availableValues,
-      onSubmit
+      onSubmit,
+      t
     } = this.props;
     const entityName = selectedEntity.replace(/_/gi, ' ').slice(0, -1);
 
@@ -156,31 +160,33 @@ class FilterPanel extends React.Component<Props, {}> {
       disableAddFilter = false;
     } else if(lastFilter.operator === ConseilOperator.BETWEEN) {
       disableAddFilter = lastFilter.values.length !== 2;
-    } else if (lastFilter.values[0]) {
+    } else if (lastFilter.values[0] !== '') {
       disableAddFilter = false;
     }
+    const newAttributes = attributes.filter((attr: any) => { return !attr.cardinality || attr.cardinality > 1; });
 
     return (
       <Container>
         <MainContainer>
           {filters.map((filter: Filter, index) => {
-            const newAttributes = attributes.filter((attr: any) => { return !attr.cardinality || attr.cardinality > 1; });
-
+            const filterAttr = newAttributes.find(attr => attr.name === filter.name);
             return (
               <FilterItemContainer key={index}>
                 <FilterItemGr>
                   <FilterSelect
                     value={filter.name}
-                    placeholder={`Select ${entityName} Attribute`}
+                    placeholder={t('components.aggregationPanel.select_attribute', { entityName })}
                     items={newAttributes}
+                    type='attributes'
                     onChange={attr => this.onFilterNameChange(attr, index)}
                   />
                   {filter.name && <HR />}
                   {filter.name && (
                     <FilterSelect
                       value={filter.operator}
-                      placeholder='Select Operator'
+                      placeholder={t('components.filterPanel.select_operator')}
                       items={operators[filter.operatorType]}
+                      type='operators'
                       onChange={operator =>
                         this.onFilterOperatorChange(operator, index)
                       }
@@ -189,7 +195,7 @@ class FilterPanel extends React.Component<Props, {}> {
                   {filter.operator && <HR />}
                   {filter.operator && filter.isLowCardinality && (
                     <ValueSelect
-                      placeholder='Select Value'
+                      placeholder={t('components.filterPanel.select_value')}
                       operator={filter.operator}
                       selectedValues={filter.values}
                       values={availableValues[filter.name]}
@@ -198,10 +204,10 @@ class FilterPanel extends React.Component<Props, {}> {
                   )}
                   {filter.operator && !filter.isLowCardinality && (
                     <ValueInput
-                      type={filter.operatorType}
+                      attribute={filterAttr}
                       values={filter.values}
                       operator={filter.operator}
-                      onChange={(value, pos) => this.onInputValueChange(value, index, pos)}
+                      onChange={(values) => this.onInputValueChange(values, index)}
                     />
                   )}
                 </FilterItemGr>
@@ -221,17 +227,17 @@ class FilterPanel extends React.Component<Props, {}> {
               isDisabled={disableAddFilter}
             >
               <PlusIconWrapper />
-              Add Filter
+              {t('components.filterPanel.add_filter')}
             </AddFilterButton>
           </AddFilterFooter>
         </MainContainer>
         <ButtonContainer>
           <ResetButton onClick={this.onResetFilters}>
             <RefreshIcon size="23px" color="#56c2d9" iconName="icon-reset"/>
-            Reset
+            {t('general.verbs.reset')}
           </ResetButton>
           <RunButton onClick={onSubmit}>
-            Apply
+            {t('general.verbs.apply')}
           </RunButton>
         </ButtonContainer>
       </Container>
@@ -261,4 +267,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(FilterPanel);
+)(withTranslation()(FilterPanel));

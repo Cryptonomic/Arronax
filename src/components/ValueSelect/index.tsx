@@ -157,7 +157,7 @@ class ValueSelect extends React.Component<Props, States> {
     const { anchorEl } = this.state;
     const { values, selectedValues, placeholder } = this.props;
     let menuTitle = '';
-    if (selectedValues[0]) {
+    if (selectedValues[0] !== '') {
       selectedValues.forEach((value, index) => {
         if (index === 0) {
           menuTitle = convertValue(value);

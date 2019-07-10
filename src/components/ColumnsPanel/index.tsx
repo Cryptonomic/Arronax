@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { ArronaxIcon } from '../ArronaxIcon';
@@ -67,7 +68,7 @@ const ResetButton = styled.div`
   align-items: center;
 `;
 
-type Props = {
+type OwnProps = {
   selectedColumns: AttributeDefinition[];
   selectedEntity: string;
   attributes: AttributeDefinition[];
@@ -80,6 +81,8 @@ type States = {
   selected: AttributeDefinition[];
   prevPropsSelected: AttributeDefinition[];
 };
+
+type Props = OwnProps & WithTranslation;
 
 class ColumnsPanel extends React.Component<Props, States> {
 
@@ -141,7 +144,7 @@ class ColumnsPanel extends React.Component<Props, States> {
   }
 
   render() {
-    const { attributes } = this.props;
+    const { attributes, t } = this.props;
     const { selected } = this.state;
     const columnsCount = Math.ceil(attributes.length / 6);
     return (
@@ -176,10 +179,10 @@ class ColumnsPanel extends React.Component<Props, States> {
         <ButtonContainer>
           <ResetButton onClick={this.cancelChange}>
             <RefreshIcon size="23px" color="#56c2d9" iconName="icon-reset"/>
-            Reset
+            {t('general.verbs.reset')}
           </ResetButton>
           <RunButton onClick={this.handleSubmit}>
-            Apply
+            {t('general.verbs.apply')}
           </RunButton>
         </ButtonContainer>
       </Container>
@@ -201,5 +204,5 @@ const mapDispatchToProps = (dispatch: any) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ColumnsPanel);
+)(withTranslation()(ColumnsPanel));
 

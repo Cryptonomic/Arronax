@@ -7,7 +7,8 @@ import {
   ConseilQueryBuilder,
   ConseilOperator,
   ConseilOutput,
-  ConseilSortDirection, EntityDefinition, AttributeDefinition
+  ConseilSortDirection, EntityDefinition, AttributeDefinition,
+  TezosConseilClient
 } from 'conseiljs';
 
 import {
@@ -115,6 +116,19 @@ function clearSortAndAggregations(columns: AttributeDefinition[], sort: Sort, ag
   };
 }
 
+export const setAggregationsThunk = (aggregations: Aggregation[]) => async (dispatch, state) => {
+  const { selectedEntity, sort, columns } = state().app;
+  let selectedSorts = sort[selectedEntity];
+  const selectedColumns = columns[selectedEntity];
+  const { sorts, aggs } = clearSortAndAggregations(selectedColumns, selectedSorts, aggregations);
+  const sortColumn = selectedColumns.find(col => col.name === selectedSorts[0].orderBy);
+  const sortAgg = aggregations.find(agg => selectedSorts[0].orderBy === `${agg.function}_${agg.field}` || selectedSorts[0].orderBy === agg.field);
+  if (!sortColumn && !sortAgg || sortColumn && sortAgg ) {
+    selectedSorts = sorts;
+  }
+  await dispatch(setAggregationAction(selectedEntity, aggs, selectedSorts));
+};
+
 export const setColumnsThunk = (columns: AttributeDefinition[]) => async (dispatch, state) => {
   const { selectedEntity, sort, aggregations } = state().app;
   const { sorts, aggs } = clearSortAndAggregations(columns, sort[selectedEntity], aggregations[selectedEntity]);
@@ -138,10 +152,11 @@ export const resetFilters = () => async (dispatch, state) => {
 };
 
 export const resetAggregations = () => async (dispatch, state) => {
-  const { selectedEntity } = state().app;
+  const { selectedEntity, columns, sort } = state().app;
   const initProperty = InitProperties[selectedEntity];
   const aggregations = initProperty ? initProperty.aggregations : [];
-  await dispatch(setAggregationAction(selectedEntity, aggregations));
+  const { sorts } = clearSortAndAggregations(columns[selectedEntity], sort[selectedEntity], aggregations);
+  await dispatch(setAggregationAction(selectedEntity, aggregations, sorts));
 };
 
 export const fetchInitEntityAction = (
@@ -153,7 +168,8 @@ export const fetchInitEntityAction = (
   urlEntity: string,
   urlQuery: string
 ) => async (dispatch: any) => {
-  const defaultQuery = (urlEntity === entity && urlQuery) ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
+  let defaultQuery = (urlEntity === entity && urlQuery) ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
+  defaultQuery = {...ConseilQueryBuilder.blankQuery(), ...defaultQuery};
   let columns: any[] = [];
   let sorts: Sort[];
   let filters: Filter[] = [];
@@ -235,7 +251,7 @@ export const fetchInitEntityAction = (
   } else {
     query = addFields(query, ...getAttributeNames(sortedAttributes));
     columns = [...sortedAttributes];
-    query = setLimit(query, 5000);
+    query = setLimit(query, 1000);
     sorts = [{ orderBy: levelColumn.name, order: ConseilSortDirection.DESC }];
     query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
   }
@@ -374,7 +390,7 @@ export const shareReport = () => async (dispatch, state) => {
   const { selectedEntity, columns, sort, selectedFilters, selectedConfig, aggregations } = state().app;
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
-  query = setLimit(query, 5000);
+  query = setLimit(query, 1000);
   const serializedQuery = JSON.stringify(query);
   const hostUrl = window.location.origin;
   const encodedUrl = base64url(serializedQuery);
@@ -419,7 +435,7 @@ export const submitQuery = () => async (dispatch, state) => {
   const attributeNames = getAttributeNames(columns[selectedEntity]);
 
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
-  query = setLimit(query, 5000);
+  query = setLimit(query, 1000);
   const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
 
   await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length))
@@ -452,4 +468,26 @@ export const changeTab = (entity: string) => async (dispatch, state) => {
     dispatch(setLoadingAction(false));
   }
   dispatch(setTabAction(entity));
+};
+
+export const searchByIdThunk = (id: string | number) => async (dispatch: any, state: any) => {
+  dispatch(setLoadingAction(true));
+  const { selectedConfig } = state().app;
+  const { platform, network, url, apiKey } = selectedConfig;
+  const serverInfo = { url, apiKey };
+  try {
+    const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
+    const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+    await dispatch(changeTab(entity));
+    dispatch(setLoadingAction(false));
+    return { entity, items };
+  } catch (e) {
+      if (e.message === 'Invalid id parameter') {
+        dispatch(createMessageAction(`Invalid id format entered.`, true));
+      } else {
+        dispatch(createMessageAction('Unable to load an object for the id', true));
+      }
+
+      dispatch(setLoadingAction(false));
+  }
 };

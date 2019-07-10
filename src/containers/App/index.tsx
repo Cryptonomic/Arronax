@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { RouteProps, withRouter } from 'react-router-dom';
@@ -6,7 +7,6 @@ import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -21,6 +21,8 @@ import Footer from '../../components/Footer';
 import Toolbar from '../../components/Toolbar';
 import CustomTable from '../CustomTable';
 import ConfigModal from '../../components/ConfigModal';
+import EntityModal from '../../components/EntityModal';
+import Loader from '../../components/Loader';
 
 import {
   getLoading,
@@ -32,7 +34,8 @@ import {
   getFilterCount,
   getColumns,
   getEntities,
-  getAggregations
+  getAggregations,
+  getAttributesAll
 } from '../../reducers/app/selectors';
 import { getErrorState, getMessageTxt } from '../../reducers/message/selectors';
 import {
@@ -41,7 +44,8 @@ import {
   submitQuery,
   exportCsvData,
   shareReport,
-  changeTab
+  changeTab,
+  searchByIdThunk
 } from '../../reducers/app/thunks';
 import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../../reducers/app/actions';
 import { clearMessageAction } from '../../reducers/message/actions';
@@ -57,19 +61,6 @@ const Container = styled.div`
 const MainContainer = styled.div`
   position: relative;
   min-height: 100vh;
-`;
-
-const LoadingContainer = styled.div`
-  position: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.3);
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  z-index: 100;
 `;
 
 const TabContainer = styled.div`
@@ -170,7 +161,7 @@ const TabWrapper = withStyles({
   selected: {},
 })(Tab);
 
-export interface Props extends RouteProps {
+interface OwnProps {
   isLoading: boolean;
   configs: Config[];
   selectedConfig: Config;
@@ -183,6 +174,7 @@ export interface Props extends RouteProps {
   entities: EntityDefinition[];
   isError: boolean;
   message: string;
+  attributes: any;
   removeAllFilters: (entity: string) => void;
   changeNetwork(config: Config): void;
   changeTab: (type: string) => void;
@@ -193,30 +185,41 @@ export interface Props extends RouteProps {
   initMessage: ()=> void;
   addConfig: (config: Config, isUse: boolean) => void;
   removeConfig: (index: number) => void;
+  searchById: (id: string | number) => any;
 }
 
-export interface States {
+interface States {
   isSettingCollapsed: boolean;
   selectedTool: string;
   isModalUrl: boolean;
   isOpenConfigMdoal: boolean;
+  isOpenEntityModal: boolean;
+  searchedEntity: string;
+  searchedItem: any;
 }
+
+type Props = OwnProps & RouteProps & WithTranslation;
 
 class Arronax extends React.Component<Props, States> {
   static defaultProps: any = {
     items: []
   };
   settingRef: any = null;
+  tableRef = null;
   constructor(props: Props) {
     super(props);
     this.state = {
       isSettingCollapsed: false,
       selectedTool: ToolType.FILTER,
       isModalUrl: false,
-      isOpenConfigMdoal: false
+      isOpenConfigMdoal: false,
+      isOpenEntityModal: false,
+      searchedEntity: '',
+      searchedItem: {}
     };
 
     this.settingRef = React.createRef();
+    this.tableRef = React.createRef();
   }
 
   componentDidMount() {
@@ -311,6 +314,17 @@ class Arronax extends React.Component<Props, States> {
     this.closeConfigModal();
   }
 
+  onSearchById = async (val: string | number) => {
+    const { searchById } = this.props;
+    const realVal = !Number(val) ? val : Number(val);
+    const { entity, items } = await searchById(realVal);
+    if (items.length > 0 && entity) {
+      this.setState({searchedItem: items[0], searchedEntity: entity, isOpenEntityModal: true});
+    }
+  }
+
+  onCloseEntityModal = () => this.setState({isOpenEntityModal: false});
+
   render() {
     const {
       isLoading,
@@ -325,12 +339,16 @@ class Arronax extends React.Component<Props, States> {
       entities,
       isError,
       message,
-      removeConfig
+      removeConfig,
+      attributes,
+      t
     } = this.props;
     const {
-      isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal
+      isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal, isOpenEntityModal,
+      searchedItem, searchedEntity
     } = this.state;
     const isRealLoading = isLoading || !isFullLoaded;
+    const selectedObjectEntity = entities.find(entity => entity.name === searchedEntity);
     
     return (
       <MainContainer>
@@ -340,6 +358,7 @@ class Arronax extends React.Component<Props, States> {
           onChangeNetwork={this.onChangeNetwork}
           openModal={this.openConfigModal}
           onRemoveConfig={removeConfig}
+          onSearch={this.onSearchById}
         />
         <Container>
           {isFullLoaded && (
@@ -353,7 +372,7 @@ class Arronax extends React.Component<Props, States> {
                   <TabWrapper
                     key={index}
                     value={entity.name}
-                    label={entity.displayName}
+                    label={t(`containers.arronax.${entity.name}`)}
                   />
                 ))}
               </TabsWrapper>
@@ -380,11 +399,11 @@ class Arronax extends React.Component<Props, States> {
                   <NoResultContainer>
                     <OctopusImg src={octopusSrc} />
                     <NoResultContent>
-                      <NoResultTxt>Sorry, your filters returned no results.</NoResultTxt>
-                      <TryTxt>Try a different filter combination.</TryTxt>
+                      <NoResultTxt>{t('containers.arronax.no_results')}</NoResultTxt>
+                      <TryTxt>{t('containers.arronax.try_combination')}</TryTxt>
                       <ButtonContainer>
-                        <ClearButton onClick={this.onClearFilter}>Clear Filters</ClearButton>
-                        <TryButton onClick={this.onSettingCollapse}>Try Again</TryButton>
+                        <ClearButton onClick={this.onClearFilter}>{t('containers.arronax.clear_filters')}</ClearButton>
+                        <TryButton onClick={this.onSettingCollapse}>{t('containers.arronax.try_again')}</TryButton>
                       </ButtonContainer>
                     </NoResultContent>
                   </NoResultContainer>
@@ -394,32 +413,39 @@ class Arronax extends React.Component<Props, States> {
           )}
         </Container>
         <Footer />
-        {isRealLoading && (
-          <LoadingContainer>
-            <CircularProgress />
-          </LoadingContainer>
-        )}
+        {isRealLoading && <Loader />}
         <Dialog
           open={isError}
           onClose={this.handleErrorClose}
           aria-labelledby='alert-dialog-title'
           aria-describedby='alert-dialog-description'
         >
-          <DialogTitle id='alert-dialog-title'>Error</DialogTitle>
+          <DialogTitle id='alert-dialog-title'>{t('general.nouns.error')}</DialogTitle>
           <DialogContent>
             <DialogContentText id='alert-dialog-description'>
               {message}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <DismissButton onClick={this.handleErrorClose}>Dismiss</DismissButton>
+            <DismissButton onClick={this.handleErrorClose}>{t('general.verbs.dismiss')}</DismissButton>
           </DialogActions>
         </Dialog>
         <ConfigModal
+          t={t}
           open={isOpenConfigMdoal}
           onClose={this.closeConfigModal}
           addConfig={this.onAddConfig}
         />
+        {isOpenEntityModal && 
+          <EntityModal
+            open={isOpenEntityModal}
+            title={selectedObjectEntity.displayName}
+            attributes={attributes[searchedEntity]}
+            item={searchedItem}
+            isLoading={isLoading}
+            onClose={this.onCloseEntityModal}
+          />
+        }
       </MainContainer>
     );
   }
@@ -437,7 +463,8 @@ const mapStateToProps = (state: any) => ({
   entities: getEntities(state),
   isError: getErrorState(state),
   message: getMessageTxt(state),
-  aggCount: getAggregations(state).length
+  aggCount: getAggregations(state).length,
+  attributes: getAttributesAll(state)
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -451,10 +478,12 @@ const mapDispatchToProps = (dispatch: any) => ({
   shareReport: () => dispatch(shareReport()),
   initMessage: () => dispatch(clearMessageAction()),
   addConfig: (config: Config, isUse: boolean) => dispatch(addConfigAction(config, isUse)),
-  removeConfig: (index: number) => dispatch(removeConfigAction(index))
+  removeConfig: (index: number) => dispatch(removeConfigAction(index)),
+  searchById: (id: string | number) => dispatch(searchByIdThunk(id))
 });
 
 export default compose(
+  withTranslation(),
   DragDropContext(HTML5Backend),
   withRouter,
   connect(
