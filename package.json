@@ -17,6 +17,7 @@
     "@types/rc-tooltip": "^3.7.1",
     "@types/react": "16.8.19",
     "@types/react-dom": "16.8.4",
+    "autosuggest-highlight": "^3.1.1",
     "base64url": "^3.0.1",
     "conseiljs": "^0.2.6",
     "i18next": "^17.0.6",
@@ -26,6 +27,7 @@
     "moment-timezone": "^0.5.25",
     "rc-tooltip": "^3.7.3",
     "react": "^16.8.6",
+    "react-autosuggest": "^9.4.3",
     "react-clipboard.js": "^2.0.10",
     "react-datepicker": "^2.7.0",
     "react-dnd": "^7.5.0",
@@ -65,6 +67,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-autosuggest": "^9.3.9",
     "@types/react-redux": "^7.0.9",
     "@types/react-router-dom": "^4.3.3",
     "@types/styled-components": "^4.1.16",
