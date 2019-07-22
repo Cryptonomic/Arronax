@@ -43,6 +43,7 @@
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
     "styled-components": "^4.2.0",
+    "throttle-debounce": "^2.1.0",
     "typescript": "3.5.1"
   },
   "scripts": {
@@ -71,6 +72,7 @@
     "@types/react-redux": "^7.0.9",
     "@types/react-router-dom": "^4.3.3",
     "@types/styled-components": "^4.1.16",
+    "@types/throttle-debounce": "^1.1.1",
     "awesome-typescript-loader": "^5.2.1",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.6",

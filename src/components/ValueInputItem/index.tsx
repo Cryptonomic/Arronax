@@ -12,6 +12,7 @@ import DatePicker from 'react-datepicker';
 import Autosuggest from 'react-autosuggest';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
+import { debounce } from "throttle-debounce";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { getHightCardinalityValues } from '../../reducers/app/thunks';
@@ -105,7 +106,10 @@ class InputItem extends React.Component<Props, States> {
       searchedVal: '',
       availableValues: []
     };
+    this.autocompleteSearchDebounce = debounce(300, this.autocompleteSearch);
   }
+
+  autocompleteSearchDebounce: any;
 
   static defaultProps: any = {
     disabled: false
@@ -121,18 +125,23 @@ class InputItem extends React.Component<Props, States> {
     return null;
   }
 
+  autocompleteSearch = (attribute: string, value: string) => {
+    const { fetchValues } = this.props;
+    fetchValues(attribute, value).then(values => {
+      this.setState({availableValues: values, suggestions: values, searchedVal: value});
+    });
+  }
+
   onHighCardValueChange = async (event, { newValue }) => {
     const { value, onChange, fetchValues, attribute } = this.props;
     const { searchedVal } = this.state;
     const splitVals = newValue.split(',');
-    const filterVal = splitVals[splitVals.length - 1].trim().toLowerCase();
+    const filterVal = splitVals[splitVals.length - 1].trim();
     const filterValLength = filterVal.length;
     if(filterValLength === 0) {
       this.setState({availableValues: [], suggestions: [], searchedVal: ''});
-    } else if (filterValLength > 2 && !searchedVal) {
-      fetchValues(attribute.name, newValue).then(values => {
-        this.setState({availableValues: values, suggestions: values, searchedVal: filterVal});
-      });
+    } else if (filterValLength > 2 && (!searchedVal || searchedVal.length > filterValLength)) {
+      this.autocompleteSearchDebounce(attribute.name, filterVal);
     }
 
     if (value.length > newValue.length && filterValLength === 0) {
