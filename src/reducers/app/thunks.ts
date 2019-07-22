@@ -49,7 +49,7 @@ const CACHE_TIME = 432000000; // 5*24*3600*1000
 
 let InitProperties: any = {};
 
-const { getAttributes, getAttributeValues, getEntities } = ConseilMetadataClient;
+const { getAttributes, getAttributeValues, getEntities, getAttributeValuesForPrefix } = ConseilMetadataClient;
 
 const getAttributeNames = (attributes: AttributeDefinition[]) => attributes.map(attr => attr.name);
 
@@ -490,4 +490,11 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
 
       dispatch(setLoadingAction(false));
   }
+};
+
+export const getHightCardinalityValues = (attribute: string, prefix: string) => async (dispatch: any, state: any) => {
+  const { selectedConfig, selectedEntity } = state().app;
+  const { platform, network, url, apiKey } = selectedConfig;
+  const serverInfo = { url, apiKey };
+  return await getAttributeValuesForPrefix(serverInfo, platform, network, selectedEntity, attribute, prefix);
 };
