@@ -29,3 +29,4 @@ export const ADD_CONFIG = 'ADD_CONFIG';
 export const REMOVE_CONFIG = 'REMOVE_CONFIG';
 export const SET_AGGREGATIONS = 'SET_AGGREGATIONS';
 export const SET_SUBMIT = 'SET_SUBMIT';
+export const INIT_ITEMS = 'INIT_ITEMS';

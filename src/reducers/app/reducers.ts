@@ -24,7 +24,8 @@ import {
   INIT_MAIN_PARAMS,
   INIT_ATTRIBUTES,
   SET_AGGREGATIONS,
-  SET_SUBMIT
+  SET_SUBMIT,
+  INIT_ITEMS
 } from './types';
 
 import { EntityDefinition } from 'conseiljs';
@@ -134,9 +135,12 @@ export const app = (state = initialState, action) => {
   switch (action.type) {
     case SET_FILTER:
       return { ...state, filters: action.filters };
-    case SET_ITEMS:
+    case SET_ITEMS: {
       const items = { ...state.items, [action.entity]: action.items };
       return { ...state, items };
+    }
+    case INIT_ITEMS:
+      return { ...state, items: {} };
     case SET_COLUMNS: {
       const columns = {...state.columns, [action.entity]: action.columns};
       const sort = {...state.sort, [action.entity]: action.sorts};
@@ -231,7 +235,7 @@ export const app = (state = initialState, action) => {
     }
     case SET_ENTITIES: {
       const entities = action.entities;
-      const selectedEntity = state.selectedEntity ? state.selectedEntity : entities[0].name;
+      const selectedEntity = !action.isChange && state.selectedEntity ? state.selectedEntity : entities[0].name;
       return { ...state, entities, selectedEntity };
     }
     case INIT_ENTITY_PROPERTIES: {
