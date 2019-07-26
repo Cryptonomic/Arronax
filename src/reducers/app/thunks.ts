@@ -26,7 +26,8 @@ import {
   setTabAction,
   initMainParamsAction,
   setSubmitAction,
-  setAggregationAction
+  setAggregationAction,
+  initItemsAction
 } from './actions';
 import { createMessageAction } from '../message/actions';
 import { Config, Sort, Filter, Aggregation } from '../../types';
@@ -80,10 +81,16 @@ export const changeNetwork = (config: Config) => async (dispatch, state) => {
   const isSame = oldConfig.network === config.network && oldConfig.platform === config.platform &&
     oldConfig.url === config.url && oldConfig.apiKey === config.apiKey;
   if (isSame) return;
-  localStorage.setItem('timestamp', '0');
-  await dispatch(initDataAction());
-  await dispatch(setConfigAction(config));
-  await dispatch(initLoad());
+  else if(oldConfig.platform === config.platform) {
+    await dispatch(initItemsAction());
+    await dispatch(setConfigAction(config));
+    await dispatch(initLoadByNetwork());
+  } else {
+    localStorage.setItem('timestamp', '0');
+    await dispatch(initDataAction());
+    await dispatch(setConfigAction(config));
+    await dispatch(initLoad());
+  }
 };
 
 function clearSortAndAggregations(columns: AttributeDefinition[], sort: Sort, aggregations: Aggregation[]) {
@@ -265,6 +272,83 @@ export const fetchInitEntityAction = (
   await Promise.all(cardinalityPromises);
 };
 
+export const initLoadByNetwork = () => async (dispatch, state) => {
+  dispatch(setLoadingAction(true));
+  const { selectedConfig, selectedEntity } = state().app;
+  const { platform, network, url, apiKey } = selectedConfig;
+  const serverInfo = { url, apiKey };
+
+  let entities: any[] = await getEntities(serverInfo, platform, network).catch(err => {
+    dispatch(createMessageAction(`Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`, true));
+    return [];
+  });
+
+  if (entities.length === 0) {
+    dispatch(setLoadingAction(false));
+    return;
+  }
+
+  if (selectedConfig.entities && selectedConfig.entities.length > 0) {
+      let filteredEntities: EntityDefinition[] = [];
+      selectedConfig.entities.forEach(e => {
+          if (e === 'rolls') { return; }
+          let match = entities.find(i => i.name === e);
+          if (!!match) { filteredEntities.push(match); }
+      });
+      entities.forEach(e => {
+          if (e.name === 'rolls') { return; } // TODO
+          if (!selectedConfig.entities.includes(e.name)) { filteredEntities.push(e); }
+      });
+      entities = filteredEntities;
+  }
+
+  let isSelectedEntity = false;
+
+  entities.forEach(e => {
+    if (e.name === selectedEntity && !isSelectedEntity) {
+      isSelectedEntity = true;
+    }
+    if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) {
+      e.displayNamePlural = e.displayName;
+    }
+  }); // TODO: remove, use metadata when available
+
+  dispatch(setEntitiesAction(entities, !isSelectedEntity));
+  validateCache(2);
+  
+  const attrPromises = entities.map(entity => fetchAttributes(platform, entity.name, network, serverInfo));
+  const attrObjsList = await Promise.all(attrPromises).catch(err => {
+    dispatch(createMessageAction(`Unable to load attribute data: ${err}.`, true));
+    return [];
+  });
+  if (attrObjsList.length > 0) {
+    let attributes = {};
+    attrObjsList.forEach(obj => {
+      attributes = {
+        ...attributes,
+        [obj.entity]: obj.attributes
+      }
+    });
+    await dispatch(initAttributesAction(attributes));
+    const currentDate = Date.now();
+    saveAttributes(attributes, currentDate, 2);
+  } else {
+    dispatch(setLoadingAction(false));
+    return;
+  }
+
+  if (isSelectedEntity) {
+    dispatch(submitQuery());
+  } else {
+    const { attributes } = state().app;
+    const newEntity = entities[0].name;
+    await dispatch(
+      fetchInitEntityAction(platform, newEntity, network, serverInfo, attributes[newEntity], '', '')
+    );
+    dispatch(setLoadingAction(false));
+  }
+};
+
 export const initLoad = (environmentInfo?: string, query?: string) => async (dispatch, state) => {
   let urlEntity = '';
   if (environmentInfo && query) {
@@ -372,7 +456,11 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
       isInvert = true;
     }
 
-    query = addPredicate(query, filter.name, operator, filter.values, isInvert);
+    if (filter.operatorType === 'dateTime') { // HACK
+        query = addPredicate(query, filter.name, operator, filter.values.map(v => parseInt(v)), isInvert);
+    } else {
+        query = addPredicate(query, filter.name, operator, filter.values, isInvert);
+    }
   });
 
   aggregations.forEach((agg: Aggregation) => {

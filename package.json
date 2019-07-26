@@ -14,7 +14,7 @@
     "@material-ui/icons": "^4.2.1",
     "autosuggest-highlight": "^3.1.1",
     "base64url": "^3.0.1",
-    "conseiljs": "^0.2.6",
+    "conseiljs": "^0.2.7",
     "i18next": "^17.0.6",
     "i18next-browser-languagedetector": "^3.0.1",
     "i18next-xhr-backend": "^3.0.0",
