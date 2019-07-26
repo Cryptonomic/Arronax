@@ -24,7 +24,8 @@ import {
   ADD_CONFIG,
   REMOVE_CONFIG,
   SET_AGGREGATIONS,
-  SET_SUBMIT
+  SET_SUBMIT,
+  INIT_ITEMS
 } from './types';
 
 import { AttributeDefinition, EntityDefinition } from 'conseiljs';
@@ -35,6 +36,12 @@ export function setItemsAction(entity: string, items: any[]) {
     type: SET_ITEMS,
     entity,
     items
+  }
+}
+
+export function initItemsAction() {
+  return {
+    type: INIT_ITEMS
   }
 }
 
@@ -170,10 +177,11 @@ export function setSortAction(entity: string, sorts: Sort[]) {
   return { type: SET_SORT, entity, sorts };
 }
 
-export function setEntitiesAction(entities: EntityDefinition[]) {
+export function setEntitiesAction(entities: EntityDefinition[], isChange: boolean = false) {
   return {
     type: SET_ENTITIES,
-    entities
+    entities,
+    isChange
   }
 }
 
