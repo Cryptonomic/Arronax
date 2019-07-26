@@ -456,7 +456,11 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
       isInvert = true;
     }
 
-    query = addPredicate(query, filter.name, operator, filter.values, isInvert);
+    if (filter.operatorType === 'dateTime') { // HACK
+        query = addPredicate(query, filter.name, operator, filter.values.map(v => parseInt(v)), isInvert);
+    } else {
+        query = addPredicate(query, filter.name, operator, filter.values, isInvert);
+    }
   });
 
   aggregations.forEach((agg: Aggregation) => {
