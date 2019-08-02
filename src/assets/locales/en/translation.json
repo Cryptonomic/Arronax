@@ -213,7 +213,7 @@
     "lt": "is less than",
     "gt": "is greater than",
     "isnull": "is null",
-    "isnotnull": "isnotnull",
+    "isnotnull": "is not null",
     "like": "is like",
     "startsWith": "starts with",
     "notstartWith": "does not start with",
