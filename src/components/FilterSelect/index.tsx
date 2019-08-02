@@ -16,6 +16,7 @@ const ButtonShell = styled(Button)<{isactive: string; iscapital: number}>`
     justify-content: center;
     font-size: 18px;
     cursor: pointer;
+    width: max-content;
     color: ${({ isactive }) => (isactive ? '#4A4A4A' : '#9b9b9b')};
     text-transform: ${({ iscapital }) => (iscapital ? 'capitalize' : 'initial')};;
   }
