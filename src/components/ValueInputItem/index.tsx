@@ -67,8 +67,8 @@ const styles: any = {
     listStyleType: 'none'
   },
   input: {
-    color: '#9b9b9b',
-    fontSize: '16px',
+    color: '#4A4A4A',
+    fontSize: '18px',
     letterSpacing: 0,
     lineHeight: '17px',
     width: '100%',
@@ -286,6 +286,7 @@ class InputItem extends React.Component<Props, States> {
     return (
       <InputBase
         className={classes.input}
+        value={stateVal}
         onChange={this.onValueChange}
       />
     )
