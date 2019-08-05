@@ -16,7 +16,7 @@ export const saveConfigs = (configs: Config[]) => {
 export function getConfigs() {
     const localConfigs = getLocalConfigs();
     try {
-        const configs = require('../config');
+        const configs = require('../config').default;
         return [...configs, ...localConfigs];
     } catch (err) {
         return (localConfigs.length > 0) ? localConfigs : defaultConfig;
