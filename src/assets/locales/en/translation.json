@@ -140,7 +140,8 @@
       "signature": "Signature",
       "timestamp": "Timestamp",
       "validation_pass": "Validation pass",
-      "period_kind": "Voting Period"
+      "period_kind": "Voting Period",
+      "priority": "Priority"
     },
     "delegates": {
       "pkh": "Address",
@@ -166,7 +167,8 @@
       "hash": "Hash",
       "branch": "Branch",
       "signature": "Signature",
-      "block_id": "Block Hash"
+      "block_id": "Block Hash",
+      "block_level": "Block Level"
     },
     "operations": {
       "operation_group_hash": "Op Group Hash",
@@ -196,7 +198,11 @@
       "consumed_gas": "Consumed Gas",
       "block_hash": "Block Hash",
       "block_level": "Block Level",
-      "timestamp": "Timestamp"
+      "timestamp": "Timestamp",
+      "internal": "Internal", 
+      "originated_contracts": "Originated Accounts",
+      "storage_size": "Storage Size",
+      "paid_storage_size_diff": "Paid Storage Delta",
     },
     "proposals": {
       "protocol_hash": "Protocol hash",
