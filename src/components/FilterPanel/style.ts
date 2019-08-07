@@ -32,6 +32,7 @@ export const FilterItemGr = styled.div`
   border-radius: 5px;
   border: 1px solid #ecedef;
   display: flex;
+  flex: 1;
 `;
 
 export const AddFilterFooter = styled.div<{isFilters: boolean}>`
