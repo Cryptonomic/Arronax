@@ -135,6 +135,9 @@ const SearchContainer = styled.div`
   padding: 0 0 0 20px;
   align-items: center;
   margin-left: auto;
+  @media(max-width: 1200px) {
+    flex: 1;
+  }
 `;
 
 const InputContainer = muiStyled(InputBase)({
