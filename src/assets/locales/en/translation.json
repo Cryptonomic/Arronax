@@ -202,7 +202,7 @@
       "internal": "Internal", 
       "originated_contracts": "Originated Accounts",
       "storage_size": "Storage Size",
-      "paid_storage_size_diff": "Paid Storage Delta",
+      "paid_storage_size_diff": "Paid Storage Delta"
     },
     "proposals": {
       "protocol_hash": "Protocol hash",
