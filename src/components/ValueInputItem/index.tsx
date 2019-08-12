@@ -23,6 +23,7 @@ const Container = styled.div<{isLong: boolean}>`
   height: 52px;
   display: flex;
   align-items: center;
+  flex: 1;
 `;
 
 const DatePickerWrapper = styled(DatePicker)`
@@ -69,11 +70,12 @@ const styles: any = {
   input: {
     color: '#4A4A4A',
     fontSize: '18px',
+    width: '100%',
     letterSpacing: 0,
     lineHeight: '17px',
-    width: '100%',
     height: '52px',
-    paddingLeft: '10px'
+    paddingLeft: '10px',
+    flex: 1
   },
 };
 
@@ -246,7 +248,7 @@ class InputItem extends React.Component<Props, States> {
         />
       )
     }
-    if (attribute.cardinality && attribute.cardinality >= CARDINALITY_NUMBER) {
+    if (attribute.cardinality && attribute.cardinality >= CARDINALITY_NUMBER && attribute.cacheConfig && attribute.cacheConfig.cached) {
       const autosuggestProps = {
         renderInputComponent: this.renderInputComponent,
         suggestions,
