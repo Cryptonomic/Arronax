@@ -326,7 +326,7 @@ export const initLoadByNetwork = () => async (dispatch, state) => {
     attrObjsList.forEach(obj => {
       attributes = {
         ...attributes,
-        [obj.entity]: obj.attributes
+        [obj.entity]: sortAttributes(obj.attributes)
       }
     });
     await dispatch(initAttributesAction(attributes));
@@ -402,7 +402,7 @@ export const initLoad = (environmentInfo?: string, query?: string) => async (dis
       attrObjsList.forEach(obj => {
         attributes = {
           ...attributes,
-          [obj.entity]: obj.attributes
+          [obj.entity]: sortAttributes(obj.attributes)
         }
       });
       await dispatch(initAttributesAction(attributes));

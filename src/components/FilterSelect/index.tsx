@@ -102,8 +102,6 @@ interface OwnProps {
 
 type States = {
   anchorEl: any;
-  isFadeBottom: boolean;
-  isFadeTop: boolean;
 };
 
 type Props = OwnProps & WithTranslation;
@@ -112,19 +110,12 @@ class FilterSelect extends React.Component<Props, States> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      anchorEl: null,
-      isFadeBottom: false,
-      isFadeTop: false,
+      anchorEl: null
     };
   }
 
   componentDidMount() {
     const { items } = this.props;
-    if (items.length < 8) {
-      this.setState({ isFadeBottom: false });
-    } else {
-      this.setState({ isFadeBottom: true });
-    }
   }
 
   handleChange = (item: any) => {
@@ -141,21 +132,8 @@ class FilterSelect extends React.Component<Props, States> {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  handleScroll = (event: any) => {
-    const { items } = this.props;
-    const pos = event.target.scrollTop;
-    const remainCount = items.length - 8;
-    if (pos === 0) {
-      this.setState({ isFadeTop: false, isFadeBottom: true });
-    } else if (pos < remainCount * 46) {
-      this.setState({ isFadeTop: true, isFadeBottom: true });
-    } else {
-      this.setState({ isFadeTop: true, isFadeBottom: false });
-    }
-  };
-
   render() {
-    const { anchorEl, isFadeBottom, isFadeTop } = this.state;
+    const { anchorEl } = this.state;
     const { items, value, placeholder, type, t } = this.props;
     const tranPrefix = type === 'attributes'? `${type}.${items[0].entity}.` : `${type}.`;
 
@@ -187,8 +165,7 @@ class FilterSelect extends React.Component<Props, States> {
               },
             }}
           >
-            <MenuContents onScroll={this.handleScroll}>
-              {isFadeTop && <FadeTop />}
+            <MenuContents>
               {items.map((item: any, index) => (
                 <MainMenuItem
                   onClick={() => this.handleChange(item)}
@@ -199,7 +176,6 @@ class FilterSelect extends React.Component<Props, States> {
                 </MainMenuItem>
               ))}
             </MenuContents>
-            {isFadeBottom && <FadeBottom />}
           </Menu>
         </MenuContainer>
       </Container>
