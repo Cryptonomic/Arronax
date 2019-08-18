@@ -144,7 +144,7 @@ class ColumnsPanel extends React.Component<Props, States> {
   }
 
   render() {
-    const { attributes, t } = this.props;
+    const { attributes, selectedEntity, t } = this.props;
     const { selected } = this.state;
     const columnsCount = Math.ceil(attributes.length / 6);
     return (
@@ -155,7 +155,7 @@ class ColumnsPanel extends React.Component<Props, States> {
               <ColumnDragItem
                 key={index}
                 index={index}
-                name={attribute.displayName}
+                name={t(`attributes.${selectedEntity}.${attribute.name}`)}
                 onClick={() => this.handleChange(attribute)}
                 moveItem={this.onMoveItem}
               />
@@ -169,7 +169,7 @@ class ColumnsPanel extends React.Component<Props, States> {
                 return (
                   <ColumnItem
                     key={index}
-                    name={attribute.displayName}
+                    name={t(`attributes.${selectedEntity}.${attribute.name}`)}
                     onClick={() => this.handleChange(attribute)}
                   />
                 );
