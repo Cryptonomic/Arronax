@@ -28,11 +28,11 @@ export const FilterItemContainer = styled.div`
   padding: 18px 24px 0 30px;
 `;
 
-export const FilterItemGr = styled.div`
+export const FilterItemGr = styled.div<{isFull: boolean}>`
   border-radius: 5px;
   border: 1px solid #ecedef;
   display: flex;
-  flex: 1;
+  flex: ${({ isFull }) => (isFull ? 1 : 'none')};
 `;
 
 export const AddFilterFooter = styled.div<{isFilters: boolean}>`

@@ -18,6 +18,8 @@ const Container = styled.div<{ count: number }>`
   width: ${({ count }) => count*372 + 'px' };
   margin: auto;
   max-width: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const MainContainer = styled.div`
