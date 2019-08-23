@@ -172,7 +172,7 @@ class FilterPanel extends React.Component<Props, {}> {
             const filterAttr = newAttributes.find(attr => attr.name === filter.name);
             return (
               <FilterItemContainer key={index}>
-                <FilterItemGr>
+                <FilterItemGr isFull={!filter.isLowCardinality}>
                   <FilterSelect
                     value={filter.name}
                     placeholder={t('components.aggregationPanel.select_attribute', { entityName })}
