@@ -2,6 +2,7 @@ import React from 'react';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Modal from '@material-ui/core/Modal';
+import IconButton from '@material-ui/core/IconButton';
 import moment from 'moment';
 import { AttrbuteDataType } from 'conseiljs';
 import { ArronaxIcon } from '../ArronaxIcon';
@@ -43,6 +44,8 @@ const ModalTitle = styled.div`
   font-weight: 400;
   color: #9b9b9b;
   text-transform: capitalize;
+  display: flex;
+  align-items: center;
 `;
 
 const RowContainer = styled.div`
@@ -83,24 +86,39 @@ const CloseButton = styled.div`
 
 type OwnProps = {
   open: boolean;
-  item: any;
+  items: any[];
   attributes: any[];
   isLoading: boolean;
   title: string;
   onClose: () => void;
 };
 
+interface States {
+  count: number;
+}
+
 type Props = OwnProps & WithTranslation;
 
-class EntityModal extends React.Component<Props, {}> {
+class EntityModal extends React.Component<Props, States> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 0
+    };
+  }
+  changeCount = (count: number) => {
+    this.setState({count});
+  }
   onClickModal = (event: any) => {
     event.stopPropagation();
   }
   render() {
-    const { open, item, attributes, isLoading, onClose, title, t } = this.props;
+    const { open, items, attributes, isLoading, onClose, title, t } = this.props;
+    const { count } = this.state;
+    const total = items ? items.length : 0;
 
     const formattedValues = attributes
-      .filter(c => item[c.name] != null && item[c.name] !== undefined)
+      .filter(c => total > 0 && items[count][c.name] != null && items[count][c.name] !== undefined)
       .sort((a, b) => {
           if (a.displayOrder === undefined && b.displayOrder === undefined) {
               if(a.displayName < b.displayName) { return -1; }
@@ -120,14 +138,14 @@ class EntityModal extends React.Component<Props, {}> {
       .map(c => {
           let v = {displayName: c.displayName, value: undefined, name: c.name, entity: c.entity};
           if (c.dataType === AttrbuteDataType.DATETIME && c.dataFormat) {
-              v['value'] = moment(item[c.name]).format(c.dataFormat);
+              v['value'] = moment(items[count][c.name]).format(c.dataFormat);
           } else if (c.dataType === AttrbuteDataType.DECIMAL || c.dataType === AttrbuteDataType.INT || c.dataType === AttrbuteDataType.CURRENCY) {
-              v.value = formatNumber(Number(item[c.name]), c);
+              v.value = formatNumber(Number(items[count][c.name]), c);
           } else if (c.dataType === AttrbuteDataType.BOOLEAN) {
-              v.value = item[c.name].toString();
+              v.value = items[count][c.name].toString();
               v.value = v.value.charAt(0).toUpperCase() + v.value.substring(1);
           } else {
-              v.value = item[c.name].toString();
+              v.value = items[count][c.name].toString();
               if (v.value.length > 0 && c.cardinality && c.cardinality < 20) {
                   v.value = v.value.split('_').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
               }
@@ -141,7 +159,25 @@ class EntityModal extends React.Component<Props, {}> {
         <ScrollContainer onClick={onClose}>
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
-            <ModalTitle>{t('components.entityModal.details', {title})}</ModalTitle>
+            {total > 1?
+              (
+                <ModalTitle>
+                  {t('components.entityModal.details', {title})}
+                  (
+                  <IconButton aria-label="previous" disabled={count === 0}>
+                    <ArronaxIcon iconName="icon-previous" size="16px" color={count !== 0 ? '#65C8CE' : '#D3D3D3'} />
+                  </IconButton>
+                  {count + 1}/{total}
+                  <IconButton aria-label="next" disabled={count === total - 1}>
+                    <ArronaxIcon iconName="icon-next" size="16px" color={count !== total - 1 ? '#65C8CE' : '#D3D3D3'} />
+                  </IconButton>
+                  )
+                </ModalTitle>
+              ) :
+              <ModalTitle>{t('components.entityModal.details', {title})}</ModalTitle>
+            
+            }
+            
               {!isLoading && (
                 <ListContainer>
                   {formattedValues.map((item, index) => {
