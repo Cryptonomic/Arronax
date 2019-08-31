@@ -12,8 +12,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import HTML5Backend from 'react-dnd-html5-backend';
-import { DragDropContext } from 'react-dnd';
 import { EntityDefinition } from 'conseiljs';
 import Header from '../../components/Header';
 import SettingsPanel from '../../components/SettingsPanel';
@@ -484,7 +482,6 @@ const mapDispatchToProps = (dispatch: any) => ({
 
 export default compose(
   withTranslation(),
-  DragDropContext(HTML5Backend),
   withRouter,
   connect(
     mapStateToProps,
