@@ -1,6 +1,6 @@
 {
   "name": "arronax",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "description": "Blockchain analytics and business intelligence tool for the Tezos chain.",
   "author": "Cryptonomic",
   "license": "GPL-3.0",
@@ -45,6 +45,9 @@
     "start": "webpack-dev-server --mode development --inline --hot --open",
     "serve": "webpack-dev-server --mode development --inline --hot",
     "build": "webpack --mode development"
+  },
+  "engines": {
+    "node": ">=10.16.3"
   },
   "eslintConfig": {
     "extends": "react-app"
