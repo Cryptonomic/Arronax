@@ -43,7 +43,6 @@ const ModalTitle = styled.div`
   line-height: 28px;
   font-weight: 400;
   color: #9b9b9b;
-  text-transform: capitalize;
   display: flex;
   align-items: center;
 `;
@@ -159,25 +158,21 @@ class EntityModal extends React.Component<Props, States> {
         <ScrollContainer onClick={onClose}>
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
-            {total > 1?
+            {total > 1 ?
               (
                 <ModalTitle>
                   {t('components.entityModal.details', {title})}
-                  (
                   <IconButton aria-label="previous" disabled={count === 0}>
                     <ArronaxIcon iconName="icon-previous" size="16px" color={count !== 0 ? '#65C8CE' : '#D3D3D3'} />
                   </IconButton>
-                  {count + 1}/{total}
+                  {count + 1} {t('components.entityModal.of')} {total}
                   <IconButton aria-label="next" disabled={count === total - 1}>
                     <ArronaxIcon iconName="icon-next" size="16px" color={count !== total - 1 ? '#65C8CE' : '#D3D3D3'} />
                   </IconButton>
-                  )
                 </ModalTitle>
               ) :
               <ModalTitle>{t('components.entityModal.details', {title})}</ModalTitle>
-            
             }
-            
               {!isLoading && (
                 <ListContainer>
                   {formattedValues.map((item, index) => {
