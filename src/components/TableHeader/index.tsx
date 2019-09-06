@@ -5,6 +5,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
+import Tooltip from '@material-ui/core/Tooltip';
 import { Aggregation } from '../../types';
 
 const TableCellWrapper = muiStyled(TableCell)({
@@ -31,6 +32,44 @@ const TableHeader: React.FC<Props> = props => {
   const { rows, aggregations, order, orderBy, createSortHandler } = props;
   const { t } = useTranslation();
 
+  function getRealLabel(keyName, value, description) {
+    if (description) {
+      return (
+        <Tooltip title={description}>
+           <SortLabelWrapper
+              active={orderBy === keyName}
+              direction={order}
+              onClick={() => createSortHandler(keyName)}
+            >
+              {value}
+            </SortLabelWrapper>
+        </Tooltip>
+      );
+    }
+
+    return (
+      <SortLabelWrapper
+        active={orderBy === keyName}
+        direction={order}
+        onClick={() => createSortHandler(keyName)}
+      >
+        {value}
+      </SortLabelWrapper>
+    );
+  }
+
+  function getRealCell(keyName, value, description) {
+    return (
+      <TableCellWrapper
+        key={keyName}
+        sortDirection={orderBy === keyName ? order : false}
+        align="left"
+      >
+        {getRealLabel(keyName, value, description)}
+      </TableCellWrapper>
+    )
+  }
+
   return (
     <TableHead>
       <TableRow>
@@ -39,38 +78,12 @@ const TableHeader: React.FC<Props> = props => {
           if (selectedAggs.length > 0) {
             return selectedAggs.map(agg=> {
               const keyName = `${agg.function}_${agg.field}`;
-              return (
-                <TableCellWrapper
-                  key={keyName}
-                  sortDirection={orderBy === keyName ? order : false}
-                  align="left"
-                >
-                  <SortLabelWrapper
-                    active={orderBy === keyName}
-                    direction={order}
-                    onClick={() => createSortHandler(keyName)}
-                  >
-                    {t(`aggFunctions.${agg.function}`)}{' '}{t(`attributes.${row.entity}.${row.name}`)}
-                  </SortLabelWrapper>
-                </TableCellWrapper>
-              );
+              const value = t(`aggFunctions.${agg.function}`) + ' ' + t(`attributes.${row.entity}.${row.name}`);
+              return getRealCell(keyName, value, row.description);
             });
           } else {
-            return (
-              <TableCellWrapper
-                key={row.name}
-                sortDirection={orderBy === row.name ? order : false}
-                align="left"
-              >
-                <SortLabelWrapper
-                  active={orderBy === row.name}
-                  direction={order}
-                  onClick={() => createSortHandler(row.name)}
-                >
-                  {t(`attributes.${row.entity}.${row.name}`)}
-                </SortLabelWrapper>
-              </TableCellWrapper>
-            );
+            const value = t(`attributes.${row.entity}.${row.name}`);
+            return getRealCell(row.name, value, row.description);
           }
         })}
       </TableRow>
