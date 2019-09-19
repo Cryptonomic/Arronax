@@ -162,11 +162,11 @@ class EntityModal extends React.Component<Props, States> {
               (
                 <ModalTitle>
                   {t('components.entityModal.details', {title})}
-                  <IconButton aria-label="previous" disabled={count === 0}>
+                  <IconButton aria-label="previous" disabled={count === 0} onClick={() => this.changeCount(count - 1)}>
                     <ArronaxIcon iconName="icon-previous" size="16px" color={count !== 0 ? '#65C8CE' : '#D3D3D3'} />
                   </IconButton>
                   {count + 1} {t('components.entityModal.of')} {total}
-                  <IconButton aria-label="next" disabled={count === total - 1}>
+                  <IconButton aria-label="next" disabled={count === total - 1} onClick={() => this.changeCount(count + 1)}>
                     <ArronaxIcon iconName="icon-next" size="16px" color={count !== total - 1 ? '#65C8CE' : '#D3D3D3'} />
                   </IconButton>
                 </ModalTitle>
