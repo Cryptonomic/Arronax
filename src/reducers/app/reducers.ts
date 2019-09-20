@@ -49,7 +49,7 @@ export interface AppState {
   isFullLoaded: boolean;
   rowCount: number;
   filterCount: object;
-  selectedModalItem: object;
+  selectedModalItem: object[];
   sort: object;
   configs: Config[];
   selectedConfig: Config;
@@ -109,7 +109,7 @@ let initialState: AppState = {
   isFullLoaded: false,
   rowCount: 50,
   filterCount: {},
-  selectedModalItem: {},
+  selectedModalItem: [],
   sort: {},
   aggregations: {},
   aggFunctions: {

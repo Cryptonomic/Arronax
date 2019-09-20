@@ -264,7 +264,7 @@ class InputItem extends React.Component<Props, States> {
             inputProps={{
               classes,
               id: 'high-cardinality-input',
-              placeholder: t('components.valueInputItem.insert_value'),
+              placeholder: attribute.placeholder ? attribute.placeholder : t('components.valueInputItem.insert_value'),
               value: stateVal,
               onChange: this.onHighCardValueChange,
               disabled
@@ -289,6 +289,7 @@ class InputItem extends React.Component<Props, States> {
       <InputBase
         className={classes.input}
         value={stateVal}
+        placeholder={attribute.placeholder ? attribute.placeholder : t('components.valueInputItem.insert_value')}
         onChange={this.onValueChange}
       />
     )

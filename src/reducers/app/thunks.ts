@@ -537,11 +537,16 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
 
   let query = blankQuery();
   query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
-  query = setLimit(query, 1);
+  const s = String(value);
+  if (s.startsWith('o')) {
+    query = setLimit(query, 1000);
+  } else {
+    query = setLimit(query, 1);
+  }
 
   const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
 
-  await dispatch(setModalItemAction(items[0]));
+  await dispatch(setModalItemAction(items));
   dispatch(setLoadingAction(false));
 };
 

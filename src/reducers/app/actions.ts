@@ -166,7 +166,7 @@ export function setFilterCountAction(count: number) {
   }
 }
 
-export function setModalItemAction(item: any) {
+export function setModalItemAction(item: any[]) {
   return {
     type: SET_MODAL_ITEM,
     item

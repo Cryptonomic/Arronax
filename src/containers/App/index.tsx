@@ -193,7 +193,7 @@ interface States {
   isOpenConfigMdoal: boolean;
   isOpenEntityModal: boolean;
   searchedEntity: string;
-  searchedItem: any;
+  searchedItem: any[];
 }
 
 type Props = OwnProps & RouteProps & WithTranslation;
@@ -213,7 +213,7 @@ class Arronax extends React.Component<Props, States> {
       isOpenConfigMdoal: false,
       isOpenEntityModal: false,
       searchedEntity: '',
-      searchedItem: {}
+      searchedItem: []
     };
 
     this.settingRef = React.createRef();
@@ -317,7 +317,7 @@ class Arronax extends React.Component<Props, States> {
     const realVal = !Number(val) ? val : Number(val);
     const { entity, items } = await searchById(realVal);
     if (items.length > 0 && entity) {
-      this.setState({searchedItem: items[0], searchedEntity: entity, isOpenEntityModal: true});
+      this.setState({searchedItem: items, searchedEntity: entity, isOpenEntityModal: true});
     }
   }
 
@@ -439,7 +439,7 @@ class Arronax extends React.Component<Props, States> {
             open={isOpenEntityModal}
             title={selectedObjectEntity.displayName}
             attributes={attributes[searchedEntity]}
-            item={searchedItem}
+            items={searchedItem}
             isLoading={isLoading}
             onClose={this.onCloseEntityModal}
           />

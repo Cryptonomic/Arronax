@@ -36,7 +36,8 @@
       "limit_query": "Queries on Arronax are limited to 1000 results. <1>Export to CSV</1> to get the full result set."
     },
     "entityModal": {
-      "details": "{{title}} Details"
+      "details": "{{title}} Details",
+      "of": "of"
     },
     "filterPanel": {
       "select_value": "Select Value",
