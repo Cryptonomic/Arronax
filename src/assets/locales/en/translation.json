@@ -75,15 +75,15 @@
       "try_combination": "Try a different filter combination.",
       "clear_filters": "Clear Filters",
       "try_again": "Try Again",
-      "blocks": "Block",
-      "operations": "Operation",
-      "accounts": "Account",
-      "delegates": "Baker",
-      "balance_updates": "Balance Update",
-      "ballots": "Ballot",
-      "fees": "Fee",
-      "operation_groups": "Operation Group",
-      "proposals": "Proposal"
+      "blocks": "Blocks",
+      "operations": "Operations",
+      "accounts": "Accounts",
+      "delegates": "Bakers",
+      "balance_updates": "Balance Updates",
+      "ballots": "Ballots",
+      "fees": "Fees",
+      "operation_groups": "Operation Groups",
+      "proposals": "Proposals"
     }
   },
   "attributes": {
@@ -203,25 +203,32 @@
       "internal": "Internal", 
       "originated_contracts": "Originated Accounts",
       "storage_size": "Storage Size",
-      "paid_storage_size_diff": "Paid Storage Delta"
+      "paid_storage_size_diff": "Paid Storage Delta",
+      "proposal": "Proposal",
+      "ballot": "Vote",
+      "cycle": "Cycle",
+      "branch": "Branch",
+      "period": "Period",
+      "number_of_slots": "Number of Slots"
     },
     "proposals": {
       "protocol_hash": "Protocol hash",
       "block_id": "Block Hash",
-      "block_level": "Block level"
+      "block_level": "Block level",
+      "supporters": "Supporters"
     }
   },
   "operators": {
     "eq": "is",
     "noteq": "is not",
-    "in": "is in",
+    "in": "is one of",
     "notin": "is not in",
     "between": "is between",
     "lt": "is less than",
     "gt": "is greater than",
     "isnull": "is null",
     "isnotnull": "is not null",
-    "like": "is like",
+    "like": "contains",
     "startsWith": "starts with",
     "notstartWith": "does not start with",
     "endsWith": "ends with",
