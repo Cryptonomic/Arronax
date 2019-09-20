@@ -174,7 +174,7 @@ class CustomTable extends React.Component<Props, State> {
           open={isOpenedModal}
           title={selectedObjectEntity.displayName}
           attributes={attributes[referenceEntity]}
-          items={[selectedModalItem]}
+          items={selectedModalItem}
           isLoading={isLoading}
           onClose={this.onCloseModal}
         />
