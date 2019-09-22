@@ -1,6 +1,8 @@
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { Route, BrowserRouter } from 'react-router-dom';
+import { DndProvider } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 import Arronax from './containers/App';
 import Loader from './components/Loader';
 import { Provider } from 'react-redux';
@@ -11,7 +13,9 @@ import './utils/i18n';
 function App() {
   return (
     <Suspense fallback={<Loader />}>
-      <Arronax />
+      <DndProvider backend={HTML5Backend}>
+        <Arronax />
+			</DndProvider>
     </Suspense>
   );
 }

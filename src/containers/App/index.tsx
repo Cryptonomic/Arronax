@@ -12,8 +12,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import HTML5Backend from 'react-dnd-html5-backend';
-import { DragDropContext } from 'react-dnd';
 import { EntityDefinition } from 'conseiljs';
 import Header from '../../components/Header';
 import SettingsPanel from '../../components/SettingsPanel';
@@ -195,7 +193,7 @@ interface States {
   isOpenConfigMdoal: boolean;
   isOpenEntityModal: boolean;
   searchedEntity: string;
-  searchedItem: any;
+  searchedItem: any[];
 }
 
 type Props = OwnProps & RouteProps & WithTranslation;
@@ -215,7 +213,7 @@ class Arronax extends React.Component<Props, States> {
       isOpenConfigMdoal: false,
       isOpenEntityModal: false,
       searchedEntity: '',
-      searchedItem: {}
+      searchedItem: []
     };
 
     this.settingRef = React.createRef();
@@ -319,7 +317,7 @@ class Arronax extends React.Component<Props, States> {
     const realVal = !Number(val) ? val : Number(val);
     const { entity, items } = await searchById(realVal);
     if (items.length > 0 && entity) {
-      this.setState({searchedItem: items[0], searchedEntity: entity, isOpenEntityModal: true});
+      this.setState({searchedItem: items, searchedEntity: entity, isOpenEntityModal: true});
     }
   }
 
@@ -441,7 +439,7 @@ class Arronax extends React.Component<Props, States> {
             open={isOpenEntityModal}
             title={selectedObjectEntity.displayName}
             attributes={attributes[searchedEntity]}
-            item={searchedItem}
+            items={searchedItem}
             isLoading={isLoading}
             onClose={this.onCloseEntityModal}
           />
@@ -484,7 +482,6 @@ const mapDispatchToProps = (dispatch: any) => ({
 
 export default compose(
   withTranslation(),
-  DragDropContext(HTML5Backend),
   withRouter,
   connect(
     mapStateToProps,
