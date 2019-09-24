@@ -110,7 +110,8 @@
         "change": "Change",
         "level": "Level",
         "delegate": "Delegate",
-        "category": "Category"
+        "category": "Category",
+        "operation_group_hash": "Op Group Hash"
       },
       "ballots": {
         "pkh": "Address",
