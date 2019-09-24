@@ -13,13 +13,13 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { EntityDefinition } from 'conseiljs';
+import ReactDynamicImport from 'react-dynamic-import';
 import Header from '../../components/Header';
 import SettingsPanel from '../../components/SettingsPanel';
 import Footer from '../../components/Footer';
 import Toolbar from '../../components/Toolbar';
 import CustomTable from '../CustomTable';
 import ConfigModal from '../../components/ConfigModal';
-import EntityModal from '../../components/EntityModal';
 import Loader from '../../components/Loader';
 
 import {
@@ -50,6 +50,8 @@ import { clearMessageAction } from '../../reducers/message/actions';
 
 import { ToolType, Config } from '../../types';
 import octopusSrc from '../../assets/sadOctopus.svg';
+
+const entityloader = f => import(`../Entities/${f}`);
 
 const Container = styled.div`
   padding: 50px 0;
@@ -204,6 +206,7 @@ class Arronax extends React.Component<Props, States> {
   };
   settingRef: any = null;
   tableRef = null;
+  EntityModal: any = null;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -317,6 +320,11 @@ class Arronax extends React.Component<Props, States> {
     const realVal = !Number(val) ? val : Number(val);
     const { entity, items } = await searchById(realVal);
     if (items.length > 0 && entity) {
+      const modalName = entity === 'operations' ? entity : 'default';
+      this.EntityModal = ReactDynamicImport({
+        name: modalName,
+        loader: entityloader
+      });
       this.setState({searchedItem: items, searchedEntity: entity, isOpenEntityModal: true});
     }
   }
@@ -345,6 +353,7 @@ class Arronax extends React.Component<Props, States> {
       isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal, isOpenEntityModal,
       searchedItem, searchedEntity
     } = this.state;
+    const { EntityModal } = this;
     const isRealLoading = isLoading || !isFullLoaded;
     const selectedObjectEntity = entities.find(entity => entity.name === searchedEntity);
     

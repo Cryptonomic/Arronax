@@ -5,6 +5,7 @@ import muiStyled from '@material-ui/styles/styled';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import { ConseilSortDirection, EntityDefinition } from 'conseiljs';
+import ReactDynamicImport from 'react-dynamic-import';
 import {
   getSelectedConfig,
   getRows,
@@ -21,8 +22,9 @@ import { setSortAction } from '../../reducers/app/actions';
 import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
-import EntityModal from '../../components/EntityModal';
 import { Sort, Config, Aggregation } from '../../types';
+
+const entityloader = f => import(`../Entities/${f}`);
 
 const TableContainer = muiStyled(Table)({
   width: '100%',
@@ -62,6 +64,7 @@ interface State {
 }
 
 class CustomTable extends React.Component<Props, State> {
+  EntityModal: any = null;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -105,6 +108,11 @@ class CustomTable extends React.Component<Props, State> {
     const { selectedPrimaryKey, selectedPrimaryValue } = this.state;
     const { getModalItemAction } = this.props;
     if (selectedPrimaryKey !== key || selectedPrimaryValue !== value) {
+      const modalName = entity === 'operations' ? entity : 'default';
+      this.EntityModal = ReactDynamicImport({
+        name: modalName,
+        loader: entityloader
+      });
       getModalItemAction(entity, key, value);
       this.setState({referenceEntity: entity, selectedPrimaryKey: key, selectedPrimaryValue: value, isOpenedModal: true});
     }
@@ -112,6 +120,7 @@ class CustomTable extends React.Component<Props, State> {
   }
 
   render() {
+    const { EntityModal } = this;
     const {
       items,
       selectedConfig,
@@ -170,14 +179,16 @@ class CustomTable extends React.Component<Props, State> {
           onChangePage={this.handleChangePage}
           onExportCsv={onExportCsv}
         />
-        <EntityModal
-          open={isOpenedModal}
-          title={selectedObjectEntity.displayName}
-          attributes={attributes[referenceEntity]}
-          items={selectedModalItem}
-          isLoading={isLoading}
-          onClose={this.onCloseModal}
-        />
+        {isOpenedModal && 
+          <EntityModal
+            open={isOpenedModal}
+            title={selectedObjectEntity.displayName}
+            attributes={attributes[referenceEntity]}
+            items={selectedModalItem}
+            isLoading={isLoading}
+            onClose={this.onCloseModal}
+          />
+        }
       </React.Fragment>
     );
   }
