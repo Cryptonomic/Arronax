@@ -47,6 +47,7 @@ import {
 } from '../../reducers/app/thunks';
 import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../../reducers/app/actions';
 import { clearMessageAction } from '../../reducers/message/actions';
+import { getEntityModalName } from '../../utils/hashtable';
 
 import { ToolType, Config } from '../../types';
 import octopusSrc from '../../assets/sadOctopus.svg';
@@ -316,11 +317,12 @@ class Arronax extends React.Component<Props, States> {
   }
 
   onSearchById = async (val: string | number) => {
-    const { searchById } = this.props;
+    const { searchById, selectedConfig } = this.props;
     const realVal = !Number(val) ? val : Number(val);
     const { entity, items } = await searchById(realVal);
     if (items.length > 0 && entity) {
-      const modalName = entity === 'operations' ? entity : 'default';
+      const { platform, network } = selectedConfig;
+      const modalName = getEntityModalName(platform, network, entity);
       this.EntityModal = ReactDynamicImport({
         name: modalName,
         loader: entityloader

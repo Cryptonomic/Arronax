@@ -23,6 +23,7 @@ import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
 import { Sort, Config, Aggregation } from '../../types';
+import { getEntityModalName } from '../../utils/hashtable';
 
 const entityloader = f => import(`../Entities/${f}`);
 
@@ -106,9 +107,10 @@ class CustomTable extends React.Component<Props, State> {
 
   onOpenModal = (entity: string, key: string, value: string | number) => {
     const { selectedPrimaryKey, selectedPrimaryValue } = this.state;
-    const { getModalItemAction } = this.props;
+    const { getModalItemAction, selectedConfig } = this.props;
     if (selectedPrimaryKey !== key || selectedPrimaryValue !== value) {
-      const modalName = entity === 'operations' ? entity : 'default';
+      const { platform, network } = selectedConfig;
+      const modalName = getEntityModalName(platform, network, entity);
       this.EntityModal = ReactDynamicImport({
         name: modalName,
         loader: entityloader
