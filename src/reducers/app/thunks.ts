@@ -34,7 +34,7 @@ import { Config, Sort, Filter, Aggregation } from '../../types';
 
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
-import { getOperatorType, sortAttributes } from '../../utils/general';
+import { getOperatorType, sortAttributes, isOS } from '../../utils/general';
 
 const { executeEntityQuery } = ConseilDataClient;
 const {
@@ -486,7 +486,16 @@ export const shareReport = () => async (dispatch, state) => {
   const textField = document.createElement('textarea');
   textField.innerText = shareLink;
   document.body.appendChild(textField);
-  textField.select();
+  if (isOS()) {
+    const range = document.createRange();
+    range.selectNodeContents(textField);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    textField.setSelectionRange(0, 999999);
+  } else {
+    textField.select();
+  }
   document.execCommand('copy');
   textField.remove();
 }
