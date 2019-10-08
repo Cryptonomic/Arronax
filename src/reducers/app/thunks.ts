@@ -58,7 +58,7 @@ export const fetchValues = (attribute: string) => async (dispatch, state) => {
   const { selectedEntity, selectedConfig } = state().app;
   const { network, platform, url, apiKey } = selectedConfig;
   dispatch(setLoadingAction(true));
-  const serverInfo = { url, apiKey };
+  const serverInfo = { url, apiKey, network };
   const values = await getAttributeValues(serverInfo, platform, network, selectedEntity, attribute);
   dispatch(setAvailableValuesAction(selectedEntity, attribute, values));
   dispatch(setLoadingAction(false));
@@ -276,7 +276,7 @@ export const initLoadByNetwork = () => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
   const { selectedConfig, selectedEntity } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
-  const serverInfo = { url, apiKey };
+  const serverInfo = { url, apiKey, network };
 
   let entities: any[] = await getEntities(serverInfo, platform, network).catch(err => {
     dispatch(createMessageAction(`Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`, true));
@@ -359,7 +359,7 @@ export const initLoad = (environmentInfo?: string, query?: string) => async (dis
   }
   const selectedConfig: Config = state().app.selectedConfig;
   const { platform, network, url, apiKey } = selectedConfig;
-  const serverInfo = { url, apiKey };
+  const serverInfo = { url, apiKey, network };
 
   let entities: any[] = await getEntities(serverInfo, platform, network).catch(err => {
     dispatch(createMessageAction(`Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`, true));
@@ -503,7 +503,7 @@ export const shareReport = () => async (dispatch, state) => {
 export const exportCsvData = () => async (dispatch, state) => {
   const { selectedEntity, columns, sort, selectedFilters, selectedConfig, aggregations } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
-  const serverInfo = { url, apiKey };
+  const serverInfo = { url, apiKey, network };
 
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
@@ -528,7 +528,7 @@ export const submitQuery = () => async (dispatch, state) => {
   dispatch(setLoadingAction(true));
   const { selectedEntity, selectedFilters, selectedConfig, columns, sort, aggregations } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
-  const serverInfo = { url, apiKey };
+  const serverInfo = { url, apiKey, network };
   const attributeNames = getAttributeNames(columns[selectedEntity]);
 
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
@@ -542,7 +542,7 @@ export const submitQuery = () => async (dispatch, state) => {
 export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: string | number) => async (dispatch: any, state: any) => {
   dispatch(setLoadingAction(true));
   const { network, platform, url, apiKey } = state().app.selectedConfig;
-  const serverInfo = { url, apiKey };
+  const serverInfo = { url, apiKey, network };
 
   let query = blankQuery();
   query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
@@ -562,7 +562,7 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
 export const changeTab = (entity: string) => async (dispatch, state) => {
   const { selectedConfig, attributes, items } = state().app;
   const { network, platform, url, apiKey } = selectedConfig;
-  const serverInfo = { url, apiKey };
+  const serverInfo = { url, apiKey, network };
 
   if(!items[entity] || (items[entity] && items[entity].length === 0)) {
     dispatch(setLoadingAction(true));
@@ -576,7 +576,7 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
   dispatch(setLoadingAction(true));
   const { selectedConfig } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
-  const serverInfo = { url, apiKey };
+  const serverInfo = { url, apiKey, network };
   try {
     const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
     const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
@@ -597,6 +597,6 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
 export const getHightCardinalityValues = (attribute: string, prefix: string) => async (dispatch: any, state: any) => {
   const { selectedConfig, selectedEntity } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
-  const serverInfo = { url, apiKey };
+  const serverInfo = { url, apiKey, network };
   return await getAttributeValuesForPrefix(serverInfo, platform, network, selectedEntity, attribute, prefix);
 };
