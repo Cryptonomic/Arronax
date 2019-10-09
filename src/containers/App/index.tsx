@@ -323,10 +323,7 @@ class Arronax extends React.Component<Props, States> {
     if (items.length > 0 && entity) {
       const { platform, network } = selectedConfig;
       const modalName = getEntityModalName(platform, network, entity);
-      this.EntityModal = ReactDynamicImport({
-        name: modalName,
-        loader: entityloader
-      });
+      this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
       this.setState({searchedItem: items, searchedEntity: entity, isOpenEntityModal: true});
     }
   }
