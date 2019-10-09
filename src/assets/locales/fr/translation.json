@@ -37,6 +37,7 @@
       },
       "entityModal": {
         "details": "{{title}} Details",
+        "clear": "clear",
         "at": "at",
         "in": "in",
         "of": "of",

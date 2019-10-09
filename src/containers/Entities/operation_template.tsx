@@ -110,6 +110,7 @@ class EntityModal extends React.Component<Props, States> {
 
   formatValue = (processedValues: any[], attributes: any[], key: string) => {
     this.explicitKeys.push(key);
+    if (processedValues.find(i => i.name === key) === undefined) { return ''; }
     return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined);
   }
 
@@ -143,7 +144,6 @@ class EntityModal extends React.Component<Props, States> {
       const opKind = kind !== undefined ? kind.value : 'undefined';
       this.explicitKeys = [];
 
-console.log(processedValues)
     return (
       <Modal open={open}>
         <ScrollContainer onClick={onClose}>
@@ -256,7 +256,95 @@ console.log(processedValues)
                 <ListContainer>
                   <RowContainer>
                     <TitleTxt>{this.formatValue(processedValues, attributes, 'kind')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'source')} {t('components.entityModal.to')} {this.formatValue(processedValues, attributes, 'delegate')}</ContentTxt>
+                    {(processedValues.find(i => i.name === 'delegate') === undefined) && (
+                      <ContentTxt>{this.formatValue(processedValues, attributes, 'source')} {t('components.entityModal.to')} {t('components.entityModal.clear')}</ContentTxt>
+                    )}
+
+                    {(processedValues.find(i => i.name === 'delegate') !== undefined) && (
+                      <ContentTxt>{this.formatValue(processedValues, attributes, 'source')} {t('components.entityModal.to')} {this.formatValue(processedValues, attributes, 'delegate')}</ContentTxt>
+                    )}
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')} {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'block_hash')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'block_level')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'cycle')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.status')}</TitleTxt>
+                    <ContentTxt>
+                      {this.formatValue(processedValues, attributes, 'status')} {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'operation_group_hash')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.consumed_gas')}</TitleTxt>
+                    <ContentTxt>
+                      {this.formatValue(processedValues, attributes, 'consumed_gas')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'gas_limit')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  {processedValues.filter(i => !(this.explicitKeys.includes(i.name))).map((item, index) => {
+                    const { entity, name } = item;
+                    return (
+                      <RowContainer key={index}>
+                        <TitleTxt>{t(`attributes.${entity}.${name}`)}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, name)}</ContentTxt>
+                      </RowContainer>
+                    );
+                  })}
+                </ListContainer>
+              )}
+
+               {(!isLoading && opKind === 'origination') && (
+                <ListContainer>
+                  <RowContainer>
+                    <TitleTxt>{this.formatValue(processedValues, attributes, 'kind')}</TitleTxt>
+                    <ContentTxt>
+                      {this.formatValue(processedValues, attributes, 'originated_contracts')} {t('components.entityModal.by')} {this.formatValue(processedValues, attributes, 'source')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')} {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'block_hash')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'block_level')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'cycle')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.status')}</TitleTxt>
+                    <ContentTxt>
+                      {this.formatValue(processedValues, attributes, 'status')} {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'operation_group_hash')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.consumed_gas')}</TitleTxt>
+                    <ContentTxt>
+                      {this.formatValue(processedValues, attributes, 'consumed_gas')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'gas_limit')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  {processedValues.filter(i => !(this.explicitKeys.includes(i.name))).map((item, index) => {
+                    const { entity, name } = item;
+                    return (
+                      <RowContainer key={index}>
+                        <TitleTxt>{t(`attributes.${entity}.${name}`)}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, name)}</ContentTxt>
+                      </RowContainer>
+                    );
+                  })}
+                </ListContainer>
+              )}
+
+              {(!isLoading && opKind === 'reveal') && (
+                <ListContainer>
+                  <RowContainer>
+                    <TitleTxt>{this.formatValue(processedValues, attributes, 'kind')}</TitleTxt>
+                    <ContentTxt>
+                      {this.formatValue(processedValues, attributes, 'public_key')} {t('components.entityModal.by')} {this.formatValue(processedValues, attributes, 'source')}
+                    </ContentTxt>
                   </RowContainer>
 
                   <RowContainer>
@@ -291,7 +379,7 @@ console.log(processedValues)
                 </ListContainer>
               )}
               
-              {(!isLoading && !['transaction', 'endorsement', 'delegation'].includes(opKind)) && (
+              {(!isLoading && !['transaction', 'endorsement', 'delegation', 'origination', 'reveal'].includes(opKind)) && (
                 <ListContainer>
                   {processedValues.map((item, index) => {
                     const { value, entity, name } = item;
