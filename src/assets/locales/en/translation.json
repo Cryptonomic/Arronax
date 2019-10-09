@@ -37,7 +37,10 @@
     },
     "entityModal": {
       "details": "{{title}} Details",
-      "of": "of"
+      "at": "at",
+      "in": "in",
+      "of": "of",
+      "to": "to"
     },
     "filterPanel": {
       "select_value": "Select Value",
