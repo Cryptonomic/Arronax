@@ -2,12 +2,11 @@ import React from 'react';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Modal from '@material-ui/core/Modal';
-import moment from 'moment';
+import IconButton from '@material-ui/core/IconButton';
 
-import { AttrbuteDataType } from 'conseiljs';
+import { formatValueForDisplay } from '../../utils/render';
 import { ArronaxIcon } from '../../components/ArronaxIcon';
 import Loader from '../../components/Loader';
-import { formatNumber } from '../../utils/general';
 
 const ScrollContainer = styled.div`
   width: 100%;
@@ -62,10 +61,9 @@ const TitleTxt = styled.div`
   font-weight: 400;
 `;
 
-const ContentTxt = styled.div`
-  font-weight: 300;
-  word-break: break-word;
-  flex: 1;
+const ContentTxt = styled.span`
+display: flex;
+align-items: center;
 `;
 
 const ButtonContainer = styled.div`
@@ -99,24 +97,29 @@ interface States {
 type Props = OwnProps & WithTranslation;
 
 class EntityModal extends React.Component<Props, States> {
+  explicitKeys: string[] = [];
+
   constructor(props) {
     super(props);
-    this.state = {
-      count: 0
-    };
+    this.state = { count: 0 };
   }
-  changeCount = (count: number) => {
-    this.setState({count});
+
+  changeCount = (count: number) => { this.setState({count}); }
+
+  onClickModal = (event: any) => { event.stopPropagation(); }
+
+  formatValue = (processedValues: any[], attributes: any[], key: string) => {
+    this.explicitKeys.push(key);
+    if (processedValues.find(i => i.name === key) === undefined) { return ''; }
+    return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined);
   }
-  onClickModal = (event: any) => {
-    event.stopPropagation();
-  }
+
   render() {
     const { open, items, attributes, isLoading, onClose, title, t } = this.props;
     const { count } = this.state;
     const total = items ? items.length : 0;
 
-    const formattedValues = attributes
+    const processedValues = attributes
       .filter(c => total > 0 && items[count][c.name] != null && items[count][c.name] !== undefined)
       .sort((a, b) => {
           if (a.displayOrder === undefined && b.displayOrder === undefined) {
@@ -133,54 +136,64 @@ class EntityModal extends React.Component<Props, States> {
           }
 
           return a.displayOrder - b.displayOrder;
-      })
-      .map(c => {
-          let v = {displayName: c.displayName, value: undefined, name: c.name, entity: c.entity};
-          if (c.dataType === AttrbuteDataType.DATETIME && c.dataFormat) {
-              v['value'] = moment(items[count][c.name]).format(c.dataFormat);
-          } else if (c.dataType === AttrbuteDataType.DECIMAL || c.dataType === AttrbuteDataType.INT || c.dataType === AttrbuteDataType.CURRENCY) {
-              v.value = formatNumber(Number(items[count][c.name]), c);
-          } else if (c.dataType === AttrbuteDataType.BOOLEAN) {
-              v.value = items[count][c.name].toString();
-              v.value = v.value.charAt(0).toUpperCase() + v.value.substring(1);
-          } else {
-              v.value = items[count][c.name].toString();
-              if (v.value.length > 0 && c.cardinality && c.cardinality < 20) {
-                  v.value = v.value.split('_').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
-              }
-          }
-
-          return v;
+      }).map(c => {
+        return { displayName: c.displayName, value: items[count][c.name], name: c.name, entity: c.entity };
       });
+
+      this.explicitKeys = [];
 
     return (
       <Modal open={open}>
         <ScrollContainer onClick={onClose}>
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
-              <ModalTitle>{t('components.entityModal.details', {title})}</ModalTitle>
+              <ModalTitle>
+                {(processedValues.find(i => i.name === 'script') === undefined) && (
+                  t('components.entityModal.details', {title})
+                )}
+
+                {(processedValues.find(i => i.name === 'script') !== undefined) && (
+                  t('components.entityModal.contract_details', {title})
+                )}
+              </ModalTitle>
+
+              {isLoading && <Loader />}
+
               {!isLoading && (
                 <ListContainer>
-                  {formattedValues.map((item, index) => {
-                    const { displayName, value, entity, name } = item;
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.accounts.account_id')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'account_id')}</ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.accounts.balance')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'balance')}</ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('components.entityModal.last_active')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'block_id')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'block_level')}</ContentTxt>
+                  </RowContainer>
+
+                  {processedValues.filter(i => !(this.explicitKeys.includes(i.name))).map((item, index) => {
+                    const { entity, name } = item;
                     return (
                       <RowContainer key={index}>
                         <TitleTxt>{t(`attributes.${entity}.${name}`)}</TitleTxt>
-                        <ContentTxt>{value}</ContentTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, name)}</ContentTxt>
                       </RowContainer>
                     );
                   })}
-                  <ButtonContainer>
-                    <CloseButton onClick={onClose}>
-                      {t('general.verbs.close')}
-                    </CloseButton>
-                  </ButtonContainer>
                 </ListContainer>
               )}
-              {isLoading && <Loader />}
+              <ButtonContainer>
+                <CloseButton onClick={onClose}>
+                  {t('general.verbs.close')}
+                </CloseButton>
+              </ButtonContainer>
           </ModalContainer>
         </ScrollContainer>
-        
       </Modal>
     );
   }
