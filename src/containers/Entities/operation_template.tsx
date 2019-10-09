@@ -216,8 +216,43 @@ console.log(processedValues)
                   })}
                 </ListContainer>
               )}
+
+              {(!isLoading && opKind === 'endorsement') && (
+                <ListContainer>
+                  <RowContainer>
+                    <TitleTxt>{this.formatValue(processedValues, attributes, 'kind')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'branch')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'level')}</ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.delegate')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'delegate')}</ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.slots')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'number_of_slots')}: {this.formatValue(processedValues, attributes, 'slots')}</ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')} {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'block_hash')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'block_level')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'cycle')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  {processedValues.filter(i => !(this.explicitKeys.includes(i.name))).map((item, index) => {
+                    const { entity, name } = item;
+                    return (
+                      <RowContainer key={index}>
+                        <TitleTxt>{t(`attributes.${entity}.${name}`)}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, name)}</ContentTxt>
+                      </RowContainer>
+                    );
+                  })}
+                </ListContainer>
+              )}
               
-              {(!isLoading && opKind !== 'transaction') && (
+              {(!isLoading && !['transaction', 'endorsement'].includes(opKind)) && (
                 <ListContainer>
                   {processedValues.map((item, index) => {
                     const { value, entity, name } = item;
