@@ -186,13 +186,6 @@ console.log(processedValues)
                   </RowContainer>
 
                   <RowContainer>
-                    <TitleTxt>{t('attributes.operations.consumed_gas')}</TitleTxt>
-                    <ContentTxt>
-                      {this.formatValue(processedValues, attributes, 'consumed_gas')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'gas_limit')}
-                    </ContentTxt>
-                  </RowContainer>
-
-                  <RowContainer>
                     <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
                     <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')} {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'block_hash')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'block_level')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'cycle')}
                     </ContentTxt>
@@ -202,6 +195,13 @@ console.log(processedValues)
                     <TitleTxt>{t('attributes.operations.status')}</TitleTxt>
                     <ContentTxt>
                       {this.formatValue(processedValues, attributes, 'status')} {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'operation_group_hash')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.consumed_gas')}</TitleTxt>
+                    <ContentTxt>
+                      {this.formatValue(processedValues, attributes, 'consumed_gas')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'gas_limit')}
                     </ContentTxt>
                   </RowContainer>
 
@@ -251,8 +251,47 @@ console.log(processedValues)
                   })}
                 </ListContainer>
               )}
+
+              {(!isLoading && opKind === 'delegation') && (
+                <ListContainer>
+                  <RowContainer>
+                    <TitleTxt>{this.formatValue(processedValues, attributes, 'kind')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'source')} {t('components.entityModal.to')} {this.formatValue(processedValues, attributes, 'delegate')}</ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')} {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'block_hash')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'block_level')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'cycle')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.status')}</TitleTxt>
+                    <ContentTxt>
+                      {this.formatValue(processedValues, attributes, 'status')} {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'operation_group_hash')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.consumed_gas')}</TitleTxt>
+                    <ContentTxt>
+                      {this.formatValue(processedValues, attributes, 'consumed_gas')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'gas_limit')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  {processedValues.filter(i => !(this.explicitKeys.includes(i.name))).map((item, index) => {
+                    const { entity, name } = item;
+                    return (
+                      <RowContainer key={index}>
+                        <TitleTxt>{t(`attributes.${entity}.${name}`)}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, name)}</ContentTxt>
+                      </RowContainer>
+                    );
+                  })}
+                </ListContainer>
+              )}
               
-              {(!isLoading && !['transaction', 'endorsement'].includes(opKind)) && (
+              {(!isLoading && !['transaction', 'endorsement', 'delegation'].includes(opKind)) && (
                 <ListContainer>
                   {processedValues.map((item, index) => {
                     const { value, entity, name } = item;
