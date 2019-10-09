@@ -3,11 +3,10 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Modal from '@material-ui/core/Modal';
 import IconButton from '@material-ui/core/IconButton';
-import moment from 'moment';
-import { AttrbuteDataType } from 'conseiljs';
+
+import { formatValueForDisplay } from '../../utils/render';
 import { ArronaxIcon } from '../../components/ArronaxIcon';
 import Loader from '../../components/Loader';
-import { formatNumber } from '../../utils/general';
 
 const ScrollContainer = styled.div`
   width: 100%;
@@ -62,10 +61,9 @@ const TitleTxt = styled.div`
   font-weight: 400;
 `;
 
-const ContentTxt = styled.div`
-  font-weight: 300;
-  word-break: break-word;
-  flex: 1;
+const ContentTxt = styled.span`
+display: flex;
+align-items: center;
 `;
 
 const ButtonContainer = styled.div`
@@ -99,24 +97,28 @@ interface States {
 type Props = OwnProps & WithTranslation;
 
 class EntityModal extends React.Component<Props, States> {
+  explicitKeys: string[] = [];
+
   constructor(props) {
     super(props);
-    this.state = {
-      count: 0
-    };
+    this.state = { count: 0 };
   }
-  changeCount = (count: number) => {
-    this.setState({count});
+
+  changeCount = (count: number) => { this.setState({count}); }
+
+  onClickModal = (event: any) => { event.stopPropagation(); }
+
+  formatValue = (processedValues: any[], attributes: any[], key: string) => {
+    this.explicitKeys.push(key);
+    return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined);
   }
-  onClickModal = (event: any) => {
-    event.stopPropagation();
-  }
+
   render() {
     const { open, items, attributes, isLoading, onClose, title, t } = this.props;
     const { count } = this.state;
     const total = items ? items.length : 0;
 
-    const formattedValues = attributes
+    const processedValues = attributes
       .filter(c => total > 0 && items[count][c.name] != null && items[count][c.name] !== undefined)
       .sort((a, b) => {
           if (a.displayOrder === undefined && b.displayOrder === undefined) {
@@ -133,26 +135,15 @@ class EntityModal extends React.Component<Props, States> {
           }
 
           return a.displayOrder - b.displayOrder;
-      })
-      .map(c => {
-          let v = {displayName: c.displayName, value: undefined, name: c.name, entity: c.entity};
-          if (c.dataType === AttrbuteDataType.DATETIME && c.dataFormat) {
-              v['value'] = moment(items[count][c.name]).format(c.dataFormat);
-          } else if (c.dataType === AttrbuteDataType.DECIMAL || c.dataType === AttrbuteDataType.INT || c.dataType === AttrbuteDataType.CURRENCY) {
-              v.value = formatNumber(Number(items[count][c.name]), c);
-          } else if (c.dataType === AttrbuteDataType.BOOLEAN) {
-              v.value = items[count][c.name].toString();
-              v.value = v.value.charAt(0).toUpperCase() + v.value.substring(1);
-          } else {
-              v.value = items[count][c.name].toString();
-              if (v.value.length > 0 && c.cardinality && c.cardinality < 20) {
-                  v.value = v.value.split('_').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
-              }
-          }
-
-          return v;
+      }).map(c => {
+        return { displayName: c.displayName, value: items[count][c.name], name: c.name, entity: c.entity };
       });
 
+      const kind = processedValues.find(a => a.name === 'kind');
+      const opKind = kind !== undefined ? kind.value : 'undefined';
+      this.explicitKeys = [];
+
+console.log(processedValues)
     return (
       <Modal open={open}>
         <ScrollContainer onClick={onClose}>
@@ -160,36 +151,93 @@ class EntityModal extends React.Component<Props, States> {
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
               <ModalTitle>
                 {t('components.entityModal.details', {title})}
-                <IconButton aria-label="previous" disabled={count === 0} onClick={() => this.changeCount(count - 1)}>
-                  <ArronaxIcon iconName="icon-previous" size="16px" color={count !== 0 ? '#65C8CE' : '#D3D3D3'} />
-                </IconButton>
-                {count + 1} {t('components.entityModal.of')} {total}
-                <IconButton aria-label="next" disabled={count === total - 1} onClick={() => this.changeCount(count + 1)}>
-                  <ArronaxIcon iconName="icon-next" size="16px" color={count !== total - 1 ? '#65C8CE' : '#D3D3D3'} />
-                </IconButton>
+                {total > 1 && (
+                <span>
+                    <IconButton aria-label="previous" disabled={count === 0} onClick={() => this.changeCount(count - 1)}>
+                        <ArronaxIcon iconName="icon-previous" size="16px" color={count !== 0 ? '#65C8CE' : '#D3D3D3'} />
+                    </IconButton>
+                    {count + 1} {t('components.entityModal.of')} {total}
+                    <IconButton aria-label="next" disabled={count === total - 1} onClick={() => this.changeCount(count + 1)}>
+                        <ArronaxIcon iconName="icon-next" size="16px" color={count !== total - 1 ? '#65C8CE' : '#D3D3D3'} />
+                    </IconButton>
+                </span>
+                )}
               </ModalTitle>
-              {!isLoading && (
+
+              {isLoading && <Loader />}
+
+              {(!isLoading && opKind === 'transaction') && (
                 <ListContainer>
-                  {formattedValues.map((item, index) => {
-                    const { displayName, value, entity, name } = item;
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.amount')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'amount')}</ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.fee')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'fee')}</ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{this.formatValue(processedValues, attributes, 'kind')}</TitleTxt>
+                    <ContentTxt>
+                      {this.formatValue(processedValues, attributes, 'source')} {t('components.entityModal.to')} {this.formatValue(processedValues, attributes, 'destination')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.consumed_gas')}</TitleTxt>
+                    <ContentTxt>
+                      {this.formatValue(processedValues, attributes, 'consumed_gas')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'gas_limit')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')} {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'block_hash')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'block_level')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'cycle')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.status')}</TitleTxt>
+                    <ContentTxt>
+                      {this.formatValue(processedValues, attributes, 'status')} {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'operation_group_hash')}
+                    </ContentTxt>
+                  </RowContainer>
+
+                  {processedValues.filter(i => !(this.explicitKeys.includes(i.name))).map((item, index) => {
+                    const { entity, name } = item;
                     return (
                       <RowContainer key={index}>
                         <TitleTxt>{t(`attributes.${entity}.${name}`)}</TitleTxt>
-                        <ContentTxt>{value}</ContentTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, name)}</ContentTxt>
                       </RowContainer>
                     );
                   })}
-                  <ButtonContainer>
-                    <CloseButton onClick={onClose}>
-                      {t('general.verbs.close')}
-                    </CloseButton>
-                  </ButtonContainer>
                 </ListContainer>
               )}
-              {isLoading && <Loader />}
+              
+              {(!isLoading && opKind !== 'transaction') && (
+                <ListContainer>
+                  {processedValues.map((item, index) => {
+                    const { value, entity, name } = item;
+                    return (
+                      <RowContainer key={index}>
+                        <TitleTxt>{t(`attributes.${entity}.${name}`)}</TitleTxt>
+                        <ContentTxt>{formatValueForDisplay('platform', 'network', entity, value, attributes.filter(a => a.name === name)[0], undefined, undefined)}</ContentTxt>
+                      </RowContainer>
+                    );
+                  })}
+                </ListContainer>
+              )}
+
+              <ButtonContainer>
+                <CloseButton onClick={onClose}>
+                  {t('general.verbs.close')}
+                </CloseButton>
+              </ButtonContainer>
           </ModalContainer>
         </ScrollContainer>
-        
       </Modal>
     );
   }
