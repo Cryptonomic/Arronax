@@ -161,18 +161,23 @@ class EntityModal extends React.Component<Props, States> {
               {!isLoading && (
                 <ListContainer>
                   <RowContainer>
-                    <TitleTxt>{t('attributes.accounts.account_id')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'account_id')}</ContentTxt>
+                    <TitleTxt>{t('attributes.blocks.hash')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'hash')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'level')} ({this.formatValue(processedValues, attributes, 'meta_cycle_position')}) {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'meta_cycle')}</ContentTxt>
                   </RowContainer>
 
                   <RowContainer>
-                    <TitleTxt>{t('attributes.accounts.balance')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'balance')}</ContentTxt>
+                    <TitleTxt>{t('attributes.blocks.baker')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'baker')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'priority')}</ContentTxt>
                   </RowContainer>
 
                   <RowContainer>
-                    <TitleTxt>{t('components.entityModal.last_active')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'block_id')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'block_level')}</ContentTxt>
+                    <TitleTxt>{t('attributes.blocks.protocol')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'proto')}: {this.formatValue(processedValues, attributes, 'protocol')}</ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('general.nouns.period')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'meta_voting_period')}: {this.formatValue(processedValues, attributes, 'period_kind')}, {this.formatValue(processedValues, attributes, '"meta_voting_period_position')}</ContentTxt>
                   </RowContainer>
 
                   {processedValues.filter(i => !(this.explicitKeys.includes(i.name))).map((item, index) => {

@@ -187,7 +187,13 @@ class EntityModal extends React.Component<Props, States> {
 
                   <RowContainer>
                     <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')} &nbsp; {t('components.entityModal.in')} &nbsp; {this.formatValue(processedValues, attributes, 'block_hash')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'block_level')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'cycle')}
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')}</ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.operations.block_hash')}</TitleTxt>
+                    <ContentTxt>
+                      {this.formatValue(processedValues, attributes, 'block_hash')} at level {this.formatValue(processedValues, attributes, 'block_level')} in cycle {this.formatValue(processedValues, attributes, 'cycle')}
                     </ContentTxt>
                   </RowContainer>
 
@@ -349,14 +355,14 @@ class EntityModal extends React.Component<Props, States> {
 
                   <RowContainer>
                     <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')} {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'block_hash')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'block_level')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'cycle')}
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')} &nbsp; {t('components.entityModal.in')} &nbsp; {this.formatValue(processedValues, attributes, 'block_hash')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'block_level')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'cycle')}
                     </ContentTxt>
                   </RowContainer>
 
                   <RowContainer>
                     <TitleTxt>{t('attributes.operations.status')}</TitleTxt>
                     <ContentTxt>
-                      {this.formatValue(processedValues, attributes, 'status')} {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'operation_group_hash')}
+                      {this.formatValue(processedValues, attributes, 'status')} &nbsp; {t('components.entityModal.in')} {this.formatValue(processedValues, attributes, 'operation_group_hash')}
                     </ContentTxt>
                   </RowContainer>
 
