@@ -11,7 +11,7 @@
     },
     "nouns": {
       "error": "Error",
-      "period": "Period"
+      "period": "Voting Period"
     },
     "errors": {
       "no_hex_data": "The provided string doesn't look like hex data",
