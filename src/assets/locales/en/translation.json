@@ -38,7 +38,6 @@
     },
     "entityModal": {
       "details": "{{title}} Details",
-      "contract_details": "Contract Details",
       "clear": "clear",
       "last_active": "Last Active",
       "at": "at",

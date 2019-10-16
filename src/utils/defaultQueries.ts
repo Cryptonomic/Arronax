@@ -1,13 +1,13 @@
 export const defaultQueries = {
     blocks: {
         fields: ['level', 'timestamp', 'hash', 'baker', 'meta_cycle'],
-        predicates: [{ field: 'timestamp', set: [1556683200000], operation: 'after', inverse: false }],
+        predicates: [{ field: 'timestamp', set: [1569888000000], operation: 'after', inverse: false }],
         orderBy: [{ field: 'level', direction: 'desc' }],
         limit: 1000
     },
     operations: {
         fields: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind', 'fee', 'operation_group_hash'],
-        predicates: [{ field: 'kind', set: ['transaction'], operation: 'eq', inverse: false }, { field: 'timestamp', set: [1556683200000], operation: 'after', inverse: false }],
+        predicates: [{ field: 'kind', set: ['transaction'], operation: 'eq', inverse: false }, { field: 'timestamp', set: [1569888000000], operation: 'after', inverse: false }],
         orderBy: [{ field: 'timestamp', direction: 'desc' }],
         limit: 1000
     },
@@ -21,25 +21,25 @@ export const defaultQueries = {
     },
     rolls: {
         fields: [],
-        predicates: [{ field: 'block_level', set: [418201], operation: 'gt', inverse: false }],
+        predicates: [{ field: 'block_level', set: [631060], operation: 'gt', inverse: false }],
         orderBy: [{ field: 'block_level', direction: 'desc' }, { field: 'rolls', direction: 'desc' }],
         limit: 1000
     },
     fees: {
         fields: ['kind', 'timestamp', 'high', 'medium', 'low'],
-        predicates: [{ field: 'kind', set: ['transaction', 'origination'], operation: 'in', inverse: false }, { field: 'timestamp', set: [1556683200000], operation: 'after', inverse: false }],
+        predicates: [{ field: 'kind', set: ['transaction', 'origination'], operation: 'in', inverse: false }, { field: 'timestamp', set: [1569888000000], operation: 'after', inverse: false }],
         orderBy: [{ field: 'timestamp', direction: 'desc' }, { field: 'kind', direction: 'asc' }],
         limit: 1000
     },
     balance_updates: {
         fields: [],
-        predicates: [{ field: 'level', set: [418201], operation: 'gt', inverse: false }],
+        predicates: [{ field: 'level', set: [631060], operation: 'gt', inverse: false }],
         orderBy: [],
         limit: 1000
     },
     ballots: {
         fields: [],
-        predicates: [{ field: 'block_level', set: [418201], operation: 'gt', inverse: false }],
+        predicates: [{ field: 'block_level', set: [631060], operation: 'gt', inverse: false }],
         orderBy: [],
         limit: 1000
     },

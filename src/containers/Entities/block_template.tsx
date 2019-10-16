@@ -150,10 +150,6 @@ class EntityModal extends React.Component<Props, States> {
                 {(processedValues.find(i => i.name === 'script') === undefined) && (
                   t('components.entityModal.details', {title})
                 )}
-
-                {(processedValues.find(i => i.name === 'script') !== undefined) && (
-                  t('components.entityModal.contract_details', {title})
-                )}
               </ModalTitle>
 
               {isLoading && <Loader />}
