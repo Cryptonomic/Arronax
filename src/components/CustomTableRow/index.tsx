@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import 'moment-timezone';
 import TableCell, { TableCellProps } from '@material-ui/core/TableCell';
 import TableRow, { TableRowProps } from '@material-ui/core/TableRow';
 

@@ -62,8 +62,8 @@ const TitleTxt = styled.div`
 `;
 
 const ContentTxt = styled.span`
-display: flex;
-align-items: center;
+  display: flex;
+  align-items: center;
 `;
 
 const ButtonContainer = styled.div`
