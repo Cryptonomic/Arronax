@@ -8,7 +8,8 @@ import {
   ConseilOperator,
   ConseilOutput,
   ConseilSortDirection, EntityDefinition, AttributeDefinition,
-  TezosConseilClient
+  TezosConseilClient,
+  ConseilQuery
 } from 'conseiljs';
 
 import {
@@ -599,4 +600,83 @@ export const getHightCardinalityValues = (attribute: string, prefix: string) => 
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
   return await getAttributeValuesForPrefix(serverInfo, platform, network, selectedEntity, attribute, prefix);
+};
+
+export const gotoOperationsForBlockThunk = (hash: string) => async (dispatch: any, state: any) => {
+  dispatch(setLoadingAction(true));
+  const { selectedConfig, attributes, items } = state().app;
+  const { platform, network, url, apiKey } = selectedConfig;
+
+  const entity = 'operations';
+  const defaultQuery = {...ConseilQueryBuilder.blankQuery(), ...defaultQueries[entity]};
+  const mainQuery: any = { 
+    ...defaultQuery,
+    predicates: [{ field: 'block_hash', set: [hash], operation: ConseilOperator.EQ, inverse: false }]
+  };
+  const serverInfo = { url, apiKey, network };
+  let columns: any[] = [];
+  
+  const { fields, predicates, orderBy } = defaultQuery;
+  fields.forEach(field=> {
+    const column = attributes[entity].find(attr => attr.name === field);
+    if (column) { columns.push(column); }
+  });
+
+  const sorts: any = orderBy.map(o => { return { orderBy: o.field, order: o.direction } });
+  const mainFilters = [{
+    name: 'block_hash',
+    operator: ConseilOperator.EQ,
+    operatorType: 'string',
+    isLowCardinality: false,
+    values: [hash]
+  }];
+
+  if(!items[entity] || (items[entity] && items[entity].length === 0)) {
+    let cardinalityPromises: any[] = [];
+    const initFilters = predicates.map(predicate => {
+      const selectedAttribute = attributes[entity].find(attr => attr.name === predicate.field);
+      const isLowCardinality = selectedAttribute.cardinality !== undefined && selectedAttribute.cardinality < CARDINALITY_NUMBER;
+      if (isLowCardinality) {
+        cardinalityPromises.push(
+          dispatch(initCardinalityValues(platform, entity, network, selectedAttribute.name, serverInfo))
+        );
+      }
+      const operatorType = getOperatorType(selectedAttribute.dataType);
+  
+      let operator = predicate.operation;
+      if (predicate.inverse) {
+        if (predicate.operation === ConseilOperator.ISNULL) {
+          operator = 'isnotnull';
+        } else if (predicate.operation === ConseilOperator.EQ) {
+          operator = 'noteq';
+        } else if (predicate.operation === ConseilOperator.STARTSWITH) {
+          operator = 'notstartWith';
+        } else if (predicate.operation === ConseilOperator.ENDSWITH) {
+          operator = 'notendWith';
+        } else if (predicate.operation === ConseilOperator.IN) {
+            operator = 'notin';
+        }
+      }
+  
+      return {
+        name: predicate.field,
+        operator,
+        values: predicate.set,
+        operatorType,
+        isLowCardinality
+      };
+    });
+    const initProperty = { columns, filters: initFilters, aggregations: [] };
+    InitProperties = { ...InitProperties, [entity]: initProperty };
+    Promise.all(cardinalityPromises);
+  }
+
+  const newItems = await executeEntityQuery(serverInfo, platform, network, entity, mainQuery).catch(() => {
+    dispatch(createMessageAction(`Unable to retrieve data for ${entity} request.`, true));
+    return [];
+  });
+
+  await dispatch(initEntityPropertiesAction(entity, mainFilters, sorts, columns, newItems, []));
+  dispatch(setTabAction(entity));
+  dispatch(setLoadingAction(false));
 };

@@ -1,84 +1,19 @@
 import React from 'react';
 import { withTranslation, WithTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { connect } from 'react-redux';
 import Modal from '@material-ui/core/Modal';
 
 import { formatValueForDisplay } from '../../utils/render';
-import { ArronaxIcon } from '../../components/ArronaxIcon';
 import Loader from '../../components/Loader';
 
-const ScrollContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  padding: 77px 0;
-`;
+import { gotoOperationsForBlockThunk } from '../../reducers/app/thunks';
 
-const ModalContainer = styled.div`
-  background-color: #ffffff;
-  outline: none;
-  position: relative;
-  padding: 27px 30px 30px 30px;
-  margin: 0 auto;
-  width: 798px;
-  min-height: 100%;
-`;
-
-const ListContainer = styled.div`
-  width: 100%;
-`;
-
-const CloseIcon = styled(ArronaxIcon)`
-  cursor: pointer;
-  position: absolute;
-  top: 30px;
-  right: 30px;
-`;
-
-const ModalTitle = styled.div`
-  padding: 0 0 19px 0;
-  font-size: 24px;
-  line-height: 28px;
-  font-weight: 400;
-  color: #9b9b9b;
-  display: flex;
-  align-items: center;
-`;
-
-const RowContainer = styled.div`
-  display: flex;
-  padding: 15px 0;
-  font-size: 16px;
-  line-height: 19px;
-  border-bottom: 1px solid #dcdcdc;
-  letter-spacing: 0.23px;
-  color: rgb(74, 74, 74);
-`;
-
-const TitleTxt = styled.div`
-  width: 198px;
-  font-weight: 400;
-`;
-
-const ContentTxt = styled.span`
-display: flex;
-align-items: center;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  padding: 15px;
-  justify-content: flex-end;
-`;
-
-const CloseButton = styled.div`
-  color: #56c2d9;
-  font-size: 20px;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-`;
+import {
+  ScrollContainer, ModalContainer, ListContainer,
+  CloseIcon, ModalTitle, RowContainer, TitleTxt,
+  ContentTxt, ButtonContainer, CloseButton,
+  GotoOpBtn
+} from './style';
 
 type OwnProps = {
   open: boolean;
@@ -87,6 +22,7 @@ type OwnProps = {
   isLoading: boolean;
   title: string;
   onClose: () => void;
+  gotoOperations: (id: string) => any;
 };
 
 interface States {
@@ -111,6 +47,12 @@ class EntityModal extends React.Component<Props, States> {
     this.explicitKeys.push(key);
     if (processedValues.find(i => i.name === key) === undefined) { return ''; }
     return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined);
+  }
+
+  onGotoAllOperations(hash) {
+    const { gotoOperations, onClose } = this.props;
+    gotoOperations(hash);
+    onClose();
   }
 
   render() {
@@ -185,6 +127,7 @@ class EntityModal extends React.Component<Props, States> {
                       </RowContainer>
                     );
                   })}
+                  <GotoOpBtn onClick={() => this.onGotoAllOperations(items[0].hash)}>All Operations >></GotoOpBtn>
                 </ListContainer>
               )}
               <ButtonContainer>
@@ -199,4 +142,12 @@ class EntityModal extends React.Component<Props, States> {
   }
 };
 
-export default withTranslation()(EntityModal);
+const mapDispatchToProps = (dispatch: any) => ({
+  gotoOperations: (id: string) => dispatch(gotoOperationsForBlockThunk(id))
+});
+
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(withTranslation()(EntityModal));
