@@ -1,84 +1,16 @@
 import React from 'react';
 import { withTranslation, WithTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import Modal from '@material-ui/core/Modal';
 
 import { formatValueForDisplay } from '../../utils/render';
-import { ArronaxIcon } from '../../components/ArronaxIcon';
+import { getNoEmptyFields } from '../../utils/attributes';
 import Loader from '../../components/Loader';
 
-const ScrollContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  padding: 77px 0;
-`;
-
-const ModalContainer = styled.div`
-  background-color: #ffffff;
-  outline: none;
-  position: relative;
-  padding: 27px 30px 30px 30px;
-  margin: 0 auto;
-  width: 798px;
-  min-height: 100%;
-`;
-
-const ListContainer = styled.div`
-  width: 100%;
-`;
-
-const CloseIcon = styled(ArronaxIcon)`
-  cursor: pointer;
-  position: absolute;
-  top: 30px;
-  right: 30px;
-`;
-
-const ModalTitle = styled.div`
-  padding: 0 0 19px 0;
-  font-size: 24px;
-  line-height: 28px;
-  font-weight: 400;
-  color: #9b9b9b;
-  display: flex;
-  align-items: center;
-`;
-
-const RowContainer = styled.div`
-  display: flex;
-  padding: 15px 0;
-  font-size: 16px;
-  line-height: 19px;
-  border-bottom: 1px solid #dcdcdc;
-  letter-spacing: 0.23px;
-  color: rgb(74, 74, 74);
-`;
-
-const TitleTxt = styled.div`
-  width: 198px;
-  font-weight: 400;
-`;
-
-const ContentTxt = styled.span`
-  display: flex;
-  align-items: center;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  padding: 15px;
-  justify-content: flex-end;
-`;
-
-const CloseButton = styled.div`
-  color: #56c2d9;
-  font-size: 20px;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-`;
+import {
+  ScrollContainer, ModalContainer, ListContainer, CloseIcon,
+  ModalTitle, RowContainer, TitleTxt, ContentTxt, ButtonContainer,
+  CloseButton
+} from './style';
 
 type OwnProps = {
   open: boolean;
@@ -119,27 +51,7 @@ class EntityModal extends React.Component<Props, States> {
     const { open, items, attributes, isLoading, onClose, title, t } = this.props;
     const { count } = this.state;
     const total = items ? items.length : 0;
-
-    const processedValues = attributes
-      .filter(c => total > 0 && items[count][c.name] != null && items[count][c.name] !== undefined)
-      .sort((a, b) => {
-          if (a.displayOrder === undefined && b.displayOrder === undefined) {
-              if(a.displayName < b.displayName) { return -1; }
-              if(a.displayName > b.displayName) { return 1; }
-          }
-
-          if (a.displayOrder === undefined && b.displayOrder !== undefined){
-              return 1;
-          }
-
-          if (a.displayOrder !== undefined && b.displayOrder === undefined){
-              return -1;
-          }
-
-          return a.displayOrder - b.displayOrder;
-      }).map(c => {
-        return { displayName: c.displayName, value: items[count][c.name], name: c.name, entity: c.entity };
-      });
+    const processedValues = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
 
     return (
       <Modal open={open}>
