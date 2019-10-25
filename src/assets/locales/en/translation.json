@@ -10,7 +10,8 @@
       "dismiss": "Dismiss"
     },
     "nouns": {
-      "error": "Error"
+      "error": "Error",
+      "period": "Voting Period"
     },
     "errors": {
       "no_hex_data": "The provided string doesn't look like hex data",
@@ -37,7 +38,13 @@
     },
     "entityModal": {
       "details": "{{title}} Details",
-      "of": "of"
+      "clear": "clear",
+      "last_active": "Last Active",
+      "at": "at",
+      "by": "by",
+      "in": "in",
+      "of": "of",
+      "to": "to"
     },
     "filterPanel": {
       "select_value": "Select Value",
@@ -83,7 +90,9 @@
       "ballots": "Ballots",
       "fees": "Fees",
       "operation_groups": "Operation Groups",
-      "proposals": "Proposals"
+      "proposals": "Proposals",
+      "baking_rights": "Baking Rights",
+      "endorsing_rights": "Endorsing Rights"
     }
   },
   "attributes": {
@@ -101,6 +110,7 @@
       "block_level": "Block Level"
     },
     "balance_updates": {
+      "id": "Id",
       "source": "Source",
       "source_id": "Source id",
       "source_hash": "Source Hash",
@@ -109,8 +119,7 @@
       "change": "Change",
       "level": "Level",
       "delegate": "Delegate",
-      "category": "Category",
-      "operation_group_hash": "Op Group Hash"
+      "category": "Category"
     },
     "ballots": {
       "pkh": "Address",
@@ -136,7 +145,7 @@
       "meta_voting_period": "Period Index",
       "meta_voting_period_position": "Period Position",
       "predecessor": "Predecessor Hash",
-      "protocol": "Protocol Hash",
+      "protocol": "Protocol",
       "proto": "Protocol Index",
       "signature": "Signature",
       "timestamp": "Timestamp",
@@ -163,7 +172,7 @@
       "kind": "Kind"
     },
     "operation_groups": {
-      "protocol": "Protocol",
+      "protocol": "Protocol Hash",
       "chain_id": "Chain id",
       "hash": "Hash",
       "branch": "Branch",
@@ -216,6 +225,20 @@
       "block_id": "Block Hash",
       "block_level": "Block level",
       "supporters": "Supporters"
+    },
+    "baking_rights": {
+      "block_hash": "Block Hash",
+      "delegate": "Baker",
+      "estimated_time": "Estimated Time",
+      "level": "Block Level",
+      "priority": "Priority"
+    },
+    "endorsing_rights": {
+      "block_hash": "Block Hash",
+      "delegate": "Baker",
+      "estimated_time": "Estimated Time",
+      "level": "Block Level",
+      "slot": "Slot"
     }
   },
   "operators": {
