@@ -574,13 +574,18 @@ export const changeTab = (entity: string) => async (dispatch, state) => {
 
 export const searchByIdThunk = (id: string | number) => async (dispatch: any, state: any) => {
   dispatch(setLoadingAction(true));
-  const { selectedConfig } = state().app;
+  const { selectedConfig, entities } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
   try {
     const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
     const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
-    await dispatch(changeTab(entity));
+    if (items.length > 0) {
+      await dispatch(changeTab(entity));
+    } else {
+      const searchedEntity = entities.find(item => item.name === entity);
+      dispatch(createMessageAction(`The ${searchedEntity.displayName.toLowerCase()} was not found.`, true));
+    }
     dispatch(setLoadingAction(false));
     return { entity, items };
   } catch (e) {
