@@ -162,6 +162,12 @@ const TabWrapper = withStyles({
   selected: {},
 })(Tab);
 
+const DialogContentWrapper = withStyles({
+  root: {
+    minWidth: '350px'
+  }
+})(DialogContent);
+
 interface OwnProps {
   isLoading: boolean;
   configs: Config[];
@@ -427,11 +433,11 @@ class Arronax extends React.Component<Props, States> {
           aria-describedby='alert-dialog-description'
         >
           <DialogTitle id='alert-dialog-title'>{t('general.nouns.error')}</DialogTitle>
-          <DialogContent>
+          <DialogContentWrapper>
             <DialogContentText id='alert-dialog-description'>
               {message}
             </DialogContentText>
-          </DialogContent>
+          </DialogContentWrapper>
           <DialogActions>
             <DismissButton onClick={this.handleErrorClose}>{t('general.verbs.dismiss')}</DismissButton>
           </DialogActions>
