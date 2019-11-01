@@ -46,7 +46,7 @@ import {
   searchByIdThunk
 } from '../../reducers/app/thunks';
 import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../../reducers/app/actions';
-import { clearMessageAction } from '../../reducers/message/actions';
+import { clearMessageAction, createMessageAction } from '../../reducers/message/actions';
 import { getEntityModalName } from '../../utils/hashtable';
 
 import { ToolType, Config } from '../../types';
@@ -162,6 +162,12 @@ const TabWrapper = withStyles({
   selected: {},
 })(Tab);
 
+const DialogContentWrapper = withStyles({
+  root: {
+    minWidth: '350px'
+  }
+})(DialogContent);
+
 interface OwnProps {
   isLoading: boolean;
   configs: Config[];
@@ -184,6 +190,7 @@ interface OwnProps {
   exportCsvData: ()=> void;
   shareReport: ()=> void;
   initMessage: ()=> void;
+  addMessage: (message: string)=> void;
   addConfig: (config: Config, isUse: boolean) => void;
   removeConfig: (index: number) => void;
   searchById: (id: string | number) => any;
@@ -317,7 +324,7 @@ class Arronax extends React.Component<Props, States> {
   }
 
   onSearchById = async (val: string | number) => {
-    const { searchById, selectedConfig } = this.props;
+    const { searchById, selectedConfig, addMessage, entities, t } = this.props;
     const realVal = !Number(val) ? val : Number(val);
     const { entity, items } = await searchById(realVal);
     if (items.length > 0 && entity) {
@@ -325,6 +332,9 @@ class Arronax extends React.Component<Props, States> {
       const modalName = getEntityModalName(platform, network, entity);
       this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
       this.setState({searchedItem: items, searchedEntity: entity, isOpenEntityModal: true});
+    } else if (entity) {
+      const selectedObjectEntity = entities.find(item => item.name === entity);
+      addMessage(t('containers.arronax.nothing_found', {entityName: selectedObjectEntity.displayName.toLowerCase()}));
     }
   }
 
@@ -427,11 +437,11 @@ class Arronax extends React.Component<Props, States> {
           aria-describedby='alert-dialog-description'
         >
           <DialogTitle id='alert-dialog-title'>{t('general.nouns.error')}</DialogTitle>
-          <DialogContent>
+          <DialogContentWrapper>
             <DialogContentText id='alert-dialog-description'>
               {message}
             </DialogContentText>
-          </DialogContent>
+          </DialogContentWrapper>
           <DialogActions>
             <DismissButton onClick={this.handleErrorClose}>{t('general.verbs.dismiss')}</DismissButton>
           </DialogActions>
@@ -483,6 +493,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   exportCsvData: () => dispatch(exportCsvData()),
   shareReport: () => dispatch(shareReport()),
   initMessage: () => dispatch(clearMessageAction()),
+  addMessage: (message: string) => dispatch(createMessageAction(message, true)),
   addConfig: (config: Config, isUse: boolean) => dispatch(addConfigAction(config, isUse)),
   removeConfig: (index: number) => dispatch(removeConfigAction(index)),
   searchById: (id: string | number) => dispatch(searchByIdThunk(id))

@@ -92,7 +92,8 @@
       "operation_groups": "Operation Groups",
       "proposals": "Proposals",
       "baking_rights": "Baking Rights",
-      "endorsing_rights": "Endorsing Rights"
+      "endorsing_rights": "Endorsing Rights",
+      "nothing_found": "The {{entityName}} was not found."
     }
   },
   "attributes": {

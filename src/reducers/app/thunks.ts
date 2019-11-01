@@ -591,6 +591,7 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
       }
 
       dispatch(setLoadingAction(false));
+      return { entity: '', items: [] };
   }
 };
 
