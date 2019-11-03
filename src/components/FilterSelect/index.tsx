@@ -138,7 +138,7 @@ class FilterSelect extends React.Component<Props, States> {
     const tranPrefix = type === 'attributes'? `${type}.${items[0].entity}.` : `${type}.`;
 
     const selectedItem = items.find(item => item.name === value);
-    const menuTitle = value ? t(`${tranPrefix}${selectedItem.name}`) : placeholder;
+    const menuTitle = (value && selectedItem) ? t(`${tranPrefix}${selectedItem.name}`) : placeholder;
 
     return (
       <Container>
