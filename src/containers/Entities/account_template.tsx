@@ -28,21 +28,19 @@ interface States {
 type Props = OwnProps & WithTranslation;
 
 class EntityModal extends React.Component<Props, States> {
+  explicitKeys: string[] = [];
+
   constructor(props) {
     super(props);
-    this.state = {
-      count: 0
-    };
-  }
-  changeCount = (count: number) => {
-    this.setState({count});
+    this.state = { count: 0 };
   }
 
-  onClickModal = (event: any) => {
-    event.stopPropagation();
-  }
+  changeCount = (count: number) => { this.setState({count}); }
+
+  onClickModal = (event: any) => { event.stopPropagation(); }
 
   formatValue = (processedValues: any[], attributes: any[], key: string) => {
+    this.explicitKeys.push(key);
     if (processedValues.find(i => i.name === key) === undefined) { return ''; }
     return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined);
   }
@@ -52,16 +50,43 @@ class EntityModal extends React.Component<Props, States> {
     const { count } = this.state;
     const total = items ? items.length : 0;
     const processedValues = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
+    this.explicitKeys = [];
 
     return (
       <Modal open={open}>
         <ScrollContainer onClick={onClose}>
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
-              <ModalTitle>{t('components.entityModal.details', {title})}</ModalTitle>
+              <ModalTitle>
+                {(processedValues.find(i => i.name === 'script') === undefined) && (
+                  t('components.entityModal.details', {title})
+                )}
+
+                {(processedValues.find(i => i.name === 'script') !== undefined) && (
+                  t('components.entityModal.details', {title: 'Contract'})
+                )}
+              </ModalTitle>
+
+              {isLoading && <Loader />}
+
               {!isLoading && (
                 <ListContainer>
-                  {processedValues.map((item, index) => {
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.accounts.account_id')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'account_id')}</ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.accounts.balance')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'balance')}</ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('components.entityModal.last_active')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'block_id')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'block_level')}</ContentTxt>
+                  </RowContainer>
+
+                  {processedValues.filter(i => !(this.explicitKeys.includes(i.name))).map((item, index) => {
                     const { entity, name } = item;
                     return (
                       <RowContainer key={index}>
@@ -72,16 +97,13 @@ class EntityModal extends React.Component<Props, States> {
                   })}
                 </ListContainer>
               )}
-              {isLoading && <Loader />}
-
               <ButtonContainer>
                 <CloseButton onClick={onClose}>
-                    {t('general.verbs.close')}
+                  {t('general.verbs.close')}
                 </CloseButton>
               </ButtonContainer>
           </ModalContainer>
         </ScrollContainer>
-        
       </Modal>
     );
   }

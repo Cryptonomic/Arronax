@@ -42,7 +42,7 @@ const SelectWrapper = muiStyled(SelectField)({
 const DownIcon = styled(ArronaxIcon)`
   position: absolute;
   top: -2px;
-  right: 0;
+  right: -5px;
   z-index: -1;
 `;
 

@@ -37,7 +37,12 @@
       },
       "entityModal": {
         "details": "{{title}} Details",
-        "of": "of"
+        "clear": "clear",
+        "last_active": "Last Active",
+        "at": "at",
+        "in": "in",
+        "of": "of",
+        "to": "to"
       },
       "filterPanel": {
         "select_value": "Select Value",
@@ -83,7 +88,9 @@
         "ballots": "Ballots",
         "fees": "Fees",
         "operation_groups": "Operation Groups",
-        "proposals": "Proposals"
+        "proposals": "Proposals",
+        "baking_rights": "Baking Rights",
+        "endorsing_rights": "Endorsing Rights"
       }
     },
     "attributes": {
@@ -216,6 +223,20 @@
         "block_id": "Block Hash",
         "block_level": "Block level",
         "supporters": "Supporters"
+      },
+      "baking_rights": {
+        "block_hash": "Block Hash",
+        "delegate": "Baker",
+        "estimated_time": "Estimated Time",
+        "level": "Block Level",
+        "priority": "Priority"
+      },
+      "endorsing_rights": {
+        "block_hash": "Block Hash",
+        "delegate": "Baker",
+        "estimated_time": "Estimated Time",
+        "level": "Block Level",
+        "slot": "Slot"
       }
     },
     "operators": {
