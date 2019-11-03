@@ -169,7 +169,9 @@
       "medium": "Medium",
       "high": "High",
       "timestamp": "Timestamp",
-      "kind": "Kind"
+      "kind": "Kind",
+      "level": "Block Level",
+      "cycle": "Cycle"
     },
     "operation_groups": {
       "protocol": "Protocol Hash",
