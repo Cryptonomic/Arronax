@@ -22,8 +22,8 @@ export const defaultQueries = {
     fees: {
         fields: ['cycle', 'kind', 'high', 'medium', 'low'],
         predicates: [
-            { field: 'kind', operation: 'in', 'set': ['transaction', 'origination'], 'inverse': false},
-            { field: 'timestamp', operation: 'after', set: [1569902400000], 'inverse' :false}],
+            { field: 'kind', operation: 'in', set: ['transaction', 'origination'], inverse: false },
+            { field: 'timestamp', operation: 'after', set: [1569902400000], inverse: false }],
         orderBy: [{ field: 'cycle', direction: 'desc' }],
         aggregation: [
             { field: 'high', function: 'avg' },
@@ -50,11 +50,11 @@ export const defaultQueries = {
         limit: 1000
     },
     baking_rights: {
-        'fields': ['level', 'priority', 'delegate', 'estimated_time'],
-        'predicates': [{ field: 'priority', operation: 'in','set': ['0','1'],'inverse': false }],
-        'orderBy': [{field: 'level', direction: 'desc'}],
-        'aggregation': [],
-        'limit': 1000
+        fields: ['level', 'priority', 'delegate', 'estimated_time'],
+        predicates: [{ field: 'priority', operation: 'in', set: ['0','1'], inverse: false }],
+        orderBy: [{ field: 'level', direction: 'desc'}],
+        aggregation: [],
+        limit: 1000
     },
     endorsing_rights: {
         fields: ['level', 'slot', 'delegate', 'estimated_time'],
