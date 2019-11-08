@@ -102,3 +102,7 @@ export const sortAttributes = (attributes: AttributeDefinition[]) => {
     return a.displayOrder - b.displayOrder;
     });
 }
+
+export function isOS() {
+  return navigator.userAgent.match(/ipad|iphone/i);
+}
