@@ -1,13 +1,16 @@
 export const defaultQueries = {
     blocks: {
         fields: ['level', 'timestamp', 'hash', 'baker', 'meta_cycle'],
-        predicates: [{ field: 'timestamp', set: [1569902400000], operation: 'after', inverse: false }],
+        predicates: [
+            { field: 'timestamp', set: [1569902400000], operation: 'after', inverse: false }],
         orderBy: [{ field: 'level', direction: 'desc' }],
         limit: 1000
     },
     operations: {
-        fields: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind', 'fee', 'operation_group_hash'],
-        predicates: [{ field: 'kind', set: ['transaction'], operation: 'eq', inverse: false }, { field: 'timestamp', set: [1556683200000], operation: 'after', inverse: false }],
+        fields: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind', 'fee', 'status', 'operation_group_hash'],
+        predicates: [
+            { field: 'kind', set: ['transaction'], operation: 'eq', inverse: false },
+            { field: 'timestamp', set: [1569902400000], operation: 'after', inverse: false }],
         orderBy: [{ field: 'timestamp', direction: 'desc' }],
         limit: 1000
     },
@@ -22,8 +25,8 @@ export const defaultQueries = {
     fees: {
         fields: ['cycle', 'kind', 'high', 'medium', 'low'],
         predicates: [
-            { field: 'kind', operation: 'in', 'set': ['transaction', 'origination'], 'inverse': false},
-            { field: 'timestamp', operation: 'after', set: [1569902400000], 'inverse' :false}],
+            { field: 'kind', operation: 'in', set: ['transaction', 'origination'], inverse: false },
+            { field: 'timestamp', operation: 'after', set: [1569902400000], inverse: false }],
         orderBy: [{ field: 'cycle', direction: 'desc' }],
         aggregation: [
             { field: 'high', function: 'avg' },
@@ -33,13 +36,13 @@ export const defaultQueries = {
     },
     balance_updates: {
         fields: [],
-        predicates: [{ field: 'level', set: [418201], operation: 'gt', inverse: false }],
+        predicates: [{ field: 'level', set: [631060], operation: 'gt', inverse: false }],
         orderBy: [],
         limit: 1000
     },
     ballots: {
         fields: [],
-        predicates: [{ field: 'block_level', set: [418201], operation: 'gt', inverse: false }],
+        predicates: [{ field: 'block_level', set: [631060], operation: 'gt', inverse: false }],
         orderBy: [],
         limit: 1000
     },
@@ -50,20 +53,19 @@ export const defaultQueries = {
         limit: 1000
     },
     baking_rights: {
-        'fields': ['level', 'priority', 'delegate', 'estimated_time'],
-        'predicates': [{ field: 'priority', operation: 'in','set': ['0','1'],'inverse': false }],
-        'orderBy': [{field: 'level', direction: 'desc'}],
-        'aggregation': [],
-        'limit': 1000
+        fields: ['level', 'priority', 'delegate', 'estimated_time'],
+        predicates: [{ field: 'priority', operation: 'in', set: ['0','1'], inverse: false }],
+        orderBy: [{ field: 'level', direction: 'desc'}],
+        aggregation: [],
+        limit: 1000
     },
     endorsing_rights: {
         fields: ['level', 'slot', 'delegate', 'estimated_time'],
-        'predicates': [],
-        'orderBy': [{'field':'level','direction':'desc'}],
-        'aggregation': [],
-        'limit':1000
+        predicates: [],
+        orderBy: [{ field: 'level', direction: 'desc' }],
+        aggregation: [],
+        limit: 1000
     }
-
 };
 
 export const CARDINALITY_NUMBER = 25;
