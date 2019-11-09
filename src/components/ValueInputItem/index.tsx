@@ -262,7 +262,6 @@ class InputItem extends React.Component<Props, States> {
           <Autosuggest
             {...autosuggestProps}
             inputProps={{
-              classes,
               id: 'high-cardinality-input',
               placeholder: attribute.placeholder ? attribute.placeholder : t('components.valueInputItem.insert_value'),
               value: stateVal,
