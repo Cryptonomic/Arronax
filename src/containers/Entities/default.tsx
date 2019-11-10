@@ -42,9 +42,9 @@ class EntityModal extends React.Component<Props, States> {
     event.stopPropagation();
   }
 
-  formatValue = (processedValues: any[], attributes: any[], key: string) => {
+  formatValue = (processedValues: any[], attributes: any[], key: string, truncate: boolean = false) => {
     if (processedValues.find(i => i.name === key) === undefined) { return ''; }
-    return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined);
+    return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined, truncate);
   }
 
   render() {
