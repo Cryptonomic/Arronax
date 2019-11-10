@@ -9,7 +9,7 @@ import Loader from '../../components/Loader';
 import {
   ScrollContainer, ModalContainer, ListContainer, CloseIcon,
   ModalTitle, RowContainer, TitleTxt, ContentTxt, ButtonContainer,
-  CloseButton
+  CloseButton, BottomRowContainer, BottomCol, BottomColTitle, BottomColContent
 } from './style';
 
 type OwnProps = {
@@ -29,6 +29,7 @@ type Props = OwnProps & WithTranslation;
 
 class EntityModal extends React.Component<Props, States> {
   explicitKeys: string[] = [];
+  explicitMinorKeys: string[] = ['fitness', 'signature', 'chain_id', 'operations_hash', 'nonce_hash'];
 
   constructor(props) {
     super(props);
@@ -39,10 +40,10 @@ class EntityModal extends React.Component<Props, States> {
 
   onClickModal = (event: any) => { event.stopPropagation(); }
 
-  formatValue = (processedValues: any[], attributes: any[], key: string) => {
+  formatValue = (processedValues: any[], attributes: any[], key: string, truncate: boolean = false) => {
     this.explicitKeys.push(key);
     if (processedValues.find(i => i.name === key) === undefined) { return ''; }
-    return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined);
+    return formatValueForDisplay('platform', 'network', 'blocks', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined, truncate);
   }
 
   render() {
@@ -51,7 +52,7 @@ class EntityModal extends React.Component<Props, States> {
     const total = items ? items.length : 0;
 
     const processedValues = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
-    this.explicitKeys = [];
+    this.explicitKeys = [...this.explicitMinorKeys];
 
     return (
       <Modal open={open}>
@@ -80,7 +81,7 @@ class EntityModal extends React.Component<Props, States> {
 
                   <RowContainer>
                     <TitleTxt>{t('attributes.blocks.protocol')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'proto')}: {this.formatValue(processedValues, attributes, 'protocol')}</ContentTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'proto')}: {this.formatValue(processedValues, attributes, 'protocol', true)}</ContentTxt>
                   </RowContainer>
 
                   <RowContainer>
@@ -97,6 +98,15 @@ class EntityModal extends React.Component<Props, States> {
                       </RowContainer>
                     );
                   })}
+
+                  <BottomRowContainer>
+                    {this.explicitMinorKeys.filter(name => processedValues.find(i => i.name === name) !== undefined).map(name => (
+                      <BottomCol key={name}>
+                        <BottomColTitle>{t(`attributes.blocks.${name}`)}</BottomColTitle>
+                        <BottomColContent>{this.formatValue(processedValues, attributes, name, true)}</BottomColContent>
+                      </BottomCol>
+                    ))}
+                  </BottomRowContainer>
                 </ListContainer>
               )}
               <ButtonContainer>

@@ -77,7 +77,7 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
       return formatNumber(Number(value), aggregationAttribute);
   }
   
-  export const formatValueForDisplay = (platform: string, network: string, entity: string, value: any, attribute: AttributeDefinition, onClickPrimaryKey: (entity: string, key: string, value: string | number) => void, aggregation?: ConseilFunction) => {
+  export const formatValueForDisplay = (platform: string, network: string, entity: string, value: any, attribute: AttributeDefinition, onClickPrimaryKey: (entity: string, key: string, value: string | number) => void, aggregation?: ConseilFunction, truncate: boolean = true) => {
       if (value == null || value.length === 0) { return ''; }
       const {dataFormat, dataType} = attribute;
   
@@ -93,27 +93,29 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
           )
       } else if (dataType === AttrbuteDataType.ACCOUNT_ADDRESS) {
           const colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255)/74)).toString('hex');
+          const address = formatReferenceValue(attribute, (truncate ? truncateHash(value) : value), value, onClickPrimaryKey)
           return (
               <React.Fragment>
               <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
               <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
-              {formatReferenceValue(attribute, truncateHash(value), value, onClickPrimaryKey)}
+              {address}
               <ClipboardWrapper data-clipboard-text={value}>
                   <CopyIcon />
               </ClipboardWrapper>
               </React.Fragment>
           );
       } else if (dataType === AttrbuteDataType.HASH) {
+          const hash = formatReferenceValue(attribute, (truncate ? truncateHash(value) : value), value, onClickPrimaryKey);
           return (
               <React.Fragment>
-              {formatReferenceValue(attribute, truncateHash(value), value, onClickPrimaryKey)}
+              {hash}
               <ClipboardWrapper data-clipboard-text={value}>
                   <CopyIcon />
               </ClipboardWrapper>
               </React.Fragment>
           );
       } else if (dataType === AttrbuteDataType.DECIMAL || dataType === AttrbuteDataType.INT || dataType === AttrbuteDataType.CURRENCY) {
-        return formatNumber(Number(value), attribute);
+        return formatNumber(Number(value), attribute, truncate);
       } else if (dataType === AttrbuteDataType.STRING && value.length > 100) {
           return (
               <React.Fragment>

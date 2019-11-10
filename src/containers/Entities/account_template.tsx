@@ -39,10 +39,10 @@ class EntityModal extends React.Component<Props, States> {
 
   onClickModal = (event: any) => { event.stopPropagation(); }
 
-  formatValue = (processedValues: any[], attributes: any[], key: string) => {
+  formatValue = (processedValues: any[], attributes: any[], key: string, truncate: boolean = false) => {
     this.explicitKeys.push(key);
     if (processedValues.find(i => i.name === key) === undefined) { return ''; }
-    return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined);
+    return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined, truncate);
   }
 
   render() {
@@ -82,8 +82,10 @@ class EntityModal extends React.Component<Props, States> {
                   </RowContainer>
 
                   <RowContainer>
-                    <TitleTxt>{t('components.entityModal.last_active')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'block_id')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'block_level')}</ContentTxt>
+                    <TitleTxt>{t('components.entityModal.account.last_active_title')}</TitleTxt>
+                    <ContentTxt>
+                        {t('components.entityModal.account.at_level', { level: this.formatValue(processedValues, attributes, 'block_level') })}: &nbsp; {this.formatValue(processedValues, attributes, 'block_id', true)}
+                    </ContentTxt>
                   </RowContainer>
 
                   {processedValues.filter(i => !(this.explicitKeys.includes(i.name))).map((item, index) => {

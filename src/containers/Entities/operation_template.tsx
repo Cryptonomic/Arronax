@@ -14,8 +14,6 @@ import {
   CloseButton, BottomRowContainer, BottomCol, BottomColTitle, BottomColContent
 } from './style';
 
-const InitExplicitKeys = ['counter', 'internal', 'storage_limit'];
-
 type OwnProps = {
   open: boolean;
   items: any[];
@@ -32,7 +30,8 @@ interface States {
 type Props = OwnProps & WithTranslation;
 
 class EntityModal extends React.Component<Props, States> {
-  explicitKeys: string[] = [ ...InitExplicitKeys];
+  explicitKeys: string[];
+  explicitMinorKeys: string[] = [];
 
   constructor(props) {
     super(props);
@@ -43,10 +42,10 @@ class EntityModal extends React.Component<Props, States> {
 
   onClickModal = (event: any) => { event.stopPropagation(); }
 
-  formatValue = (processedValues: any[], attributes: any[], key: string) => {
+  formatValue = (processedValues: any[], attributes: any[], key: string, truncate: boolean = false) => {
     this.explicitKeys.push(key);
     if (processedValues.find(i => i.name === key) === undefined) { return ''; }
-    return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined);
+    return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined, truncate);
   }
 
   render() {
@@ -58,7 +57,17 @@ class EntityModal extends React.Component<Props, States> {
 
     const kind = processedValues.find(a => a.name === 'kind');
     const opKind = kind !== undefined ? kind.value : 'undefined';
-    this.explicitKeys = [...InitExplicitKeys];
+
+    if (opKind === 'transaction' && processedValues.find(i => i.name === 'parameters') !== undefined) {
+        this.explicitMinorKeys = ['counter', 'internal', 'storage_limit', 'storage_size'];
+        this.explicitKeys = [...this.explicitMinorKeys];
+    } else if (opKind === 'transaction' && processedValues.find(i => i.name === 'parameters') === undefined) {
+        this.explicitMinorKeys = ['counter', 'internal', 'gas_limit', 'consumed_gas', 'storage_limit', 'storage_size'];
+        this.explicitKeys = [...this.explicitMinorKeys];
+    } else {
+        this.explicitMinorKeys = ['counter', 'internal', 'gas_limit', 'consumed_gas', 'storage_limit', 'storage_size'];
+        this.explicitKeys = [...this.explicitMinorKeys];
+    }
 
     return (
       <Modal open={open}>
@@ -83,8 +92,15 @@ class EntityModal extends React.Component<Props, States> {
               {isLoading && <Loader />}
               {!isLoading && (
                 <ListContainer>
-                  {opKind === 'transaction' && (
+                  {(opKind === 'transaction' && processedValues.find(i => i.name === 'parameters') === undefined) && ( // transfer
                     <Fragment>
+                      <RowContainer>
+                        <TitleTxt>{this.formatValue(processedValues, attributes, 'kind')}</TitleTxt>
+                        <ContentTxt>
+                          {this.formatValue(processedValues, attributes, 'source', true)} &nbsp;&#x27A1;&nbsp; {this.formatValue(processedValues, attributes, 'destination', true)}
+                        </ContentTxt>
+                      </RowContainer>
+
                       <RowContainer>
                         <TitleTxt>{t('attributes.operations.amount')}</TitleTxt>
                         <ContentTxt>{this.formatValue(processedValues, attributes, 'amount')}</ContentTxt>
@@ -96,9 +112,9 @@ class EntityModal extends React.Component<Props, States> {
                       </RowContainer>
 
                       <RowContainer>
-                        <TitleTxt>{this.formatValue(processedValues, attributes, 'kind')}</TitleTxt>
+                        <TitleTxt>{this.formatValue(processedValues, attributes, 'status')}</TitleTxt>
                         <ContentTxt>
-                          {this.formatValue(processedValues, attributes, 'source')} {t('components.entityModal.to')} {this.formatValue(processedValues, attributes, 'destination')}
+                          {t('components.entityModal.operation.at_level', { level: this.formatValue(processedValues, attributes, 'block_level') })} {t('components.entityModal.operation.in_cycle', { cycle: this.formatValue(processedValues, attributes, 'cycle') })}: &nbsp; {this.formatValue(processedValues, attributes, 'block_hash', true)}
                         </ContentTxt>
                       </RowContainer>
 
@@ -108,17 +124,45 @@ class EntityModal extends React.Component<Props, States> {
                       </RowContainer>
 
                       <RowContainer>
-                        <TitleTxt>{t('attributes.operations.block_hash')}</TitleTxt>
+                        <TitleTxt>{t('attributes.operations.operation_group_hash')}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, 'operation_group_hash')}</ContentTxt>
+                      </RowContainer>
+                    </Fragment>
+                  )}
+                  {(opKind === 'transaction' && processedValues.find(i => i.name === 'parameters') !== undefined) && ( // invocation
+                    <Fragment>
+                      <RowContainer>
+                        <TitleTxt>{this.formatValue(processedValues, attributes, 'kind')}</TitleTxt>
                         <ContentTxt>
-                          {this.formatValue(processedValues, attributes, 'block_hash')} at level {this.formatValue(processedValues, attributes, 'block_level')} in cycle {this.formatValue(processedValues, attributes, 'cycle')}
+                          {this.formatValue(processedValues, attributes, 'source', true)} &nbsp;&#x27A1;&nbsp; {this.formatValue(processedValues, attributes, 'destination', true)}
                         </ContentTxt>
                       </RowContainer>
 
                       <RowContainer>
-                        <TitleTxt>{t('attributes.operations.status')}</TitleTxt>
+                        <TitleTxt>{t('attributes.operations.parameters')}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, 'parameters')}</ContentTxt>
+                      </RowContainer>
+
+                      <RowContainer>
+                        <TitleTxt>{t('attributes.operations.amount')}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, 'amount')}</ContentTxt>
+                      </RowContainer>
+
+                      <RowContainer>
+                        <TitleTxt>{t('attributes.operations.fee')}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, 'fee')}</ContentTxt>
+                      </RowContainer>
+
+                      <RowContainer>
+                        <TitleTxt>{this.formatValue(processedValues, attributes, 'status')}</TitleTxt>
                         <ContentTxt>
-                          {this.formatValue(processedValues, attributes, 'status')} {t('components.entityModal.in')} &nbsp; {this.formatValue(processedValues, attributes, 'operation_group_hash')}
+                          {t('components.entityModal.operation.at_level', { level: this.formatValue(processedValues, attributes, 'block_level') })} {t('components.entityModal.operation.in_cycle', { cycle: this.formatValue(processedValues, attributes, 'cycle') })}: &nbsp; {this.formatValue(processedValues, attributes, 'block_hash', true)}
                         </ContentTxt>
+                      </RowContainer>
+
+                      <RowContainer>
+                        <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')}</ContentTxt>
                       </RowContainer>
 
                       <RowContainer>
@@ -128,6 +172,10 @@ class EntityModal extends React.Component<Props, States> {
                         </ContentTxt>
                       </RowContainer>
 
+                      <RowContainer>
+                        <TitleTxt>{t('attributes.operations.operation_group_hash')}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, 'operation_group_hash')}</ContentTxt>
+                      </RowContainer>
                     </Fragment>
                   )}
                   {opKind === 'endorsement' && (
@@ -248,6 +296,7 @@ class EntityModal extends React.Component<Props, States> {
                       </RowContainer>
                     </Fragment>
                   )}
+
                   {processedValues.filter(i => !(this.explicitKeys.includes(i.name))).map((item, index) => {
                     const { entity, name } = item;
                     return (
@@ -257,8 +306,9 @@ class EntityModal extends React.Component<Props, States> {
                       </RowContainer>
                     );
                   })}
+
                   <BottomRowContainer>
-                    {InitExplicitKeys.map(name => (
+                    {this.explicitMinorKeys.filter(name => processedValues.find(i => i.name === name) !== undefined).map(name => (
                       <BottomCol key={name}>
                         <BottomColTitle>{t(`attributes.operations.${name}`)}</BottomColTitle>
                         <BottomColContent>{this.formatValue(processedValues, attributes, name)}</BottomColContent>
