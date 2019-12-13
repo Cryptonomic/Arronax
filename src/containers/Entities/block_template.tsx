@@ -76,12 +76,12 @@ class EntityModal extends React.Component<Props, States> {
 
                   <RowContainer>
                     <TitleTxt>{t('attributes.blocks.level')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'level')} {t('components.entityModal.of')} {t('attributes.blocks.meta_cycle')} {this.formatValue(processedValues, attributes, 'meta_cycle')} {t('components.entityModal.in')} {t('attributes.blocks.meta_voting_period')} {this.formatValue(processedValues, attributes, 'meta_voting_period')}</ContentTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'level')} {t('components.entityModal.of')} {t('attributes.blocks.meta_cycle').toLowerCase()} {this.formatValue(processedValues, attributes, 'meta_cycle')} {t('components.entityModal.in')} {t('attributes.blocks.meta_voting_period').toLowerCase()} {this.formatValue(processedValues, attributes, 'meta_voting_period')}</ContentTxt>
                   </RowContainer>
 
                   <RowContainer>
                     <TitleTxt>{t('attributes.blocks.baker')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'baker')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'priority')}</ContentTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'baker')} {t('components.entityModal.of')} {t('attributes.blocks.priority').toLowerCase()} {this.formatValue(processedValues, attributes, 'priority')}</ContentTxt>
                   </RowContainer>
 
                   <RowContainer>
