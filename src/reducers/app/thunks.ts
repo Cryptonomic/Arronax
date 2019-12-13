@@ -264,7 +264,7 @@ export const fetchInitEntityAction = (
   }
 
   const items = await executeEntityQuery(serverInfo, platform, network, entity, query).catch(() => {
-    dispatch(createMessageAction(`Unable to retrieve data for ${entity} request.`, true));
+    dispatch(createMessageAction(`Unable to retrieve data for ${entity} request.`, true)); // TODO: use metadata
     return [];
   });
   
@@ -279,7 +279,7 @@ export const initLoadByNetwork = () => async (dispatch, state) => {
   const serverInfo = { url, apiKey, network };
 
   let entities: any[] = await getEntities(serverInfo, platform, network).catch(err => {
-    dispatch(createMessageAction(`Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`, true));
+    dispatch(createMessageAction(`Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`, true)); // TODO: use metadata
     return [];
   });
 
@@ -574,13 +574,18 @@ export const changeTab = (entity: string) => async (dispatch, state) => {
 
 export const searchByIdThunk = (id: string | number) => async (dispatch: any, state: any) => {
   dispatch(setLoadingAction(true));
-  const { selectedConfig } = state().app;
+  const { selectedConfig, entities } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
   try {
     const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
     const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
-    await dispatch(changeTab(entity));
+    if (items.length > 0) {
+      await dispatch(changeTab(entity));
+    } else {
+      const searchedEntity = entities.find(item => item.name === entity);
+      dispatch(createMessageAction(`The ${searchedEntity.displayName.toLowerCase()} was not found.`, true));
+    }
     dispatch(setLoadingAction(false));
     return { entity, items };
   } catch (e) {
@@ -591,6 +596,7 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
       }
 
       dispatch(setLoadingAction(false));
+      return { entity: '', items: [] };
   }
 };
 
