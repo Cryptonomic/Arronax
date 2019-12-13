@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import Modal from '@material-ui/core/Modal';
 
@@ -50,6 +50,7 @@ class EntityModal extends React.Component<Props, States> {
     const { count } = this.state;
     const total = items ? items.length : 0;
     const processedValues = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
+    const isBaker = processedValues.find(a => a.name === 'is_baker').value == true;
     this.explicitKeys = [];
 
     return (
@@ -71,15 +72,34 @@ class EntityModal extends React.Component<Props, States> {
 
               {!isLoading && (
                 <ListContainer>
-                  <RowContainer>
-                    <TitleTxt>{t('attributes.accounts.account_id')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'account_id')}</ContentTxt>
-                  </RowContainer>
 
-                  <RowContainer>
-                    <TitleTxt>{t('attributes.accounts.balance')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'balance')}</ContentTxt>
-                  </RowContainer>
+                {(isBaker) && (
+                    <Fragment>
+                        <RowContainer>
+                            <TitleTxt>{t('components.entityModal.account.baker')}</TitleTxt>
+                            <ContentTxt>{this.formatValue(processedValues, attributes, 'account_id')}</ContentTxt>
+                        </RowContainer>
+
+                        <RowContainer>
+                            <TitleTxt>{t('attributes.accounts.balance')}</TitleTxt>
+                            <ContentTxt>{this.formatValue(processedValues, attributes, 'balance')}</ContentTxt>
+                        </RowContainer>
+                    </Fragment>
+                )}
+
+                {!isBaker && (
+                    <Fragment>
+                        <RowContainer>
+                            <TitleTxt>{t('attributes.accounts.account_id')}</TitleTxt>
+                            <ContentTxt>{this.formatValue(processedValues, attributes, 'account_id')}</ContentTxt>
+                        </RowContainer>
+
+                        <RowContainer>
+                            <TitleTxt>{t('attributes.accounts.balance')}</TitleTxt>
+                            <ContentTxt>{this.formatValue(processedValues, attributes, 'balance')}</ContentTxt>
+                        </RowContainer>
+                    </Fragment>
+                )}
 
                   <RowContainer>
                     <TitleTxt>{t('components.entityModal.account.last_active_title')}</TitleTxt>

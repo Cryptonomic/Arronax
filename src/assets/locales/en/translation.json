@@ -46,7 +46,8 @@
             "to": "to",
             "account": {
                 "last_active_title": "Last Active",
-                "at_level": "at level {{level}}"
+                "at_level": "at level {{level}}",
+                "baker": "Baker"
             },
             "block": {},
             "operation": {
@@ -117,7 +118,8 @@
             "script": "Script",
             "storage": "Storage",
             "balance": "Balance",
-            "block_level": "Block Level"
+            "block_level": "Block Level",
+            "is_baker": "Baker"
         },
         "accounts_history": {
             "account_id": "Address",
