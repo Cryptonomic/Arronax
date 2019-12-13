@@ -34,17 +34,26 @@
             "api_key": "Api Key"
         },
         "customPaginator": {
-            "limit_query": "Queries on Arronax are limited to 1000 results. <1>Export to CSV</1> to get the full result set."
+            "limit_query": "Queries on Arronax are limited to 1000 results. <1>Export to CSV</1> to get a larger result set."
         },
         "entityModal": {
             "details": "{{title}} Details",
             "clear": "clear",
-            "last_active": "Last Active",
             "at": "at",
             "by": "by",
             "in": "in",
             "of": "of",
-            "to": "to"
+            "to": "to",
+            "account": {
+                "last_active_title": "Last Active",
+                "at_level": "at level {{level}}",
+                "baker": "Baker"
+            },
+            "block": {},
+            "operation": {
+                "at_level": "at level {{level}}",
+                "in_cycle": "in cycle {{cycle}}"
+            }
         },
         "filterPanel": {
             "select_value": "Select Value",
@@ -109,7 +118,8 @@
             "script": "Script",
             "storage": "Storage",
             "balance": "Balance",
-            "block_level": "Block Level"
+            "block_level": "Block Level",
+            "is_baker": "Baker"
         },
         "accounts_history": {
             "account_id": "Address",
@@ -119,7 +129,9 @@
             "block_level": "Block Level",
             "asof": "As of Date",
             "counter": "Counter",
-            "delegate_value": "Delegate"
+            "delegate_value": "Delegate",
+            "cycle": "Cycle",
+            "is_baker": "Baker"
         },
         "balance_updates": {
             "id": "Id",
@@ -131,7 +143,8 @@
             "change": "Change",
             "level": "Level",
             "delegate": "Delegate",
-            "category": "Category"
+            "category": "Category",
+            "operation_group_hash": "Op Group Hash"
         },
         "ballots": {
             "pkh": "Address",
@@ -154,7 +167,7 @@
             "level": "Level",
             "nonce_hash": "Nonce",
             "operations_hash": "Operations Hash",
-            "meta_voting_period": "Period Index",
+            "meta_voting_period": "Period",
             "meta_voting_period_position": "Period Position",
             "predecessor": "Predecessor Hash",
             "protocol": "Protocol",
@@ -245,14 +258,18 @@
             "delegate": "Baker",
             "estimated_time": "Estimated Time",
             "level": "Block Level",
-            "priority": "Priority"
+            "priority": "Priority",
+            "cycle": "Cycle",
+            "governance_period": "Period"
         },
         "endorsing_rights": {
             "block_hash": "Block Hash",
             "delegate": "Baker",
             "estimated_time": "Estimated Time",
             "level": "Block Level",
-            "slot": "Slot"
+            "slot": "Slot",
+            "cycle": "Cycle",
+            "governance_period": "Period"
         }
     },
     "operators": {

@@ -40,3 +40,10 @@ export interface Operator {
   name: string;
   displayName: string;
 }
+
+export interface ProcessedValue {
+  displayName: string;
+  name: string;
+  value: any;
+  entity: string;
+}

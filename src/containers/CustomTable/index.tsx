@@ -111,10 +111,7 @@ class CustomTable extends React.Component<Props, State> {
     if (selectedPrimaryKey !== key || selectedPrimaryValue !== value) {
       const { platform, network } = selectedConfig;
       const modalName = getEntityModalName(platform, network, entity);
-      this.EntityModal = ReactDynamicImport({
-        name: modalName,
-        loader: entityloader
-      });
+      this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
       getModalItemAction(entity, key, value);
       this.setState({referenceEntity: entity, selectedPrimaryKey: key, selectedPrimaryValue: value, isOpenedModal: true});
     }

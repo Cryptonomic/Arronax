@@ -1,3 +1,4 @@
+import { ProcessedValue } from '../types';
 export const getLocalAttributes = () => {
     const attributes = localStorage.getItem('attributes');
     if (attributes) {
@@ -31,4 +32,27 @@ export function validateCache(version: number) {
         localStorage.clear();
         return;
     }
+}
+
+export function getNoEmptyFields(attributes, item): ProcessedValue[] {
+    return attributes
+        .filter(c => item[c.name] != null && item[c.name] !== undefined)
+        .sort((a, b) => {
+            if (a.displayOrder === undefined && b.displayOrder === undefined) {
+                if(a.displayName < b.displayName) { return -1; }
+                if(a.displayName > b.displayName) { return 1; }
+            }
+
+            if (a.displayOrder === undefined && b.displayOrder !== undefined){
+                return 1;
+            }
+
+            if (a.displayOrder !== undefined && b.displayOrder === undefined){
+                return -1;
+            }
+
+            return a.displayOrder - b.displayOrder;
+        }).map(c => {
+            return { displayName: c.displayName, value: item[c.name], name: c.name, entity: c.entity };
+        });
 }

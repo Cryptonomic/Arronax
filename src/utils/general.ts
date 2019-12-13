@@ -28,7 +28,7 @@ export const truncateHash = (value) => {
   return `${firstHalf}...${secondHalf}`;
 }
 
-export const formatNumber = (value: number, attribute: AttributeDefinition) => {
+export const formatNumber = (value: number, attribute: AttributeDefinition, truncate: boolean = true) => {
     if (value === undefined) { return ''; }
 
     let t = '';
@@ -38,7 +38,10 @@ export const formatNumber = (value: number, attribute: AttributeDefinition) => {
         const d = value / Math.pow(10, attribute.scale);
         let minimumFractionDigits = 0;
         let maximumFractionDigits = 0;
-        if (value < 10000) {
+        if (!truncate) {
+            minimumFractionDigits = 6;
+            maximumFractionDigits = 6;
+        } else if (value < 10000) {
             minimumFractionDigits = 6;
             maximumFractionDigits = 6;
         } else if (value < 100000) {
