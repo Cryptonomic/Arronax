@@ -16,11 +16,12 @@ export const defaultQueries = {
         limit: 1000
     },
     accounts: {
-        fields: ['account_id', 'manager', 'delegate_value', 'balance'],
-        predicates: [
-            { field: 'account_id', set: ['KT1'], operation: 'startsWith', inverse: true },
-            { field: 'balance', set: [0], operation: 'gt', inverse: false }],
+        fields: ['block_level', 'account_id', 'balance', 'delegate_value', 'storage', 'counter'],
+        predicates:[
+            { field: 'balance', operation: 'gt', set:[0], inverse: false },
+            { field: 'block_level', operation: 'gt', set: [716676], inverse: false }],
         orderBy: [{ field: 'block_level', direction: 'desc' }],
+        aggregation: [],
         limit: 1000
     },
     fees: {
@@ -69,7 +70,7 @@ export const defaultQueries = {
         limit: 1000
     },
     accounts_history: {
-        fields: ['block_level', 'asof', 'account_id', 'balance', 'storage', 'counter', 'delegate_value'],
+        fields: ['block_level', 'asof', 'account_id', 'balance', 'delegate_value', 'storage', 'counter'],
         predicates: [{field: 'asof', operation: 'after', set:[1575176400000], inverse:false}],
         orderBy: [{field: 'block_level', direction: 'desc'}],
         aggregation: [],
