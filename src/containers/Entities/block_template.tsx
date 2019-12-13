@@ -91,7 +91,7 @@ class EntityModal extends React.Component<Props, States> {
 
                   <RowContainer>
                     <TitleTxt>{t('general.nouns.period')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'period_kind')}, {this.formatValue(processedValues, attributes, 'meta_voting_period_position')} {this.formatValue(processedValues, attributes, 'expected_commitment')} {this.formatValue(processedValues, attributes, 'current_expected_quorum')}</ContentTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'period_kind')}</ContentTxt>
                   </RowContainer>
 
                   {processedValues.filter(i => !(this.explicitKeys.includes(i.name))).map((item, index) => {
