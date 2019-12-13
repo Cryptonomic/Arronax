@@ -9,7 +9,7 @@ import Loader from '../../components/Loader';
 import {
   ScrollContainer, ModalContainer, ListContainer, CloseIcon,
   ModalTitle, RowContainer, TitleTxt, ContentTxt, ButtonContainer,
-  CloseButton
+  CloseButton, BottomRowContainer, BottomCol, BottomColTitle, BottomColContent
 } from './style';
 
 type OwnProps = {
@@ -29,6 +29,7 @@ type Props = OwnProps & WithTranslation;
 
 class EntityModal extends React.Component<Props, States> {
   explicitKeys: string[] = [];
+  explicitMinorKeys: string[] = [];
 
   constructor(props) {
     super(props);
@@ -50,8 +51,13 @@ class EntityModal extends React.Component<Props, States> {
     const { count } = this.state;
     const total = items ? items.length : 0;
     const processedValues = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
-    const isBaker = processedValues.find(a => a.name === 'is_baker').value == true;
-    this.explicitKeys = [];
+    let isBaker = false;
+    try {
+        isBaker = processedValues.find(a => a.name === 'is_baker').value == true;
+        // TODO: query delegates
+    } catch { }
+    this.explicitMinorKeys = ['delegate_setable', 'spendable'];
+    this.explicitKeys = ['is_baker', ...this.explicitMinorKeys];
 
     return (
       <Modal open={open}>
@@ -117,6 +123,16 @@ class EntityModal extends React.Component<Props, States> {
                       </RowContainer>
                     );
                   })}
+
+                  <BottomRowContainer>
+                    {this.explicitMinorKeys.filter(name => processedValues.find(i => i.name === name) !== undefined).map(name => (
+                      <BottomCol key={name}>
+                        <BottomColTitle>{t(`attributes.account.${name}`)}</BottomColTitle>
+                        <BottomColContent>{this.formatValue(processedValues, attributes, name)}</BottomColContent>
+                      </BottomCol>
+                    ))}
+                  </BottomRowContainer>
+
                 </ListContainer>
               )}
               <ButtonContainer>

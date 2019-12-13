@@ -29,7 +29,7 @@ type Props = OwnProps & WithTranslation;
 
 class EntityModal extends React.Component<Props, States> {
   explicitKeys: string[] = [];
-  explicitMinorKeys: string[] = ['fitness', 'signature', 'chain_id', 'operations_hash', 'nonce_hash'];
+  explicitMinorKeys: string[] = []//['fitness', 'signature', 'chain_id', 'operations_hash', 'nonce_hash'];
 
   constructor(props) {
     super(props);
@@ -71,7 +71,12 @@ class EntityModal extends React.Component<Props, States> {
                 <ListContainer>
                   <RowContainer>
                     <TitleTxt>{t('attributes.blocks.hash')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'hash')} {t('components.entityModal.at')} {this.formatValue(processedValues, attributes, 'level')} ({this.formatValue(processedValues, attributes, 'meta_cycle_position')}) {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'meta_cycle')}</ContentTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'hash', true)}</ContentTxt>
+                  </RowContainer>
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.blocks.level')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'level')} {t('components.entityModal.of')} {t('attributes.blocks.meta_cycle')} {this.formatValue(processedValues, attributes, 'meta_cycle')} {t('components.entityModal.in')} {t('attributes.blocks.meta_voting_period')} {this.formatValue(processedValues, attributes, 'meta_voting_period')}</ContentTxt>
                   </RowContainer>
 
                   <RowContainer>
@@ -86,7 +91,7 @@ class EntityModal extends React.Component<Props, States> {
 
                   <RowContainer>
                     <TitleTxt>{t('general.nouns.period')}</TitleTxt>
-                    <ContentTxt>{this.formatValue(processedValues, attributes, 'meta_voting_period')}: {this.formatValue(processedValues, attributes, 'period_kind')}, {this.formatValue(processedValues, attributes, 'meta_voting_period_position')} {this.formatValue(processedValues, attributes, 'expected_commitment')} {this.formatValue(processedValues, attributes, 'current_expected_quorum')}</ContentTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'period_kind')}, {this.formatValue(processedValues, attributes, 'meta_voting_period_position')} {this.formatValue(processedValues, attributes, 'expected_commitment')} {this.formatValue(processedValues, attributes, 'current_expected_quorum')}</ContentTxt>
                   </RowContainer>
 
                   {processedValues.filter(i => !(this.explicitKeys.includes(i.name))).map((item, index) => {
@@ -94,7 +99,7 @@ class EntityModal extends React.Component<Props, States> {
                     return (
                       <RowContainer key={index}>
                         <TitleTxt>{t(`attributes.${entity}.${name}`)}</TitleTxt>
-                        <ContentTxt>{this.formatValue(processedValues, attributes, name)}</ContentTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, name, true)}</ContentTxt>
                       </RowContainer>
                     );
                   })}

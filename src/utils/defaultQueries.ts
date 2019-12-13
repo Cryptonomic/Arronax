@@ -1,16 +1,17 @@
 export const defaultQueries = {
     blocks: {
-        fields: ['level', 'timestamp', 'hash', 'baker', 'meta_cycle'],
-        predicates: [
-            { field: 'timestamp', set: [1569902400000], operation: 'after', inverse: false }],
+        fields: ['meta_voting_period', 'meta_cycle', 'level', 'timestamp', 'baker', 'hash', 'priority'],
+        predicates: [{ field: 'timestamp', operation: 'after', set: [1575176400000], inverse: false }],
         orderBy: [{ field: 'level', direction: 'desc' }],
+        aggregation:[],
         limit: 1000
+
     },
     operations: {
         fields: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind', 'fee', 'status', 'operation_group_hash'],
         predicates: [
             { field: 'kind', set: ['transaction'], operation: 'eq', inverse: false },
-            { field: 'timestamp', set: [1569902400000], operation: 'after', inverse: false }],
+            { field: 'timestamp', set: [1575176400000], operation: 'after', inverse: false }],
         orderBy: [{ field: 'timestamp', direction: 'desc' }],
         limit: 1000
     },
@@ -26,7 +27,7 @@ export const defaultQueries = {
         fields: ['cycle', 'kind', 'high', 'medium', 'low'],
         predicates: [
             { field: 'kind', operation: 'in', set: ['transaction', 'origination'], inverse: false },
-            { field: 'timestamp', operation: 'after', set: [1569902400000], inverse: false }],
+            { field: 'timestamp', operation: 'after', set: [1575176400000], inverse: false }],
         orderBy: [{ field: 'cycle', direction: 'desc' }],
         aggregation: [
             { field: 'high', function: 'avg' },
@@ -47,9 +48,10 @@ export const defaultQueries = {
         limit: 1000
     },
     delegates: {
-        fields: ['block_level', 'pkh', 'balance', 'staking_balance'],
-        predicates: [{ field: 'deactivated', set: [false], operation: 'eq', inverse: false }],
-        orderBy: [{ field: 'staking_balance', direction: 'desc' }],
+        fields: ["block_level", "pkh", "balance", "delegated_balance"," staking_balance"],
+        predicates: [{ field: "deactivated", operation: "eq", set: [false], inverse: false }],
+        orderBy: [{ field: "block_level", direction: "desc" }],
+        aggregation: [],
         limit: 1000
     },
     baking_rights: {

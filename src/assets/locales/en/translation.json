@@ -129,7 +129,9 @@
             "block_level": "Block Level",
             "asof": "As of Date",
             "counter": "Counter",
-            "delegate_value": "Delegate"
+            "delegate_value": "Delegate",
+            "cycle": "Cycle",
+            "is_baker": "Baker"
         },
         "balance_updates": {
             "id": "Id",
@@ -141,7 +143,8 @@
             "change": "Change",
             "level": "Level",
             "delegate": "Delegate",
-            "category": "Category"
+            "category": "Category",
+            "operation_group_hash": "Op Group Hash"
         },
         "ballots": {
             "pkh": "Address",
@@ -164,7 +167,7 @@
             "level": "Level",
             "nonce_hash": "Nonce",
             "operations_hash": "Operations Hash",
-            "meta_voting_period": "Period Index",
+            "meta_voting_period": "Period",
             "meta_voting_period_position": "Period Position",
             "predecessor": "Predecessor Hash",
             "protocol": "Protocol",
@@ -255,14 +258,18 @@
             "delegate": "Baker",
             "estimated_time": "Estimated Time",
             "level": "Block Level",
-            "priority": "Priority"
+            "priority": "Priority",
+            "cycle": "Cycle",
+            "governance_period": "Period"
         },
         "endorsing_rights": {
             "block_hash": "Block Hash",
             "delegate": "Baker",
             "estimated_time": "Estimated Time",
             "level": "Block Level",
-            "slot": "Slot"
+            "slot": "Slot",
+            "cycle": "Cycle",
+            "governance_period": "Period"
         }
     },
     "operators": {
