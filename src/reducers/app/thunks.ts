@@ -264,7 +264,7 @@ export const fetchInitEntityAction = (
   }
 
   const items = await executeEntityQuery(serverInfo, platform, network, entity, query).catch(() => {
-    dispatch(createMessageAction(`Unable to retrieve data for ${entity} request.`, true));
+    dispatch(createMessageAction(`Unable to retrieve data for ${entity} request.`, true)); // TODO: use metadata
     return [];
   });
   
@@ -279,7 +279,7 @@ export const initLoadByNetwork = () => async (dispatch, state) => {
   const serverInfo = { url, apiKey, network };
 
   let entities: any[] = await getEntities(serverInfo, platform, network).catch(err => {
-    dispatch(createMessageAction(`Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`, true));
+    dispatch(createMessageAction(`Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`, true)); // TODO: use metadata
     return [];
   });
 

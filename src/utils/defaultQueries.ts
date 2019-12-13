@@ -26,7 +26,7 @@ export const defaultQueries = {
     fees: {
         fields: ['cycle', 'kind', 'high', 'medium', 'low'],
         predicates: [
-            { field: 'kind', operation: 'in', set: ['transaction', 'origination'], inverse: false },
+            { field: 'kind', operation: 'in', set: ['transaction', 'origination', 'delegation'], inverse: false },
             { field: 'timestamp', operation: 'after', set: [1575176400000], inverse: false }],
         orderBy: [{ field: 'cycle', direction: 'desc' }],
         aggregation: [
@@ -48,26 +48,34 @@ export const defaultQueries = {
         limit: 1000
     },
     delegates: {
-        fields: ["block_level", "pkh", "balance", "delegated_balance"," staking_balance"],
-        predicates: [{ field: "deactivated", operation: "eq", set: [false], inverse: false }],
-        orderBy: [{ field: "block_level", direction: "desc" }],
+        fields: ['block_level', 'pkh', 'balance', 'delegated_balance', 'staking_balance'],
+        predicates: [{ field: 'deactivated',operation: 'eq',set: [false], inverse: false }],
+        orderBy: [{ field: 'block_level', direction: 'desc' }],
         aggregation: [],
         limit: 1000
     },
     baking_rights: {
         fields: ['level', 'priority', 'delegate', 'estimated_time'],
-        predicates: [{ field: 'priority', operation: 'in', set: ['0','1'], inverse: false }],
+        predicates: [{ field: 'priority', operation: 'in', set: ['0','1'], inverse: false }, { field: 'estimated_time', operation: 'after', set: [1575176400000], inverse: false}],
         orderBy: [{ field: 'level', direction: 'desc'}],
         aggregation: [],
         limit: 1000
     },
     endorsing_rights: {
         fields: ['level', 'slot', 'delegate', 'estimated_time'],
-        predicates: [],
+        predicates: [{ field: 'estimated_time', operation: 'after', set: [1575176400000], inverse: false}],
         orderBy: [{ field: 'level', direction: 'desc' }],
         aggregation: [],
         limit: 1000
-    }
+    },
+    accounts_history: {
+        fields: ['block_level', 'asof', 'account_id', 'balance', 'storage', 'counter', 'delegate_value'],
+        predicates: [{field: 'asof', operation: 'after', set:[1575176400000], inverse:false}],
+        orderBy: [{field: 'block_level', direction: 'desc'}],
+        aggregation: [],
+        limit: 1000
+
+    },
 };
 
 export const CARDINALITY_NUMBER = 25;

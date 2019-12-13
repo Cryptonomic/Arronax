@@ -127,7 +127,7 @@ class EntityModal extends React.Component<Props, States> {
                   <BottomRowContainer>
                     {this.explicitMinorKeys.filter(name => processedValues.find(i => i.name === name) !== undefined).map(name => (
                       <BottomCol key={name}>
-                        <BottomColTitle>{t(`attributes.account.${name}`)}</BottomColTitle>
+                        <BottomColTitle>{t(`attributes.accounts.${name}`)}</BottomColTitle>
                         <BottomColContent>{this.formatValue(processedValues, attributes, name)}</BottomColContent>
                       </BottomCol>
                     ))}
