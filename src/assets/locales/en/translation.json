@@ -52,7 +52,8 @@
             "block": {},
             "operation": {
                 "at_level": "at level {{level}}",
-                "in_cycle": "in cycle {{cycle}}"
+                "in_cycle": "in cycle {{cycle}}",
+                "parent_fee": "Paid by parent operation"
             }
         },
         "filterPanel": {
