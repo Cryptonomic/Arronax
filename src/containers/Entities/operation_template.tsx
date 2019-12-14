@@ -67,6 +67,8 @@ class EntityModal extends React.Component<Props, States> {
     } else if (opKind === 'transaction' && processedValues.find(i => i.name === 'parameters') === undefined) {
         this.explicitMinorKeys = ['counter', 'internal', 'gas_limit', 'consumed_gas', 'storage_limit', 'storage_size'];
         this.explicitKeys = [...this.explicitMinorKeys];
+    } else if (opKind === 'ballot'){
+        this.explicitKeys = ['kind'];
     } else {
         this.explicitMinorKeys = ['counter', 'internal', 'gas_limit', 'consumed_gas', 'storage_limit', 'storage_size'];
         this.explicitKeys = [...this.explicitMinorKeys];
@@ -311,6 +313,53 @@ class EntityModal extends React.Component<Props, States> {
                         <ContentTxt>
                           {this.formatValue(processedValues, attributes, 'consumed_gas')} {t('components.entityModal.of')} {this.formatValue(processedValues, attributes, 'gas_limit')}
                         </ContentTxt>
+                      </RowContainer>
+                    </Fragment>
+                  )}
+                  {opKind === 'ballot' && (
+                    <Fragment>
+                      <RowContainer>
+                        <TitleTxt>{this.formatValue(processedValues, attributes, 'ballot')}</TitleTxt>
+                        <ContentTxt>
+                          {t('components.entityModal.by')} {this.formatValue(processedValues, attributes, 'source', true)} {t('components.entityModal.on')} {this.formatValue(processedValues, attributes, 'proposal', true)}
+                        </ContentTxt>
+                      </RowContainer>
+
+                      <RowContainer>
+                        <TitleTxt>{t('components.entityModal.recorded')}</TitleTxt>
+                        <ContentTxt>
+                          {t('components.entityModal.operation.at_level', { level: this.formatValue(processedValues, attributes, 'block_level') })} {t('components.entityModal.operation.in_cycle', { cycle: this.formatValue(processedValues, attributes, 'cycle') })}: &nbsp; {this.formatValue(processedValues, attributes, 'block_hash', true)}
+                        </ContentTxt>
+                      </RowContainer>
+
+                      <RowContainer>
+                        <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')}</ContentTxt>
+                      </RowContainer>
+                    </Fragment>
+                  )}
+                  {opKind === 'activate_account' && (
+                    <Fragment>
+                      <RowContainer>
+                        <TitleTxt>{this.formatValue(processedValues, attributes, 'kind')}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, 'pkh', true)}</ContentTxt>
+                      </RowContainer>
+
+                      <RowContainer>
+                        <TitleTxt>{t('attributes.operations.secret')}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, 'secret')}</ContentTxt>
+                      </RowContainer>
+
+                      <RowContainer>
+                        <TitleTxt>{t('components.entityModal.recorded')}</TitleTxt>
+                        <ContentTxt>
+                          {t('components.entityModal.operation.at_level', { level: this.formatValue(processedValues, attributes, 'block_level') })} {t('components.entityModal.operation.in_cycle', { cycle: this.formatValue(processedValues, attributes, 'cycle') })}: &nbsp; {this.formatValue(processedValues, attributes, 'block_hash', true)}
+                        </ContentTxt>
+                      </RowContainer>
+
+                      <RowContainer>
+                        <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
+                        <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')}</ContentTxt>
                       </RowContainer>
                     </Fragment>
                   )}
