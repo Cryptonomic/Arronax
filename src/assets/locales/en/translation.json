@@ -39,10 +39,12 @@
         "entityModal": {
             "details": "{{title}} Details",
             "clear": "clear",
+            "recorded": "Recorded",
             "at": "at",
             "by": "by",
             "in": "in",
             "of": "of",
+            "on": "on",
             "to": "to",
             "account": {
                 "last_active_title": "Last Active",
@@ -52,7 +54,8 @@
             "block": {},
             "operation": {
                 "at_level": "at level {{level}}",
-                "in_cycle": "in cycle {{cycle}}"
+                "in_cycle": "in cycle {{cycle}}",
+                "parent_fee": "Paid by parent operation"
             }
         },
         "filterPanel": {
