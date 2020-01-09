@@ -186,6 +186,7 @@ class CustomTable extends React.Component<Props, State> {
             items={selectedModalItem}
             isLoading={isLoading}
             onClose={this.onCloseModal}
+            selectedConfig={this.props.selectedConfig}
           />
         }
       </React.Fragment>
