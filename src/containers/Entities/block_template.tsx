@@ -55,7 +55,7 @@ class EntityModal extends React.Component<Props, States> {
     this.explicitKeys = [...this.explicitMinorKeys];
 
     return (
-      <Modal open={open}>
+      <Modal open={open} disableEnforceFocus>
         <ScrollContainer onClick={onClose}>
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
@@ -98,6 +98,7 @@ class EntityModal extends React.Component<Props, States> {
                     const { entity, name } = item;
                     return (
                       <RowContainer key={index}>
+                        <div>Hello</div>
                         <TitleTxt>{t(`attributes.${entity}.${name}`)}</TitleTxt>
                         <ContentTxt>{this.formatValue(processedValues, attributes, name, true)}</ContentTxt>
                       </RowContainer>
