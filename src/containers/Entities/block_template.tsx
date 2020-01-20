@@ -98,7 +98,6 @@ class EntityModal extends React.Component<Props, States> {
                     const { entity, name } = item;
                     return (
                       <RowContainer key={index}>
-                        <div>Hello</div>
                         <TitleTxt>{t(`attributes.${entity}.${name}`)}</TitleTxt>
                         <ContentTxt>{this.formatValue(processedValues, attributes, name, true)}</ContentTxt>
                       </RowContainer>
