@@ -6,8 +6,6 @@ import 'moment-timezone';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import Circle from '@material-ui/icons/FiberManualRecord';
 import Clipboard from '../components/Clipboard';
-// import ContentCopy from '@material-ui/icons/FileCopyOutlined';
-// import Clipboard from 'react-clipboard.js';
 
 import { AttributeDefinition, AttrbuteDataType, ConseilFunction } from 'conseiljs';
 import { truncateHash, formatNumber } from './general';
