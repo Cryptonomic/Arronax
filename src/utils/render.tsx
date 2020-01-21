@@ -5,8 +5,9 @@ import Moment from 'react-moment';
 import 'moment-timezone';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import Circle from '@material-ui/icons/FiberManualRecord';
-import ContentCopy from '@material-ui/icons/FileCopyOutlined';
-import Clipboard from 'react-clipboard.js';
+import Clipboard from '../components/Clipboard';
+// import ContentCopy from '@material-ui/icons/FileCopyOutlined';
+// import Clipboard from 'react-clipboard.js';
 
 import { AttributeDefinition, AttrbuteDataType, ConseilFunction } from 'conseiljs';
 import { truncateHash, formatNumber } from './general';
@@ -21,20 +22,6 @@ const StyledCircle2 = styled(Circle)<{ newcolor: string }>`
   margin-left: -4px;
   margin-right: 7px;
 ` as React.ComponentType<StyledCircleProps>;
-
-const CopyIcon = styled(ContentCopy)`
-  &&& {
-    color: #a6dfe2;
-    font-size: 20px;
-  }
-` as React.ComponentType<SvgIconProps>;
-
-const ClipboardWrapper = styled(Clipboard)`
-  border: none;
-  background: transparent;
-  outline: none !important;
-  cursor: pointer;
-`;
 
 const LinkDiv = styled.div`
   color: #56c2d9;
@@ -99,9 +86,7 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
               <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
               <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
               {address}
-              <ClipboardWrapper data-clipboard-text={value}>
-                  <CopyIcon />
-              </ClipboardWrapper>
+              <Clipboard value={value} />
               </React.Fragment>
           );
       } else if (dataType === AttrbuteDataType.HASH) {
@@ -109,9 +94,7 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
           return (
               <React.Fragment>
               {hash}
-              <ClipboardWrapper data-clipboard-text={value}>
-                  <CopyIcon />
-              </ClipboardWrapper>
+              <Clipboard value={value} />
               </React.Fragment>
           );
       } else if (dataType === AttrbuteDataType.DECIMAL || dataType === AttrbuteDataType.INT || dataType === AttrbuteDataType.CURRENCY) {
@@ -120,9 +103,7 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
           return (
               <React.Fragment>
               {value.substring(0, 100)}
-              <ClipboardWrapper data-clipboard-text={value}>
-                  <CopyIcon />
-              </ClipboardWrapper>
+              <Clipboard value={value} />
               </React.Fragment>
           );
       } else if (dataType === AttrbuteDataType.STRING && value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
