@@ -4,18 +4,19 @@ import Tooltip from '@material-ui/core/Tooltip';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import ContentCopy from '@material-ui/icons/FileCopyOutlined';
 
-import { useClipboardWrapper, useCopyIconWrapper } from './Clipboard-styles';
+import { useClipboardWrapper, useCopyIconWrapper, useTooltipWrapper } from './Clipboard-styles';
 
 import { ClipboardViewProps } from './Clipboard-types';
 
 const ClipboardView = ({ value, open, onSuccess, onClose }: ClipboardViewProps) => {
   const ClipboardWrapper = useClipboardWrapper(Clipboard);
   const CopyIconWrapper = useCopyIconWrapper(ContentCopy)
+  const TooltipWrapper = useTooltipWrapper(Tooltip);
 
   return (
     <ClickAwayListener onClickAway={onClose}>
       <div>
-        <Tooltip
+        <TooltipWrapper
           PopperProps={{
             disablePortal: true
           }}
@@ -29,7 +30,7 @@ const ClipboardView = ({ value, open, onSuccess, onClose }: ClipboardViewProps) 
           <ClipboardWrapper onSuccess={onSuccess} data-clipboard-text={value}>
             <CopyIconWrapper />
           </ClipboardWrapper>
-        </Tooltip>
+        </TooltipWrapper>
       </div>
     </ClickAwayListener>
   )

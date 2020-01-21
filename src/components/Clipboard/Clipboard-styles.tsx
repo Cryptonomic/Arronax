@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { withStyles } from '@material-ui/core/styles'
 
 export const useClipboardWrapper = (Component) => styled(Component)`
   border: none;
@@ -13,3 +14,9 @@ export const useCopyIconWrapper = (Component) => styled(Component)`
   font-size: 20px;
 }
 `
+
+export const useTooltipWrapper = (Component) => withStyles({
+  tooltip: {
+    backgroundColor: 'red'
+  }
+})(Component);
