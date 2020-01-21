@@ -9,10 +9,10 @@ const ClipboardContainer = ({ value }) => {
   const onClose = () => setOpen(false);
 
   const props = {
-    onSuccess,
-    onClose,
+    value,
     open,
-    value
+    onSuccess,
+    onClose
   }
 
   return <ClipboardView {...props} />

@@ -8,7 +8,7 @@ import { useClipboardWrapper, useCopyIconWrapper } from './Clipboard-styles';
 
 import { ClipboardViewProps } from './Clipboard-types';
 
-const ClipboardView = ({ open, value, onSuccess, onClose }: ClipboardViewProps) => {
+const ClipboardView = ({ value, open, onSuccess, onClose }: ClipboardViewProps) => {
   const ClipboardWrapper = useClipboardWrapper(Clipboard);
   const CopyIconWrapper = useCopyIconWrapper(ContentCopy)
 
