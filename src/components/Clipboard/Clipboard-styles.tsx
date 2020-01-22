@@ -17,6 +17,11 @@ export const useCopyIconWrapper = (Component) => styled(Component)`
 
 export const useTooltipWrapper = (Component) => withStyles({
   tooltip: {
-    backgroundColor: 'red'
+    backgroundColor: 'white',
+    color: 'rgb(155, 155, 155)',
+    fontSize: '16px',
+    lineHeight: '24px',
+    fontWeight: 500,
+    boxShadow: '0px 0px 4px 0px rgba(0, 0, 0, 0.3)'
   }
 })(Component);
