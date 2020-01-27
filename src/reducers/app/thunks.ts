@@ -545,6 +545,8 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
   const serverInfo = { url, apiKey, network };
 
   let query = blankQuery();
+  let query_operations = null;
+
   query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
   const s = String(value);
   if (s.startsWith('o')) {
@@ -553,9 +555,15 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
     query = setLimit(query, 1);
   }
 
-  const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+  if (entity === 'blocks') {
+    query_operations = blankQuery();
+    query_operations = addPredicate(query_operations, 'block_hash', ConseilOperator.EQ, [value], false);
+  }
 
-  await dispatch(setModalItemAction(items));
+  const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+  const operations = query_operations ? await executeEntityQuery(serverInfo, platform, network, 'operations', query_operations) : [];
+
+  await dispatch(setModalItemAction(items, operations));
   dispatch(setLoadingAction(false));
 };
 

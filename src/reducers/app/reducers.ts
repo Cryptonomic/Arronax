@@ -50,6 +50,7 @@ export interface AppState {
   rowCount: number;
   filterCount: object;
   selectedModalItem: object[];
+  selectedModalSubItem: object[];
   sort: object;
   configs: Config[];
   selectedConfig: Config;
@@ -110,6 +111,7 @@ let initialState: AppState = {
   rowCount: 50,
   filterCount: {},
   selectedModalItem: [],
+  selectedModalSubItem: [],
   sort: {},
   aggregations: {},
   aggFunctions: {
@@ -228,7 +230,7 @@ export const app = (state = initialState, action) => {
     case COMPLETE_FULL_LOAD:
       return { ...state, isFullLoaded: action.isFullLoaded };
     case SET_MODAL_ITEM:
-      return { ...state, selectedModalItem: action.item };
+      return { ...state, selectedModalItem: action.item, selectedModalSubItem: action.subItem };
     case SET_SORT: {
       const sort = {...state.sort, [action.entity]: action.sorts};
       return { ...state, sort };

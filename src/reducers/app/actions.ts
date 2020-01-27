@@ -166,10 +166,11 @@ export function setFilterCountAction(count: number) {
   }
 }
 
-export function setModalItemAction(item: any[]) {
+export function setModalItemAction(item: any[], subItem: object[]) {
   return {
     type: SET_MODAL_ITEM,
-    item
+    item,
+    subItem
   }
 }
 

@@ -13,6 +13,7 @@ import {
   getEntity,
   getAttributesAll,
   getModalItem,
+  getModalSubItem,
   getSort,
   getEntities,
   getAggregations
@@ -44,6 +45,7 @@ interface Props {
   selectedConfig: Config;
   selectedEntity: string;
   selectedModalItem: object;
+  selectedModalSubItem: any;
   attributes: any;
   isLoading: boolean;
   selectedSort: Sort;
@@ -127,6 +129,7 @@ class CustomTable extends React.Component<Props, State> {
       rowsPerPage,
       selectedEntity,
       selectedModalItem,
+      selectedModalSubItem,
       attributes,
       selectedSort,
       isLoading,
@@ -134,6 +137,7 @@ class CustomTable extends React.Component<Props, State> {
       aggregations,
       onExportCsv
     } = this.props;
+
     const { page, referenceEntity, isOpenedModal} = this.state;
     const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
     const realRows = items.slice(
@@ -183,7 +187,9 @@ class CustomTable extends React.Component<Props, State> {
             open={isOpenedModal}
             title={selectedObjectEntity.displayName}
             attributes={attributes[referenceEntity]}
+            opsAttributes={attributes.operations}
             items={selectedModalItem}
+            subItems={selectedModalSubItem}
             isLoading={isLoading}
             onClose={this.onCloseModal}
           />
@@ -199,6 +205,7 @@ const mapStateToProps = (state: any) => ({
   selectedColumns: getColumns(state),
   selectedEntity: getEntity(state),
   selectedModalItem: getModalItem(state),
+  selectedModalSubItem: getModalSubItem(state),
   attributes: getAttributesAll(state),
   selectedSort: getSort(state),
   entities: getEntities(state),
