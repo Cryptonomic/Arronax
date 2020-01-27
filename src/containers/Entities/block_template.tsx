@@ -105,7 +105,7 @@ class EntityModal extends React.Component<Props, States> {
     const processedValues = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
     this.explicitKeys = [...this.explicitMinorKeys];
 
-    const subItem = subItems.length && formatValueWithLink({ 
+    const subItem = !isLoading && subItems.length && formatValueWithLink({ 
       value: subItems.length,
       onClick: this.onClickSubItem
     });
@@ -175,7 +175,7 @@ class EntityModal extends React.Component<Props, States> {
                     ))}
                   </BottomRowContainer>
                   ) : null}
-                  {subItems.length ? (
+                  {!isLoading && subItems.length ? (
                     <BottomRowContainer>
                       <BottomCol>
                         <BottomColTitle>Block Operations</BottomColTitle>

@@ -203,6 +203,7 @@ interface States {
   isOpenEntityModal: boolean;
   searchedEntity: string;
   searchedItem: any[];
+  searchedSubItems: any[];
 }
 
 type Props = OwnProps & RouteProps & WithTranslation;
@@ -223,7 +224,8 @@ class Arronax extends React.Component<Props, States> {
       isOpenConfigMdoal: false,
       isOpenEntityModal: false,
       searchedEntity: '',
-      searchedItem: []
+      searchedItem: [],
+      searchedSubItems: []
     };
 
     this.settingRef = React.createRef();
@@ -325,12 +327,12 @@ class Arronax extends React.Component<Props, States> {
   onSearchById = async (val: string | number) => {
     const { searchById, selectedConfig } = this.props;
     const realVal = !Number(val) ? val : Number(val);
-    const { entity, items } = await searchById(realVal);
+    const { entity, items, subItems } = await searchById(realVal);
     if (items.length > 0 && entity) {
       const { platform, network } = selectedConfig;
       const modalName = getEntityModalName(platform, network, entity);
       this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
-      this.setState({searchedItem: items, searchedEntity: entity, isOpenEntityModal: true});
+      this.setState({searchedItem: items, searchedSubItems: subItems, searchedEntity: entity, isOpenEntityModal: true});
     }
   }
 
@@ -356,7 +358,7 @@ class Arronax extends React.Component<Props, States> {
     } = this.props;
     const {
       isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal, isOpenEntityModal,
-      searchedItem, searchedEntity
+      searchedItem, searchedEntity, searchedSubItems
     } = this.state;
     const { EntityModal } = this;
     const isRealLoading = isLoading || !isFullLoaded;
@@ -453,7 +455,9 @@ class Arronax extends React.Component<Props, States> {
             open={isOpenEntityModal}
             title={selectedObjectEntity.displayName}
             attributes={attributes[searchedEntity]}
+            opsAttributes={attributes.operations}
             items={searchedItem}
+            subItems={searchedSubItems}
             isLoading={isLoading}
             onClose={this.onCloseEntityModal}
           />

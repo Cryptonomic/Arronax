@@ -585,9 +585,15 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
   const { selectedConfig, entities } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
+  let query_operations = null;
   try {
     const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
+    if (entity === 'blocks') {
+      query_operations = blankQuery();
+      query_operations = addPredicate(query_operations, 'block_hash', ConseilOperator.EQ, [id], false);
+    }
     const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+    const operations = query_operations ? await executeEntityQuery(serverInfo, platform, network, 'operations', query_operations) : [];
     if (items.length > 0) {
       await dispatch(changeTab(entity));
     } else {
@@ -595,7 +601,7 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
       dispatch(createMessageAction(`The ${searchedEntity.displayName.toLowerCase()} was not found.`, true));
     }
     dispatch(setLoadingAction(false));
-    return { entity, items };
+    return { entity, items, subItems: operations };
   } catch (e) {
       if (e.message === 'Invalid id parameter') {
         dispatch(createMessageAction(`Invalid id format entered.`, true));
@@ -604,7 +610,7 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
       }
 
       dispatch(setLoadingAction(false));
-      return { entity: '', items: [] };
+      return { entity: '', items: [], subItems: [] };
   }
 };
 
