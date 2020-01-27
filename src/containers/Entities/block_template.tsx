@@ -73,11 +73,9 @@ class EntityModal extends React.Component<Props, States> {
   
   opsItems = (cols: { name: string }[]) => {
     const { subItems, opsAttributes } = this.props;
-    const { count } = this.state;
-    const opsValues = getNoEmptyFields(opsAttributes, subItems[count])
-
     return subItems.map(item => {
       const newItem = { ...item };
+      const opsValues = getNoEmptyFields(opsAttributes, item);
       cols.map((col: { name: string }) => {
         if (col.name === 'kind') return newItem[col.name] = newItem[col.name].slice(0, 1).toLocaleUpperCase().concat(newItem[col.name].slice(1))
         return newItem[col.name] = this.formatValue(opsValues, opsAttributes, col.name, true);
