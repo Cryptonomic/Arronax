@@ -28,6 +28,12 @@ const LinkDiv = styled.div`
   text-decoration: underline;
 `;
 
+const LinkSpan = styled.span`
+  color: #56c2d9;
+  cursor: pointer;
+  text-decoration: underline;
+`;
+
 const PrimaryKeyList: any = {
   blocks: ['hash', 'level'],
   accounts: ['account_id'],
@@ -64,6 +70,7 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
   }
   
   export const formatValueForDisplay = (platform: string, network: string, entity: string, value: any, attribute: AttributeDefinition, onClickPrimaryKey: (entity: string, key: string, value: string | number) => void, aggregation?: ConseilFunction, truncate: boolean = true) => {
+    // console.log('aaa', value, attribute)
       if (value == null || value.length === 0) { return ''; }
       const {dataFormat, dataType} = attribute;
   
@@ -111,3 +118,8 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
           return formatReferenceValue(attribute, value, value, onClickPrimaryKey);
       }
   };
+
+  export const formatValueWithLink = (props: { value: number, onClick: () => void }) => {
+    const { value, onClick } = props;
+    return <LinkSpan onClick={onClick}>{value}</LinkSpan>
+  } 
