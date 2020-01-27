@@ -61,7 +61,7 @@ class EntityModal extends React.Component<Props, States> {
     return formatValueForDisplay('platform', 'network', 'blocks', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined, truncate);
   }
 
-  opsColsName = (cols) => {
+  opsColsName = (cols: string[]) => {
     const { t } = this.props;
     return cols.map(col => {
       return {
@@ -71,16 +71,16 @@ class EntityModal extends React.Component<Props, States> {
     })
   }
   
-  opsItems = (cols) => {
+  opsItems = (cols: { name: string }[]) => {
     const { subItems, opsAttributes } = this.props;
     const { count } = this.state;
     const opsValues = getNoEmptyFields(opsAttributes, subItems[count])
 
     return subItems.map(item => {
       const newItem = { ...item };
-      cols.map(col => {
-        if (col.name === 'operation_group_hash') return newItem[col.name] = this.formatValue(opsValues, opsAttributes, col.name, true);
+      cols.map((col: { name: string }) => {
         if (col.name === 'kind') return newItem[col.name] = newItem[col.name].slice(0, 1).toLocaleUpperCase().concat(newItem[col.name].slice(1))
+        return newItem[col.name] = this.formatValue(opsValues, opsAttributes, col.name, true);
       })
       return newItem;
     })
@@ -109,7 +109,7 @@ class EntityModal extends React.Component<Props, States> {
       value: subItems.length,
       onClick: this.onClickSubItem
     });
-    const cols = !isLoading && subItemsView && this.opsColsName(['kind', 'amount', 'operation_group_hash']);
+    const cols = !isLoading && subItemsView && this.opsColsName(['kind', 'amount', 'fee', 'operation_group_hash']);
     const opsItems = !isLoading && subItemsView && this.opsItems(cols);
 
     return (
