@@ -278,9 +278,11 @@ export const initLoadByNetwork = () => async (dispatch, state) => {
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
 
-  let entities: any[] = await getEntities(serverInfo, platform, network).catch(err => {
-    dispatch(createMessageAction(`Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`, true)); // TODO: use metadata
-    return [];
+  let entities: any[] = await getEntities(serverInfo, platform, network)
+    .catch(() => {
+      const message = `Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`
+      dispatch(createMessageAction(message, true)); // TODO: use metadata
+      return [];
   });
 
   if (entities.length === 0) {
@@ -289,18 +291,11 @@ export const initLoadByNetwork = () => async (dispatch, state) => {
   }
 
   if (selectedConfig.entities && selectedConfig.entities.length > 0) {
-      let filteredEntities: EntityDefinition[] = [];
-      selectedConfig.entities.forEach(e => {
-          if (e === 'rolls') { return; }
-          let match = entities.find(i => i.name === e);
-          if (!!match) { filteredEntities.push(match); }
-      });
-      entities.forEach(e => {
-          if (e.name === 'rolls') { return; } // TODO
-          if (!selectedConfig.entities.includes(e.name)) { filteredEntities.push(e); }
-      });
-      entities = filteredEntities;
-  }
+    entities = [
+      ...selectedConfig.entities.map(name => entities.find(item => item.name === name && item.name !== 'rolls')),
+      ...entities.filter(item => !selectedConfig.entities.includes(item.name) && item.name !== 'rolls')
+    ];
+}
 
   let isSelectedEntity = false;
 
@@ -308,7 +303,7 @@ export const initLoadByNetwork = () => async (dispatch, state) => {
     if (e.name === selectedEntity && !isSelectedEntity) {
       isSelectedEntity = true;
     }
-    if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) {
+    if (typeof e.displayNamePlural === 'undefined' || e.displayNamePlural.length === 0) {
       e.displayNamePlural = e.displayName;
     }
   }); // TODO: remove, use metadata when available
@@ -317,21 +312,20 @@ export const initLoadByNetwork = () => async (dispatch, state) => {
   validateCache(2);
   
   const attrPromises = entities.map(entity => fetchAttributes(platform, entity.name, network, serverInfo));
-  const attrObjsList = await Promise.all(attrPromises).catch(err => {
-    dispatch(createMessageAction(`Unable to load attribute data: ${err}.`, true));
-    return [];
+  const attrObjsList = await Promise.all(attrPromises)
+    .catch(err => {
+      const message = `Unable to load attribute data: ${err}.`
+      dispatch(createMessageAction(message, true));
+      return [];
   });
   if (attrObjsList.length > 0) {
-    let attributes = {};
-    attrObjsList.forEach(obj => {
-      attributes = {
-        ...attributes,
-        [obj.entity]: sortAttributes(obj.attributes)
-      }
-    });
-    await dispatch(initAttributesAction(attributes));
+    const attrMap = [...attrObjsList].reduce((curr, next) => {
+      curr[next.entity] = sortAttributes(next.attributes);
+      return curr;
+    }, {});
+    await dispatch(initAttributesAction(attrMap));
     const currentDate = Date.now();
-    saveAttributes(attributes, currentDate, 2);
+    saveAttributes(attrMap, currentDate, 2);
   } else {
     dispatch(setLoadingAction(false));
     return;
@@ -365,7 +359,7 @@ export const initLoad = (environmentInfo?: string, query?: string) => async (dis
     .catch(() => {
       const message = `Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`
       dispatch(createMessageAction(message, true));
-    return [];
+      return [];
   });
 
   if (entities.length === 0) {
@@ -381,7 +375,7 @@ export const initLoad = (environmentInfo?: string, query?: string) => async (dis
   }
 
   entities.forEach(e => { 
-    if (e.displayNamePlural === undefined || e.displayNamePlural.length === 0) { 
+    if (typeof e.displayNamePlural === 'undefined' || e.displayNamePlural.length === 0) { 
       e.displayNamePlural = e.displayName
     }
   }); // TODO: remove, use metadata when available
