@@ -27,7 +27,7 @@ export const getEntity = createSelector(
 
 export const getEntities = createSelector(
   getAppState,
-  apps => apps.entities
+  apps => [...apps.entities]
 );
 
 export const getAttributes = createSelector(
