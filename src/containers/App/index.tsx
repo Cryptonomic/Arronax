@@ -334,6 +334,13 @@ class Arronax extends React.Component<Props, States> {
     }
   }
 
+  onClickPrimaryKey = (entity: string, key: string, value: string | number) => {
+    const { searchedEntity } = this.state;
+    if (searchedEntity === entity) return;
+    this.onSearchById(value);
+    this.setState({ searchedEntity: entity });
+  }
+
   onCloseEntityModal = () => this.setState({isOpenEntityModal: false});
 
   render() {
@@ -456,6 +463,7 @@ class Arronax extends React.Component<Props, States> {
             items={searchedItem}
             isLoading={isLoading}
             onClose={this.onCloseEntityModal}
+            onClickPrimaryKey={this.onClickPrimaryKey}
           />
         }
       </MainContainer>
