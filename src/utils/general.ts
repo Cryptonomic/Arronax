@@ -88,17 +88,17 @@ export const getOperatorType = (dataType: string) => {
 }
 
 export const sortAttributes = (attributes: AttributeDefinition[]) => {
-    return attributes.concat().sort((a, b) => {
-    if (a.displayOrder === undefined && b.displayOrder === undefined) {
+    return [...attributes].sort((a, b) => {
+    if (typeof a.displayOrder === 'undefined' && typeof b.displayOrder === 'undefined') {
         if(a.displayName < b.displayName) { return -1; }
         if(a.displayName > b.displayName) { return 1; }
     }
 
-    if (a.displayOrder === undefined && b.displayOrder !== undefined){
+    if (typeof a.displayOrder === 'undefined' && typeof b.displayOrder !== 'undefined'){
         return 1;
     }
 
-    if (a.displayOrder !== undefined && b.displayOrder === undefined){
+    if (typeof a.displayOrder !== 'undefined' && typeof b.displayOrder === 'undefined'){
         return -1;
     }
 
