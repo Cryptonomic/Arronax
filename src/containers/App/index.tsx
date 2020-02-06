@@ -239,6 +239,7 @@ class Arronax extends React.Component<Props, States> {
   }
 
   componentDidMount() {
+    window.addEventListener('beforeunload', this.onBeforeunload.bind(this));
     const { initLoad, location } = this.props;
     if (location) {
       const search = new URLSearchParams(location.search);
@@ -248,6 +249,15 @@ class Arronax extends React.Component<Props, States> {
     } else {
       initLoad('', '');
     }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('beforeunload', this.onBeforeunload.bind(this));
+  }
+
+  onBeforeunload(e) {
+    e.preventDefault();
+    e.returnValue = true;
   }
 
   onChangeNetwork = (config: Config) => {
