@@ -1,8 +1,6 @@
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import GitInfo from 'react-git-info/macro';
-import moment from 'moment';
 
 const FooterContainer = styled.div`
   width: 100%;
@@ -37,9 +35,8 @@ const LanguageItem = styled.div<{isFirst: boolean}>`
 const langs = ['en', 'zh-TW', 'ru', 'fr'];
 
 const Footer: React.FC<{}> = () => {
-  const gitInfo = GitInfo();
-  const version: string = `${moment(gitInfo.commit.date).format('MMMM-YYYY')}-${process.env.REACT_APP_VERSION || gitInfo.branch}-${gitInfo.commit.shortHash}`;
-  const commitLink: string = `https://github.com/Cryptonomic/Arronax/tree/${gitInfo.commit.hash}`;
+  const version: string = `${process.env.REACT_APP_VERSION}-${process.env.REACT_APP_GIT_SHA}`;
+  const commitLink: string = `https://github.com/Cryptonomic/Arronax/tree/${process.env.REACT_APP_GIT_SHA}`;
   const { i18n } = useTranslation();
 
   const changeLanguage = (lng: any) => {

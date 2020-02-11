@@ -59,10 +59,8 @@
     "typescript": "~3.7.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "start:q": "BROWSER=none react-scripts start",
-    "build:prod": "REACT_APP_VERSION=release-5.5.0 react-scripts build",
-    "build": "react-scripts build",
+    "start": "REACT_APP_VERSION=development REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts start",
+    "build": "REACT_APP_VERSION=release-5.5.0 REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -80,8 +78,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "react-git-info": "^1.0.0"
   }
 }
