@@ -54,4 +54,4 @@ install:
 script:
   - node --version
   - unset CI
-  - yarn run build:prod
+  - yarn run build
