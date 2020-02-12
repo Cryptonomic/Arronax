@@ -17,14 +17,14 @@ const configs: Config[] = [
         entities: ['blocks', 'operations', 'accounts', 'delegates']
     }, {
         platform: 'tezos',
-        network: 'mainnet',
+        network: 'carthagenet',
         displayName: 'Carthagenet',
         url: 'https://conseil-staging2.cryptonomic-infra.tech:443',
         apiKey: 'galleon',
         entities: ['blocks', 'operations', 'accounts', 'delegates']
     }, {
         platform: 'tezos',
-        network: 'mainnet',
+        network: 'staging',
         displayName: 'Staging Mainnet',
         url: 'https://conseil-staging.cryptonomic-infra.tech:443',
         apiKey: 'galleon',
