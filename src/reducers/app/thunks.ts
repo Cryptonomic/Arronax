@@ -344,15 +344,17 @@ export const initLoadByNetwork = () => async (dispatch: any, state: any) => {
 };
 
 export const initLoad = (platformParam = '', networkParam = '', entityParam = '', idParam = '', isQuery = false) => async (dispatch: any, state: any) => {
-  const redirect = [true, false];
-  const error = [false, false];
-  const changePath = [false, true];
+  // redirect, changePath, openModal
+  const responseRedirect = [true, false, false];
+  const responseChangePath = [false, true, false];
+  const responseOpenModal = [false, false, true];
+  const responseWithNoAction = [false, false, false];
   const query = isQuery ? idParam : '';
   const configs = state().app.configs;
   const configFromParams = configs.find((c: Config) => c.platform === platformParam && c.network === networkParam);
 
   // Not valid params redirect to default path
-  if (!configFromParams && platformParam && networkParam) return redirect;
+  if (!configFromParams && platformParam && networkParam) return responseRedirect;
 
   const selectedConfig: Config | any = configFromParams || state().app.selectedConfig;
   const { platform, network, url, apiKey } = selectedConfig;
@@ -364,12 +366,12 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
   } catch (e) {
     const message = `Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`
     await dispatch(createMessageAction(message, true));
-    return error;
+    return responseWithNoAction;
   }
 
   if (entities.length === 0) {
     await dispatch(completeFullLoadAction(true));
-    return error;
+    return responseWithNoAction;
   }
 
   if (selectedConfig.entities && selectedConfig.entities.length > 0) {
@@ -388,7 +390,7 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
   const entityFromParam = entities.find((e: any) => e.name === entityParam);
 
   // Not valid param redirect to default path
-  if (!entityFromParam && entityParam) return redirect
+  if (!entityFromParam && entityParam) return responseRedirect
 
   await dispatch(setEntitiesAction(entities));
   await dispatch(initMainParamsAction(platform, network, entityParam || entities[0].name));
@@ -410,13 +412,13 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
         saveAttributes(attrMap, currentDate, 2);
       } else {
         await dispatch(completeFullLoadAction(true));
-        return error;
+        return responseWithNoAction;
       }
     }
   } catch (e) {
     const message = `Unable to load attribute data: ${e}.`
     await dispatch(createMessageAction(message, true));
-    return error;
+    return responseWithNoAction;
   }
 
   const { attributes, selectedEntity } = state().app;
@@ -426,20 +428,28 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
       fetchInitEntityAction(platform, selectedEntity, network, serverInfo, attributes[selectedEntity], entityParam, query)
     );
   } catch (e) {
-    console.error(e);
-    return redirect;
+    const message = `Unable to load data: ${e}.`
+    await dispatch(createMessageAction(message, true));
+    return responseRedirect;
   }
 
   await dispatch(completeFullLoadAction(true));
 
+  if (isQuery || !idParam) return responseWithNoAction;
+
+  await dispatch(searchByIdThunk(idParam));
+  
+  if (state().message.isError) return responseChangePath;
+  return responseOpenModal;
+
   // try {
-  //   // load modal by id
-  //   //accounts account_id tz3bTdwZinP8U1JmSweNzVKhmwafqWmFWRfk
-  //   await dispatch(getItemByPrimaryKey('accounts', 'account_id', 'tz3bTdwZinP8U1JmSweNzVKhmwafqWmFWRfk'));
-  //   return [false, false];
+  //   await dispatch(searchByIdThunk(idParam));
+  //   if (state().message.isError) return responseChangePath;
+  //   return responseOpenModal;
   // } catch (e) {
-  //   console.error('error', e);
-  //   return changePath;
+  //   const message = `Unable to load data: ${e}.`
+  //   await dispatch(createMessageAction(message, true));
+  //   return responseChangePath;
   // }
 };
 

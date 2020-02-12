@@ -251,10 +251,9 @@ class Arronax extends React.Component<Props, States> {
     const { initLoad, match, history } = this.props;
     const { url, params: { platform, network, entity, id } } = match;
     const isQuery = url.includes('/query/');
-    const [redirect, changePath] = await initLoad(platform, network, entity, id, isQuery);
+    const [redirect, changePath, openModal] = await initLoad(platform, network, entity, id, isQuery);
     redirect && history.replace('/tezos/mainnet/blocks');
     changePath && history.push(`/${platform}/${network}/${entity}`);
-    !redirect && !changePath && this.onSearchById(id); 
   }
 
   onChangeNetwork = (config: Config) => {
