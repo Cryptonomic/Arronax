@@ -2,7 +2,7 @@ import React from 'react';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { RouteProps, withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
@@ -189,7 +189,7 @@ interface OwnProps {
   removeAllFilters: (entity: string) => void;
   changeNetwork(config: Config): void;
   changeTab: (type: string) => void;
-  initLoad: (e: string | null, q: string | null) => void;
+  initLoad: (p: string, n: string, e: string, i: string, t: boolean) => any;
   submitQuery: () => void;
   exportCsvData: ()=> void;
   shareReport: ()=> void;
@@ -211,7 +211,16 @@ interface States {
   primaryKeyClicked: boolean
 }
 
-type Props = OwnProps & RouteProps & WithTranslation;
+interface RouteComponentWithParmas extends RouteComponentProps {
+  match: {
+    params: Record<string, string>
+    path: string
+    url: string
+    isExact: boolean
+  }
+}
+
+type Props = OwnProps & RouteComponentWithParmas & WithTranslation;
 
 class Arronax extends React.Component<Props, States> {
   static defaultProps: any = {
@@ -238,16 +247,14 @@ class Arronax extends React.Component<Props, States> {
     this.tableRef = React.createRef();
   }
 
-  componentDidMount() {
-    const { initLoad, location } = this.props;
-    if (location) {
-      const search = new URLSearchParams(location.search);
-      const modal = search.get('m');
-      if (modal && modal === 'true') { this.setState({isModalUrl: true}); }
-      initLoad(search.get('e'), search.get('q'));
-    } else {
-      initLoad('', '');
-    }
+  async componentDidMount() {
+    const { initLoad, match, history } = this.props;
+    const { url, params: { platform, network, entity, id } } = match;
+    const isQuery = url.includes('/query/');
+    const [redirect, changePath] = await initLoad(platform, network, entity, id, isQuery);
+    redirect && history.replace('/tezos/mainnet/blocks');
+    changePath && history.push(`/${platform}/${network}/${entity}`);
+    !redirect && !changePath && this.onSearchById(id); 
   }
 
   onChangeNetwork = (config: Config) => {
@@ -508,7 +515,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   dispatch(removeAllFiltersAction(selectedEntity)),
   changeNetwork: (config: Config) => dispatch(changeNetwork(config)),
   changeTab: (type: string) => dispatch(changeTab(type)),
-  initLoad: (e: string, q: string) => dispatch(initLoad(e, q)),
+  initLoad: (p: string, n: string, e: string, i: string, t: boolean) => dispatch(initLoad(p, n, e, i, t)),
   submitQuery: () => dispatch(submitQuery()),
   exportCsvData: () => dispatch(exportCsvData()),
   shareReport: () => dispatch(shareReport()),

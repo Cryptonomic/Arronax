@@ -343,28 +343,33 @@ export const initLoadByNetwork = () => async (dispatch: any, state: any) => {
   }
 };
 
-export const initLoad = (environmentInfo?: string, query?: any) => async (dispatch: any, state: any) => {
-  let urlEntity = '';
-  if (environmentInfo && query) {
-      const environmentName = environmentInfo.split('/')[0];
-      urlEntity = environmentInfo.split('/')[1];
+export const initLoad = (platformParam = '', networkParam = '', entityParam = '', idParam = '', isQuery = false) => async (dispatch: any, state: any) => {
+  const redirect = [true, false];
+  const error = [false, false];
+  const changePath = [false, true];
+  const query = isQuery ? idParam : '';
+  const configs = state().app.configs;
+  const configFromParams = configs.find((c: Config) => c.platform === platformParam && c.network === networkParam);
 
-      await dispatch(initMainParamsAction(environmentName, urlEntity));
-  }
-  const selectedConfig: Config | any = state().app.selectedConfig;
+  // Not valid params redirect to default path
+  if (!configFromParams && platformParam && networkParam) return redirect;
+
+  const selectedConfig: Config | any = configFromParams || state().app.selectedConfig;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
+  let entities: any[] = [];
 
-  let entities: any[] = await getEntities(serverInfo, platform, network)
-    .catch(() => {
-      const message = `Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`
-      dispatch(createMessageAction(message, true));
-      return [];
-  });
+  try {
+    entities = await getEntities(serverInfo, platform, network);
+  } catch (e) {
+    const message = `Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`
+    await dispatch(createMessageAction(message, true));
+    return error;
+  }
 
   if (entities.length === 0) {
-    dispatch(completeFullLoadAction(true));
-    return;
+    await dispatch(completeFullLoadAction(true));
+    return error;
   }
 
   if (selectedConfig.entities && selectedConfig.entities.length > 0) {
@@ -378,38 +383,64 @@ export const initLoad = (environmentInfo?: string, query?: any) => async (dispat
     if (typeof e.displayNamePlural === 'undefined' || e.displayNamePlural.length === 0) { 
       e.displayNamePlural = e.displayName
     }
-  }); // TODO: remove, use metadata when available
+  });
 
-  dispatch(setEntitiesAction(entities));
+  const entityFromParam = entities.find((e: any) => e.name === entityParam);
+
+  // Not valid param redirect to default path
+  if (!entityFromParam && entityParam) return redirect
+
+  await dispatch(setEntitiesAction(entities));
+  await dispatch(initMainParamsAction(platform, network, entityParam || entities[0].name));
   validateCache(2);
 
-  const localDate = getTimeStampFromLocal();
-  const currentDate = Date.now();
-  if (currentDate - localDate > CACHE_TIME) {
-    const attrPromises = entities.map(entity => fetchAttributes(platform, entity.name, network, serverInfo));
-    const attrObjsList = await Promise.all(attrPromises).catch(err => {
-      const message = `Unable to load attribute data: ${err}.`
-      dispatch(createMessageAction(message, true));
-      return [];
-    });
+  try {
+    const localDate = getTimeStampFromLocal();
+    const currentDate = Date.now();
+    if (currentDate - localDate > CACHE_TIME) {
+      const attrPromises = entities.map(entity => fetchAttributes(platform, entity.name, network, serverInfo));
+      const attrObjsList = await Promise.all(attrPromises);
 
-    if (attrObjsList.length > 0) {
-      const attrMap = [...attrObjsList].reduce((curr: any, next) => {
-        curr[next.entity] = sortAttributes(next.attributes);
-        return curr;
-      }, {});
-      await dispatch(initAttributesAction(attrMap));
-      saveAttributes(attrMap, currentDate, 2);
-    } else {
-      dispatch(completeFullLoadAction(true));
-      return;
+      if (attrObjsList.length > 0) {
+        const attrMap = [...attrObjsList].reduce((curr: any, next) => {
+          curr[next.entity] = sortAttributes(next.attributes);
+          return curr;
+        }, {});
+        await dispatch(initAttributesAction(attrMap));
+        saveAttributes(attrMap, currentDate, 2);
+      } else {
+        await dispatch(completeFullLoadAction(true));
+        return error;
+      }
     }
+  } catch (e) {
+    const message = `Unable to load attribute data: ${e}.`
+    await dispatch(createMessageAction(message, true));
+    return error;
   }
+
   const { attributes, selectedEntity } = state().app;
-  await dispatch(
-    fetchInitEntityAction(platform, selectedEntity, network, serverInfo, attributes[selectedEntity], urlEntity, query)
-  );
-  dispatch(completeFullLoadAction(true));
+
+  try {
+    await dispatch(
+      fetchInitEntityAction(platform, selectedEntity, network, serverInfo, attributes[selectedEntity], entityParam, query)
+    );
+  } catch (e) {
+    console.error(e);
+    return redirect;
+  }
+
+  await dispatch(completeFullLoadAction(true));
+
+  // try {
+  //   // load modal by id
+  //   //accounts account_id tz3bTdwZinP8U1JmSweNzVKhmwafqWmFWRfk
+  //   await dispatch(getItemByPrimaryKey('accounts', 'account_id', 'tz3bTdwZinP8U1JmSweNzVKhmwafqWmFWRfk'));
+  //   return [false, false];
+  // } catch (e) {
+  //   console.error('error', e);
+  //   return changePath;
+  // }
 };
 
 export const fetchAttributes = async (platform: string, entity: string, network: string, serverInfo: any) => {

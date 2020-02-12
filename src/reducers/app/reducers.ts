@@ -265,14 +265,14 @@ export const app = (state = initialState, action: any) => {
       return { ...state, selectedFilters, filterCount };
     }
     case INIT_MAIN_PARAMS: {
-      const config = configs.filter((c: any) => c.displayName === action.configName)[0];
-      // TODO: error handling
+      const { platform, network, entity } = action;
+      const config = configs.filter((c: Config) => c.network === action.network)[0];
       return {
         ...state,
-        platform: action.platform,
-        network: action.network,
+        platform: platform,
+        network: network,
         selectedConfig: config,
-        selectedEntity: action.entity
+        selectedEntity: entity
       };
     }
     case INIT_ATTRIBUTES: {
