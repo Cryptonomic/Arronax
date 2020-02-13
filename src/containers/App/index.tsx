@@ -282,13 +282,13 @@ class Arronax extends React.Component<Props, States> {
     }
   }
 
-  updateRoute = (entity?: string, replace?: boolean) => {
+  updateRoute = (replace?: boolean, entity?: string, id?: string | number) => {
     const { 
       selectedConfig: { platform, network }, 
       selectedEntity, 
       history 
     } = this.props;
-    const url = `/${platform}/${network}/${entity || selectedEntity}`;
+    let url = `/${platform}/${network}/${entity || selectedEntity}${id ? '/' + id : ''}`;
 
     if (replace) {
       history.replace(url);
@@ -309,14 +309,14 @@ class Arronax extends React.Component<Props, States> {
       await changeTab(value);
       this.settingRef.current.onChangeHeight();
     } catch (e) {
-      this.updateRoute(selectedEntity, true);
+      this.updateRoute(true, selectedEntity);
     }
   };
 
   onClickTab = (value: string) => {
     const { selectedEntity } = this.props;
     if (value === selectedEntity) return;
-    this.updateRoute(value)
+    this.updateRoute(false, value)
   }
 
   onChangeTool = async (tool: string) => {
@@ -397,6 +397,7 @@ class Arronax extends React.Component<Props, States> {
       const modalName = getEntityModalName(platform, network, entity);
       this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
       this.setState({searchedItem: items, searchedEntity: entity, isOpenEntityModal: true, primaryKeyClicked: false });
+      this.updateRoute(true, '', val)
     }
   }
 
@@ -409,11 +410,12 @@ class Arronax extends React.Component<Props, States> {
     this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
     getModalItemAction(entity, key, value);
     this.setState({ searchedEntity: entity, primaryKeyClicked: true });
+    this.updateRoute(true, '', value)
   }
 
   onCloseEntityModal = () => {
     this.setState({isOpenEntityModal: false});
-    this.updateRoute('', true);
+    this.updateRoute(true);
   };
 
   render() {
@@ -489,7 +491,15 @@ class Arronax extends React.Component<Props, States> {
                 onClose={this.onCloseFilter}
               />
               <TabContainer>
-                {items.length > 0 && <CustomTable isModalUrl={isModalUrl} isLoading={isLoading} items={items} onExportCsv={this.onExportCsv} /> }
+                {items.length > 0 && 
+                  <CustomTable 
+                    isModalUrl={isModalUrl} 
+                    isLoading={isLoading} 
+                    items={items} 
+                    onExportCsv={this.onExportCsv}
+                    updateRoute={this.updateRoute}
+                  /> 
+                }
                 {items.length === 0 && isFullLoaded && (
                   <NoResultContainer>
                     <OctopusImg src={octopusSrc} />
