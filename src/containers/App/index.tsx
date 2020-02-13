@@ -304,19 +304,18 @@ class Arronax extends React.Component<Props, States> {
   onChangeTab = async (value: string) => {
     const { selectedEntity, changeTab } = this.props;
     if (value === selectedEntity) return;
-    
     try {
       await changeTab(value);
       this.settingRef.current.onChangeHeight();
     } catch (e) {
-      this.updateRoute(selectedEntity);
+      this.updateRoute(selectedEntity, true);
     }
   };
 
   onClickTab = (value: string) => {
     const { selectedEntity } = this.props;
     if (value === selectedEntity) return;
-    this.updateRoute(value, true)
+    this.updateRoute(value)
   }
 
   onChangeTool = async (tool: string) => {

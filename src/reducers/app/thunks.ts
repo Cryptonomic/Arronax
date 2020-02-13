@@ -605,7 +605,6 @@ export const changeTab = (entity: string) => async (dispatch: any, state: any) =
     if(!items[entity] || (items[entity] && items[entity].length === 0)) {
       dispatch(setLoadingAction(true));
       await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[entity], '', ''));
-      dispatch(setTabAction(entity));
       dispatch(setLoadingAction(false));
     }
   } catch (e) {
@@ -614,6 +613,8 @@ export const changeTab = (entity: string) => async (dispatch: any, state: any) =
     dispatch(setLoadingAction(false));
     throw Error(message);
   }
+
+  dispatch(setTabAction(entity));
 };
 
 export const searchByIdThunk = (id: string | number) => async (dispatch: any, state: any) => {
