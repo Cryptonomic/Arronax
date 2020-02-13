@@ -51,6 +51,7 @@ import {
 import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../../reducers/app/actions';
 import { clearMessageAction } from '../../reducers/message/actions';
 import { getEntityModalName } from '../../utils/hashtable';
+import { defaultPath } from '../../router/routes';
 
 import { ToolType, Config } from '../../types';
 import octopusSrc from '../../assets/sadOctopus.svg';
@@ -250,16 +251,16 @@ class Arronax extends React.Component<Props, States> {
     const { initLoad, match, history, selectedConfig } = this.props;
     const { url, params: { platform, network, entity, id } } = match;
     const isQuery = url.includes('/query/');
-    const [redirect, changePath, openModalItems] = await initLoad(platform, network, entity, id, isQuery);
-    redirect && history.replace('/tezos/mainnet/blocks');
+    const [redirect, changePath, openModal] = await initLoad(platform, network, entity, id, isQuery);
+    redirect && history.replace(defaultPath);
     changePath && history.push(`/${platform}/${network}/${entity}`);
-    if (openModalItems && openModalItems.length > 0) {
+    if (openModal && openModal.items && openModal.items.length > 0) {
       const { platform, network } = selectedConfig;
-      const modalName = getEntityModalName(platform, network, entity);
+      const modalName = getEntityModalName(platform, network, openModal.entity);
       this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
       this.setState({
-        searchedItem: openModalItems, 
-        searchedEntity: entity, 
+        searchedItem: openModal.items, 
+        searchedEntity: openModal.entity, 
         isOpenEntityModal: true, 
         primaryKeyClicked: false
       });
@@ -287,7 +288,7 @@ class Arronax extends React.Component<Props, States> {
       selectedEntity, 
       history 
     } = this.props;
-    const url = `/${platform}/${network}/${entity}`;
+    const url = `/${platform}/${network}/${entity || selectedEntity}`;
 
     if (replace) {
       history.replace(url);
@@ -412,7 +413,7 @@ class Arronax extends React.Component<Props, States> {
 
   onCloseEntityModal = () => {
     this.setState({isOpenEntityModal: false});
-    // this.updateRoute(true);
+    this.updateRoute('', true);
   };
 
   render() {

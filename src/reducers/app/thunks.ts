@@ -347,7 +347,7 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
   // redirect, changePath, openModal, modalItems
   const responseRedirect = [true, false];
   const responseChangePath = [false, true];
-  const responseOpenModal: [boolean, boolean, object[]]  = [false, false, []];
+  const responseOpenModal: [boolean, boolean, Record<string, object[] | string>] = [false, false, { items: [], entity: '' }];
   const responseWithNoAction = [false, false];
   const query = isQuery ? idParam : '';
   const configs = state().app.configs;
@@ -439,8 +439,9 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
   };
 
   try {
-    const { query } = TezosConseilClient.getEntityQueryForId(idParam);
-    responseOpenModal[2] = await executeEntityQuery(serverInfo, platform, network, entityParam, query);
+    const { entity, query } = TezosConseilClient.getEntityQueryForId(idParam);
+    const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+    responseOpenModal[2] = { ...responseOpenModal[2], entity, items }
   } catch (e) {
     if (e.message === 'Invalid id parameter') {
       dispatch(createMessageAction(`Invalid id format entered.`, true));
