@@ -80,8 +80,10 @@ export const changeNetwork = (config: Config) => async (dispatch: any, state: an
   const oldConfig = state().app.selectedConfig;
   const isSame = oldConfig.network === config.network && oldConfig.platform === config.platform &&
     oldConfig.url === config.url && oldConfig.apiKey === config.apiKey;
-  if (isSame) return;
-  else if(oldConfig.platform === config.platform) {
+  
+    if (isSame) return;
+  
+  if(oldConfig.platform === config.platform) {
     await dispatch(initItemsAction());
     await dispatch(setConfigAction(config));
     await dispatch(initLoadByNetwork());

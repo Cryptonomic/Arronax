@@ -289,7 +289,6 @@ class Arronax extends React.Component<Props, States> {
       history 
     } = this.props;
     let url = `/${platform}/${network}/${entity || selectedEntity}${id ? '/' + id : ''}`;
-
     if (replace) {
       history.replace(url);
       return;
@@ -297,9 +296,10 @@ class Arronax extends React.Component<Props, States> {
     history.push(url);
   }
 
-  onChangeNetwork = (config: Config) => {
-    const { changeNetwork } = this.props;
-    changeNetwork(config);
+  onChangeNetwork = async (config: Config) => {
+    const { changeNetwork, selectedEntity } = this.props;
+    await changeNetwork(config);
+    this.updateRoute(true, selectedEntity)
   };
 
   onChangeTab = async (value: string) => {
