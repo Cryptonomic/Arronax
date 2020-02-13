@@ -248,7 +248,7 @@ class Arronax extends React.Component<Props, States> {
   }
 
   async componentDidMount() {
-    const { initLoad, match, history, selectedConfig, selectedEntity } = this.props;
+    const { initLoad, match, history, selectedConfig } = this.props;
     const { url, params: { platform, network, entity, id } } = match;
     const isQuery = url.includes('/query/');
     const [redirect, changePath, openModalItems] = await initLoad(platform, network, entity, id, isQuery);
@@ -259,7 +259,16 @@ class Arronax extends React.Component<Props, States> {
       const modalName = getEntityModalName(platform, network, entity);
       this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
       this.setState({searchedItem: openModalItems, searchedEntity: entity, isOpenEntityModal: true, primaryKeyClicked: false });
-    }
+    };
+  }
+
+  updateRoute = () => {
+    const { 
+      selectedConfig: { platform, network }, 
+      selectedEntity, 
+      history 
+    } = this.props;
+    history.push(`/${platform}/${network}/${selectedEntity}`)
   }
 
   onChangeNetwork = (config: Config) => {
@@ -271,6 +280,7 @@ class Arronax extends React.Component<Props, States> {
     const { changeTab } = this.props;
     await changeTab(value);
     this.settingRef.current.onChangeHeight();
+    this.updateRoute();
   };
 
   onChangeTool = async (tool: string) => {
