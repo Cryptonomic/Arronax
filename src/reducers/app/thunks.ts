@@ -344,11 +344,11 @@ export const initLoadByNetwork = () => async (dispatch: any, state: any) => {
 };
 
 export const initLoad = (platformParam = '', networkParam = '', entityParam = '', idParam = '', isQuery = false) => async (dispatch: any, state: any) => {
-  // redirect, changePath, openModal
-  const responseRedirect = [true, false, false];
-  const responseChangePath = [false, true, false];
-  const responseOpenModal = [false, false, true];
-  const responseWithNoAction = [false, false, false];
+  // redirect, changePath, openModal, modalItems
+  const responseRedirect = [true, false];
+  const responseChangePath = [false, true];
+  const responseOpenModal: [boolean, boolean, object[]]  = [false, false, []];
+  const responseWithNoAction = [false, false];
   const query = isQuery ? idParam : '';
   const configs = state().app.configs;
   const configFromParams = configs.find((c: Config) => c.platform === platformParam && c.network === networkParam);
@@ -433,24 +433,26 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
     return responseRedirect;
   }
 
+  if (isQuery || !idParam) {
+    await dispatch(completeFullLoadAction(true));
+    return responseWithNoAction
+  };
+
+  try {
+    const { query } = TezosConseilClient.getEntityQueryForId(idParam);
+    responseOpenModal[2] = await executeEntityQuery(serverInfo, platform, network, entityParam, query);
+  } catch (e) {
+    if (e.message === 'Invalid id parameter') {
+      dispatch(createMessageAction(`Invalid id format entered.`, true));
+    } else {
+      dispatch(createMessageAction('Unable to load an object for the id', true));
+    }
+  }
+
   await dispatch(completeFullLoadAction(true));
-
-  if (isQuery || !idParam) return responseWithNoAction;
-
-  await dispatch(searchByIdThunk(idParam));
   
   if (state().message.isError) return responseChangePath;
   return responseOpenModal;
-
-  // try {
-  //   await dispatch(searchByIdThunk(idParam));
-  //   if (state().message.isError) return responseChangePath;
-  //   return responseOpenModal;
-  // } catch (e) {
-  //   const message = `Unable to load data: ${e}.`
-  //   await dispatch(createMessageAction(message, true));
-  //   return responseChangePath;
-  // }
 };
 
 export const fetchAttributes = async (platform: string, entity: string, network: string, serverInfo: any) => {

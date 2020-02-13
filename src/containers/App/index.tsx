@@ -248,12 +248,18 @@ class Arronax extends React.Component<Props, States> {
   }
 
   async componentDidMount() {
-    const { initLoad, match, history } = this.props;
+    const { initLoad, match, history, selectedConfig, selectedEntity } = this.props;
     const { url, params: { platform, network, entity, id } } = match;
     const isQuery = url.includes('/query/');
-    const [redirect, changePath, openModal] = await initLoad(platform, network, entity, id, isQuery);
+    const [redirect, changePath, openModalItems] = await initLoad(platform, network, entity, id, isQuery);
     redirect && history.replace('/tezos/mainnet/blocks');
     changePath && history.push(`/${platform}/${network}/${entity}`);
+    if (openModalItems && openModalItems.length > 0) {
+      const { platform, network } = selectedConfig;
+      const modalName = getEntityModalName(platform, network, entity);
+      this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
+      this.setState({searchedItem: openModalItems, searchedEntity: entity, isOpenEntityModal: true, primaryKeyClicked: false });
+    }
   }
 
   onChangeNetwork = (config: Config) => {
