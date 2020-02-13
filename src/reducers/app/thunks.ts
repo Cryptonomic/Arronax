@@ -601,12 +601,19 @@ export const changeTab = (entity: string) => async (dispatch: any, state: any) =
   const { network, platform, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
 
-  if(!items[entity] || (items[entity] && items[entity].length === 0)) {
-    dispatch(setLoadingAction(true));
-    await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[entity], '', ''));
+  try {
+    if(!items[entity] || (items[entity] && items[entity].length === 0)) {
+      dispatch(setLoadingAction(true));
+      await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[entity], '', ''));
+      dispatch(setTabAction(entity));
+      dispatch(setLoadingAction(false));
+    }
+  } catch (e) {
+    const message = `Unable to change to tab ${entity}`;
+    dispatch(createMessageAction(message, true));
     dispatch(setLoadingAction(false));
+    throw Error(message);
   }
-  dispatch(setTabAction(entity));
 };
 
 export const searchByIdThunk = (id: string | number) => async (dispatch: any, state: any) => {

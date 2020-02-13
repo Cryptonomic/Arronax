@@ -238,7 +238,6 @@ class Arronax extends React.Component<Props, States> {
       isModalUrl: false,
       isOpenConfigMdoal: false,
       isOpenEntityModal: false,
-      
       searchedEntity: '',
       searchedItem: []
     };
@@ -258,17 +257,43 @@ class Arronax extends React.Component<Props, States> {
       const { platform, network } = selectedConfig;
       const modalName = getEntityModalName(platform, network, entity);
       this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
-      this.setState({searchedItem: openModalItems, searchedEntity: entity, isOpenEntityModal: true, primaryKeyClicked: false });
+      this.setState({
+        searchedItem: openModalItems, 
+        searchedEntity: entity, 
+        isOpenEntityModal: true, 
+        primaryKeyClicked: false
+      });
     };
   }
 
-  updateRoute = () => {
+  componentDidUpdate(prevProps: Props) {
+    const { 
+      match: { params: { entity: prevRouteEntity } },
+      selectedEntity: prevSelectedEntity
+    } = prevProps;
+    const { 
+      match: { params: { entity: currRouteEntity } },
+      selectedEntity: currSelectedEntity,
+      isError 
+    } = this.props;
+    if (!isError && prevSelectedEntity === currSelectedEntity && prevRouteEntity !== currRouteEntity) {
+      this.onChangeTab(currRouteEntity);
+    }
+  }
+
+  updateRoute = (entity?: string, replace?: boolean) => {
     const { 
       selectedConfig: { platform, network }, 
       selectedEntity, 
       history 
     } = this.props;
-    history.push(`/${platform}/${network}/${selectedEntity}`)
+    const url = `/${platform}/${network}/${entity}`;
+
+    if (replace) {
+      history.replace(url);
+      return;
+    }
+    history.push(url);
   }
 
   onChangeNetwork = (config: Config) => {
@@ -277,11 +302,22 @@ class Arronax extends React.Component<Props, States> {
   };
 
   onChangeTab = async (value: string) => {
-    const { changeTab } = this.props;
-    await changeTab(value);
-    this.settingRef.current.onChangeHeight();
-    this.updateRoute();
+    const { selectedEntity, changeTab } = this.props;
+    if (value === selectedEntity) return;
+    
+    try {
+      await changeTab(value);
+      this.settingRef.current.onChangeHeight();
+    } catch (e) {
+      this.updateRoute(selectedEntity);
+    }
   };
+
+  onClickTab = (value: string) => {
+    const { selectedEntity } = this.props;
+    if (value === selectedEntity) return;
+    this.updateRoute(value, true)
+  }
 
   onChangeTool = async (tool: string) => {
     const { isSettingCollapsed, selectedTool } = this.state;
@@ -377,7 +413,7 @@ class Arronax extends React.Component<Props, States> {
 
   onCloseEntityModal = () => {
     this.setState({isOpenEntityModal: false});
-    this.updateRoute();
+    // this.updateRoute(true);
   };
 
   render() {
@@ -425,7 +461,7 @@ class Arronax extends React.Component<Props, States> {
               <TabsWrapper
                 value={selectedEntity}
                 variant='scrollable'
-                onChange={(event, newValue) => this.onChangeTab(newValue)}
+                onChange={(event, newValue) => this.onClickTab(newValue)}
               >
                 {entities.map((entity, index) => (
                   <TabWrapper
