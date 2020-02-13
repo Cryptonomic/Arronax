@@ -375,7 +375,10 @@ class Arronax extends React.Component<Props, States> {
     this.setState({ searchedEntity: entity, primaryKeyClicked: true });
   }
 
-  onCloseEntityModal = () => this.setState({isOpenEntityModal: false});
+  onCloseEntityModal = () => {
+    this.setState({isOpenEntityModal: false});
+    this.updateRoute();
+  };
 
   render() {
     const {
