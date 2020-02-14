@@ -29,7 +29,7 @@ import {
 } from './types';
 
 import { EntityDefinition } from 'conseiljs';
-import { Filter, Config, Aggregation } from '../../types';
+import { Filter, Config } from '../../types';
 import { getLocalAttributes } from '../../utils/attributes';
 import { getConfigs, saveConfigs } from '../../utils/getconfig';
 

@@ -7,7 +7,7 @@ import {
   ConseilQueryBuilder,
   ConseilOperator,
   ConseilOutput,
-  ConseilSortDirection, EntityDefinition, AttributeDefinition,
+  ConseilSortDirection, AttributeDefinition,
   TezosConseilClient
 } from 'conseiljs';
 
