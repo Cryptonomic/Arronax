@@ -131,8 +131,8 @@ export const setAggregationsThunk = (aggregations: Aggregation[]) => async (disp
   const selectedColumns = columns[selectedEntity];
   const { sorts, aggs } = clearSortAndAggregations(selectedColumns, selectedSorts, aggregations);
   const sortColumn = selectedColumns.find((col: any) => col.name === selectedSorts[0].orderBy);
-  const sortAgg = aggregations.find(agg => selectedSorts[0].orderBy === `${agg.function}_${agg.field}` || selectedSorts[0].orderBy === agg.field);
-  if (!sortColumn && !sortAgg || sortColumn && sortAgg ) {
+  const sortAgg = aggregations.find(agg => (selectedSorts[0].orderBy === `${agg.function}_${agg.field}`) || (selectedSorts[0].orderBy === agg.field));
+  if ((!sortColumn && !sortAgg) || (sortColumn && sortAgg) ) {
     selectedSorts = sorts;
   }
   await dispatch(setAggregationAction(selectedEntity, aggs, selectedSorts));
