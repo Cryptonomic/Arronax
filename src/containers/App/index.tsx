@@ -2,7 +2,7 @@ import React from 'react';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { RouteProps, withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
@@ -51,6 +51,7 @@ import {
 import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../../reducers/app/actions';
 import { clearMessageAction } from '../../reducers/message/actions';
 import { getEntityModalName } from '../../utils/hashtable';
+import { defaultPath } from '../../router/routes';
 
 import { ToolType, Config } from '../../types';
 import octopusSrc from '../../assets/sadOctopus.svg';
@@ -189,7 +190,7 @@ interface OwnProps {
   removeAllFilters: (entity: string) => void;
   changeNetwork(config: Config): void;
   changeTab: (type: string) => void;
-  initLoad: (e: string | null, q: string | null) => void;
+  initLoad: (p: string, n: string, e: string, i: string, t: boolean) => any;
   submitQuery: () => void;
   exportCsvData: ()=> void;
   shareReport: ()=> void;
@@ -211,7 +212,16 @@ interface States {
   primaryKeyClicked: boolean
 }
 
-type Props = OwnProps & RouteProps & WithTranslation;
+interface RouteComponentWithParmas extends RouteComponentProps {
+  match: {
+    params: Record<string, string>
+    path: string
+    url: string
+    isExact: boolean
+  }
+}
+
+type Props = OwnProps & RouteComponentWithParmas & WithTranslation;
 
 class Arronax extends React.Component<Props, States> {
   static defaultProps: any = {
@@ -229,7 +239,6 @@ class Arronax extends React.Component<Props, States> {
       isModalUrl: false,
       isOpenConfigMdoal: false,
       isOpenEntityModal: false,
-      
       searchedEntity: '',
       searchedItem: []
     };
@@ -238,28 +247,77 @@ class Arronax extends React.Component<Props, States> {
     this.tableRef = React.createRef();
   }
 
-  componentDidMount() {
-    const { initLoad, location } = this.props;
-    if (location) {
-      const search = new URLSearchParams(location.search);
-      const modal = search.get('m');
-      if (modal && modal === 'true') { this.setState({isModalUrl: true}); }
-      initLoad(search.get('e'), search.get('q'));
-    } else {
-      initLoad('', '');
+  async componentDidMount() {
+    const { initLoad, match, history, selectedConfig } = this.props;
+    const { url, params: { platform, network, entity, id } } = match;
+    const isQuery = url.includes('/query/');
+    const [redirect, changePath, openModal] = await initLoad(platform, network, entity, id, isQuery);
+    redirect && history.replace(defaultPath);
+    changePath && history.push(`/${platform}/${network}/${entity}`);
+    if (openModal && openModal.items && openModal.items.length > 0) {
+      const { platform, network } = selectedConfig;
+      const modalName = getEntityModalName(platform, network, openModal.entity);
+      this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
+      this.setState({
+        searchedItem: openModal.items, 
+        searchedEntity: openModal.entity, 
+        isOpenEntityModal: true, 
+        primaryKeyClicked: false
+      });
+    };
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { 
+      match: { params: { entity: prevRouteEntity } },
+      selectedEntity: prevSelectedEntity
+    } = prevProps;
+    const { 
+      match: { params: { entity: currRouteEntity } },
+      selectedEntity: currSelectedEntity,
+      isError 
+    } = this.props;
+    if (!isError && prevSelectedEntity === currSelectedEntity && prevRouteEntity !== currRouteEntity) {
+      this.onChangeTab(currRouteEntity);
     }
   }
 
-  onChangeNetwork = (config: Config) => {
-    const { changeNetwork } = this.props;
-    changeNetwork(config);
+  updateRoute = (replace?: boolean, entity?: string, id?: string | number) => {
+    const { 
+      selectedConfig: { platform, network }, 
+      selectedEntity, 
+      history 
+    } = this.props;
+    let url = `/${platform}/${network}/${entity || selectedEntity}${id ? '/' + id : ''}`;
+    if (replace) {
+      history.replace(url);
+      return;
+    }
+    history.push(url);
+  }
+
+  onChangeNetwork = async (config: Config) => {
+    const { changeNetwork, selectedEntity } = this.props;
+    await changeNetwork(config);
+    this.updateRoute(true, selectedEntity)
   };
 
   onChangeTab = async (value: string) => {
-    const { changeTab } = this.props;
-    await changeTab(value);
-    this.settingRef.current.onChangeHeight();
+    const { selectedEntity, changeTab } = this.props;
+    if (value === selectedEntity) return;
+    try {
+      await changeTab(value);
+      this.settingRef.current.onChangeHeight();
+    } catch (e) {
+      this.updateRoute(true, selectedEntity);
+    }
   };
+
+  onClickTab = (value: string) => {
+    const { selectedEntity } = this.props;
+    if (value === selectedEntity) return;
+    this.updateRoute(false, value)
+  }
 
   onChangeTool = async (tool: string) => {
     const { isSettingCollapsed, selectedTool } = this.state;
@@ -339,6 +397,7 @@ class Arronax extends React.Component<Props, States> {
       const modalName = getEntityModalName(platform, network, entity);
       this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
       this.setState({searchedItem: items, searchedEntity: entity, isOpenEntityModal: true, primaryKeyClicked: false });
+      this.updateRoute(true, '', val)
     }
   }
 
@@ -351,9 +410,13 @@ class Arronax extends React.Component<Props, States> {
     this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
     getModalItemAction(entity, key, value);
     this.setState({ searchedEntity: entity, primaryKeyClicked: true });
+    this.updateRoute(true, '', value)
   }
 
-  onCloseEntityModal = () => this.setState({isOpenEntityModal: false});
+  onCloseEntityModal = () => {
+    this.setState({isOpenEntityModal: false});
+    this.updateRoute(true);
+  };
 
   render() {
     const {
@@ -400,7 +463,7 @@ class Arronax extends React.Component<Props, States> {
               <TabsWrapper
                 value={selectedEntity}
                 variant='scrollable'
-                onChange={(event, newValue) => this.onChangeTab(newValue)}
+                onChange={(event, newValue) => this.onClickTab(newValue)}
               >
                 {entities.map((entity, index) => (
                   <TabWrapper
@@ -428,7 +491,15 @@ class Arronax extends React.Component<Props, States> {
                 onClose={this.onCloseFilter}
               />
               <TabContainer>
-                {items.length > 0 && <CustomTable isModalUrl={isModalUrl} isLoading={isLoading} items={items} onExportCsv={this.onExportCsv} /> }
+                {items.length > 0 && 
+                  <CustomTable 
+                    isModalUrl={isModalUrl} 
+                    isLoading={isLoading} 
+                    items={items} 
+                    onExportCsv={this.onExportCsv}
+                    updateRoute={this.updateRoute}
+                  /> 
+                }
                 {items.length === 0 && isFullLoaded && (
                   <NoResultContainer>
                     <OctopusImg src={octopusSrc} />
@@ -508,7 +579,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   dispatch(removeAllFiltersAction(selectedEntity)),
   changeNetwork: (config: Config) => dispatch(changeNetwork(config)),
   changeTab: (type: string) => dispatch(changeTab(type)),
-  initLoad: (e: string, q: string) => dispatch(initLoad(e, q)),
+  initLoad: (p: string, n: string, e: string, i: string, t: boolean) => dispatch(initLoad(p, n, e, i, t)),
   submitQuery: () => dispatch(submitQuery()),
   exportCsvData: () => dispatch(exportCsvData()),
   shareReport: () => dispatch(shareReport()),

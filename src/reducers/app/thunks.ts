@@ -7,7 +7,7 @@ import {
   ConseilQueryBuilder,
   ConseilOperator,
   ConseilOutput,
-  ConseilSortDirection, EntityDefinition, AttributeDefinition,
+  ConseilSortDirection, AttributeDefinition,
   TezosConseilClient
 } from 'conseiljs';
 
@@ -80,8 +80,10 @@ export const changeNetwork = (config: Config) => async (dispatch: any, state: an
   const oldConfig = state().app.selectedConfig;
   const isSame = oldConfig.network === config.network && oldConfig.platform === config.platform &&
     oldConfig.url === config.url && oldConfig.apiKey === config.apiKey;
-  if (isSame) return;
-  else if(oldConfig.platform === config.platform) {
+  
+    if (isSame) return;
+  
+  if(oldConfig.platform === config.platform) {
     await dispatch(initItemsAction());
     await dispatch(setConfigAction(config));
     await dispatch(initLoadByNetwork());
@@ -129,8 +131,8 @@ export const setAggregationsThunk = (aggregations: Aggregation[]) => async (disp
   const selectedColumns = columns[selectedEntity];
   const { sorts, aggs } = clearSortAndAggregations(selectedColumns, selectedSorts, aggregations);
   const sortColumn = selectedColumns.find((col: any) => col.name === selectedSorts[0].orderBy);
-  const sortAgg = aggregations.find(agg => selectedSorts[0].orderBy === `${agg.function}_${agg.field}` || selectedSorts[0].orderBy === agg.field);
-  if (!sortColumn && !sortAgg || sortColumn && sortAgg ) {
+  const sortAgg = aggregations.find(agg => (selectedSorts[0].orderBy === `${agg.function}_${agg.field}`) || (selectedSorts[0].orderBy === agg.field));
+  if ((!sortColumn && !sortAgg) || (sortColumn && sortAgg) ) {
     selectedSorts = sorts;
   }
   await dispatch(setAggregationAction(selectedEntity, aggs, selectedSorts));
@@ -343,28 +345,35 @@ export const initLoadByNetwork = () => async (dispatch: any, state: any) => {
   }
 };
 
-export const initLoad = (environmentInfo?: string, query?: any) => async (dispatch: any, state: any) => {
-  let urlEntity = '';
-  if (environmentInfo && query) {
-      const environmentName = environmentInfo.split('/')[0];
-      urlEntity = environmentInfo.split('/')[1];
+export const initLoad = (platformParam = '', networkParam = '', entityParam = '', idParam = '', isQuery = false) => async (dispatch: any, state: any) => {
+  // redirect, changePath, openModal, modalItems
+  const responseRedirect = [true, false];
+  const responseChangePath = [false, true];
+  const responseOpenModal: [boolean, boolean, Record<string, object[] | string>] = [false, false, { items: [], entity: '' }];
+  const responseWithNoAction = [false, false];
+  const query = isQuery ? idParam : '';
+  const configs = state().app.configs;
+  const configFromParams = configs.find((c: Config) => c.platform === platformParam && c.network === networkParam);
 
-      await dispatch(initMainParamsAction(environmentName, urlEntity));
-  }
-  const selectedConfig: Config | any = state().app.selectedConfig;
+  // Not valid params redirect to default path
+  if (!configFromParams && platformParam && networkParam) return responseRedirect;
+
+  const selectedConfig: Config | any = configFromParams || state().app.selectedConfig;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
+  let entities: any[] = [];
 
-  let entities: any[] = await getEntities(serverInfo, platform, network)
-    .catch(() => {
-      const message = `Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`
-      dispatch(createMessageAction(message, true));
-      return [];
-  });
+  try {
+    entities = await getEntities(serverInfo, platform, network);
+  } catch (e) {
+    const message = `Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`
+    await dispatch(createMessageAction(message, true));
+    return responseWithNoAction;
+  }
 
   if (entities.length === 0) {
-    dispatch(completeFullLoadAction(true));
-    return;
+    await dispatch(completeFullLoadAction(true));
+    return responseWithNoAction;
   }
 
   if (selectedConfig.entities && selectedConfig.entities.length > 0) {
@@ -378,38 +387,75 @@ export const initLoad = (environmentInfo?: string, query?: any) => async (dispat
     if (typeof e.displayNamePlural === 'undefined' || e.displayNamePlural.length === 0) { 
       e.displayNamePlural = e.displayName
     }
-  }); // TODO: remove, use metadata when available
+  });
 
-  dispatch(setEntitiesAction(entities));
+  const entityFromParam = entities.find((e: any) => e.name === entityParam);
+
+  // Not valid param redirect to default path
+  if (!entityFromParam && entityParam) return responseRedirect
+
+  await dispatch(setEntitiesAction(entities));
+  await dispatch(initMainParamsAction(platform, network, entityParam || entities[0].name));
   validateCache(2);
 
-  const localDate = getTimeStampFromLocal();
-  const currentDate = Date.now();
-  if (currentDate - localDate > CACHE_TIME) {
-    const attrPromises = entities.map(entity => fetchAttributes(platform, entity.name, network, serverInfo));
-    const attrObjsList = await Promise.all(attrPromises).catch(err => {
-      const message = `Unable to load attribute data: ${err}.`
-      dispatch(createMessageAction(message, true));
-      return [];
-    });
+  try {
+    const localDate = getTimeStampFromLocal();
+    const currentDate = Date.now();
+    if (currentDate - localDate > CACHE_TIME) {
+      const attrPromises = entities.map(entity => fetchAttributes(platform, entity.name, network, serverInfo));
+      const attrObjsList = await Promise.all(attrPromises);
 
-    if (attrObjsList.length > 0) {
-      const attrMap = [...attrObjsList].reduce((curr: any, next) => {
-        curr[next.entity] = sortAttributes(next.attributes);
-        return curr;
-      }, {});
-      await dispatch(initAttributesAction(attrMap));
-      saveAttributes(attrMap, currentDate, 2);
+      if (attrObjsList.length > 0) {
+        const attrMap = [...attrObjsList].reduce((curr: any, next) => {
+          curr[next.entity] = sortAttributes(next.attributes);
+          return curr;
+        }, {});
+        await dispatch(initAttributesAction(attrMap));
+        saveAttributes(attrMap, currentDate, 2);
+      } else {
+        await dispatch(completeFullLoadAction(true));
+        return responseWithNoAction;
+      }
+    }
+  } catch (e) {
+    const message = `Unable to load attribute data: ${e}.`
+    await dispatch(createMessageAction(message, true));
+    return responseWithNoAction;
+  }
+
+  const { attributes, selectedEntity } = state().app;
+
+  try {
+    await dispatch(
+      fetchInitEntityAction(platform, selectedEntity, network, serverInfo, attributes[selectedEntity], entityParam, query)
+    );
+  } catch (e) {
+    const message = `Unable to load data: ${e}.`
+    await dispatch(createMessageAction(message, true));
+    return responseRedirect;
+  }
+
+  if (isQuery || !idParam) {
+    await dispatch(completeFullLoadAction(true));
+    return responseWithNoAction
+  };
+
+  try {
+    const { entity, query } = TezosConseilClient.getEntityQueryForId(idParam);
+    const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+    responseOpenModal[2] = { ...responseOpenModal[2], entity, items }
+  } catch (e) {
+    if (e.message === 'Invalid id parameter') {
+      dispatch(createMessageAction(`Invalid id format entered.`, true));
     } else {
-      dispatch(completeFullLoadAction(true));
-      return;
+      dispatch(createMessageAction('Unable to load an object for the id', true));
     }
   }
-  const { attributes, selectedEntity } = state().app;
-  await dispatch(
-    fetchInitEntityAction(platform, selectedEntity, network, serverInfo, attributes[selectedEntity], urlEntity, query)
-  );
-  dispatch(completeFullLoadAction(true));
+
+  await dispatch(completeFullLoadAction(true));
+  
+  if (state().message.isError) return responseChangePath;
+  return responseOpenModal;
 };
 
 export const fetchAttributes = async (platform: string, entity: string, network: string, serverInfo: any) => {
@@ -558,11 +604,19 @@ export const changeTab = (entity: string) => async (dispatch: any, state: any) =
   const { network, platform, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
 
-  if(!items[entity] || (items[entity] && items[entity].length === 0)) {
-    dispatch(setLoadingAction(true));
-    await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[entity], '', ''));
+  try {
+    if(!items[entity] || (items[entity] && items[entity].length === 0)) {
+      dispatch(setLoadingAction(true));
+      await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[entity], '', ''));
+      dispatch(setLoadingAction(false));
+    }
+  } catch (e) {
+    const message = `Unable to change to tab ${entity}`;
+    dispatch(createMessageAction(message, true));
     dispatch(setLoadingAction(false));
+    throw Error(message);
   }
+
   dispatch(setTabAction(entity));
 };
 

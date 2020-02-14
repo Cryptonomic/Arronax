@@ -54,6 +54,7 @@ interface Props {
   getModalItemAction: (entity: string, key: string, value: string | number) => void;
   onSubmitQuery: () => void;
   onSetSort: (entity: string, sorts: Sort[]) => void;
+  updateRoute: (redirect?: boolean, entity?: string, id?: string | number) => void;
 }
 
 interface State {
@@ -103,17 +104,22 @@ class CustomTable extends React.Component<Props, State> {
     onSubmitQuery();
   };
 
-  onCloseModal = () => this.setState({isOpenedModal: false});
+  onCloseModal = () => {
+    const { updateRoute } = this.props;
+    this.setState({isOpenedModal: false});
+    updateRoute(true);
+  };
 
   onOpenModal = (entity: string, key: string, value: string | number) => {
     const { selectedPrimaryKey, selectedPrimaryValue } = this.state;
-    const { getModalItemAction, selectedConfig } = this.props;
+    const { getModalItemAction, selectedConfig, updateRoute } = this.props;
     if (selectedPrimaryKey !== key || selectedPrimaryValue !== value) {
       const { platform, network } = selectedConfig;
       const modalName = getEntityModalName(platform, network, entity);
       this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
       getModalItemAction(entity, key, value);
       this.setState({referenceEntity: entity, selectedPrimaryKey: key, selectedPrimaryValue: value, isOpenedModal: true});
+      updateRoute(true, '', value);
     }
     this.setState({isOpenedModal: true});
   }

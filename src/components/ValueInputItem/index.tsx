@@ -135,7 +135,7 @@ class InputItem extends React.Component<Props, States> {
   }
 
   onHighCardValueChange = async (event: any, { newValue }: any) => {
-    const { value, onChange, fetchValues, attribute } = this.props;
+    const { value, onChange, attribute } = this.props;
     const { searchedVal } = this.state;
     const splitVals = newValue.split(',');
     const filterVal = splitVals[splitVals.length - 1].trim();
