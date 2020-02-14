@@ -35,7 +35,7 @@ cache:
     - node_modules
 
 install:
-  - npm run install
+  - npm install
   # On Linux, initialize "virtual display". See before_script
   - |
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
