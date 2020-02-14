@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 
 const FooterContainer = styled.div`
@@ -19,29 +19,29 @@ const Link = styled.a`
   text-decoration: none;
 `;
 
-const LanguageContainer = styled.div`
-  display: flex;
-  justify-content: center;
-`;
+// const LanguageContainer = styled.div`
+//   display: flex;
+//   justify-content: center;
+// `;
 
-const LanguageItem = styled.div<{isFirst: boolean}>`
-  color: #ffffff;
-  padding: 0 5px;
-  border-left: ${({ isFirst }) => (!isFirst && '1px solid rgba(255, 255, 255, 0.2)')};
-  line-height: 18px;
-  cursor: pointer;
-`;
+// const LanguageItem = styled.div<{isFirst: boolean}>`
+//   color: #ffffff;
+//   padding: 0 5px;
+//   border-left: ${({ isFirst }) => (!isFirst && '1px solid rgba(255, 255, 255, 0.2)')};
+//   line-height: 18px;
+//   cursor: pointer;
+// `;
 
-const langs = ['en', 'zh-TW', 'ru', 'fr'];
+// const langs = ['en', 'zh-TW', 'ru', 'fr'];
 
 const Footer: React.FC<{}> = () => {
   const version: string = `${process.env.REACT_APP_VERSION}-${process.env.REACT_APP_GIT_SHA}`;
   const commitLink: string = `https://github.com/Cryptonomic/Arronax/tree/${process.env.REACT_APP_GIT_SHA}`;
-  const { i18n } = useTranslation();
+  // const { i18n } = useTranslation();
 
-  const changeLanguage = (lng: any) => {
-    i18n.changeLanguage(lng);
-  };
+  // const changeLanguage = (lng: any) => {
+  //   i18n.changeLanguage(lng);
+  // };
 
   return (
     <FooterContainer>

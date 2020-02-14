@@ -40,17 +40,6 @@ const HeaderLogo = styled.div`
   letter-spacing: 5.46px;
 `;
 
-const IconContainer = styled.div`
-  width: 35px;
-  height: 35px;
-  background: #669fb1;
-  border-radius: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: auto;
-`;
-
 const SelectContainer = styled.div`
   margin-left: 12px;
 `;

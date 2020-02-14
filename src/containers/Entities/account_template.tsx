@@ -55,7 +55,7 @@ class EntityModal extends React.Component<Props, States> {
     const processedValues: any = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
     let isBaker: any = false;
     try {
-        isBaker = processedValues.find((a: any) => a.name === 'is_baker').value == true;
+        isBaker = processedValues.find((a: any) => a.name === 'is_baker').value === true;
         // TODO: query delegates
     } catch { }
     this.explicitMinorKeys = ['delegate_setable', 'spendable'];

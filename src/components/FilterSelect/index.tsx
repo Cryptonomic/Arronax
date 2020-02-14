@@ -42,31 +42,6 @@ const MenuContents = styled.div`
   min-height: 1.25em;
 `;
 
-const FadeOut = styled.span`
-  position: absolute;
-  width: 100%;
-  height: 30px;
-  pointer-events: none;
-`;
-
-const FadeTop = styled(FadeOut)`
-  top: 38px;
-  background-image: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.8) 50%
-  );
-  z-index: 10;
-`;
-
-const FadeBottom = styled(FadeOut)`
-  bottom: 8px;
-  background-image: linear-gradient(
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.8) 50%
-  );
-`;
-
 const MainMenuItem = styled(MenuItem)`
   &&& {
     &[class*='selected'] {
@@ -112,10 +87,6 @@ class FilterSelect extends React.Component<Props, States> {
     this.state = {
       anchorEl: null
     };
-  }
-
-  componentDidMount() {
-    const { items } = this.props;
   }
 
   handleChange = (item: any) => {
