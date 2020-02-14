@@ -35,7 +35,7 @@ cache:
     - node_modules
 
 install:
-  - yarn install
+  - npm run install
   # On Linux, initialize "virtual display". See before_script
   - |
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
@@ -54,4 +54,4 @@ install:
 script:
   - node --version
   - unset CI
-  - yarn run build
+  - npm run build
