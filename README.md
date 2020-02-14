@@ -10,9 +10,9 @@ Blockchain data analytics tool built with [ConseilJS](https://github.com/Crypton
 ```bash
 git clone https://github.com/Cryptonomic/Arronax.git
 cd Arronax
-yarn install
+npm install
 #Read instructions for configuration
-yarn start
+npm run start
 ```
 
 ### Configuration Instructions
@@ -39,5 +39,8 @@ export default configs;
 
 ### Other Build Targets
 
+Start the local server without forcing open a browser.
+`npm run serve`
+
 Package (webpack) for distribution. Fully contained artifacts will appear in `/build` once this process is complete.
-`yarn build`
+`npm run build`
