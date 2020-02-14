@@ -1,14 +1,14 @@
 import React from 'react';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
+import { withStyles } from '@material-ui/core/styles';
 import muiStyled from '@material-ui/styles/styled';
 import FormControl from '@material-ui/core/FormControl';
 import SelectField from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
-import Tooltip from 'rc-tooltip';
+import Tooltip from '@material-ui/core/Tooltip';
 import { ArronaxIcon } from '../ArronaxIcon';
-import 'rc-tooltip/assets/bootstrap_white.css';
 
 const Container = styled.div`
   position: absolute;
@@ -94,7 +94,6 @@ const TooltipButton = muiStyled(IconButton)({
 });
 
 const TooltipContainer = styled.div`
-  width: 344px;
   font-size: 16px;
   line-height: 24px;
   font-weight: 500;
@@ -106,6 +105,18 @@ const ExportTxt = styled.span`
   color: #56c2d9;
   cursor: pointer;
 `;
+
+const TooltipWrapper = withStyles({
+  tooltip: {
+    maxWidth: '370px',
+    padding: '23px 0px 23px 23px',
+    boxShadow: '0px 0px 12px 0px rgba(0, 0, 0, 0.3)',
+    background: 'white'
+  },
+  arrow: {
+    color: 'white'
+  }
+})(Tooltip);
 
 const getList = (pageCount: number, balance: number, rowsPerPage: number) => {
   let items = [];
@@ -172,21 +183,19 @@ const CustomPaginator: React.FC<Props> = props => {
       </SelectContainer>
       <MainTxtWrapper>of {totalNumber}</MainTxtWrapper>
       {totalNumber >= 1000 && (
-        <React.Fragment>
+        <>
           <LimitTxt>limit</LimitTxt>
-          <Tooltip
-            placement="bottomRight"
-            overlayClassName="limit-tooltip"
-            overlay={getLimitTooltip(onExportCsv)}
-            align={{
-              offset: [7, 10],
-            }}
-          >
+          <TooltipWrapper
+            interactive
+            arrow
+            open={true}
+            placement="bottom-end"
+            title={getLimitTooltip(onExportCsv)} >
             <TooltipButton>
               <ArronaxIcon iconName="icon-question" size="16px" color="#56c2d9" />
             </TooltipButton>
-          </Tooltip>
-        </React.Fragment>
+          </TooltipWrapper>
+        </>
       )}
       <ButtonWrapper
         isActive={page !== 0 ? 1 : 0}
