@@ -188,7 +188,6 @@ const CustomPaginator: React.FC<Props> = props => {
           <TooltipWrapper
             interactive
             arrow
-            open={true}
             placement="bottom-end"
             title={getLimitTooltip(onExportCsv)} >
             <TooltipButton>
