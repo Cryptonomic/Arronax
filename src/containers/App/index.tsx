@@ -1,13 +1,12 @@
 import React from 'react';
-import { withTranslation, WithTranslation } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { EntityDefinition } from 'conseiljs';
 import ReactDynamicImport from 'react-dynamic-import';
 
 import Header from '../../components/Header';
@@ -46,7 +45,6 @@ import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../
 import { clearMessageAction } from '../../reducers/message/actions';
 import { getEntityModalName } from '../../utils/hashtable';
 import { defaultPath } from '../../router/routes';
-import { ToolType, Config } from '../../types';
 import octopusSrc from '../../assets/sadOctopus.svg';
 
 import { 
@@ -67,58 +65,10 @@ import {
   DialogContentWrapper
 } from './styles';
 
+import { ToolType, Config } from '../../types';
+import { Props, States } from './types';
+ 
 const entityloader = (f: any) => import(`../Entities/${f}`);
-
-interface OwnProps {
-  isLoading: boolean;
-  configs: Config[];
-  selectedConfig: Config;
-  selectedEntity: string;
-  items: object[];
-  isFullLoaded: boolean;
-  filterCount: number;
-  aggCount: number;
-  selectedColumns: EntityDefinition[];
-  entities: EntityDefinition[];
-  isError: boolean;
-  message: string;
-  attributes: any;
-  selectedModalItem: object;
-  removeAllFilters: (entity: string) => void;
-  changeNetwork(config: Config): void;
-  changeTab: (type: string) => void;
-  initLoad: (p: string, n: string, e: string, i: string, t: boolean) => any;
-  submitQuery: () => void;
-  exportCsvData: ()=> void;
-  shareReport: ()=> void;
-  initMessage: ()=> void;
-  addConfig: (config: Config, isUse: boolean) => void;
-  removeConfig: (index: number) => void;
-  searchById: (id: string | number) => any;
-  getModalItemAction: (entity: string, key: string, value: string | number) => void;
-}
-
-interface States {
-  isSettingCollapsed: boolean;
-  selectedTool: string;
-  isModalUrl: boolean;
-  isOpenConfigMdoal: boolean;
-  isOpenEntityModal: boolean;
-  searchedEntity: string;
-  searchedItem: any[];
-  primaryKeyClicked: boolean
-}
-
-interface RouteComponentWithParmas extends RouteComponentProps {
-  match: {
-    params: Record<string, string>
-    path: string
-    url: string
-    isExact: boolean
-  }
-}
-
-type Props = OwnProps & RouteComponentWithParmas & WithTranslation;
 
 class Arronax extends React.Component<Props, States> {
   static defaultProps: any = {
