@@ -3,17 +3,13 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import styled from 'styled-components';
-import { withStyles } from '@material-ui/core/styles';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { EntityDefinition } from 'conseiljs';
 import ReactDynamicImport from 'react-dynamic-import';
+
 import Header from '../../components/Header';
 import SettingsPanel from '../../components/SettingsPanel';
 import Footer from '../../components/Footer';
@@ -21,9 +17,7 @@ import Toolbar from '../../components/Toolbar';
 import CustomTable from '../CustomTable';
 import ConfigModal from '../../components/ConfigModal';
 import Loader from '../../components/Loader';
-
 import { getItemByPrimaryKey } from '../../reducers/app/thunks';
-
 import {
   getLoading,
   getConfigs,
@@ -52,125 +46,28 @@ import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../
 import { clearMessageAction } from '../../reducers/message/actions';
 import { getEntityModalName } from '../../utils/hashtable';
 import { defaultPath } from '../../router/routes';
-
 import { ToolType, Config } from '../../types';
 import octopusSrc from '../../assets/sadOctopus.svg';
 
+import { 
+  Container,
+  MainContainer,
+  TabContainer,
+  NoResultContainer,
+  OctopusImg,
+  NoResultContent,
+  NoResultTxt,
+  TryTxt,
+  ButtonContainer,
+  ClearButton,
+  TryButton,
+  DismissButton,
+  TabsWrapper,
+  TabWrapper,
+  DialogContentWrapper
+} from './styles';
+
 const entityloader = (f: any) => import(`../Entities/${f}`);
-
-const Container = styled.div`
-  padding: 50px 0;
-  min-height: calc(100vh - 405px);
-`;
-
-const MainContainer = styled.div`
-  position: relative;
-  min-height: 100vh;
-`;
-
-const TabContainer = styled.div`
-  padding: 0px 15px;
-  width: 100%;
-`;
-
-const NoResultContainer = styled.div`
-  width: 100%;
-  padding-top: 67px;
-  display: flex;
-  justify-content: center;
-`;
-
-const OctopusImg = styled.img`
-  height: 183px;
-  width: 169px;
-`;
-
-const NoResultContent = styled.div`
-  margin-left: 38px;
-  padding-top: 16px;
-`;
-
-const NoResultTxt = styled.div`
-  color: rgb(42, 57, 115);
-  font-size: 28px;
-  font-weight: 500;
-  line-height: 30px;
-`;
-
-const TryTxt = styled.div`
-  color: rgb(155, 155, 155);
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 21px;
-  margin-top: 8px;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  margin-top: 24px;
-`;
-
-const CustomButton = styled.div`
-  cursor: pointer;
-  border-radius: 9px;
-  height: 42px;
-  width: 158px;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-`;
-
-const ClearButton = styled(CustomButton)`
-  border: 2px solid rgb(0, 196, 220);
-  color: rgb(0, 196, 220);
-`;
-
-const TryButton = styled(CustomButton)`
-  color: white;
-  background: rgb(86, 194, 217);
-  margin-left: 22px;
-`;
-
-const DismissButton = styled(CustomButton)`
-  color: white;
-  background: rgb(86, 194, 217);
-`;
-
-const TabsWrapper = withStyles({
-  root: {
-    borderBottom: 'none',
-  },
-  indicator: {
-    backgroundColor: '#a6dfe2',
-    height: '5px'
-  },
-})(Tabs);
-
-const TabWrapper = withStyles({
-  root: {
-    textTransform: 'capitalize',
-    padding: 0,
-    minWidth: '50px',
-    fontWeight: 300,
-    color: '#2e3b6c',
-    fontSize: '24px',
-    letterSpacing: '3px',
-    maxWidth: '500px',
-    marginRight: '50px',
-    '&$selected': {
-      fontWeight: 'normal',
-    },
-  },
-  selected: {},
-})(Tab);
-
-const DialogContentWrapper = withStyles({
-  root: {
-    minWidth: '350px'
-  }
-})(DialogContent);
 
 interface OwnProps {
   isLoading: boolean;
