@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createRef, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -78,7 +78,7 @@ export const Arronax = (props: any) => {
   const entities = useSelector(({ app }: RootState) => app.entities, shallowEqual);
   const isError = useSelector(({ message }: RootState) => message.isError, shallowEqual);
   const message = useSelector(({ message }: RootState) => message.message, shallowEqual);
-  const settingRef: any = createRef();
+  const settingRef: any = useRef();
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const isRealLoading = isLoading || !isFullLoaded;
@@ -107,10 +107,10 @@ export const Arronax = (props: any) => {
   }, []);
 
   useEffect(() => {
-    if (!isError) {
+    if (!isError && settingRef.current) {
       onChangeTab(props.match.params.entity);
     }
-  }, [tabChanged]);
+  }, [props.match.params.entity]);
 
   const updateRoute = (replace?: boolean, entity?: string, id?: string | number) => {
     const { platform, network } = selectedConfig;
