@@ -16,9 +16,9 @@ import {
 } from '../../reducers/app/selectors';
 import { getItemByPrimaryKey, submitQuery } from '../../reducers/app/thunks';
 import { setSortAction } from '../../reducers/app/actions';
-import CustomTableRow from '../../components/CustomTableRow';
-import CustomTableHeader from '../../components/TableHeader';
-import CustomPaginator from '../../components/CustomPaginator';
+import CustomTableRow from '../CustomTableRow';
+import CustomTableHeader from '../TableHeader';
+import CustomPaginator from '../CustomPaginator';
 import { getEntityModalName } from '../../utils/hashtable';
 import {
   TableContainer,

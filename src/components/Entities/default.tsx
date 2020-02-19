@@ -4,7 +4,7 @@ import Modal from '@material-ui/core/Modal';
 
 import { formatValueForDisplay } from '../../utils/render';
 import { getNoEmptyFields } from '../../utils/attributes';
-import Loader from '../../components/Loader';
+import Loader from '../Loader';
 
 import {
   ScrollContainer, ModalContainer, ListContainer, CloseIcon,
