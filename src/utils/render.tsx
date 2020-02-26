@@ -11,6 +11,10 @@ import Clipboard from '../components/Clipboard';
 import { AttributeDefinition, AttrbuteDataType, ConseilFunction } from 'conseiljs';
 import { truncateHash, formatNumber } from './general';
 
+interface Attributes extends AttributeDefinition {
+  valueMap?: Record<string, string>
+}
+
 type StyledCircleProps = SvgIconProps & { newcolor: string };
 const StyledCircle1 = styled(Circle)<{ newcolor: string }>`
   color: ${({ newcolor }) => newcolor};
@@ -63,9 +67,13 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
       return formatNumber(Number(value), aggregationAttribute);
   }
   
-  export const formatValueForDisplay = (platform: string, network: string, entity: string, value: any, attribute: AttributeDefinition, onClickPrimaryKey: (entity: string, key: string, value: string | number) => void, aggregation?: ConseilFunction, truncate: boolean = true) => {
+  export const formatValueForDisplay = (platform: string, network: string, entity: string, value: any, attribute: Attributes, onClickPrimaryKey: (entity: string, key: string, value: string | number) => void, aggregation?: ConseilFunction, truncate: boolean = true) => {
       if (value == null || value.length === 0) { return ''; }
-      const {dataFormat, dataType} = attribute;
+      const {dataFormat, dataType, valueMap} = attribute;
+      
+      if (valueMap && valueMap[value]) {
+        return valueMap[value];
+      }
   
       if (!!aggregation) { return formatAggregatedValue(attribute, value, aggregation); }
   
