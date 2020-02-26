@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { withRouter, useHistory } from 'react-router-dom';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -50,41 +50,52 @@ import {
 } from './styles';
 
 import { Config } from '../../types';
-import { RootState } from '../../reducers'
+
+import useAppState from './state';
  
 const entityloader = (f: any) => import(`../Entities/${f}`);
 
 export const Arronax = (props: any) => {
-  const [primaryKeyClicked, setPrimaryKeyClicked] = useState(false);
-  const [settingCollapsed, setSettingCollapsed] = useState(false);
-  const [openConfigModal, setOpenConfigModal] = useState(false);
-  const [openEntityModal, setOpenEntityModal] = useState(false);
-  const [selectedTool, setSelectedTool] = useState('filter');
-  const [tabChanged, setTabChanged] = useState(false);
-  const [searchedEntity, setSearchedEntity] = useState('');
-  const [searchedItem, setSearchedItem] = useState([]);
-  const [modalUrl] = useState(false);
-  const filterCount = useSelector(({ app }: RootState) => app.filterCount[app.selectedEntity], shallowEqual);
-  const isLoading = useSelector(({ app }: RootState) => app.isLoading, shallowEqual);
-  const configs = useSelector(({ app }: RootState) => app.configs, shallowEqual);
-  const selectedConfig = useSelector(({ app }: RootState) => app.selectedConfig, shallowEqual);
-  const selectedEntity = useSelector(({ app }: RootState) => app.selectedEntity, shallowEqual);
-  const selectedModalItem = useSelector(({ app }: RootState) => app.selectedModalItem, shallowEqual);
-  const items = useSelector(({ app }: RootState) => app.items[app.selectedEntity], shallowEqual);
-  const isFullLoaded = useSelector(({ app }: RootState) => app.isFullLoaded, shallowEqual);
-  const selectedColumns = useSelector(({ app }: RootState) => app.columns[app.selectedEntity], shallowEqual);
-  const aggregations = useSelector(({ app }: RootState) => app.aggregations[app.selectedEntity], shallowEqual);
-  const attributes = useSelector(({ app }: RootState) => app.attributes, shallowEqual);
-  const entities = useSelector(({ app }: RootState) => app.entities, shallowEqual);
-  const isError = useSelector(({ message }: RootState) => message.isError, shallowEqual);
-  const message = useSelector(({ message }: RootState) => message.message, shallowEqual);
+  const [
+    {
+      filterCount,
+      isLoading,
+      configs,
+      selectedConfig,
+      selectedEntity,
+      selectedModalItem,
+      items,
+      isFullLoaded,
+      selectedColumns,
+      aggregations,
+      attributes,
+      entities,
+      isError,
+      message,
+    }, 
+    {
+      primaryKeyClicked,
+      settingCollapsed,
+      openConfigModal,
+      openEntityModal,
+      tabChanged,
+      modalUrl,
+      selectedTool,
+      searchedEntity,
+      searchedItem
+   }, 
+   { 
+      updateAppState
+   }
+  ] = useAppState();
   const settingRef: any = useRef();
+  const EntityModal: any = useRef(null);
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const isRealLoading = isLoading || !isFullLoaded;
   const selectedObjectEntity: any = entities.find((entity: any) => entity.name === searchedEntity);
   const modalItems = primaryKeyClicked ? selectedModalItem : searchedItem;
-  let EntityModal: any = useRef(null);
+  console.log('ITEMS', items)
 
   useEffect(() => {
     (async () => {
@@ -98,10 +109,12 @@ export const Arronax = (props: any) => {
         const { platform, network } = selectedConfig;
         const modalName = getEntityModalName(platform, network, openModal.entity);
         EntityModal.current = ReactDynamicImport({ name: modalName, loader: entityloader });
-        setSearchedItem(openModal.items);
-        setSearchedEntity(openModal.entity);
-        setOpenEntityModal(true);
-        setPrimaryKeyClicked(false);
+        updateAppState({
+          searchedItem: openModal.items,
+          searchedEntity: openModal.entity,
+          openEntityModal: false,
+          primaryKeyClicked: false
+        });
       };
     })();
   }, []);
@@ -111,6 +124,10 @@ export const Arronax = (props: any) => {
       onChangeTab(props.match.params.entity);
     }
   }, [props.match.params.entity]);
+
+  useEffect(() => {
+
+  }, [selectedConfig.network]);
 
   const updateRoute = (replace?: boolean, entity?: string, id?: string | number) => {
     const { platform, network } = selectedConfig;
@@ -125,6 +142,7 @@ export const Arronax = (props: any) => {
 
   const onChangeNetwork = async (config: Config) => {
     await dispatch(changeNetwork(config));
+    console.log(selectedEntity)
     updateRoute(true, selectedEntity)
   };
 
@@ -140,24 +158,32 @@ export const Arronax = (props: any) => {
 
   const onClickTab = (value: string) => {
     if (value === selectedEntity) return;
-    setTabChanged(!tabChanged);
+    updateAppState({ tabChanged: !tabChanged });
     updateRoute(false, value);
   }
 
   const onChangeTool = async (tool: string) => {
     if (settingCollapsed && selectedTool !== tool) {
-      setSelectedTool(tool)
+      updateAppState({ selectedTool: tool });
     } else if (!settingCollapsed && selectedTool !== tool) {
-      setSettingCollapsed(!settingCollapsed);
-      setSelectedTool(tool)
+      updateAppState({
+        selectedTool: tool,
+        settingCollapsed: !settingCollapsed 
+      });
     } else {
-      setSettingCollapsed(!settingCollapsed);
+      updateAppState({
+        settingCollapsed: !settingCollapsed 
+      });
     }
   }
 
-  const onSettingCollapse = () => setSettingCollapsed(!settingCollapsed);
+  const onSettingCollapse = () => updateAppState({
+        settingCollapsed: !settingCollapsed 
+      });;
 
-  const onCloseFilter = () => setSettingCollapsed(false);
+  const onCloseFilter = () => updateAppState({
+    settingCollapsed: false 
+  });
 
   const onSubmit = async () => {
     onCloseFilter();
@@ -175,9 +201,13 @@ export const Arronax = (props: any) => {
 
   const handleErrorClose = async () => await dispatch(clearMessageAction());
 
-  const closeConfigModal = () => setOpenConfigModal(false);
+  const closeConfigModal = () => updateAppState({
+    openConfigModal: false
+  });
 
-  const onOpenConfigModal = () => setOpenConfigModal(true);
+  const onOpenConfigModal = () => updateAppState({
+    openConfigModal: true
+  });;
 
   const onAddConfig = (config: Config, isUse: boolean) => {
     dispatch(addConfigAction(config, isUse));
@@ -191,10 +221,12 @@ export const Arronax = (props: any) => {
       const { platform, network } = selectedConfig;
       const modalName = getEntityModalName(platform, network, entity);
       EntityModal.current = ReactDynamicImport({ name: modalName, loader: entityloader });
-      setSearchedItem(items);
-      setSearchedEntity(entity);
-      setOpenEntityModal(true);
-      setPrimaryKeyClicked(false);
+      updateAppState({
+        searchedItem: items,
+        searchedEntity: entity,
+        openEntityModal: true,
+        primaryKeyClicked: false
+      });
       updateRoute(true, '', val);
     }
   }
@@ -205,13 +237,15 @@ export const Arronax = (props: any) => {
     const modalName = getEntityModalName(platform, network, entity);
     EntityModal.current = ReactDynamicImport({ name: modalName, loader: entityloader });
     dispatch(getItemByPrimaryKey(entity, key, value));
-    setSearchedEntity(entity);
-    setPrimaryKeyClicked(true);
+    updateAppState({
+      searchedEntity: entity,
+      primaryKeyClicked: true
+    });
     updateRoute(true, '', value);
   }
 
   const onCloseEntityModal = () => {
-    setOpenEntityModal(false);
+    updateAppState({ openEntityModal: false });
     updateRoute(true);
   };
 
@@ -260,8 +294,8 @@ export const Arronax = (props: any) => {
             onSubmit={onSubmit}
             onClose={onCloseFilter}
           />
-          <TabContainer>
-            {items.length > 0 && 
+          {/* <TabContainer>
+            {items && items.length > 0 && 
               <CustomTable 
                 isModalUrl={modalUrl} 
                 isLoading={isLoading} 
@@ -283,7 +317,7 @@ export const Arronax = (props: any) => {
                 </NoResultContent>
               </NoResultContainer>
             )}
-          </TabContainer>
+          </TabContainer> */}
         </>
       )}
     </Container>
