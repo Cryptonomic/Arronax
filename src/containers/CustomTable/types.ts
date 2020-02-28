@@ -9,6 +9,7 @@ export interface Props {
   selectedConfig: Config;
   selectedEntity: string;
   selectedModalItem: object;
+  selectedModalSubItem: any;
   attributes: any;
   isLoading: boolean;
   selectedSort: Sort;
