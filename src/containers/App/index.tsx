@@ -96,7 +96,7 @@ class Arronax extends React.Component<Props, States> {
   }
 
   async componentDidMount() {
-    // window.addEventListener('beforeunload', this.onBeforeunload.bind(this));
+    window.addEventListener('beforeunload', this.onBeforeunload.bind(this));
     const { initLoad, match, history, selectedConfig } = this.props;
     const { url, params: { platform, network, entity, id } } = match;
     const isQuery = url.includes('/query/');
@@ -132,7 +132,7 @@ class Arronax extends React.Component<Props, States> {
   }
 
   componentWillUnmount() {
-    // window.removeEventListener('beforeunload', this.onBeforeunload.bind(this));
+    window.removeEventListener('beforeunload', this.onBeforeunload.bind(this));
   }
 
   updateRoute = (replace?: boolean, entity?: string, id?: string | number) => {
