@@ -41,7 +41,8 @@ export interface States {
   isOpenEntityModal: boolean;
   searchedEntity: string;
   searchedItem: any[];
-  primaryKeyClicked: boolean
+  searchedSubItems: any[];
+  primaryKeyClicked: boolean;
 }
 
 export interface RouteComponentWithParmas extends RouteComponentProps {

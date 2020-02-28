@@ -28,6 +28,12 @@ const LinkDiv = styled.div`
   text-decoration: underline;
 `;
 
+const LinkSpan = styled.span`
+  color: #56c2d9;
+  cursor: pointer;
+  text-decoration: underline;
+`;
+
 const PrimaryKeyList: any = {
   blocks: ['hash', 'level'],
   accounts: ['account_id'],
@@ -111,3 +117,8 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
           return formatReferenceValue(attribute, value, value, onClickPrimaryKey);
       }
   };
+
+  export const formatValueWithLink = (props: { value: number, onClick: () => void }) => {
+    const { value, onClick } = props;
+    return <LinkSpan onClick={onClick}>{value}</LinkSpan>
+  } 

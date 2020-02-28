@@ -87,7 +87,8 @@ class Arronax extends React.Component<Props, States> {
       isOpenConfigMdoal: false,
       isOpenEntityModal: false,
       searchedEntity: '',
-      searchedItem: []
+      searchedItem: [],
+      searchedSubItems: []
     };
 
     this.settingRef = React.createRef();
@@ -95,6 +96,7 @@ class Arronax extends React.Component<Props, States> {
   }
 
   async componentDidMount() {
+    // window.addEventListener('beforeunload', this.onBeforeunload.bind(this));
     const { initLoad, match, history, selectedConfig } = this.props;
     const { url, params: { platform, network, entity, id } } = match;
     const isQuery = url.includes('/query/');
@@ -129,6 +131,10 @@ class Arronax extends React.Component<Props, States> {
     }
   }
 
+  componentWillUnmount() {
+    // window.removeEventListener('beforeunload', this.onBeforeunload.bind(this));
+  }
+
   updateRoute = (replace?: boolean, entity?: string, id?: string | number) => {
     const { 
       selectedConfig: { platform, network }, 
@@ -146,8 +152,13 @@ class Arronax extends React.Component<Props, States> {
   onChangeNetwork = async (config: Config) => {
     const { changeNetwork, selectedEntity } = this.props;
     await changeNetwork(config);
-    this.updateRoute(true, selectedEntity)
+    this.updateRoute(true, selectedEntity) 
   };
+
+  onBeforeunload(e: any) {
+    e.preventDefault();
+    e.returnValue = true;
+  }
 
   onChangeTab = async (value: string) => {
     const { selectedEntity, changeTab } = this.props;
@@ -286,7 +297,7 @@ class Arronax extends React.Component<Props, States> {
     } = this.props;
     const {
       isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal, isOpenEntityModal,
-      searchedItem, searchedEntity, primaryKeyClicked
+      searchedItem, searchedEntity, searchedSubItems, primaryKeyClicked
     } = this.state;
     const { EntityModal } = this;
     const isRealLoading = isLoading || !isFullLoaded;
@@ -393,6 +404,8 @@ class Arronax extends React.Component<Props, States> {
             open={isOpenEntityModal}
             title={selectedObjectEntity.displayName}
             attributes={attributes[searchedEntity]}
+            opsAttributes={attributes.operations}
+            subItems={searchedSubItems}
             items={modalItems}
             isLoading={isLoading}
             onClose={this.onCloseEntityModal}
