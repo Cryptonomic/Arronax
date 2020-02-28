@@ -31,10 +31,10 @@ interface States {
 type Props = OwnProps & WithTranslation;
 
 class EntityModal extends React.Component<Props, States> {
-  explicitKeys: string[];
+  explicitKeys: string[] = [];
   explicitMinorKeys: string[] = [];
 
-  constructor(props) {
+  constructor(props: any) {
     super(props);
     this.state = { count: 0 };
   }

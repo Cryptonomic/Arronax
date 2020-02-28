@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import ClipboardView from './Clipboard-view';
 
-const ClipboardContainer = ({ value }) => {
+const ClipboardContainer = ({ value }: any) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {

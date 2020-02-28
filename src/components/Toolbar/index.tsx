@@ -146,7 +146,7 @@ const Toolbar: React.FC<Props> = props => {
     }, 2000);
   }
 
-  function openShareMenu(event) {
+  function openShareMenu(event: any) {
     setAnchorEl(event.currentTarget);
   }
   function closeShareMenu() {

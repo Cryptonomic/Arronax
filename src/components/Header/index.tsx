@@ -40,17 +40,6 @@ const HeaderLogo = styled.div`
   letter-spacing: 5.46px;
 `;
 
-const IconContainer = styled.div`
-  width: 35px;
-  height: 35px;
-  background: #669fb1;
-  border-radius: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: auto;
-`;
-
 const SelectContainer = styled.div`
   margin-left: 12px;
 `;
@@ -168,8 +157,8 @@ const Header: React.FC<Props> = props => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [searchKey, setSearchKey] = React.useState('');
   const { t } = useTranslation();
-  const localConfigs = [];
-  const mainConfigs = [];
+  const localConfigs: any = [];
+  const mainConfigs: any = [];
   configs.forEach(config => {
     if (config.isLocal) {
       localConfigs.push(config);
@@ -178,7 +167,7 @@ const Header: React.FC<Props> = props => {
     }
   });
 
-  function handleClick(event) {
+  function handleClick(event: any) {
     setAnchorEl(event.currentTarget);
   }
 
@@ -241,7 +230,7 @@ const Header: React.FC<Props> = props => {
           <MenuHeaderItem value="" disabled>
             {t('components.header.select_prefered_network')}
           </MenuHeaderItem>
-          {mainConfigs.map(config => {
+          {mainConfigs.map((config: any) => {
             const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&
               selectedConfig.url === config.url && selectedConfig.apiKey === config.apiKey;
             return (
@@ -259,7 +248,7 @@ const Header: React.FC<Props> = props => {
             );
           })}
           {localConfigs.length > 0 && <Divider />}
-          {localConfigs.map((config, index) => {
+          {localConfigs.map((config: any, index: any) => {
             const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&
               selectedConfig.url === config.url && selectedConfig.apiKey === config.apiKey;
             return (

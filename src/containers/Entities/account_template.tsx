@@ -32,7 +32,7 @@ class EntityModal extends React.Component<Props, States> {
   explicitKeys: string[] = [];
   explicitMinorKeys: string[] = [];
 
-  constructor(props) {
+  constructor(props: any) {
     super(props);
     this.state = { count: 0 };
   }
@@ -52,10 +52,10 @@ class EntityModal extends React.Component<Props, States> {
     const { open, items, attributes, isLoading, onClose, title, t } = this.props;
     const { count } = this.state;
     const total = items ? items.length : 0;
-    const processedValues = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
-    let isBaker = false;
+    const processedValues: any = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
+    let isBaker: any = false;
     try {
-        isBaker = processedValues.find(a => a.name === 'is_baker').value == true;
+        isBaker = processedValues.find((a: any) => a.name === 'is_baker').value === true;
         // TODO: query delegates
     } catch { }
     this.explicitMinorKeys = ['delegate_setable', 'spendable'];
@@ -67,11 +67,11 @@ class EntityModal extends React.Component<Props, States> {
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
               <ModalTitle>
-                {(processedValues.find(i => i.name === 'script') === undefined) && (
+                {(processedValues.find((i: any) => i.name === 'script') === undefined) && (
                   t('components.entityModal.details', {title})
                 )}
 
-                {(processedValues.find(i => i.name === 'script') !== undefined) && (
+                {(processedValues.find((i: any) => i.name === 'script') !== undefined) && (
                   t('components.entityModal.details', {title: 'Contract'})
                 )}
               </ModalTitle>
@@ -116,7 +116,7 @@ class EntityModal extends React.Component<Props, States> {
                     </ContentTxt>
                   </RowContainer>
 
-                  {processedValues.filter(i => !(this.explicitKeys.includes(i.name))).map((item, index) => {
+                  {processedValues.filter((i: any) => !(this.explicitKeys.includes(i.name))).map((item: any, index: any) => {
                     const { entity, name } = item;
                     return (
                       <RowContainer key={index}>
@@ -127,7 +127,7 @@ class EntityModal extends React.Component<Props, States> {
                   })}
 
                   <BottomRowContainer>
-                    {this.explicitMinorKeys.filter(name => processedValues.find(i => i.name === name) !== undefined).map(name => (
+                    {this.explicitMinorKeys.filter(name => processedValues.find((i: any) => i.name === name) !== undefined).map(name => (
                       <BottomCol key={name}>
                         <BottomColTitle>{t(`attributes.accounts.${name}`)}</BottomColTitle>
                         <BottomColContent>{this.formatValue(processedValues, attributes, name)}</BottomColContent>

@@ -1,21 +1,21 @@
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles'
 
-export const useClipboardWrapper = (Component) => styled(Component)`
+export const useClipboardWrapper = (Component: any) => styled(Component)`
   border: none;
   background: transparent;
   outline: none !important;
   cursor: pointer;
 `;
 
-export const useCopyIconWrapper = (Component) => styled(Component)`
+export const useCopyIconWrapper = (Component: any) => styled(Component)`
 &&& {
   color: #a6dfe2;
   font-size: 20px;
 }
 `
 
-export const useTooltipWrapper = (Component) => withStyles({
+export const useTooltipWrapper = (Component: any) => withStyles({
   tooltip: {
     backgroundColor: 'white',
     color: 'rgb(155, 155, 155)',

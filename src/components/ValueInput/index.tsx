@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ConseilOperator, AttributeDefinition } from 'conseiljs';
-import InputItem from '../ValueInputItem';
+import { ValueInputItem } from '../ValueInputItem';
 
 const HR = styled.div`
   width: 1px;
@@ -22,7 +22,7 @@ const AndBlock = styled.div`
 `;
 
 interface Props {
-  attribute: AttributeDefinition;
+  attribute: AttributeDefinition | any;
   operator: string;
   values: string[];
   onChange: (values: string[]) => void;
@@ -50,19 +50,19 @@ const ValueInput: React.FC<Props> = props => {
   if (operator === ConseilOperator.BETWEEN) {
     return (
       <React.Fragment>
-        <InputItem
+        <ValueInputItem
           attribute={attribute}
           value={values[0]}
-          onChange={val => changeRange(val, 0)}
+          onChange={(val: any) => changeRange(val, 0)}
         />
         <HR />
         <AndBlock>{t('components.valueInput.and')}</AndBlock>
         <HR />
-        <InputItem
+        <ValueInputItem
           attribute={attribute}
           disabled={!values[0]}
           value={values[1] ? values[1] : ''}
-          onChange={val => changeRange(val, 1)}
+          onChange={(val: any) => changeRange(val, 1)}
         />
       </React.Fragment>
     );
@@ -72,18 +72,18 @@ const ValueInput: React.FC<Props> = props => {
     const newValue = values.join(', ');
 
     return (
-      <InputItem
+      <ValueInputItem
         attribute={attribute}
         value={newValue}
-        onChange={val => changeList(val)}
+        onChange={(val: any) => changeList(val)}
       />
     );
   }
   return (
-    <InputItem
+    <ValueInputItem
       attribute={attribute}
       value={values[0]}
-      onChange={val => changeSingle(val)}
+      onChange={(val: any) => changeSingle(val)}
     />
   );
 }

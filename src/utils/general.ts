@@ -1,7 +1,7 @@
 
 import { AttributeDefinition, AttrbuteDataType } from 'conseiljs';
 
-export const convertValue = (value) => {
+export const convertValue = (value: any) => {
   if (value === true) {
     return 'True';
   }
@@ -9,17 +9,17 @@ export const convertValue = (value) => {
     return 'False';
   }
   if (value) {
-    return value.replace(/(^|_)./g, s =>
+    return value.replace(/(^|_)./g, (s: any) =>
       s
         .split('_')
-        .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+        .map((s: any) => s.charAt(0).toUpperCase() + s.substring(1))
         .join(' ')
     );
   }
   return 'Null';
 };
 
-export const truncateHash = (value) => {
+export const truncateHash = (value: any) => {
   if (Number(value)) { return value; }
   if (!value || value.length < 6) { return ''; }
 
@@ -88,7 +88,7 @@ export const getOperatorType = (dataType: string) => {
 }
 
 export const sortAttributes = (attributes: AttributeDefinition[]) => {
-    return [...attributes].sort((a, b) => {
+    return [...attributes].sort((a: any, b: any) => {
     if (typeof a.displayOrder === 'undefined' && typeof b.displayOrder === 'undefined') {
         if(a.displayName < b.displayName) { return -1; }
         if(a.displayName > b.displayName) { return 1; }

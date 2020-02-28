@@ -129,13 +129,13 @@ class InputItem extends React.Component<Props, States> {
 
   autocompleteSearch = (attribute: string, value: string) => {
     const { fetchValues } = this.props;
-    fetchValues(attribute, value).then(values => {
+    fetchValues(attribute, value).then((values: any) => {
       this.setState({availableValues: values, suggestions: values, searchedVal: value});
     });
   }
 
-  onHighCardValueChange = async (event, { newValue }) => {
-    const { value, onChange, fetchValues, attribute } = this.props;
+  onHighCardValueChange = async (event: any, { newValue }: any) => {
+    const { value, onChange, attribute } = this.props;
     const { searchedVal } = this.state;
     const splitVals = newValue.split(',');
     const filterVal = splitVals[splitVals.length - 1].trim();
@@ -153,7 +153,7 @@ class InputItem extends React.Component<Props, States> {
     }
   }
 
-  onValueChange = (event) => {
+  onValueChange = (event: any) => {
     const newValue = event.target.value;
     const { value, onChange } = this.props;
     const lastChar = newValue.slice(-1);
@@ -164,7 +164,7 @@ class InputItem extends React.Component<Props, States> {
     }
   }
 
-  renderInputComponent = (inputProps) => {
+  renderInputComponent = (inputProps: any) => {
     const { classes, inputRef = () => {}, ref, ...other } = inputProps;
     return (
       <InputBase
@@ -178,7 +178,7 @@ class InputItem extends React.Component<Props, States> {
     );
   }
   
-  renderSuggestion = (suggestion, { query, isHighlighted }) => {
+  renderSuggestion = (suggestion: any, { query, isHighlighted }: any) => {
     const matches = match(suggestion, query);
     const parts = parse(suggestion, matches);
   
@@ -195,7 +195,7 @@ class InputItem extends React.Component<Props, States> {
     );
   }
 
-  getSuggestions = (value) => {
+  getSuggestions = (value: any) => {
     const { availableValues } = this.state;
     const splitVals = value.split(',');
     const inputValue = splitVals[splitVals.length - 1].trim().toLowerCase();
@@ -206,11 +206,11 @@ class InputItem extends React.Component<Props, States> {
       : availableValues.filter(val => val.slice(0, inputLength).toLowerCase() === inputValue);
   }
   
-  getSuggestionValue = (suggestion) => {
+  getSuggestionValue = (suggestion: any) => {
     return suggestion;
   }
 
-  handleSuggestionsFetchRequested = ({ value }) => {
+  handleSuggestionsFetchRequested = ({ value }: any) => {
     const suggestions = this.getSuggestions(value);
     this.setState({suggestions});
   };
@@ -234,7 +234,7 @@ class InputItem extends React.Component<Props, States> {
     const isLong = attribute.dataType === AttrbuteDataType.STRING || attribute.dataType === AttrbuteDataType.HASH || attribute.dataType === AttrbuteDataType.ACCOUNT_ADDRESS;
     
     if (attribute.dataType === AttrbuteDataType.DATETIME) {
-      const newValue = value? new Date(Number(value)) : '';
+      const newValue: any = value? new Date(Number(value)) : '';
       return (
         <DatePickerWrapper
           selected={newValue}
@@ -244,7 +244,7 @@ class InputItem extends React.Component<Props, States> {
           timeIntervals={15}
           dateFormat='MMMM d, yyyy h:mm aa'
           timeCaption='time'
-          onChange={(val) => onChange(String(new Date(val).getTime()))}
+          onChange={(val: any) => onChange(String(new Date(val).getTime()))}
         />
       )
     }
@@ -304,7 +304,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   fetchValues: (attribute: string, value: string) => dispatch(getHightCardinalityValues(attribute, value)),
 });
 
-export default compose(
+export const ValueInputItem: any = compose(
   withStyles(styles),
   connect(
     mapStateToProps,

@@ -1,4 +1,4 @@
-export const defaultQueries = {
+export const defaultQueries: any = {
     blocks: {
         fields: ['meta_voting_period', 'meta_cycle', 'level', 'timestamp', 'baker', 'hash', 'priority'],
         predicates: [{ field: 'timestamp', operation: 'after', set: [1575176400000], inverse: false }],

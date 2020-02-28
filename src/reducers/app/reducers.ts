@@ -29,7 +29,7 @@ import {
 } from './types';
 
 import { EntityDefinition } from 'conseiljs';
-import { Filter, Config, Aggregation } from '../../types';
+import { Filter, Config } from '../../types';
 import { getLocalAttributes } from '../../utils/attributes';
 import { getConfigs, saveConfigs } from '../../utils/getconfig';
 
@@ -38,18 +38,19 @@ const configs = getConfigs();
 
 export interface AppState {
   entities: EntityDefinition[];
-  availableValues: object;
+  availableValues: any;
   columns: object;
   attributes: object;
   items: object;
   operators: object;
-  selectedFilters: object;
+  selectedFilters: any;
   isLoading: boolean;
   selectedEntity: string;
   isFullLoaded: boolean;
   rowCount: number;
-  filterCount: object;
+  filterCount: any;
   selectedModalItem: object[];
+  selectedModalSubItem: object[];
   sort: object;
   configs: Config[];
   selectedConfig: Config;
@@ -110,6 +111,7 @@ let initialState: AppState = {
   rowCount: 50,
   filterCount: {},
   selectedModalItem: [],
+  selectedModalSubItem: [],
   sort: {},
   aggregations: {},
   aggFunctions: {
@@ -131,7 +133,7 @@ let initialState: AppState = {
   }
 };
 
-export const app = (state = initialState, action) => {
+export const app = (state = initialState, action: any) => {
   switch (action.type) {
     case SET_FILTER:
       return { ...state, filters: action.filters };
@@ -228,7 +230,7 @@ export const app = (state = initialState, action) => {
     case COMPLETE_FULL_LOAD:
       return { ...state, isFullLoaded: action.isFullLoaded };
     case SET_MODAL_ITEM:
-      return { ...state, selectedModalItem: action.item };
+      return { ...state, selectedModalItem: action.item, selectedModalSubItem: action.subItem };
     case SET_SORT: {
       const sort = {...state.sort, [action.entity]: action.sorts};
       return { ...state, sort };
@@ -265,14 +267,14 @@ export const app = (state = initialState, action) => {
       return { ...state, selectedFilters, filterCount };
     }
     case INIT_MAIN_PARAMS: {
-      const config = configs.filter(c => c.displayName === action.configName)[0];
-      // TODO: error handling
+      const { platform, network, entity } = action;
+      const config = configs.filter((c: Config) => c.network === action.network)[0];
       return {
         ...state,
-        platform: action.platform,
-        network: action.network,
+        platform: platform,
+        network: network,
         selectedConfig: config,
-        selectedEntity: action.entity
+        selectedEntity: entity
       };
     }
     case INIT_ATTRIBUTES: {

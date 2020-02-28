@@ -1,4 +1,4 @@
-const modalRegistry = {
+const modalRegistry: any = {
   'tezos/mainnet/operations': "operation_template",
   "tezos/babylonnet/operations": "operation_template",
   "tezos/mainnet/accounts": "account_template",

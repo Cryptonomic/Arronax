@@ -1,10 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
-import muiStyled from '@material-ui/styles/styled';
-import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
-import { ConseilSortDirection, EntityDefinition } from 'conseiljs';
+import { ConseilSortDirection } from 'conseiljs';
 import ReactDynamicImport from 'react-dynamic-import';
 import {
   getSelectedConfig,
@@ -13,6 +10,7 @@ import {
   getEntity,
   getAttributesAll,
   getModalItem,
+  getModalSubItem,
   getSort,
   getEntities,
   getAggregations
@@ -22,47 +20,16 @@ import { setSortAction } from '../../reducers/app/actions';
 import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
-import { Sort, Config, Aggregation } from '../../types';
 import { getEntityModalName } from '../../utils/hashtable';
+import {
+  TableContainer,
+  Overflow
+} from './styles';
 
-const entityloader = f => import(`../Entities/${f}`);
+import { Sort } from '../../types';
+import { Props, State } from './types';
 
-const TableContainer = muiStyled(Table)({
-  width: '100%',
-  background: '#fff',
-  borderRadius: '4px'
-});
-
-const Overflow = styled.div`
-  overflow-x: auto;
-`;
-
-interface Props {
-  rowsPerPage: number;
-  items: any[];
-  selectedColumns: any[];
-  selectedConfig: Config;
-  selectedEntity: string;
-  selectedModalItem: object;
-  attributes: any;
-  isLoading: boolean;
-  selectedSort: Sort;
-  entities: EntityDefinition[];
-  isModalUrl?: boolean;
-  aggregations: Aggregation[];
-  onExportCsv: () => void;
-  getModalItemAction: (entity: string, key: string, value: string | number) => void;
-  onSubmitQuery: () => void;
-  onSetSort: (entity: string, sorts: Sort[]) => void;
-}
-
-interface State {
-  page: number;
-  isOpenedModal: boolean;
-  selectedPrimaryKey: string;
-  selectedPrimaryValue: string | number;
-  referenceEntity: string;
-}
+const entityloader = (f: any) => import(`../Entities/${f}`);
 
 class CustomTable extends React.Component<Props, State> {
   EntityModal: any = null;
@@ -103,17 +70,22 @@ class CustomTable extends React.Component<Props, State> {
     onSubmitQuery();
   };
 
-  onCloseModal = () => this.setState({isOpenedModal: false});
+  onCloseModal = () => {
+    const { updateRoute } = this.props;
+    this.setState({isOpenedModal: false});
+    updateRoute(true);
+  };
 
   onOpenModal = (entity: string, key: string, value: string | number) => {
     const { selectedPrimaryKey, selectedPrimaryValue } = this.state;
-    const { getModalItemAction, selectedConfig } = this.props;
+    const { getModalItemAction, selectedConfig, updateRoute } = this.props;
     if (selectedPrimaryKey !== key || selectedPrimaryValue !== value) {
       const { platform, network } = selectedConfig;
       const modalName = getEntityModalName(platform, network, entity);
       this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
       getModalItemAction(entity, key, value);
       this.setState({referenceEntity: entity, selectedPrimaryKey: key, selectedPrimaryValue: value, isOpenedModal: true});
+      updateRoute(true, '', value);
     }
     this.setState({isOpenedModal: true});
   }
@@ -127,6 +99,7 @@ class CustomTable extends React.Component<Props, State> {
       rowsPerPage,
       selectedEntity,
       selectedModalItem,
+      selectedModalSubItem,
       attributes,
       selectedSort,
       isLoading,
@@ -134,13 +107,14 @@ class CustomTable extends React.Component<Props, State> {
       aggregations,
       onExportCsv
     } = this.props;
+
     const { page, referenceEntity, isOpenedModal} = this.state;
     const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
     const realRows = items.slice(
       page * rowCount,
       page * rowCount + rowCount
     );
-    const selectedObjectEntity = entities.find(entity => entity.name === referenceEntity);
+    const selectedObjectEntity: any = entities.find(entity => entity.name === referenceEntity);
     const { network, platform } = selectedConfig;
     return (
       <React.Fragment>
@@ -183,7 +157,9 @@ class CustomTable extends React.Component<Props, State> {
             open={isOpenedModal}
             title={selectedObjectEntity.displayName}
             attributes={attributes[referenceEntity]}
+            opsAttributes={attributes.operations}
             items={selectedModalItem}
+            subItems={selectedModalSubItem}
             isLoading={isLoading}
             onClose={this.onCloseModal}
             onClickPrimaryKey={this.onOpenModal}
@@ -200,6 +176,7 @@ const mapStateToProps = (state: any) => ({
   selectedColumns: getColumns(state),
   selectedEntity: getEntity(state),
   selectedModalItem: getModalItem(state),
+  selectedModalSubItem: getModalSubItem(state),
   attributes: getAttributesAll(state),
   selectedSort: getSort(state),
   entities: getEntities(state),

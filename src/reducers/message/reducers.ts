@@ -6,7 +6,7 @@ const initState = {
 };
 
 
-export const message = (state = initState, action) => {
+export const message = (state = initState, action: any) => {
   switch (action.type) {
     case CLEAR_MESSAGE_STATE:
       return initState;

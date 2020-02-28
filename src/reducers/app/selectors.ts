@@ -17,7 +17,7 @@ export const getLoading = createSelector(
 
 export const getColumns = createSelector(
   getAppState,
-  apps => apps.selectedEntity && apps.columns[apps.selectedEntity] || []
+  apps => (apps.selectedEntity && apps.columns[apps.selectedEntity]) || []
 );
 
 export const getEntity = createSelector(
@@ -74,6 +74,11 @@ export const getModalItem = createSelector(
   getAppState,
   apps => apps.selectedModalItem
 );
+
+export const getModalSubItem = createSelector(
+  getAppState,
+  apps => apps.selectedModalSubItem
+)
 
 export const getSort = createSelector(
   getAppState,

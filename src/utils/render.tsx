@@ -28,6 +28,12 @@ const LinkDiv = styled.div`
   text-decoration: underline;
 `;
 
+const LinkSpan = styled.span`
+  color: #56c2d9;
+  cursor: pointer;
+  text-decoration: underline;
+`;
+
 const PrimaryKeyList: any = {
   blocks: ['hash', 'level'],
   accounts: ['account_id'],
@@ -106,8 +112,13 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
               </React.Fragment>
           );
       } else if (dataType === AttrbuteDataType.STRING && value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
-          return value.split('_').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+          return value.split('_').map((s: any) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
       } else {
           return formatReferenceValue(attribute, value, value, onClickPrimaryKey);
       }
   };
+
+  export const formatValueWithLink = (props: { value: number, onClick: () => void }) => {
+    const { value, onClick } = props;
+    return <LinkSpan onClick={onClick}>{value}</LinkSpan>
+  } 

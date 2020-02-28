@@ -7,7 +7,7 @@ import {
   ConseilQueryBuilder,
   ConseilOperator,
   ConseilOutput,
-  ConseilSortDirection, EntityDefinition, AttributeDefinition,
+  ConseilSortDirection, AttributeDefinition,
   TezosConseilClient
 } from 'conseiljs';
 
@@ -54,7 +54,7 @@ const { getAttributes, getAttributeValues, getEntities, getAttributeValuesForPre
 
 const getAttributeNames = (attributes: AttributeDefinition[]) => attributes.map(attr => attr.name);
 
-export const fetchValues = (attribute: string) => async (dispatch, state) => {
+export const fetchValues = (attribute: string) => async (dispatch: any, state: any) => {
   const { selectedEntity, selectedConfig } = state().app;
   const { network, platform, url, apiKey } = selectedConfig;
   dispatch(setLoadingAction(true));
@@ -64,7 +64,7 @@ export const fetchValues = (attribute: string) => async (dispatch, state) => {
   dispatch(setLoadingAction(false));
 };
 
-const initCardinalityValues = (platform: string, entity: string, network: string, attribute: string, serverInfo: any) => async dispatch => {
+const initCardinalityValues = (platform: string, entity: string, network: string, attribute: string, serverInfo: any) => async (dispatch: any) => {
   const values = await getAttributeValues(
     serverInfo,
     platform,
@@ -76,12 +76,14 @@ const initCardinalityValues = (platform: string, entity: string, network: string
 };
 
 // TODO need to modify
-export const changeNetwork = (config: Config) => async (dispatch, state) => {
+export const changeNetwork = (config: Config) => async (dispatch: any, state: any) => {
   const oldConfig = state().app.selectedConfig;
   const isSame = oldConfig.network === config.network && oldConfig.platform === config.platform &&
     oldConfig.url === config.url && oldConfig.apiKey === config.apiKey;
-  if (isSame) return;
-  else if(oldConfig.platform === config.platform) {
+  
+    if (isSame) return;
+  
+  if(oldConfig.platform === config.platform) {
     await dispatch(initItemsAction());
     await dispatch(setConfigAction(config));
     await dispatch(initLoadByNetwork());
@@ -103,7 +105,7 @@ function clearSortAndAggregations(columns: AttributeDefinition[], sort: Sort, ag
       order: ConseilSortDirection.DESC
     };
   }
-  const newAggs = [];
+  const newAggs: any = [];
   aggregations.forEach(agg => {
     const colIndex = columns.findIndex(col => col.name === agg.field);
     if (colIndex > -1) {
@@ -123,27 +125,27 @@ function clearSortAndAggregations(columns: AttributeDefinition[], sort: Sort, ag
   };
 }
 
-export const setAggregationsThunk = (aggregations: Aggregation[]) => async (dispatch, state) => {
+export const setAggregationsThunk = (aggregations: Aggregation[]) => async (dispatch: any, state: any) => {
   const { selectedEntity, sort, columns } = state().app;
   let selectedSorts = sort[selectedEntity];
   const selectedColumns = columns[selectedEntity];
   const { sorts, aggs } = clearSortAndAggregations(selectedColumns, selectedSorts, aggregations);
-  const sortColumn = selectedColumns.find(col => col.name === selectedSorts[0].orderBy);
-  const sortAgg = aggregations.find(agg => selectedSorts[0].orderBy === `${agg.function}_${agg.field}` || selectedSorts[0].orderBy === agg.field);
-  if (!sortColumn && !sortAgg || sortColumn && sortAgg ) {
+  const sortColumn = selectedColumns.find((col: any) => col.name === selectedSorts[0].orderBy);
+  const sortAgg = aggregations.find(agg => (selectedSorts[0].orderBy === `${agg.function}_${agg.field}`) || (selectedSorts[0].orderBy === agg.field));
+  if ((!sortColumn && !sortAgg) || (sortColumn && sortAgg) ) {
     selectedSorts = sorts;
   }
   await dispatch(setAggregationAction(selectedEntity, aggs, selectedSorts));
 };
 
-export const setColumnsThunk = (columns: AttributeDefinition[]) => async (dispatch, state) => {
+export const setColumnsThunk = (columns: AttributeDefinition[]) => async (dispatch: any, state: any) => {
   const { selectedEntity, sort, aggregations } = state().app;
   const { sorts, aggs } = clearSortAndAggregations(columns, sort[selectedEntity], aggregations[selectedEntity]);
   
   await dispatch(setColumnsAction(selectedEntity, columns, sorts, aggs));
 };
 
-export const resetColumns = () => async (dispatch, state) => {
+export const resetColumns = () => async (dispatch: any, state: any) => {
   const { selectedEntity, sort, aggregations, attributes } = state().app;
   const initProperty = InitProperties[selectedEntity];
   const columns = initProperty ? initProperty.columns : sortAttributes(attributes[selectedEntity]);
@@ -151,14 +153,14 @@ export const resetColumns = () => async (dispatch, state) => {
   await dispatch(setColumnsAction(selectedEntity, columns, sorts, aggs));
 };
 
-export const resetFilters = () => async (dispatch, state) => {
+export const resetFilters = () => async (dispatch: any, state: any) => {
   const { selectedEntity } = state().app;
   const initProperty = InitProperties[selectedEntity];
   const filters = initProperty ? initProperty.filters : [];
   await dispatch(initFilterAction(selectedEntity, filters));
 };
 
-export const resetAggregations = () => async (dispatch, state) => {
+export const resetAggregations = () => async (dispatch: any, state: any) => {
   const { selectedEntity, columns, sort } = state().app;
   const initProperty = InitProperties[selectedEntity];
   const aggregations = initProperty ? initProperty.aggregations : [];
@@ -173,16 +175,16 @@ export const fetchInitEntityAction = (
   serverInfo: any,
   attributes: AttributeDefinition[],
   urlEntity: string,
-  urlQuery: string
+  urlQuery: any
 ) => async (dispatch: any) => {
-  let defaultQuery = (urlEntity === entity && urlQuery) ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
+  let defaultQuery: any = (urlEntity === entity && urlQuery) ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
   defaultQuery = {...ConseilQueryBuilder.blankQuery(), ...defaultQuery};
   let columns: any[] = [];
   let sorts: Sort[];
   let filters: Filter[] = [];
   let aggregations: Aggregation[] = [];
   let cardinalityPromises: any[] = [];
-  let query = blankQuery();
+  let query: any = blankQuery();
   const sortedAttributes = sortAttributes(attributes);
   const levelColumn = attributes.find(column => column.name === 'level' || column.name === 'block_level' || column.name === 'timestamp') || sortedAttributes[0];
 
@@ -191,7 +193,7 @@ export const fetchInitEntityAction = (
     query = defaultQuery;
     // initColumns
     if (fields.length > 0) {
-      fields.forEach(field=> {
+      fields.forEach((field: any)=> {
         const column = attributes.find(attr => attr.name === field);
         if (column) { columns.push(column); }
       });
@@ -200,7 +202,7 @@ export const fetchInitEntityAction = (
     }
 
     if (orderBy.length > 0) {
-      sorts = orderBy.map(o => { return { orderBy: o.field, order: o.direction } });
+      sorts = orderBy.map((o: any) => { return { orderBy: o.field, order: o.direction } });
     } else {
       // adding the default sort
       sorts = [{
@@ -210,8 +212,8 @@ export const fetchInitEntityAction = (
       query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
     }
     // initFilters
-    filters = predicates.map(predicate => {
-      const selectedAttribute = attributes.find(attr => attr.name === predicate.field);
+    filters = predicates.map((predicate: any) => {
+      const selectedAttribute: any = attributes.find(attr => attr.name === predicate.field);
       const isLowCardinality = selectedAttribute.cardinality !== undefined && selectedAttribute.cardinality < CARDINALITY_NUMBER;
       if (isLowCardinality) {
         cardinalityPromises.push(
@@ -245,8 +247,8 @@ export const fetchInitEntityAction = (
     });
 
     if (!!query.aggregation && query.aggregation.length > 0) {
-      aggregations = query.aggregation.map(agg => {
-        const selectedAttribute = attributes.find(attr => attr.name === agg.field);
+      aggregations = query.aggregation.map((agg: any) => {
+        const selectedAttribute: any = attributes.find(attr => attr.name === agg.field);
         const type = getOperatorType(selectedAttribute.dataType);
         return {...agg, type};
       });
@@ -272,7 +274,7 @@ export const fetchInitEntityAction = (
   await Promise.all(cardinalityPromises);
 };
 
-export const initLoadByNetwork = () => async (dispatch, state) => {
+export const initLoadByNetwork = () => async (dispatch: any, state: any) => {
   dispatch(setLoadingAction(true));
   const { selectedConfig, selectedEntity } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
@@ -292,7 +294,7 @@ export const initLoadByNetwork = () => async (dispatch, state) => {
 
   if (selectedConfig.entities && selectedConfig.entities.length > 0) {
     entities = [
-      ...selectedConfig.entities.map(name => entities.find(item => item.name === name && item.name !== 'rolls')),
+      ...selectedConfig.entities.map((name: any) => entities.find(item => item.name === name && item.name !== 'rolls')),
       ...entities.filter(item => !selectedConfig.entities.includes(item.name) && item.name !== 'rolls')
     ];
 }
@@ -319,7 +321,7 @@ export const initLoadByNetwork = () => async (dispatch, state) => {
       return [];
   });
   if (attrObjsList.length > 0) {
-    const attrMap = [...attrObjsList].reduce((curr, next) => {
+    const attrMap = [...attrObjsList].reduce((curr: any, next) => {
       curr[next.entity] = sortAttributes(next.attributes);
       return curr;
     }, {});
@@ -343,33 +345,40 @@ export const initLoadByNetwork = () => async (dispatch, state) => {
   }
 };
 
-export const initLoad = (environmentInfo?: string, query?: string) => async (dispatch, state) => {
-  let urlEntity = '';
-  if (environmentInfo && query) {
-      const environmentName = environmentInfo.split('/')[0];
-      urlEntity = environmentInfo.split('/')[1];
+export const initLoad = (platformParam = '', networkParam = '', entityParam = '', idParam = '', isQuery = false) => async (dispatch: any, state: any) => {
+  // redirect, changePath, openModal, modalItems
+  const responseRedirect = [true, false];
+  const responseChangePath = [false, true];
+  const responseOpenModal: [boolean, boolean, Record<string, object[] | string>] = [false, false, { items: [], entity: '' }];
+  const responseWithNoAction = [false, false];
+  const query = isQuery ? idParam : '';
+  const configs = state().app.configs;
+  const configFromParams = configs.find((c: Config) => c.platform === platformParam && c.network === networkParam);
 
-      await dispatch(initMainParamsAction(environmentName, urlEntity));
-  }
-  const selectedConfig: Config = state().app.selectedConfig;
+  // Not valid params redirect to default path
+  if (!configFromParams && platformParam && networkParam) return responseRedirect;
+
+  const selectedConfig: Config | any = configFromParams || state().app.selectedConfig;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
+  let entities: any[] = [];
 
-  let entities: any[] = await getEntities(serverInfo, platform, network)
-    .catch(() => {
-      const message = `Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`
-      dispatch(createMessageAction(message, true));
-      return [];
-  });
+  try {
+    entities = await getEntities(serverInfo, platform, network);
+  } catch (e) {
+    const message = `Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`
+    await dispatch(createMessageAction(message, true));
+    return responseWithNoAction;
+  }
 
   if (entities.length === 0) {
-    dispatch(completeFullLoadAction(true));
-    return;
+    await dispatch(completeFullLoadAction(true));
+    return responseWithNoAction;
   }
 
   if (selectedConfig.entities && selectedConfig.entities.length > 0) {
       entities = [
-        ...selectedConfig.entities.map(name => entities.find(item => item.name === name && item.name !== 'rolls')),
+        ...selectedConfig.entities.map((name: any) => entities.find(item => item.name === name && item.name !== 'rolls')),
         ...entities.filter(item => !selectedConfig.entities.includes(item.name) && item.name !== 'rolls')
       ];
   }
@@ -378,38 +387,75 @@ export const initLoad = (environmentInfo?: string, query?: string) => async (dis
     if (typeof e.displayNamePlural === 'undefined' || e.displayNamePlural.length === 0) { 
       e.displayNamePlural = e.displayName
     }
-  }); // TODO: remove, use metadata when available
+  });
 
-  dispatch(setEntitiesAction(entities));
+  const entityFromParam = entities.find((e: any) => e.name === entityParam);
+
+  // Not valid param redirect to default path
+  if (!entityFromParam && entityParam) return responseRedirect
+
+  await dispatch(setEntitiesAction(entities));
+  await dispatch(initMainParamsAction(platform, network, entityParam || entities[0].name));
   validateCache(2);
 
-  const localDate = getTimeStampFromLocal();
-  const currentDate = Date.now();
-  if (currentDate - localDate > CACHE_TIME) {
-    const attrPromises = entities.map(entity => fetchAttributes(platform, entity.name, network, serverInfo));
-    const attrObjsList = await Promise.all(attrPromises).catch(err => {
-      const message = `Unable to load attribute data: ${err}.`
-      dispatch(createMessageAction(message, true));
-      return [];
-    });
+  try {
+    const localDate = getTimeStampFromLocal();
+    const currentDate = Date.now();
+    if (currentDate - localDate > CACHE_TIME) {
+      const attrPromises = entities.map(entity => fetchAttributes(platform, entity.name, network, serverInfo));
+      const attrObjsList = await Promise.all(attrPromises);
 
-    if (attrObjsList.length > 0) {
-      const attrMap = [...attrObjsList].reduce((curr, next) => {
-        curr[next.entity] = sortAttributes(next.attributes);
-        return curr;
-      }, {});
-      await dispatch(initAttributesAction(attrMap));
-      saveAttributes(attrMap, currentDate, 2);
+      if (attrObjsList.length > 0) {
+        const attrMap = [...attrObjsList].reduce((curr: any, next) => {
+          curr[next.entity] = sortAttributes(next.attributes);
+          return curr;
+        }, {});
+        await dispatch(initAttributesAction(attrMap));
+        saveAttributes(attrMap, currentDate, 2);
+      } else {
+        await dispatch(completeFullLoadAction(true));
+        return responseWithNoAction;
+      }
+    }
+  } catch (e) {
+    const message = `Unable to load attribute data: ${e}.`
+    await dispatch(createMessageAction(message, true));
+    return responseWithNoAction;
+  }
+
+  const { attributes, selectedEntity } = state().app;
+
+  try {
+    await dispatch(
+      fetchInitEntityAction(platform, selectedEntity, network, serverInfo, attributes[selectedEntity], entityParam, query)
+    );
+  } catch (e) {
+    const message = `Unable to load data: ${e}.`
+    await dispatch(createMessageAction(message, true));
+    return responseRedirect;
+  }
+
+  if (isQuery || !idParam) {
+    await dispatch(completeFullLoadAction(true));
+    return responseWithNoAction
+  };
+
+  try {
+    const { entity, query } = TezosConseilClient.getEntityQueryForId(idParam);
+    const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+    responseOpenModal[2] = { ...responseOpenModal[2], entity, items }
+  } catch (e) {
+    if (e.message === 'Invalid id parameter') {
+      dispatch(createMessageAction(`Invalid id format entered.`, true));
     } else {
-      dispatch(completeFullLoadAction(true));
-      return;
+      dispatch(createMessageAction('Unable to load an object for the id', true));
     }
   }
-  const { attributes, selectedEntity } = state().app;
-  await dispatch(
-    fetchInitEntityAction(platform, selectedEntity, network, serverInfo, attributes[selectedEntity], urlEntity, query)
-  );
-  dispatch(completeFullLoadAction(true));
+
+  await dispatch(completeFullLoadAction(true));
+  
+  if (state().message.isError) return responseChangePath;
+  return responseOpenModal;
 };
 
 export const fetchAttributes = async (platform: string, entity: string, network: string, serverInfo: any) => {
@@ -456,7 +502,7 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
     }
   });
 
-  aggregations.forEach((agg: Aggregation) => {
+  aggregations.forEach((agg: Aggregation | any) => {
     query = addAggregationFunction(query, agg.field, agg.function);
   });  
 
@@ -467,7 +513,7 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
   return query;
 }
 
-export const shareReport = () => async (dispatch, state) => {
+export const shareReport = () => async (dispatch: any, state: any) => {
   const { selectedEntity, columns, sort, selectedFilters, selectedConfig, aggregations } = state().app;
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
@@ -482,7 +528,7 @@ export const shareReport = () => async (dispatch, state) => {
   if (isOS()) {
     const range = document.createRange();
     range.selectNodeContents(textField);
-    const selection = window.getSelection();
+    const selection: any = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
     textField.setSelectionRange(0, 999999);
@@ -493,7 +539,7 @@ export const shareReport = () => async (dispatch, state) => {
   textField.remove();
 }
 
-export const exportCsvData = () => async (dispatch, state) => {
+export const exportCsvData = () => async (dispatch: any, state: any) => {
   const { selectedEntity, columns, sort, selectedFilters, selectedConfig, aggregations } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
@@ -505,7 +551,8 @@ export const exportCsvData = () => async (dispatch, state) => {
 
   const result: any = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
   let blob = new Blob([result]);
-  if (window.navigator.msSaveOrOpenBlob) {
+  const winOpenBlob: any = window.navigator.msSaveOrOpenBlob || null;
+  if (winOpenBlob) {
     window.navigator.msSaveBlob(blob, 'arronax-results.csv');
   } else {
     const a = window.document.createElement("a");
@@ -517,7 +564,7 @@ export const exportCsvData = () => async (dispatch, state) => {
   }
 }
 
-export const submitQuery = () => async (dispatch, state) => {
+export const submitQuery = () => async (dispatch: any, state: any) => {
   dispatch(setLoadingAction(true));
   const { selectedEntity, selectedFilters, selectedConfig, columns, sort, aggregations } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
@@ -538,6 +585,8 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
   const serverInfo = { url, apiKey, network };
 
   let query = blankQuery();
+  let query_operations = null;
+
   query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
   const s = String(value);
   if (s.startsWith('o')) {
@@ -546,22 +595,36 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
     query = setLimit(query, 1);
   }
 
-  const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+  if (entity === 'blocks') {
+    query_operations = blankQuery();
+    query_operations = addPredicate(query_operations, 'block_hash', ConseilOperator.EQ, [value], false);
+  }
 
-  await dispatch(setModalItemAction(items));
+  const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+  const operations = query_operations ? await executeEntityQuery(serverInfo, platform, network, 'operations', query_operations) : [];
+
+  await dispatch(setModalItemAction(items, operations));
   dispatch(setLoadingAction(false));
 };
 
-export const changeTab = (entity: string) => async (dispatch, state) => {
+export const changeTab = (entity: string) => async (dispatch: any, state: any) => {
   const { selectedConfig, attributes, items } = state().app;
   const { network, platform, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
 
-  if(!items[entity] || (items[entity] && items[entity].length === 0)) {
-    dispatch(setLoadingAction(true));
-    await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[entity], '', ''));
+  try {
+    if(!items[entity] || (items[entity] && items[entity].length === 0)) {
+      dispatch(setLoadingAction(true));
+      await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[entity], '', ''));
+      dispatch(setLoadingAction(false));
+    }
+  } catch (e) {
+    const message = `Unable to change to tab ${entity}`;
+    dispatch(createMessageAction(message, true));
     dispatch(setLoadingAction(false));
+    throw Error(message);
   }
+
   dispatch(setTabAction(entity));
 };
 
@@ -570,17 +633,23 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
   const { selectedConfig, entities } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
+  let query_operations = null;
   try {
     const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
+    if (entity === 'blocks') {
+      query_operations = blankQuery();
+      query_operations = addPredicate(query_operations, 'block_hash', ConseilOperator.EQ, [id], false);
+    }
     const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+    const operations = query_operations ? await executeEntityQuery(serverInfo, platform, network, 'operations', query_operations) : [];
     if (items.length > 0) {
       await dispatch(changeTab(entity));
     } else {
-      const searchedEntity = entities.find(item => item.name === entity);
+      const searchedEntity = entities.find((item: any) => item.name === entity);
       dispatch(createMessageAction(`The ${searchedEntity.displayName.toLowerCase()} was not found.`, true));
     }
     dispatch(setLoadingAction(false));
-    return { entity, items };
+    return { entity, items, subItems: operations };
   } catch (e) {
       if (e.message === 'Invalid id parameter') {
         dispatch(createMessageAction(`Invalid id format entered.`, true));
@@ -589,7 +658,7 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
       }
 
       dispatch(setLoadingAction(false));
-      return { entity: '', items: [] };
+      return { entity: '', items: [], subItems: [] };
   }
 };
 
