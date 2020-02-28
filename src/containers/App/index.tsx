@@ -22,12 +22,15 @@ import CustomTable from '../CustomTable';
 import ConfigModal from '../../components/ConfigModal';
 import Loader from '../../components/Loader';
 
+import { getItemByPrimaryKey } from '../../reducers/app/thunks';
+
 import {
   getLoading,
   getConfigs,
   getSelectedConfig,
   getEntity,
   getItems,
+  getModalItem,
   getIsFullLoaded,
   getFilterCount,
   getColumns,
@@ -182,6 +185,7 @@ interface OwnProps {
   isError: boolean;
   message: string;
   attributes: any;
+  selectedModalItem: object;
   removeAllFilters: (entity: string) => void;
   changeNetwork(config: Config): void;
   changeTab: (type: string) => void;
@@ -193,6 +197,7 @@ interface OwnProps {
   addConfig: (config: Config, isUse: boolean) => void;
   removeConfig: (index: number) => void;
   searchById: (id: string | number) => any;
+  getModalItemAction: (entity: string, key: string, value: string | number) => void;
 }
 
 interface States {
@@ -204,6 +209,7 @@ interface States {
   searchedEntity: string;
   searchedItem: any[];
   searchedSubItems: any[];
+  primaryKeyClicked: boolean
 }
 
 type Props = OwnProps & RouteProps & WithTranslation;
@@ -218,11 +224,13 @@ class Arronax extends React.Component<Props, States> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      primaryKeyClicked: false,
       isSettingCollapsed: false,
       selectedTool: ToolType.FILTER,
       isModalUrl: false,
       isOpenConfigMdoal: false,
       isOpenEntityModal: false,
+      
       searchedEntity: '',
       searchedItem: [],
       searchedSubItems: []
@@ -233,6 +241,7 @@ class Arronax extends React.Component<Props, States> {
   }
 
   componentDidMount() {
+    window.addEventListener('beforeunload', this.onBeforeunload.bind(this));
     const { initLoad, location } = this.props;
     if (location) {
       const search = new URLSearchParams(location.search);
@@ -242,6 +251,15 @@ class Arronax extends React.Component<Props, States> {
     } else {
       initLoad('', '');
     }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('beforeunload', this.onBeforeunload.bind(this));
+  }
+
+  onBeforeunload(e) {
+    e.preventDefault();
+    e.returnValue = true;
   }
 
   onChangeNetwork = (config: Config) => {
@@ -332,8 +350,19 @@ class Arronax extends React.Component<Props, States> {
       const { platform, network } = selectedConfig;
       const modalName = getEntityModalName(platform, network, entity);
       this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
-      this.setState({searchedItem: items, searchedSubItems: subItems, searchedEntity: entity, isOpenEntityModal: true});
+      this.setState({searchedItem: items, searchedEntity: entity, isOpenEntityModal: true, primaryKeyClicked: false });
     }
+  }
+
+  onClickPrimaryKey = (entity: string, key: string, value: string | number) => {
+    const { searchedEntity } = this.state;
+    const { getModalItemAction, selectedConfig } = this.props;
+    if (searchedEntity === entity) return;
+    const { platform, network } = selectedConfig;
+    const modalName = getEntityModalName(platform, network, entity);
+    this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
+    getModalItemAction(entity, key, value);
+    this.setState({ searchedEntity: entity, primaryKeyClicked: true });
   }
 
   onCloseEntityModal = () => this.setState({isOpenEntityModal: false});
@@ -345,6 +374,7 @@ class Arronax extends React.Component<Props, States> {
       selectedConfig,
       selectedEntity,
       items,
+      selectedModalItem,
       isFullLoaded,
       filterCount,
       aggCount,
@@ -358,11 +388,13 @@ class Arronax extends React.Component<Props, States> {
     } = this.props;
     const {
       isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal, isOpenEntityModal,
-      searchedItem, searchedEntity, searchedSubItems
+      searchedItem, searchedEntity, searchedSubItems, primaryKeyClicked
     } = this.state;
     const { EntityModal } = this;
     const isRealLoading = isLoading || !isFullLoaded;
     const selectedObjectEntity = entities.find(entity => entity.name === searchedEntity);
+
+    const modalItems = primaryKeyClicked ? selectedModalItem : searchedItem;
     
     return (
       <MainContainer>
@@ -456,10 +488,11 @@ class Arronax extends React.Component<Props, States> {
             title={selectedObjectEntity.displayName}
             attributes={attributes[searchedEntity]}
             opsAttributes={attributes.operations}
-            items={searchedItem}
             subItems={searchedSubItems}
+            items={modalItems}
             isLoading={isLoading}
             onClose={this.onCloseEntityModal}
+            onClickPrimaryKey={this.onClickPrimaryKey}
           />
         }
       </MainContainer>
@@ -473,6 +506,7 @@ const mapStateToProps = (state: any) => ({
   configs: getConfigs(state),
   selectedConfig: getSelectedConfig(state),
   selectedEntity: getEntity(state),
+  selectedModalItem: getModalItem(state),
   items: getItems(state),
   isFullLoaded: getIsFullLoaded(state),
   selectedColumns: getColumns(state),
@@ -485,7 +519,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   removeAllFilters: (selectedEntity: string) =>
-    dispatch(removeAllFiltersAction(selectedEntity)),
+  dispatch(removeAllFiltersAction(selectedEntity)),
   changeNetwork: (config: Config) => dispatch(changeNetwork(config)),
   changeTab: (type: string) => dispatch(changeTab(type)),
   initLoad: (e: string, q: string) => dispatch(initLoad(e, q)),
@@ -495,7 +529,8 @@ const mapDispatchToProps = (dispatch: any) => ({
   initMessage: () => dispatch(clearMessageAction()),
   addConfig: (config: Config, isUse: boolean) => dispatch(addConfigAction(config, isUse)),
   removeConfig: (index: number) => dispatch(removeConfigAction(index)),
-  searchById: (id: string | number) => dispatch(searchByIdThunk(id))
+  searchById: (id: string | number) => dispatch(searchByIdThunk(id)),
+  getModalItemAction: (entity: string, key: string, value: string | number) => dispatch(getItemByPrimaryKey(entity, key, value)),
 });
 
 export default compose(

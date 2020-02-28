@@ -1,3 +1,5 @@
+// Beware of getting and manipulating state in the app. Object are passed as references. Make sure to clone object before.
+
 import { createSelector } from 'reselect';
 import { RootState } from '../index';
 
@@ -25,12 +27,12 @@ export const getEntity = createSelector(
 
 export const getEntities = createSelector(
   getAppState,
-  apps => apps.entities
+  apps => [...apps.entities]
 );
 
 export const getAttributes = createSelector(
   getAppState,
-  apps => apps.attributes[apps.selectedEntity] || []
+  apps => [...apps.attributes[apps.selectedEntity]] || []
 );
 
 export const getAttributesAll = createSelector(

@@ -19,6 +19,7 @@ type OwnProps = {
   isLoading: boolean;
   title: string;
   onClose: () => void;
+  onClickPrimaryKey: () => void
 };
 
 interface States {
@@ -41,9 +42,10 @@ class EntityModal extends React.Component<Props, States> {
   onClickModal = (event: any) => { event.stopPropagation(); }
 
   formatValue = (processedValues: any[], attributes: any[], key: string, truncate: boolean = false) => {
+    const { onClickPrimaryKey } = this.props;
     this.explicitKeys.push(key);
     if (processedValues.find(i => i.name === key) === undefined) { return ''; }
-    return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], undefined, undefined, truncate);
+    return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], onClickPrimaryKey, undefined, truncate);
   }
 
   render() {

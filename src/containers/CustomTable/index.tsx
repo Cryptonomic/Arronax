@@ -192,6 +192,7 @@ class CustomTable extends React.Component<Props, State> {
             subItems={selectedModalSubItem}
             isLoading={isLoading}
             onClose={this.onCloseModal}
+            onClickPrimaryKey={this.onOpenModal}
           />
         }
       </React.Fragment>
