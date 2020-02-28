@@ -1,10 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
-import muiStyled from '@material-ui/styles/styled';
-import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
-import { ConseilSortDirection, EntityDefinition } from 'conseiljs';
+import { ConseilSortDirection } from 'conseiljs';
 import ReactDynamicImport from 'react-dynamic-import';
 import {
   getSelectedConfig,
@@ -22,48 +19,16 @@ import { setSortAction } from '../../reducers/app/actions';
 import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
 import CustomPaginator from '../../components/CustomPaginator';
-import { Sort, Config, Aggregation } from '../../types';
 import { getEntityModalName } from '../../utils/hashtable';
+import {
+  TableContainer,
+  Overflow
+} from './styles';
+
+import { Sort } from '../../types';
+import { Props, State } from './types';
 
 const entityloader = (f: any) => import(`../Entities/${f}`);
-
-const TableContainer = muiStyled(Table)({
-  width: '100%',
-  background: '#fff',
-  borderRadius: '4px'
-});
-
-const Overflow = styled.div`
-  overflow-x: auto;
-`;
-
-interface Props {
-  rowsPerPage: number;
-  items: any[];
-  selectedColumns: any[];
-  selectedConfig: Config;
-  selectedEntity: string;
-  selectedModalItem: object;
-  attributes: any;
-  isLoading: boolean;
-  selectedSort: Sort;
-  entities: EntityDefinition[];
-  isModalUrl?: boolean;
-  aggregations: Aggregation[];
-  onExportCsv: () => void;
-  getModalItemAction: (entity: string, key: string, value: string | number) => void;
-  onSubmitQuery: () => void;
-  onSetSort: (entity: string, sorts: Sort[]) => void;
-  updateRoute: (redirect?: boolean, entity?: string, id?: string | number) => void;
-}
-
-interface State {
-  page: number;
-  isOpenedModal: boolean;
-  selectedPrimaryKey: string;
-  selectedPrimaryValue: string | number;
-  referenceEntity: string;
-}
 
 class CustomTable extends React.Component<Props, State> {
   EntityModal: any = null;
