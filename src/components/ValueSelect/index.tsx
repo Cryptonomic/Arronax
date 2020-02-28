@@ -155,8 +155,8 @@ class ValueSelect extends React.Component<Props, States> {
 
   render() {
     const { anchorEl } = this.state;
-    const { values, selectedValues, placeholder } = this.props;
-    let menuTitle: any = '';
+    const { values, selectedValues, placeholder = '' } = this.props;
+    let menuTitle: string = '';
     if (selectedValues[0] !== '') {
       selectedValues.forEach((value, index) => {
         if (index === 0) {
