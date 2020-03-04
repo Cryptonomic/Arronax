@@ -109,9 +109,11 @@ class InputItem extends React.Component<Props, States> {
       availableValues: []
     };
     this.autocompleteSearchDebounce = debounce(300, this.autocompleteSearch);
+    this.inputValueChange = debounce(300, (value: string) => this.props.onChange(value));
   }
 
-  autocompleteSearchDebounce: any;
+  autocompleteSearchDebounce: Function;
+  inputValueChange: Function;
 
   static defaultProps: any = {
     disabled: false
@@ -155,12 +157,13 @@ class InputItem extends React.Component<Props, States> {
 
   onValueChange = (event: any) => {
     const newValue = event.target.value;
-    const { value, onChange } = this.props;
+    const { value } = this.props;
     const lastChar = newValue.slice(-1);
     if (value.length > newValue.length && lastChar === ',') {
       this.setState({stateVal: newValue});
     } else {
-      onChange(newValue);
+      this.setState({stateVal: newValue});
+      this.inputValueChange(newValue);
     }
   }
 
