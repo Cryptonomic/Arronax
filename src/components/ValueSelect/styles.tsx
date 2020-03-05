@@ -7,7 +7,7 @@ import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import Checkbox from '@material-ui/core/Checkbox';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 
-export const ButtonShell = styled(Button)<{isactive: number}>`
+export const ButtonShell = styled(Button)<{ isactive: number }>`
   &&& {
     height: 52px;
     display: flex;
@@ -18,7 +18,7 @@ export const ButtonShell = styled(Button)<{isactive: number}>`
     color: ${({ isactive }) => (isactive ? '#4A4A4A' : '#9b9b9b')};
     text-transform: capitalize;
   }
-` as React.ComponentType<ButtonProps & {isactive: number}>;
+` as React.ComponentType<ButtonProps & { isactive: number }>;
 
 export const ArrowIcon = styled(KeyboardArrowDown)`
   color: #56c2d9;
@@ -54,12 +54,12 @@ export const MainMenuItem = styled(MenuItem)<{ ismultiple: number }>`
     padding-right: 25px;
     color: #4a4a4a;
   }
-`as React.ComponentType<MenuItemProps & {ismultiple: number}>;
+` as React.ComponentType<MenuItemProps & { ismultiple: number }>;
 
 export const CheckboxWrapper = withStyles({
   root: {
     '&$checked': {
-      color: '#56c2d9'
+      color: '#56c2d9',
     },
   },
   checked: {},
