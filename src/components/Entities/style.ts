@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ArronaxIcon } from '../../components/ArronaxIcon';
+import { ArronaxIcon } from '../ArronaxIcon';
 
 export const ScrollContainer = styled.div`
   width: 100%;

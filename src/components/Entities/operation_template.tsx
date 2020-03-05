@@ -5,8 +5,8 @@ import IconButton from '@material-ui/core/IconButton';
 
 import { formatValueForDisplay } from '../../utils/render';
 import { getNoEmptyFields } from '../../utils/attributes';
-import { ArronaxIcon } from '../../components/ArronaxIcon';
-import Loader from '../../components/Loader';
+import { ArronaxIcon } from '../ArronaxIcon';
+import Loader from '../Loader';
 
 import {
   ScrollContainer, ModalContainer, ListContainer, CloseIcon,

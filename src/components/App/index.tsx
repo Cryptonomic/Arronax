@@ -9,13 +9,13 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import ReactDynamicImport from 'react-dynamic-import';
 
-import Header from '../../components/Header';
-import SettingsPanel from '../../components/SettingsPanel';
-import Footer from '../../components/Footer';
-import Toolbar from '../../components/Toolbar';
+import Header from '../Header';
+import SettingsPanel from '../SettingsPanel';
+import Footer from '../Footer';
+import Toolbar from '../Toolbar';
 import CustomTable from '../CustomTable';
-import ConfigModal from '../../components/ConfigModal';
-import Loader from '../../components/Loader';
+import ConfigModal from '../ConfigModal';
+import Loader from '../Loader';
 import { getItemByPrimaryKey } from '../../reducers/app/thunks';
 import {
   getLoading,

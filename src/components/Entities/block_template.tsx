@@ -4,9 +4,9 @@ import Modal from '@material-ui/core/Modal';
 
 import { formatValueForDisplay, formatValueWithLink } from '../../utils/render';
 import { getNoEmptyFields } from '../../utils/attributes';
-import Loader from '../../components/Loader';
+import Loader from '../Loader';
 
-import Table from '../../components/Table';
+import Table from '../Table';
 
 import styled from 'styled-components';
 
