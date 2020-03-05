@@ -199,7 +199,7 @@ class FilterPanel extends React.Component<Props, {}> {
                       operator={filter.operator}
                       selectedValues={filter.values}
                       values={availableValues[filter.name]}
-                      onChange={values => this.onCardinalityValueChange(values, index)}
+                      onChange={(values: string[]) => this.onCardinalityValueChange(values, index)}
                     />
                   )}
                   {filter.operator && !filter.isLowCardinality && (
