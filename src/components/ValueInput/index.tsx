@@ -11,7 +11,7 @@ import {
 
 import { ValueInputProps } from './types';
 
-const ValueInput: React.FC<ValueInputProps> = props => {
+const ValueInput = (props: ValueInputProps) => {
   const { t } = useTranslation();
   const { operator, values, attribute, onChange } = props;
 
