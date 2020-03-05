@@ -7,8 +7,6 @@ import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import Checkbox from '@material-ui/core/Checkbox';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 
-export const Container = styled.div``;
-
 export const ButtonShell = styled(Button)<{isactive: number}>`
   &&& {
     height: 52px;

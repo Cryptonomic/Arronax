@@ -5,7 +5,6 @@ import { convertValue } from '../../utils/general';
 import ValueSelectItems from './ValueSelectItems';
 
 import {
-  Container,
   ButtonShell,
   ArrowIcon,
   MenuContainer,
@@ -58,7 +57,7 @@ const ValueSelect = (props: ValueSelectProps) => {
   }
 
   return (
-      <Container>
+      <>
         <ButtonShell
           aria-controls="simple-menu"
           aria-haspopup="true"
@@ -86,7 +85,7 @@ const ValueSelect = (props: ValueSelectProps) => {
             </MenuContents>
           </Menu>
         </MenuContainer>
-      </Container>
+      </>
     );
 }
 
