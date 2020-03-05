@@ -2,15 +2,18 @@ import React from 'react';
 import { ConseilOperator } from 'conseiljs';
 
 import { convertValue } from '../../utils/general';
-import {
-  MainMenuItem,
-  CheckboxWrapper
-} from './styles';
+import { MainMenuItem, CheckboxWrapper } from './styles';
 
 import { ValueSelectItemsProps } from './types';
 
 const ValueSelectItem = (props: ValueSelectItemsProps) => {
-  const { operator, selectedValues, values, handleMultipleChange, handleChange } = props;
+  const {
+    operator,
+    selectedValues,
+    values,
+    handleMultipleChange,
+    handleChange,
+  } = props;
 
   const items = values.map((value: string, index: number) => {
     if (operator === ConseilOperator.IN || operator === 'notin') {
@@ -27,8 +30,8 @@ const ValueSelectItem = (props: ValueSelectItemsProps) => {
           {convertValue(value)}
         </MainMenuItem>
       );
-    };
-  
+    }
+
     return (
       <MainMenuItem
         onClick={() => handleChange(value)}

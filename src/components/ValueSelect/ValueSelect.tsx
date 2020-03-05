@@ -4,23 +4,18 @@ import Menu from '@material-ui/core/Menu';
 import { convertValue } from '../../utils/general';
 import ValueSelectItems from './ValueSelectItems';
 
-import {
-  ButtonShell,
-  ArrowIcon,
-  MenuContainer,
-  MenuContents
-} from './styles';
+import { ButtonShell, ArrowIcon, MenuContainer, MenuContents } from './styles';
 
 import { ValueSelectProps } from './types';
 
 const ValueSelect = (props: ValueSelectProps) => {
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
-  const { 
-    values, 
-    selectedValues, 
-    placeholder = '', 
-    operator, 
-    onChange
+  const {
+    values,
+    selectedValues,
+    placeholder = '',
+    operator,
+    onChange,
   } = props;
 
   const handleClick = (event: React.MouseEvent) => {
@@ -45,7 +40,7 @@ const ValueSelect = (props: ValueSelectProps) => {
       newValues = [...selectedValues, value];
     }
     onChange(newValues);
-  }
+  };
 
   const cancelChange = () => setAnchorEl(null);
 
@@ -57,36 +52,36 @@ const ValueSelect = (props: ValueSelectProps) => {
   }
 
   return (
-      <>
-        <ButtonShell
-          aria-controls="simple-menu"
-          aria-haspopup="true"
-          isactive={selectedValues.length}
-          onClick={handleClick}
+    <>
+      <ButtonShell
+        aria-controls="simple-menu"
+        aria-haspopup="true"
+        isactive={selectedValues.length}
+        onClick={handleClick}
+      >
+        {menuTitle}
+        <ArrowIcon />
+      </ButtonShell>
+      <MenuContainer>
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          open={!!anchorEl}
+          onClose={cancelChange}
         >
-          {menuTitle}
-          <ArrowIcon />
-        </ButtonShell>
-        <MenuContainer>
-          <Menu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            open={!!anchorEl}
-            onClose={cancelChange}
-          >
-            <MenuContents>
-              <ValueSelectItems
-                values={values}
-                operator={operator}
-                selectedValues={selectedValues}
-                handleMultipleChange={handleMultipleChange}
-                handleChange={handleChange}
-              />
-            </MenuContents>
-          </Menu>
-        </MenuContainer>
-      </>
-    );
-}
+          <MenuContents>
+            <ValueSelectItems
+              values={values}
+              operator={operator}
+              selectedValues={selectedValues}
+              handleMultipleChange={handleMultipleChange}
+              handleChange={handleChange}
+            />
+          </MenuContents>
+        </Menu>
+      </MenuContainer>
+    </>
+  );
+};
 
 export default ValueSelect;

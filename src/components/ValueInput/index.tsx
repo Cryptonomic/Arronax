@@ -4,10 +4,7 @@ import { ConseilOperator } from 'conseiljs';
 
 import { ValueInputItem } from '../ValueInputItem';
 
-import {
-  HR,
-  AndBlock
-} from './styles';
+import { HR, AndBlock } from './styles';
 
 import { ValueInputProps } from './types';
 
@@ -18,16 +15,16 @@ const ValueInput = (props: ValueInputProps) => {
   const changeSingle = (val: string) => {
     const l = val.split(',').map(v => v.trim());
     onChange([l[0]]);
-  }
+  };
 
   const changeRange = (val: string, index: number) => {
     values[index] = val;
     onChange(values);
-  }
+  };
 
   const changeList = (val: string) => {
-    onChange([...(new Set(val.split(',').map(v => v.trim())))]);
-  }
+    onChange([...new Set(val.split(',').map(v => v.trim()))]);
+  };
 
   // Render specific input type based on operators
   switch (operator) {
@@ -60,8 +57,8 @@ const ValueInput = (props: ValueInputProps) => {
           onChange={(val: any) => changeList(val)}
         />
       );
-    case ConseilOperator.ISNULL: 
-    case 'isnotnull': 
+    case ConseilOperator.ISNULL:
+    case 'isnotnull':
       return null;
     default:
       return (
@@ -72,6 +69,6 @@ const ValueInput = (props: ValueInputProps) => {
         />
       );
   }
-}
+};
 
 export default ValueInput;
