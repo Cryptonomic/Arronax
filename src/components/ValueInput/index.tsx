@@ -1,91 +1,77 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
-import { ConseilOperator, AttributeDefinition } from 'conseiljs';
+import { ConseilOperator } from 'conseiljs';
+
 import { ValueInputItem } from '../ValueInputItem';
 
-const HR = styled.div`
-  width: 1px;
-  background-color: #ecedef;
-`;
+import {
+  HR,
+  AndBlock
+} from './styles';
 
-const AndBlock = styled.div`
-  color: #4a4a4a;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: 400;
-  padding-right: 10px;
-  padding-left: 10px;
-`;
+import { ValueInputProps } from './types';
 
-interface Props {
-  attribute: AttributeDefinition | any;
-  operator: string;
-  values: string[];
-  onChange: (values: string[]) => void;
-}
-
-const ValueInput: React.FC<Props> = props => {
-  const { operator, values, attribute, onChange } = props;
+const ValueInput: React.FC<ValueInputProps> = props => {
   const { t } = useTranslation();
+  const { operator, values, attribute, onChange } = props;
 
-  function changeSingle (val: string) {
+  const changeSingle = (val: string) => {
     const l = val.split(',').map(v => v.trim());
     onChange([l[0]]);
   }
 
-  function changeRange(val: string, index: number) {
+  const changeRange = (val: string, index: number) => {
     values[index] = val;
     onChange(values);
   }
 
-  function changeList(val: string) {
+  const changeList = (val: string) => {
     onChange([...(new Set(val.split(',').map(v => v.trim())))]);
   }
 
   // Render specific input type based on operators
-  if (operator === ConseilOperator.BETWEEN) {
-    return (
-      <React.Fragment>
+  switch (operator) {
+    case ConseilOperator.BETWEEN:
+      return (
+        <>
+          <ValueInputItem
+            attribute={attribute}
+            value={values[0]}
+            onChange={(val: any) => changeRange(val, 0)}
+          />
+          <HR />
+          <AndBlock>{t('components.valueInput.and')}</AndBlock>
+          <HR />
+          <ValueInputItem
+            attribute={attribute}
+            disabled={!values[0]}
+            value={values[1] ? values[1] : ''}
+            onChange={(val: any) => changeRange(val, 1)}
+          />
+        </>
+      );
+    case ConseilOperator.IN:
+    case 'notin':
+      const newValue = values.join(', ');
+      return (
+        <ValueInputItem
+          attribute={attribute}
+          value={newValue}
+          onChange={(val: any) => changeList(val)}
+        />
+      );
+    case ConseilOperator.ISNULL: 
+    case 'isnotnull': 
+      return null;
+    default:
+      return (
         <ValueInputItem
           attribute={attribute}
           value={values[0]}
-          onChange={(val: any) => changeRange(val, 0)}
+          onChange={(val: any) => changeSingle(val)}
         />
-        <HR />
-        <AndBlock>{t('components.valueInput.and')}</AndBlock>
-        <HR />
-        <ValueInputItem
-          attribute={attribute}
-          disabled={!values[0]}
-          value={values[1] ? values[1] : ''}
-          onChange={(val: any) => changeRange(val, 1)}
-        />
-      </React.Fragment>
-    );
-  } else if (operator === ConseilOperator.ISNULL || operator === 'isnotnull') {
-    return null;
-  } else if (operator === ConseilOperator.IN || operator === 'notin') {
-    const newValue = values.join(', ');
-
-    return (
-      <ValueInputItem
-        attribute={attribute}
-        value={newValue}
-        onChange={(val: any) => changeList(val)}
-      />
-    );
+      );
   }
-  return (
-    <ValueInputItem
-      attribute={attribute}
-      value={values[0]}
-      onChange={(val: any) => changeSingle(val)}
-    />
-  );
 }
 
 export default ValueInput;
