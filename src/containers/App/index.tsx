@@ -304,6 +304,10 @@ class Arronax extends React.Component<Props, States> {
     const selectedObjectEntity: any = entities.find(entity => entity.name === searchedEntity);
 
     const modalItems = primaryKeyClicked ? selectedModalItem : searchedItem;
+
+    const { hiddenEntities } = selectedConfig;
+
+    const tabs = (hiddenEntities && hiddenEntities.length && entities.filter(entity => !hiddenEntities.includes(entity.name))) || entities;
     
     return (
       <MainContainer>
@@ -323,11 +327,11 @@ class Arronax extends React.Component<Props, States> {
                 variant='scrollable'
                 onChange={(event, newValue) => this.onClickTab(newValue)}
               >
-                {entities.map((entity, index) => (
+                {tabs.map((tab, index) => (
                   <TabWrapper
                     key={index}
-                    value={entity.name}
-                    label={t(`containers.arronax.${entity.name}`)}
+                    value={tab.name}
+                    label={t(`containers.arronax.${tab.name}`)}
                   />
                 ))}
               </TabsWrapper>
