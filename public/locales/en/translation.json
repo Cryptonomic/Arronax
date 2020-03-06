@@ -106,7 +106,8 @@
             "baking_rights": "Baking Rights",
             "endorsing_rights": "Endorsing Rights",
             "nothing_found": "The {{entityName}} was not found.",
-            "accounts_history": "Account History"
+            "accounts_history": "Account History",
+            "governance": "Governance"
         }
     },
     "attributes": {
@@ -248,13 +249,10 @@
             "cycle": "Cycle",
             "branch": "Branch",
             "period": "Period",
-            "number_of_slots": "Number of Slots"
-        },
-        "proposals": {
-            "protocol_hash": "Protocol hash",
-            "block_id": "Block Hash",
-            "block_level": "Block level",
-            "supporters": "Supporters"
+            "number_of_slots": "Number of Slots",
+            "errors": "Error",
+            "parameters_entrypoints": "Contract Function",
+            "ballot_period": "Vote Period"
         },
         "baking_rights": {
             "block_hash": "Block Hash",
@@ -273,6 +271,21 @@
             "slot": "Slot",
             "cycle": "Cycle",
             "governance_period": "Period"
+        },
+        "governance": {
+            "voting_period": "Period",
+            "cycle": "Cycle",
+            "level": "Block Level",
+            "voting_period_kind": "Voting Period",
+            "block_hash": "Block Hash",
+            "proposal_hash": "Proposal",
+            "yay_count": "Yea votes",
+            "nay_count": "Nay votes",
+            "pass_count": "Pass votes",
+            "yay_rolls": "Yea rolls",
+            "nay_rolls": "Nay rolls",
+            "pass_rolls": "Pass rolls",
+            "total_rolls": "Total rolls"
         }
     },
     "operators": {
