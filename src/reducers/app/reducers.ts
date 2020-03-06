@@ -236,7 +236,8 @@ export const app = (state = initialState, action: any) => {
       return { ...state, sort };
     }
     case SET_ENTITIES: {
-      const entities = action.entities;
+      const { hiddenEntities } = state.selectedConfig;
+      const entities = (hiddenEntities && hiddenEntities.length && action.entities.filter((entity: EntityDefinition) => !hiddenEntities.includes(entity.name))) || action.entities;
       const selectedEntity = !action.isChange && state.selectedEntity ? state.selectedEntity : entities[0].name;
       return { ...state, entities, selectedEntity };
     }
