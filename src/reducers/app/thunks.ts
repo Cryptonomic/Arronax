@@ -36,6 +36,14 @@ import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../util
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
 import { getOperatorType, sortAttributes, isOS } from '../../utils/general';
 
+const hiddenEntities = [
+  'big_map_contents',
+  'big_maps',
+  'governance',
+  'originated_account_maps',
+  'registered_tokens'
+];
+
 const { executeEntityQuery } = ConseilDataClient;
 const {
   blankQuery,
@@ -288,6 +296,8 @@ export const initLoadByNetwork = () => async (dispatch, state) => {
     return;
   }
 
+  entities = entities.filter(entity => !hiddenEntities.includes(entity.name));
+
   if (selectedConfig.entities && selectedConfig.entities.length > 0) {
       let filteredEntities: EntityDefinition[] = [];
       selectedConfig.entities.forEach(e => {
@@ -370,6 +380,8 @@ export const initLoad = (environmentInfo?: string, query?: string) => async (dis
     dispatch(completeFullLoadAction(true));
     return;
   }
+
+  entities = entities.filter(entity => !hiddenEntities.includes(entity.name));
 
   if (selectedConfig.entities && selectedConfig.entities.length > 0) {
       let filteredEntities: EntityDefinition[] = [];
