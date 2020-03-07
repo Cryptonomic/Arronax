@@ -64,7 +64,7 @@ class EntityModal extends React.Component<Props, States> {
     const isInternal = internal !== undefined ? internal.value : 'undefined';
     const error = processedValues.find(a => a.name === 'errors');
     const hasError = error !== undefined && error.value.length > 0;
-console.log(`error: ${hasError} ${error}`)
+
     if (opKind === 'transaction' && processedValues.find(i => i.name === 'parameters') !== undefined) {
         this.explicitMinorKeys = ['counter', 'internal', 'storage_limit', 'storage_size'];
         this.explicitKeys = [...this.explicitMinorKeys];

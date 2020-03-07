@@ -100,6 +100,12 @@ export const formatValueForDisplay = (platform: string, network: string, entity:
                 errors[i] = 'Invalid contract parameter';
             } else if (errors[i].includes('invalidSyntacticConstantError')) {
                 errors[i] = 'Invalid syntactic constant';
+            } else if (errors[i].includes('storage_exhausted')) {
+                errors[i] = 'Storage exhausted';
+            } else if (errors[i].includes('scriptRejectedRuntimeError')) {
+                errors[i] = 'Contract rejected';
+            } else if (errors[i].includes('scriptRuntimeError')) {
+                errors[i] = 'Contract runtime error';
             }
         }
 
