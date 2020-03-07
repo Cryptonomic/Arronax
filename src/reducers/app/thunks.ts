@@ -7,7 +7,9 @@ import {
   ConseilQueryBuilder,
   ConseilOperator,
   ConseilOutput,
-  ConseilSortDirection, AttributeDefinition,
+  ConseilSortDirection,
+  AttributeDefinition,
+  AttrbuteDataType,
   TezosConseilClient
 } from 'conseiljs';
 
@@ -244,6 +246,17 @@ export const fetchInitEntityAction = (
         operatorType,
         isLowCardinality
       };
+    });
+
+    predicates.map((predicate: any) => {
+        const selectedAttribute: any = attributes.find(attr => attr.name === predicate.field);
+        if (selectedAttribute.dataType === AttrbuteDataType.DATETIME){
+            for (let i = 0; i < predicate.set.length; i++) {
+                if (Number(predicate.set[i]) < 0) {
+                    predicate.set[i] = (new Date()).getTime() + predicate.set[i];
+                }
+            }
+        }
     });
 
     if (!!query.aggregation && query.aggregation.length > 0) {
