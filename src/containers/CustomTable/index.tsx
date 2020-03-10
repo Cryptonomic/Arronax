@@ -154,15 +154,16 @@ class CustomTable extends React.Component<Props, State> {
         />
         {isOpenedModal && 
           <EntityModal
-            open={isOpenedModal}
-            title={selectedObjectEntity.displayName}
             attributes={attributes[referenceEntity]}
-            opsAttributes={attributes.operations}
-            items={selectedModalItem}
-            subItems={selectedModalSubItem}
             isLoading={isLoading}
-            onClose={this.onCloseModal}
+            items={selectedModalItem}
+            open={isOpenedModal}
+            opsAttributes={attributes.operations}
+            selectedConfig={selectedConfig}
+            subItems={selectedModalSubItem}
+            title={selectedObjectEntity.displayName}
             onClickPrimaryKey={this.onOpenModal}
+            onClose={this.onCloseModal}
           />
         }
       </React.Fragment>
