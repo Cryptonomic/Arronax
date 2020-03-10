@@ -248,7 +248,7 @@ export const fetchInitEntityAction = (
       };
     });
 
-    predicates.map((predicate: any) => {
+    predicates.forEach((predicate: any) => {
         const selectedAttribute: any = attributes.find(attr => attr.name === predicate.field);
         if (selectedAttribute.dataType === AttrbuteDataType.DATETIME){
             for (let i = 0; i < predicate.set.length; i++) {
