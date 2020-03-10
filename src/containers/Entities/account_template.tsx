@@ -12,12 +12,15 @@ import {
   CloseButton, BottomRowContainer, BottomCol, BottomColTitle, BottomColContent
 } from './style';
 
+import { Config } from '../../types';
+
 type OwnProps = {
   open: boolean;
   items: any[];
   attributes: any[];
   isLoading: boolean;
   title: string;
+  selectedConfig: Config;
   onClose: () => void;
   onClickPrimaryKey: () => void
 };
@@ -42,10 +45,10 @@ class EntityModal extends React.Component<Props, States> {
   onClickModal = (event: any) => { event.stopPropagation(); }
 
   formatValue = (processedValues: any[], attributes: any[], key: string, truncate: boolean = false) => {
-    const { onClickPrimaryKey } = this.props;
+    const { onClickPrimaryKey, selectedConfig: { platform, network } } = this.props;
     this.explicitKeys.push(key);
     if (processedValues.find(i => i.name === key) === undefined) { return ''; }
-    return formatValueForDisplay('platform', 'network', 'accounts', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], onClickPrimaryKey, undefined, truncate);
+    return formatValueForDisplay(platform, network, 'accounts', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], onClickPrimaryKey, undefined, truncate);
   }
 
   render() {
