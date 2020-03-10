@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { withTranslation, WithTranslation } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import Modal from '@material-ui/core/Modal';
 import IconButton from '@material-ui/core/IconButton';
 
@@ -14,26 +14,9 @@ import {
   CloseButton, BottomRowContainer, BottomCol, BottomColTitle, BottomColContent
 } from './style';
 
-import { Config } from '../../types';
+import { DefaultProps, DefaultState } from './types';
 
-type OwnProps = {
-  open: boolean;
-  items: any[];
-  attributes: any[];
-  isLoading: boolean;
-  title: string;
-  selectedConfig: Config;
-  onClose: () => void;
-  onClickPrimaryKey: () => void
-};
-
-interface States {
-  count: number;
-}
-
-type Props = OwnProps & WithTranslation;
-
-class EntityModal extends React.Component<Props, States> {
+class EntityModal extends React.Component<DefaultProps, DefaultState> {
   explicitKeys: string[] = [];
   explicitMinorKeys: string[] = [];
 

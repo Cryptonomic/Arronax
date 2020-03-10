@@ -1,5 +1,5 @@
 import React from 'react';
-import { withTranslation, WithTranslation } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import Modal from '@material-ui/core/Modal';
 
 import { formatValueForDisplay, formatValueWithLink } from '../../utils/render';
@@ -16,27 +16,7 @@ import {
   CloseButton, BottomRowContainer, BottomCol, BottomColTitle, BottomColContent
 } from './style';
 
-import { Config } from '../../types';
-
-type OwnProps = {
-  open: boolean;
-  items: any[];
-  subItems: any[];
-  attributes: any[];
-  opsAttributes: any[];
-  isLoading: boolean;
-  title: string;
-  selectedConfig: Config;
-  onClose: () => void;
-  onClickPrimaryKey: () => void
-};
-
-interface States {
-  count: number;
-  subItemsView: boolean;
-}
-
-type Props = OwnProps & WithTranslation;
+import { BlockProps, BlockState } from './types';
 
 const Button = styled.div`
   color: #56c2d9;
@@ -45,7 +25,7 @@ const Button = styled.div`
   align-items: center;
 `;
 
-class EntityModal extends React.Component<Props, States> {
+class EntityModal extends React.Component<BlockProps, BlockState> {
   explicitKeys: string[] = [];
   explicitMinorKeys: string[] = []//['fitness', 'signature', 'chain_id', 'operations_hash', 'nonce_hash'];
 
