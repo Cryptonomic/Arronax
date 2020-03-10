@@ -16,6 +16,7 @@ import Toolbar from '../../components/Toolbar';
 import CustomTable from '../CustomTable';
 import ConfigModal from '../../components/ConfigModal';
 import Loader from '../../components/Loader';
+import Tabs from '../../components/Tabs';
 import { getItemByPrimaryKey } from '../../reducers/app/thunks';
 import {
   getLoading,
@@ -60,8 +61,6 @@ import {
   ClearButton,
   TryButton,
   DismissButton,
-  TabsWrapper,
-  TabWrapper,
   DialogContentWrapper
 } from './styles';
 
@@ -88,7 +87,8 @@ class Arronax extends React.Component<Props, States> {
       isOpenEntityModal: false,
       searchedEntity: '',
       searchedItem: [],
-      searchedSubItems: []
+      searchedSubItems: [],
+      expandedTabs: false
     };
 
     this.settingRef = React.createRef();
@@ -174,6 +174,10 @@ class Arronax extends React.Component<Props, States> {
   onClickTab = (value: string) => {
     const { selectedEntity } = this.props;
     if (value === selectedEntity) return;
+    if (value === 'more') {
+      this.setState((prevState) => ({ expandedTabs: !prevState.expandedTabs }));
+      return;
+    }
     this.updateRoute(false, value)
   }
 
@@ -297,13 +301,14 @@ class Arronax extends React.Component<Props, States> {
     } = this.props;
     const {
       isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal, isOpenEntityModal,
-      searchedItem, searchedEntity, searchedSubItems, primaryKeyClicked
+      searchedItem, searchedEntity, searchedSubItems, primaryKeyClicked, expandedTabs
     } = this.state;
     const { EntityModal } = this;
     const isRealLoading = isLoading || !isFullLoaded;
     const selectedObjectEntity: any = entities.find(entity => entity.name === searchedEntity);
 
     const modalItems = primaryKeyClicked ? selectedModalItem : searchedItem;
+    const tabs = entities.map(entity => entity.name);
     
     return (
       <MainContainer>
@@ -318,19 +323,12 @@ class Arronax extends React.Component<Props, States> {
         <Container>
           {isFullLoaded && (
             <React.Fragment>
-              <TabsWrapper
-                value={selectedEntity}
-                variant='scrollable'
-                onChange={(event, newValue) => this.onClickTab(newValue)}
-              >
-                {entities.map((entity, index) => (
-                  <TabWrapper
-                    key={index}
-                    value={entity.name}
-                    label={t(`containers.arronax.${entity.name}`)}
-                  />
-                ))}
-              </TabsWrapper>
+              <Tabs
+                tabs={tabs}
+                expanded={expandedTabs}
+                selected={selectedEntity}
+                onChange={this.onClickTab}
+              />
               <Toolbar
                 isCollapsed={isSettingCollapsed}
                 selectedTool={selectedTool}

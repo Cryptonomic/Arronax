@@ -43,6 +43,7 @@ export interface States {
   searchedItem: any[];
   searchedSubItems: any[];
   primaryKeyClicked: boolean;
+  expandedTabs: boolean;
 }
 
 export interface RouteComponentWithParmas extends RouteComponentProps {
