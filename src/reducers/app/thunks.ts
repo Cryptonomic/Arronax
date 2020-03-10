@@ -586,10 +586,15 @@ export const submitQuery = () => async (dispatch: any, state: any) => {
 
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
   query = setLimit(query, 1000);
-  const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
-
-  await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length))
-  dispatch(setLoadingAction(false));
+  try {
+    const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
+    await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length));
+    dispatch(setLoadingAction(false));
+  } catch (e) {
+    const message = `Unable to submit query`;
+    dispatch(createMessageAction(message, true));
+    dispatch(setLoadingAction(false));
+  }
 };
 
 export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: string | number) => async (dispatch: any, state: any) => {
