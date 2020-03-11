@@ -27,15 +27,16 @@ const Container = styled.div<{isLong: boolean}>`
 `;
 
 const DatePickerWrapper = styled(DatePicker)`
+  border-radius: 0 5px 5px 0;
+  border: none;
   color: #4A4A4A;
   font-size: 16px;
+  height: 52px;
   letter-spacing: 0;
   line-height: 17px;
-  width: 220px;
-  height: 52px;
-  padding-left: 10px;
-  border: none;
   outline: none;
+  padding-left: 10px;
+  width: 220px;
 `;
 
 const styles: any = {
