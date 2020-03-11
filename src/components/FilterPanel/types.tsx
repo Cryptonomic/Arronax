@@ -2,7 +2,7 @@ import { WithTranslation } from 'react-i18next';
 import { AttributeDefinition } from 'conseiljs';
 import { Filter } from '../../types';
 
-type OwnProps = {
+type Props = {
   availableValues: any;
   selectedEntity: string;
   attributes: AttributeDefinition[];
@@ -17,4 +17,4 @@ type OwnProps = {
   onSubmit: () => void;
 };
 
-export type FilterPanelProps = OwnProps & WithTranslation;
+export type FilterPanelProps = Props & WithTranslation;
