@@ -30,13 +30,18 @@ const DatePickerWrapper = styled(DatePicker)`
   border-radius: 0 5px 5px 0;
   border: none;
   color: #4A4A4A;
-  font-size: 16px;
+  font-size: 18px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
   height: 52px;
   letter-spacing: 0;
   line-height: 17px;
   outline: none;
   padding-left: 10px;
-  width: 220px;
+  width: 250px;
+  ::placeholder {
+    color: #4A4A4A;
+  }
 `;
 
 const styles: any = {
