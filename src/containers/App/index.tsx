@@ -399,15 +399,16 @@ class Arronax extends React.Component<Props, States> {
         />
         {isOpenEntityModal && 
           <EntityModal
-            open={isOpenEntityModal}
-            title={selectedObjectEntity.displayName}
             attributes={attributes[searchedEntity]}
-            opsAttributes={attributes.operations}
-            subItems={searchedSubItems}
-            items={modalItems}
             isLoading={isLoading}
-            onClose={this.onCloseEntityModal}
+            items={modalItems}
+            open={isOpenEntityModal}
+            opsAttributes={attributes.operations}
+            selectedConfig={selectedConfig}
+            subItems={searchedSubItems}
+            title={selectedObjectEntity.displayName}
             onClickPrimaryKey={this.onClickPrimaryKey}
+            onClose={this.onCloseEntityModal}
           />
         }
       </MainContainer>
