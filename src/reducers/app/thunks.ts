@@ -307,8 +307,8 @@ export const initLoadByNetwork = () => async (dispatch: any, state: any) => {
 
   if (selectedConfig.entities && selectedConfig.entities.length > 0) {
     entities = [
-      ...selectedConfig.entities.map((name: any) => entities.find(item => item.name === name && item.name !== 'rolls')),
-      ...entities.filter(item => !selectedConfig.entities.includes(item.name) && item.name !== 'rolls')
+      ...selectedConfig.entities.map((name: any) => entities.find(item => item.name === name)),
+      ...entities.filter(item => !selectedConfig.entities.includes(item.name))
     ];
 }
 
@@ -391,8 +391,8 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
 
   if (selectedConfig.entities && selectedConfig.entities.length > 0) {
       entities = [
-        ...selectedConfig.entities.map((name: any) => entities.find(item => item.name === name && item.name !== 'rolls')),
-        ...entities.filter(item => !selectedConfig.entities.includes(item.name) && item.name !== 'rolls')
+        ...selectedConfig.entities.map((name: any) => entities.find(item => item.name === name)),
+        ...entities.filter(item => !selectedConfig.entities.includes(item.name))
       ];
   }
 
