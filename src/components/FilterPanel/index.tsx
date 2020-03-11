@@ -1,8 +1,8 @@
 import React from 'react';
-import { withTranslation, WithTranslation } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
-import { ConseilOperator, AttributeDefinition } from 'conseiljs';
+import { ConseilOperator } from 'conseiljs';
 import { ArronaxIcon } from '../ArronaxIcon';
 import { fetchValues, resetFilters } from '../../reducers/app/thunks';
 import {
@@ -39,24 +39,9 @@ import {
   ResetButton
 } from './style';
 
-type OwnProps = {
-  availableValues: any;
-  selectedEntity: string;
-  attributes: AttributeDefinition[];
-  filters: Filter[];
-  operators: any;
-  swipeRef: any;
-  fetchValues: (value: string) => void;
-  addFilter: (entity: string) => void;
-  removeFilter: (entity: string, index: number) => void;
-  changeFilter: (entity: string, filter: Filter, index: number) => void;
-  resetFilters: () => void;
-  onSubmit: () => void;
-};
+import { FilterPanelProps } from './types';
 
-type Props = OwnProps & WithTranslation;
-
-class FilterPanel extends React.Component<Props, {}> {
+class FilterPanel extends React.Component<FilterPanelProps, {}> {
   onAddFilter = async () => {
     const { addFilter, selectedEntity, swipeRef } = this.props;
     await addFilter(selectedEntity);
