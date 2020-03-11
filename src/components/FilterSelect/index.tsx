@@ -8,8 +8,10 @@ import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 const Container = styled.div``;
 
-const ButtonShell = styled(Button)<{isactive: string; iscapital: number}>`
+const ButtonShell = styled(Button)<{isactive: string; iscapital: number; borderradius?: string; backgroundcolor?: string}>`
   &&& {
+    background-color: ${({ backgroundcolor }) => backgroundcolor ? backgroundcolor : ''};
+    border-radius: ${({ borderradius }) => borderradius ? borderradius : '0' };
     height: 52px;
     display: flex;
     align-items: center;
@@ -71,6 +73,8 @@ interface OwnProps {
   value: any;
   items: Array<Item>;
   type: string;
+  borderRadius?: string;
+  backgroundColor?: string;
   placeholder?: string;
   onChange: (item: object) => void;
 }
@@ -105,7 +109,7 @@ class FilterSelect extends React.Component<Props, States> {
 
   render() {
     const { anchorEl } = this.state;
-    const { items, value, placeholder, type, t } = this.props;
+    const { items, value, placeholder, type, t, borderRadius, backgroundColor } = this.props;
     const tranPrefix = type === 'attributes'? `${type}.${items[0].entity}.` : `${type}.`;
 
     const selectedItem = items.find(item => item.name === value);
@@ -114,11 +118,13 @@ class FilterSelect extends React.Component<Props, States> {
     return (
       <Container>
         <ButtonShell
-          aria-owns={anchorEl ? 'simple-menu' : undefined}
           aria-haspopup="true"
+          aria-owns={anchorEl ? 'simple-menu' : undefined}
+          backgroundcolor={backgroundColor}
+          borderradius={borderRadius}
           isactive={value}
-          onClick={this.handleClick}
           iscapital={placeholder !== t('components.filterPanel.select_operator')? 1 : 0}
+          onClick={this.handleClick}
         >
           {menuTitle}
           <ArrowIcon />

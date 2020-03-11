@@ -159,6 +159,7 @@ class FilterPanel extends React.Component<FilterPanelProps, {}> {
               <FilterItemContainer key={index}>
                 <FilterItemGr>
                   <FilterSelect
+                    borderRadius='4px 0 0 4px'
                     value={filter.name}
                     placeholder={t('components.aggregationPanel.select_attribute', { entityName })}
                     items={newAttributes}
@@ -168,6 +169,8 @@ class FilterPanel extends React.Component<FilterPanelProps, {}> {
                   {filter.name && <HR />}
                   {filter.name && (
                     <FilterSelect
+                      backgroundColor="#f9fafc"
+                      borderRadius={filter.operator !== 'isnotnull' && filter.operator !== 'isnull' ? '' : '0 4px 4px 0'}
                       value={filter.operator}
                       placeholder={t('components.filterPanel.select_operator')}
                       items={operators[filter.operatorType]}
@@ -177,7 +180,7 @@ class FilterPanel extends React.Component<FilterPanelProps, {}> {
                       }
                     />
                   )}
-                  {filter.operator && <HR />}
+                  {filter.operator && filter.operator !== 'isnotnull' && filter.operator !== 'isnull' && <HR />}
                   {filter.operator && filter.isLowCardinality && (
                     <ValueSelect
                       placeholder={t('components.filterPanel.select_value')}
