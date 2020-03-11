@@ -16,7 +16,7 @@ export const HeaderTxt = styled.div`
 
 export const MainContainer = styled.div`
   width: 100%;
-  background: #fbfbfb;
+  background: #FFFFFF;
   border: 1px solid #ededed;
   border-radius: 3px;
 `;
