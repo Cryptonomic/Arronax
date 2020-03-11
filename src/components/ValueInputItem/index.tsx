@@ -38,7 +38,7 @@ const DatePickerWrapper = styled(DatePicker)`
   line-height: 17px;
   outline: none;
   padding-left: 10px;
-  width: 250px;
+  width: 240px;
   ::placeholder {
     color: #4A4A4A;
   }
