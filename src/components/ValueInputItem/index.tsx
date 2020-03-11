@@ -35,12 +35,15 @@ const DatePickerWrapper = styled(DatePicker)`
   font-weight: 500;
   height: 52px;
   letter-spacing: 0;
-  padding-left: 8px;
+  padding-left: 18px;
+  padding-right: 18px;
   line-height: 17px;
+  text-align: center;
+  width: 270px;
   outline: none;
-  width: 240px;
   ::placeholder {
     color: #4A4A4A;
+    text-align: left;
   }
 `;
 
