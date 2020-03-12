@@ -13,6 +13,7 @@ import Autosuggest from 'react-autosuggest';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import { debounce } from "throttle-debounce";
+import DatePickerInput from './DatePickerInput';
 import "react-datepicker/dist/react-datepicker.css";
 
 import { getHightCardinalityValues } from '../../reducers/app/thunks';
@@ -26,15 +27,18 @@ const Container = styled.div<{isLong: boolean}>`
   flex: 1;
 `;
 
-const DatePickerWrapper = styled(DatePicker)`
-  color: #4A4A4A;
-  font-size: 16px;
-  letter-spacing: 0;
-  line-height: 17px;
-  width: 220px;
-  height: 52px;
-  padding-left: 10px;
+const DatePickerWrapper = styled(DatePickerInput)`
+  border-radius: 0 5px 5px 0;
   border: none;
+  color: #4A4A4A;
+  font-size: 18px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  height: 52px;
+  letter-spacing: 0;
+  padding: 0 18px;
+  line-height: 17px;
+  width: 100%;
   outline: none;
 `;
 
@@ -239,7 +243,7 @@ class InputItem extends React.Component<Props, States> {
     if (attribute.dataType === AttrbuteDataType.DATETIME) {
       const newValue: any = value? new Date(Number(value)) : '';
       return (
-        <DatePickerWrapper
+        <DatePicker
           selected={newValue}
           placeholderText={t('components.valueInputItem.select_date')}
           showTimeSelect
@@ -247,6 +251,7 @@ class InputItem extends React.Component<Props, States> {
           timeIntervals={15}
           dateFormat='MMMM d, yyyy h:mm aa'
           timeCaption='time'
+          customInput={<DatePickerWrapper />}
           onChange={(val: any) => onChange(String(new Date(val).getTime()))}
         />
       )
