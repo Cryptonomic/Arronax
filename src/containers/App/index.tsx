@@ -308,7 +308,8 @@ class Arronax extends React.Component<Props, States> {
     const selectedObjectEntity: any = entities.find(entity => entity.name === searchedEntity);
 
     const modalItems = primaryKeyClicked ? selectedModalItem : searchedItem;
-    const tabs = entities.map(entity => entity.name);
+    const fullTabsList = entities.map(entity => entity.name);
+    const shortTabsList = selectedConfig.entities || [];
     
     return (
       <MainContainer>
@@ -324,7 +325,8 @@ class Arronax extends React.Component<Props, States> {
           {isFullLoaded && (
             <React.Fragment>
               <Tabs
-                tabs={tabs}
+                full={fullTabsList}
+                short={shortTabsList}
                 expanded={expandedTabs}
                 selected={selectedEntity}
                 onChange={this.onClickTab}
