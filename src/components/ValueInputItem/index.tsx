@@ -36,8 +36,7 @@ const DatePickerWrapper = styled(DatePickerInput)`
   font-weight: 500;
   height: 52px;
   letter-spacing: 0;
-  padding-left: 18px;
-  padding-right: 18px;
+  padding: 0 18px;
   line-height: 17px;
   width: 100%;
   outline: none;
