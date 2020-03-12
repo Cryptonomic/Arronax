@@ -8,11 +8,11 @@ import { TabsProps } from './types';
 
 const Tabs = (props: TabsProps) => {
   const { t } = useTranslation();
-  const { tabs, selected, expanded, onChange } = props;
-  let custom: string[] = tabs;
+  const { full, short, selected, expanded, onChange } = props;
+  let tabs: string[] = (!short.length && full.slice(0, 3)) || short;
 
-  if (!expanded) {
-    tabs.splice(3);
+  if (expanded) {
+    tabs = full;
   }
 
   return (
@@ -21,7 +21,7 @@ const Tabs = (props: TabsProps) => {
       variant={expanded ? 'scrollable' : 'standard'}
       onChange={(e, newValue) => onChange(newValue)}
     >
-      {custom.map((tab: string, index: number) => (
+      {tabs.map((tab: string, index: number) => (
         <TabWrapper
           key={index}
           value={tab}

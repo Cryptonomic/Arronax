@@ -1,5 +1,6 @@
 export interface TabsProps {
-  tabs: string[];
+  full: string[];
+  short: string[];
   selected: string;
   expanded: boolean;
   onChange: (value: string) => void;
