@@ -123,56 +123,64 @@ export const formatValueForDisplay = (
     return errors.join(', ');
   }
 
+  if (!!aggregation) return formatAggregatedValue(attribute, value, aggregation);
+
   const { dataFormat, dataType, valueMap } = attribute;
   const displayValueMap = valueMap && valueMap[value];
 
-  if (!!aggregation) {
-    return formatAggregatedValue(attribute, value, aggregation);
-  }
-
-  if (dataType === AttrbuteDataType.BOOLEAN) {
-    const svalue = value.toString();
-    return svalue.charAt(0).toUpperCase() + svalue.slice(1);
-  } else if (dataType === AttrbuteDataType.DATETIME) {
-    if (!dataFormat) {
-      return value;
-    }
-    return <Moment format={dataFormat}>{value}</Moment>;
-  } else if (dataType === AttrbuteDataType.ACCOUNT_ADDRESS) {
-    const colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255) / 74)).toString('hex');
-    const address = formatReferenceValue(attribute, displayValueMap || (truncate ? truncateHash(value) : value), value, onClickPrimaryKey);
-    return (
-      <React.Fragment>
-        <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
-        <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
-        {address}
-        <Clipboard value={value} />
-      </React.Fragment>
-    );
-  } else if (dataType === AttrbuteDataType.HASH) {
-    const hash = formatReferenceValue(attribute, displayValueMap || (truncate ? truncateHash(value) : value), value, onClickPrimaryKey);
-    return (
-      <React.Fragment>
-        {hash}
-        <Clipboard value={value} />
-      </React.Fragment>
-    );
-  } else if (dataType === AttrbuteDataType.DECIMAL || dataType === AttrbuteDataType.INT || dataType === AttrbuteDataType.CURRENCY) {
-    return formatNumber(Number(value), attribute, truncate);
-  } else if (dataType === AttrbuteDataType.STRING && value.length > 100) {
-    return (
-      <React.Fragment>
-        {displayValueMap || value.substring(0, 100)}
-        <Clipboard value={value} />
-      </React.Fragment>
-    );
-  } else if (dataType === AttrbuteDataType.STRING && value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
-    return displayValueMap || value
-      .split('_')
-      .map((s: any) => s.charAt(0).toUpperCase() + s.slice(1))
-      .join(' ');
-  } else {
-    return formatReferenceValue(attribute, displayValueMap || value, value, onClickPrimaryKey);
+  switch (dataType) {
+    case AttrbuteDataType.BOOLEAN:
+      const svalue = value.toString();
+      return svalue.charAt(0).toUpperCase() + svalue.slice(1);
+    case AttrbuteDataType.DATETIME:
+      if (!dataFormat) {
+        return value;
+      }
+      return <Moment format={dataFormat}>{value}</Moment>;
+    case AttrbuteDataType.ACCOUNT_ADDRESS:
+      const colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255) / 74)).toString('hex');
+      const address = formatReferenceValue(attribute, displayValueMap || (truncate ? truncateHash(value) : value), value, onClickPrimaryKey);
+      return (
+        <React.Fragment>
+          <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
+          <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
+          {address}
+          <Clipboard value={value} />
+        </React.Fragment>
+      );
+    case AttrbuteDataType.HASH:
+      const hash = formatReferenceValue(attribute, displayValueMap || (truncate ? truncateHash(value) : value), value, onClickPrimaryKey);
+      return (
+        <React.Fragment>
+          {hash}
+          <Clipboard value={value} />
+        </React.Fragment>
+      );
+    case AttrbuteDataType.DECIMAL:
+    case AttrbuteDataType.INT:
+    case AttrbuteDataType.CURRENCY:
+      return formatNumber(Number(value), attribute, truncate);
+    case AttrbuteDataType.STRING:
+      if (value.length > 100) {
+        return (
+          <React.Fragment>
+            {displayValueMap || value.substring(0, 100)}
+            <Clipboard value={value} />
+          </React.Fragment>
+        );
+      }
+      if (value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
+        return (
+          displayValueMap ||
+          value
+            .split('_')
+            .map((s: any) => s.charAt(0).toUpperCase() + s.slice(1))
+            .join(' ')
+        );
+      }
+      return formatReferenceValue(attribute, displayValueMap || value, value, onClickPrimaryKey);
+    default:
+      return formatReferenceValue(attribute, displayValueMap || value, value, onClickPrimaryKey);
   }
 };
 
