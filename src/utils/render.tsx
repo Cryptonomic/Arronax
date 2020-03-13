@@ -44,11 +44,7 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
   const { entity, name } = attribute;
 
   if (attribute.reference) {
-    return (
-      <LinkDiv onClick={() => onClickPrimaryKey(attribute.reference.entity, attribute.reference.key, value)}>
-        {displayValue}
-      </LinkDiv>
-    );
+    return <LinkDiv onClick={() => onClickPrimaryKey(attribute.reference.entity, attribute.reference.key, value)}>{displayValue}</LinkDiv>;
   }
 
   if (PrimaryKeyList[entity] && PrimaryKeyList[entity].includes(name)) {
@@ -66,8 +62,7 @@ const formatAggregatedValue = (attribute: AttributeDefinition, value: any, aggre
       aggregationAttribute.dataType = AttrbuteDataType.INT;
       break;
     default:
-      aggregationAttribute.dataType =
-        attribute.dataType === AttrbuteDataType.CURRENCY ? AttrbuteDataType.CURRENCY : AttrbuteDataType.DECIMAL;
+      aggregationAttribute.dataType = attribute.dataType === AttrbuteDataType.CURRENCY ? AttrbuteDataType.CURRENCY : AttrbuteDataType.DECIMAL;
       break;
   }
 
@@ -143,9 +138,7 @@ export const formatValueForDisplay = (
     }
     return <Moment format={dataFormat}>{value}</Moment>;
   } else if (dataType === AttrbuteDataType.ACCOUNT_ADDRESS) {
-    const colors = Buffer.from(
-      Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255) / 74)
-    ).toString('hex');
+    const colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255) / 74)).toString('hex');
     const address = formatReferenceValue(attribute, truncate ? truncateHash(value) : value, value, onClickPrimaryKey);
     return (
       <React.Fragment>
@@ -163,11 +156,7 @@ export const formatValueForDisplay = (
         <Clipboard value={value} />
       </React.Fragment>
     );
-  } else if (
-    dataType === AttrbuteDataType.DECIMAL ||
-    dataType === AttrbuteDataType.INT ||
-    dataType === AttrbuteDataType.CURRENCY
-  ) {
+  } else if (dataType === AttrbuteDataType.DECIMAL || dataType === AttrbuteDataType.INT || dataType === AttrbuteDataType.CURRENCY) {
     return formatNumber(Number(value), attribute, truncate);
   } else if (dataType === AttrbuteDataType.STRING && value.length > 100) {
     return (
@@ -176,12 +165,7 @@ export const formatValueForDisplay = (
         <Clipboard value={value} />
       </React.Fragment>
     );
-  } else if (
-    dataType === AttrbuteDataType.STRING &&
-    value.length > 0 &&
-    attribute.cardinality &&
-    attribute.cardinality < 20
-  ) {
+  } else if (dataType === AttrbuteDataType.STRING && value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
     return value
       .split('_')
       .map((s: any) => s.charAt(0).toUpperCase() + s.slice(1))
