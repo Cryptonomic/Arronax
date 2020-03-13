@@ -155,9 +155,10 @@ class FilterPanel extends React.Component<FilterPanelProps, {}> {
         <MainContainer>
           {filters.map((filter: Filter, index) => {
             const filterAttr = newAttributes.find(attr => attr.name === filter.name);
+            const isFull = !!(filter.operator && filter.operator !== 'isnull' && filter.operator !== 'isnotnull' && !filter.isLowCardinality && filter.operatorType === 'string')
             return (
               <FilterItemContainer key={index}>
-                <FilterItemGr isFull={!!(filter.operator && !filter.isLowCardinality && filter.operatorType === 'string')}>
+                <FilterItemGr isFull={isFull}>
                   <FilterSelect
                     borderRadius='4px 0 0 4px'
                     value={filter.name}
