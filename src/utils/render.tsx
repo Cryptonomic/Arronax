@@ -123,7 +123,8 @@ export const formatValueForDisplay = (
     return errors.join(', ');
   }
 
-  const { dataFormat, dataType } = attribute;
+  const { dataFormat, dataType, valueMap } = attribute;
+  const displayValueMap = valueMap && valueMap[value];
 
   if (!!aggregation) {
     return formatAggregatedValue(attribute, value, aggregation);
@@ -139,7 +140,7 @@ export const formatValueForDisplay = (
     return <Moment format={dataFormat}>{value}</Moment>;
   } else if (dataType === AttrbuteDataType.ACCOUNT_ADDRESS) {
     const colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255) / 74)).toString('hex');
-    const address = formatReferenceValue(attribute, truncate ? truncateHash(value) : value, value, onClickPrimaryKey);
+    const address = formatReferenceValue(attribute, displayValueMap || (truncate ? truncateHash(value) : value), value, onClickPrimaryKey);
     return (
       <React.Fragment>
         <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
@@ -149,7 +150,7 @@ export const formatValueForDisplay = (
       </React.Fragment>
     );
   } else if (dataType === AttrbuteDataType.HASH) {
-    const hash = formatReferenceValue(attribute, truncate ? truncateHash(value) : value, value, onClickPrimaryKey);
+    const hash = formatReferenceValue(attribute, displayValueMap || (truncate ? truncateHash(value) : value), value, onClickPrimaryKey);
     return (
       <React.Fragment>
         {hash}
@@ -161,17 +162,17 @@ export const formatValueForDisplay = (
   } else if (dataType === AttrbuteDataType.STRING && value.length > 100) {
     return (
       <React.Fragment>
-        {value.substring(0, 100)}
+        {displayValueMap || value.substring(0, 100)}
         <Clipboard value={value} />
       </React.Fragment>
     );
   } else if (dataType === AttrbuteDataType.STRING && value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
-    return value
+    return displayValueMap || value
       .split('_')
       .map((s: any) => s.charAt(0).toUpperCase() + s.slice(1))
       .join(' ');
   } else {
-    return formatReferenceValue(attribute, value, value, onClickPrimaryKey);
+    return formatReferenceValue(attribute, displayValueMap || value, value, onClickPrimaryKey);
   }
 };
 
