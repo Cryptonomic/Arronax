@@ -123,7 +123,9 @@ export const formatValueForDisplay = (
     return errors.join(', ');
   }
 
-  if (!!aggregation) return formatAggregatedValue(attribute, value, aggregation);
+  if (!!aggregation) {
+    formatAggregatedValue(attribute, value, aggregation);
+  }
 
   const { dataFormat, dataType, valueMap } = attribute;
   const displayValueMap = valueMap && valueMap[value];
