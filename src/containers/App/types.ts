@@ -25,7 +25,7 @@ export interface OwnProps {
   initLoad: (p: string, n: string, e: string, i: string, t: boolean) => any;
   submitQuery: () => void;
   exportCsvData: ()=> void;
-  shareReport: ()=> void;
+  shareReport: (isSearchQuery: boolean)=> void;
   initMessage: ()=> void;
   addConfig: (config: Config, isUse: boolean) => void;
   removeConfig: (index: number) => void;

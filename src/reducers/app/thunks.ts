@@ -526,7 +526,13 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
   return query;
 }
 
-export const shareReport = () => async (dispatch: any, state: any) => {
+/*
+
+`${hostUrl}?e=${encodeURIComponent(selectedConfig.displayName)}/${encodeURIComponent(selectedEntity)}&q=${encodedUrl}`;
+
+*/
+
+export const shareReport = (isSearchQuery: boolean) => async (dispatch: any, state: any) => {
   const { selectedEntity, columns, sort, selectedFilters, selectedConfig, aggregations } = state().app;
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
@@ -534,7 +540,9 @@ export const shareReport = () => async (dispatch: any, state: any) => {
   const serializedQuery = JSON.stringify(query);
   const hostUrl = window.location.origin;
   const encodedUrl = base64url(serializedQuery);
-  const shareLink = `${hostUrl}/${selectedConfig.platform}/${selectedConfig.network}/${selectedEntity}/query/${encodedUrl}`;
+  const shareLink = isSearchQuery ? 
+      `${hostUrl}?e=${encodeURIComponent(selectedConfig.displayName)}/${encodeURIComponent(selectedEntity)}&q=${encodedUrl}` : 
+      `${hostUrl}/${selectedConfig.platform}/${selectedConfig.network}/${selectedEntity}/query/${encodedUrl}`;
   const textField = document.createElement('textarea');
   textField.innerText = shareLink;
   document.body.appendChild(textField);
