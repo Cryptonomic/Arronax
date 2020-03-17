@@ -139,12 +139,13 @@
 	     console.log(queryDetails)
 	     for (let i = 0; i < queryDetails.predicates.length; i++) {
 		 const predicate = queryDetails.predicates[i]
-		 console.log(predicate)
+		 //fix the thing with the quoted int
 		 query = conseiljs.ConseilQueryBuilder.addPredicate(query, predicate.attribute , predicate.operator, [predicate.value], false);
 	     }
 
 	     let response = await conseiljs.ConseilDataClient.executeEntityQuery(conseilServer, platform, network, queryDetails.entity, query);
 	     console.log(response)
+	     document.getElementById("results").innerHTML = response
 	 }
 	 
 	 async function initializeEntityMenu() {
@@ -235,4 +236,6 @@
 
 
     </body>
+
+    <p id="results"></p>
 </html>
