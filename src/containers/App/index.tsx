@@ -99,6 +99,7 @@ class Arronax extends React.Component<Props, States> {
     window.addEventListener('beforeunload', this.onBeforeunload.bind(this));
     const { initLoad, match, history, location, selectedConfig, configs } = this.props;
     const { url, params: { platform, network, entity, id } } = match;
+    // support search query
     const isSearchQuery = location.search && reQuery.test(location.search);
     let isQuery = isSearchQuery || url.includes('/query/');
     let searchParams: URLSearchParams | null = null;

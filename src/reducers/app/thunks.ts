@@ -526,12 +526,6 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
   return query;
 }
 
-/*
-
-`${hostUrl}?e=${encodeURIComponent(selectedConfig.displayName)}/${encodeURIComponent(selectedEntity)}&q=${encodedUrl}`;
-
-*/
-
 export const shareReport = (isSearchQuery: boolean) => async (dispatch: any, state: any) => {
   const { selectedEntity, columns, sort, selectedFilters, selectedConfig, aggregations } = state().app;
   const attributeNames = getAttributeNames(columns[selectedEntity]);
