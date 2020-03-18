@@ -1,6 +1,6 @@
 export const defaultQueries: any = {
     blocks: {
-        fields: ['meta_voting_period', 'meta_cycle', 'level', 'timestamp', 'baker', 'hash', 'priority'],
+        fields: ['timestamp', 'meta_voting_period', 'meta_cycle', 'level', 'baker', 'hash', 'priority'],
         predicates: [{ field: 'timestamp', operation: 'after', set: [-1966080000], inverse: false }],
         orderBy: [{ field: 'level', direction: 'desc' }],
         aggregation:[],
@@ -77,7 +77,7 @@ export const defaultQueries: any = {
         limit: 1000
     },
     accounts_history: {
-        fields: ['block_level', 'asof', 'account_id', 'balance', 'delegate_value', 'storage', 'counter'],
+        fields: ['asof', 'block_level', 'account_id', 'balance', 'delegate_value', 'storage', 'counter'],
         predicates: [{field: 'asof', operation: 'after', set:[-1966080000], inverse:false}],
         orderBy: [{field: 'block_level', direction: 'desc'}],
         aggregation: [],
