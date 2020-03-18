@@ -170,7 +170,7 @@ class FilterPanel extends React.Component<FilterPanelProps, {}> {
                   {filter.name && <HR />}
                   {filter.name && (
                     <FilterSelect
-                      backgroundColor="#f9fafc"
+                      backgroundColor="#ecedef"
                       borderRadius={filter.operator !== 'isnotnull' && filter.operator !== 'isnull' ? '' : '0 4px 4px 0'}
                       value={filter.operator}
                       placeholder={t('components.filterPanel.select_operator')}
