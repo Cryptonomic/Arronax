@@ -21,17 +21,8 @@ const HeaderContainer = styled.div`
   padding: 0 30px;
   display: flex;
   align-items: center;
-  background: linear-gradient(
-    -225deg,
-    #bcfcff 0%,
-    #9cd9e1 12.85%,
-    #84bfca 22.66%,
-    #75aebc 28.69%,
-    #417895 48.65%,
-    #395d94 85.37%,
-    #34386e 100%
-  );
-`;
+  background-image: linear-gradient(97deg, #bcfcff 5%, #9cd9e1 17%, #84bfca 25%, #75aebc 30%, #417895 48%, #395d94 79%, #34386e 92%);`;
+
 const HeaderLogo = styled.div`
   font-family: 'Futura';
   font-weight: 400;

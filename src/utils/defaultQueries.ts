@@ -5,7 +5,6 @@ export const defaultQueries: any = {
         orderBy: [{ field: 'level', direction: 'desc' }],
         aggregation:[],
         limit: 1000
-
     },
     operations: {
         fields: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind', 'fee', 'status', 'operation_group_hash'],
