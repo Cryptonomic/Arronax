@@ -366,7 +366,7 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
   // redirect, changePath, openModal, modalItems
   const responseRedirect = [true, false];
   const responseChangePath = [false, true];
-  const responseOpenModal: [boolean, boolean, Record<string, object[] | string>] = [false, false, { items: [], entity: '' }];
+  const responseOpenModal: [boolean, boolean, Record<string, object[] | string>] = [false, false, { items: [], subItems: [], entity: '' }];
   const responseWithNoAction = [false, false];
   const query = isQuery ? idParam : '';
   const configs = state().app.configs;
@@ -460,7 +460,45 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
   try {
     const { entity, query } = TezosConseilClient.getEntityQueryForId(idParam);
     const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
-    responseOpenModal[2] = { ...responseOpenModal[2], entity, items }
+    let subItems: any[] = []
+
+    if (entity === 'blocks') {
+      let q = blankQuery();
+      q = addPredicate(q, 'block_hash', ConseilOperator.EQ, [idParam], false);
+      subItems = await executeEntityQuery(serverInfo, platform, network, 'operations', q);
+    }
+
+    if (entity === 'accounts') {
+      const prepareQuery = async (name: string) => {
+        let q = blankQuery();
+        q = setLimit(q, 1);
+        q = addFields(q, 'amount');
+        q = addPredicate(q, name, ConseilOperator.EQ, [idParam]);
+        q = addPredicate(q, 'kind', ConseilOperator.EQ, ['transaction']);
+        q = addPredicate(q, 'status', ConseilOperator.EQ, ['applied']);
+        q = addAggregationFunction(q, 'amount', ConseilFunction.sum);
+        const response = await ConseilDataClient.executeEntityQuery({ url, apiKey, network }, platform, network, 'operations', q);
+        return Number(response[0]['sum_amount'] || '0')
+      }
+      const receivedTotal = await prepareQuery('destination');
+      const sentTotal = await prepareQuery('destination');
+  
+      subItems = [
+        {
+          name: 'received_total',
+          displayName: 'Received Total',
+          value: receivedTotal
+        },
+        {
+          name: 'sent_total',
+          displayName: 'Sent Total',
+          value: sentTotal
+        }
+      ];
+    }
+
+
+    responseOpenModal[2] = { ...responseOpenModal[2], entity, items, subItems }
   } catch (e) {
     if (e.message === 'Invalid id parameter') {
       dispatch(createMessageAction(`Invalid id format entered.`, true));
