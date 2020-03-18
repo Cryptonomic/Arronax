@@ -11,7 +11,8 @@ import {
   AttributeDefinition,
   AttrbuteDataType,
   TezosConseilClient,
-  EntityDefinition
+  EntityDefinition,
+  ConseilFunction
 } from 'conseiljs';
 
 import {
@@ -606,7 +607,7 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
   const serverInfo = { url, apiKey, network };
 
   let query = blankQuery();
-  let query_operations = null;
+  let subItems = [];
 
   query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
   const s = String(value);
@@ -617,14 +618,43 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
   }
 
   if (entity === 'blocks') {
-    query_operations = blankQuery();
-    query_operations = addPredicate(query_operations, 'block_hash', ConseilOperator.EQ, [value], false);
+    let q = blankQuery();
+    q = addPredicate(q, 'block_hash', ConseilOperator.EQ, [value], false);
+    subItems = await executeEntityQuery(serverInfo, platform, network, 'operations', q);
+  }
+
+  if (entity === 'accounts') {
+    const prepareQuery = async (name: string) => {
+      let q = blankQuery();
+      q = setLimit(q, 1);
+      q = addFields(q, 'amount');
+      q = addPredicate(q, name, ConseilOperator.EQ, [value]);
+      q = addPredicate(q, 'kind', ConseilOperator.EQ, ['transaction']);
+      q = addPredicate(q, 'status', ConseilOperator.EQ, ['applied']);
+      q = addAggregationFunction(q, 'amount', ConseilFunction.sum);
+      const response = await ConseilDataClient.executeEntityQuery({ url, apiKey, network }, platform, network, 'operations', q);
+      return Number(response[0]['sum_amount'] || '0')
+    }
+    const receivedTotal = await prepareQuery('destination');
+    const sentTotal = await prepareQuery('destination');
+
+    subItems = [
+      {
+        name: 'received_total',
+        displayName: 'Received Total',
+        value: receivedTotal
+      },
+      {
+        name: 'sent_total',
+        displayName: 'Sent Total',
+        value: sentTotal
+      }
+    ];
   }
 
   const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
-  const operations = query_operations ? await executeEntityQuery(serverInfo, platform, network, 'operations', query_operations) : [];
 
-  await dispatch(setModalItemAction(items, operations));
+  await dispatch(setModalItemAction(items, subItems));
   dispatch(setLoadingAction(false));
 };
 
@@ -654,15 +684,47 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
   const { selectedConfig, entities } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
-  let query_operations = null;
+  let subItems = [];
   try {
     const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
+    
     if (entity === 'blocks') {
-      query_operations = blankQuery();
-      query_operations = addPredicate(query_operations, 'block_hash', ConseilOperator.EQ, [id], false);
+      let q = blankQuery();
+      q = addPredicate(q, 'block_hash', ConseilOperator.EQ, [id], false);
+      subItems = await executeEntityQuery(serverInfo, platform, network, 'operations', q);
     }
+
+    if (entity === 'accounts') {
+      const prepareQuery = async (name: string) => {
+        let q = blankQuery();
+        q = setLimit(q, 1);
+        q = addFields(q, 'amount');
+        q = addPredicate(q, name, ConseilOperator.EQ, [id]);
+        q = addPredicate(q, 'kind', ConseilOperator.EQ, ['transaction']);
+        q = addPredicate(q, 'status', ConseilOperator.EQ, ['applied']);
+        q = addAggregationFunction(q, 'amount', ConseilFunction.sum);
+        const response = await ConseilDataClient.executeEntityQuery({ url, apiKey, network }, platform, network, 'operations', q);
+        return Number(response[0]['sum_amount'] || '0')
+      }
+      const receivedTotal = await prepareQuery('destination');
+      const sentTotal = await prepareQuery('destination');
+  
+      subItems = [
+        {
+          name: 'received_total',
+          displayName: 'Received Total',
+          value: receivedTotal
+        },
+        {
+          name: 'sent_total',
+          displayName: 'Sent Total',
+          value: sentTotal
+        }
+      ];
+    }
+
     const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
-    const operations = query_operations ? await executeEntityQuery(serverInfo, platform, network, 'operations', query_operations) : [];
+
     if (items.length > 0) {
       await dispatch(changeTab(entity));
     } else {
@@ -670,7 +732,7 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
       dispatch(createMessageAction(`The ${searchedEntity.displayName.toLowerCase()} was not found.`, true));
     }
     dispatch(setLoadingAction(false));
-    return { entity, items, subItems: operations };
+    return { entity, items, subItems: subItems };
   } catch (e) {
       if (e.message === 'Invalid id parameter') {
         dispatch(createMessageAction(`Invalid id format entered.`, true));

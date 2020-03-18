@@ -1,10 +1,12 @@
 import React, { Fragment } from 'react';
 import { withTranslation } from 'react-i18next';
 import Modal from '@material-ui/core/Modal';
+import { AttrbuteDataType, AttrbuteKeyType } from 'conseiljs';
 
 import { formatValueForDisplay } from '../../utils/render';
 import { getNoEmptyFields } from '../../utils/attributes';
 import Loader from '../../components/Loader';
+import { formatNumber } from '../../utils/general';
 
 import {
   ScrollContainer, ModalContainer, ListContainer, CloseIcon,
@@ -12,9 +14,9 @@ import {
   CloseButton, BottomRowContainer, BottomCol, BottomColTitle, BottomColContent
 } from './style';
 
-import { DefaultProps, DefaultState } from './types';
+import { AccountProps, DefaultState } from './types';
 
-class EntityModal extends React.Component<DefaultProps, DefaultState> {
+class EntityModal extends React.Component<AccountProps, DefaultState> {
   explicitKeys: string[] = [];
   explicitMinorKeys: string[] = [];
 
@@ -35,7 +37,7 @@ class EntityModal extends React.Component<DefaultProps, DefaultState> {
   }
 
   render() {
-    const { open, items, attributes, isLoading, onClose, title, t } = this.props;
+    const { open, items, attributes, isLoading, onClose, title, t, subItems } = this.props;
     const { count } = this.state;
     const total = items ? items.length : 0;
     const processedValues: any = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
@@ -117,6 +119,13 @@ class EntityModal extends React.Component<DefaultProps, DefaultState> {
                       <BottomCol key={name}>
                         <BottomColTitle>{t(`attributes.accounts.${name}`)}</BottomColTitle>
                         <BottomColContent>{this.formatValue(processedValues, attributes, name)}</BottomColContent>
+                      </BottomCol>
+                    ))}
+
+                    {subItems && subItems.map(item => (
+                      <BottomCol key={item.name}>
+                        <BottomColTitle>{item.displayName}</BottomColTitle>
+                        <BottomColContent>{formatNumber(item.value, { name: '', displayName: '', dataType: AttrbuteDataType.CURRENCY, cardinality: 0, keyType: AttrbuteKeyType.NONKEY, entity: '', dataFormat: '', visible: true, scale: 6})}</BottomColContent>
                       </BottomCol>
                     ))}
                   </BottomRowContainer>

@@ -253,12 +253,12 @@ class Arronax extends React.Component<Props, States> {
   onSearchById = async (val: string | number) => {
     const { searchById, selectedConfig } = this.props;
     const realVal = !Number(val) ? val : Number(val);
-    const { entity, items } = await searchById(realVal);
+    const { entity, items, subItems } = await searchById(realVal);
     if (items.length > 0 && entity) {
       const { platform, network } = selectedConfig;
       const modalName = getEntityModalName(platform, network, entity);
       this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
-      this.setState({searchedItem: items, searchedEntity: entity, isOpenEntityModal: true, primaryKeyClicked: false });
+      this.setState({searchedItem: items, searchedSubItems: subItems, searchedEntity: entity, isOpenEntityModal: true, primaryKeyClicked: false });
       this.updateRoute(true, '', val)
     }
   }
