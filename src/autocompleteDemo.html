@@ -1,0 +1,269 @@
+<!-- saved from url=(0092)https://cryptonomic.tech/_matrix/media/r0/download/cryptonomic.tech/iMTLWSuCVJbIoqrjaBHKRXdl -->
+<html>
+    <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script
+	    src="https://cdn.jsdelivr.net/gh/cryptonomic/conseiljs/dist-web/conseiljs.min.js"
+	    integrity="sha384-1Lpjkva0cskGzGmrvU+WIbzNk24LwcaEFgsukzbI5wTl7T6kom1UA4DKS/oxtaqr"
+	    crossorigin="anonymous">
+	</script>
+
+	<script>
+	 const conseilServer = { url: 'https://conseil-staging.cryptonomic-infra.tech:443', apiKey: 'hooman' };
+	 const platform = "tezos"
+	 const network = "mainnet"
+	 
+
+	 const stringOperators = [ { displayName: "is",   value: conseiljs.ConseilOperator.EQ }, 
+				   { displayName: "in" , value: conseiljs.ConseilOperator.IN }, 
+				   { displayName: "like", value: conseiljs.ConseilOperator.LIKE },
+				   { displayName: "starts with", value: conseiljs.ConseilOperator.STARTSWITH },
+				   { displayName:"ends with", value: conseiljs.ConseilOperator.ENDSWITH },
+				   { displayName:"is null", value: conseiljs.ConseilOperator.ISNULL } ]
+	 
+	 const numberOperators = [ { displayName: "is",   value: conseiljs.ConseilOperator.EQ }, 
+				   { displayName: "in" , value: conseiljs.ConseilOperator.IN }, 
+				   { displayName: "between" , value: conseiljs.ConseilOperator.BETWEEN }, 
+				   { displayName: "less than" , value: conseiljs.ConseilOperator.LT }, 
+				   { displayName: "greater than" , value: conseiljs.ConseilOperator.GT } ]
+
+	 const dateOperators = [ { displayName: "is",   value: conseiljs.ConseilOperator.EQ }, 
+				 { displayName: "in" , value: conseiljs.ConseilOperator.IN }, 
+				 { displayName: "between" , value: conseiljs.ConseilOperator.BETWEEN }, 
+				 { displayName: "less than" , value: conseiljs.ConseilOperator.LT }, 
+				 { displayName: "greater than" , value: conseiljs.ConseilOperator.GT },
+				 { displayName: "before" , value: conseiljs.ConseilOperator.BEFORE }, 
+				 { displayName: "after" , value: conseiljs.ConseilOperator.AFTER } ]
+
+	 const stringDataTypes = [ "String", "Hash", "AccountAddress"]
+
+
+	 function addOption(menu, text, value) {
+	     var opt = document.createElement('option')
+	     opt.value = value
+	     opt.text = text
+	     menu.options.add(opt)
+	 }
+
+	 function addOptions(menu, textAr, valueAr) {
+	     menu.options.length = 0
+	     addOption(menu, "pick a value", "pick a value")
+	     for (i = 0; i < textAr.length; i++) {
+		 addOption(menu, textAr[i], valueAr[i])
+	     }
+	 }
+
+	 function createMenuInBody(elementId) {
+	     var newMenu = document.createElement("select")
+	     newMenu.setAttribute("id", elementId)
+	     document.body.insertBefore(newMenu, document.getElementById("results"))
+	 }
+
+	 function createTextboxInBody(elementId) {
+	     var newTextbox = document.createElement("input")
+	     newTextbox.setAttribute("id", elementId)
+	     newTextbox.setAttribute("type", "text")
+	     document.body.insertBefore(newTextbox, document.getElementById("results"))
+	 }
+
+	 function resetMenus(toReset) {
+	     let menus = document.getElementsByTagName("select")
+	     for (i = 0; i < menus.length; i++) {
+		 if (toReset.includes(menus[i].id)) {
+		     menus[i].options.length = 0;
+		 }
+	     }
+	 }
+
+	 function deleteTextboxes() {
+	     let textboxes = document.getElementsByTagName("input")
+	     const length = textboxes.length
+	     for (i = length-1; i >= 0; i--) {
+		 textboxes[i].parentNode.removeChild(textboxes[i])
+	     }
+	 }
+
+	 function deleteMenus(toDelete) {
+	     let menus = document.getElementsByTagName("select")
+	     const length = menus.length
+	     for (i = length-1; i >= 0; i--) {
+		 if (toDelete.includes(menus[i].id)) {
+		     menus[i].parentNode.removeChild(menus[i])
+		 }
+	     }
+	 }
+
+	 function getObjectFromName(objArr, name) {
+	     for (i = 0; i < objArr.length; i++) {
+		 if (objArr[i].name == name) { return objArr[i] }
+	     }
+	 }
+
+	 function getSelectedEntity() {
+	     return document.getElementById("entities").value
+	 }
+
+	 function createPredicate(attribute, operator, value) {
+	     return { "attribute" : attribute, "operator" : operator, "value" : value }
+	 }
+
+	 async function getAttributesForEntity(entity) {
+	     const attributes = await conseiljs.ConseilMetadataClient.getAttributes(conseilServer, platform, network, entity)
+	     return attributes
+	 }
+
+	 function newPredicate() {
+	     //create attributes menu
+	     //create operator menu
+	     //create predicate objects
+
+	 }
+	 /* =============================================================================== */
+
+
+	 async function initializeEntityMenu() {
+	     const entities = await conseiljs.ConseilMetadataClient.getEntities(conseilServer, platform, network)
+	     let entityMenu =  document.getElementById("entities")
+	     entityNames = entities.map( entity => entity.name )
+	     entityDisplayNames = entities.map( entity => entity.displayName ) 
+	     addOptions(entityMenu, entityDisplayNames, entityNames)
+	 }
+
+	 async function initializeAtributeMenu() {
+	     resetMenus(["attributes", "operators"])
+	     deleteMenus(["value"])
+	     deleteTextboxes()
+	     let attributeMenu = document.getElementById("attributes")
+
+	     const attributes = await getAttributesForEntity(getSelectedEntity())
+	     const attributeDisplayNames = attributes.map( attribute => attribute.displayName )
+	     const attributeNames = attributes.map( attribute => attribute.name  ) 
+
+	     addOptions(attributeMenu, attributeDisplayNames, attributeNames)
+	 }
+
+	 async function initializeOperatorMenu(menu) {
+	     resetMenus(["operators"])
+	     deleteMenus(["value"])	     
+	     deleteTextboxes()
+	     let operatorMenu =  document.getElementById("operators")
+
+	     const selectedEntity = getSelectedEntity();
+	     const attributes = await getAttributesForEntity(selectedEntity)
+	     const attributeDataType = getObjectFromName(attributes, menu.value).dataType
+
+	     const  operatorsAvailable = (stringDataTypes.includes(attributeDataType)) ?
+					 stringOperators :
+					 (attributeDataType == "DateTime") ?
+					 dateOperators :
+					 numberOperators
+
+	     const operatorDisplayNames = operatorsAvailable.map( operator => operator.displayName )
+	     const operatorValues = operatorsAvailable.map( operator => operator.value )
+
+	     addOptions(operatorMenu, operatorDisplayNames, operatorValues)
+
+	 }
+
+	 async function initializeValueMenus(menu) {
+	     deleteMenus(["value"])
+	     deleteTextboxes()
+
+	     const entity = getSelectedEntity()
+	     const attributes = await getAttributesForEntity(entity)
+	     const attributeObject = getObjectFromName(attributes, document.getElementById("attributes").value)
+	     const cardinality = attributeObject.cardinality
+	     const cardinalityThreshold = 20
+
+	     if (menu.value == conseiljs.ConseilOperator.BETWEEN) {
+		 createTextboxInBody("after")
+		 createTextboxInBody("before")
+	     }
+	     else if (cardinality < cardinalityThreshold
+		      && menu.value == conseiljs.ConseilOperator.EQ ) {
+		 createMenuInBody("value")
+		 populateAttributeValueMenu(document.getElementById("value"), menu.value)
+	     }
+	     else { 
+		 createTextboxInBody("value")
+	     }
+
+	     //create "and" menu whose onchange takes the references to the menuse created by new
+	 }
+
+	 async function populateAttributeValueMenu(menu, attribute) {
+	     const entity = getSelectedEntity()
+	     const attributeValues = await conseiljs.ConseilMetadataClient.getAttributeValues(conseilServer, platform, network, entity, attribute )
+	     addOptions(menu, attributeValues, attributeValues)
+	 }
+	 
+	 async function getQueryDetails() {
+	     const entity = getSelectedEntity()
+
+	     // the following will be gotten from an array of predicate objects
+	     // instead of get elementby id
+	     const attribute = document.getElementById("attributes").value
+	     const operator = document.getElementById("operators").value
+
+	     let predicates = []
+	     
+	     if (operator == conseiljs.ConseilOperator.BETWEEN) {
+		 const beforeValue = document.getElementById("before").value
+		 const afterValue = document.getElementById("after").value
+		 const beforePredicate = createPredicate(attribute, conseiljs.ConseilOperator.BEFORE, beforeValue)
+		 const afterPredicate = createPredicate(attribute, conseiljs.ConseilOperator.AFTER, afterValue)
+		 predicates.push(beforePredicate)
+		 predicates.push(afterPredicate)
+	     }
+	     else {
+		 const value = document.getElementById("value").value
+		 predicates.push(createPredicate(attribute, operator, value))
+	     }
+
+	     const query = {"entity" : entity,
+			    "predicates" : predicates}
+
+	     return query
+
+	 }
+
+
+	 async function executeQuery() {
+	     const queryDetails = await getQueryDetails()
+	     let query = conseiljs.ConseilQueryBuilder.blankQuery();
+	     console.log(queryDetails)
+	     for (let i = 0; i < queryDetails.predicates.length; i++) {
+		 let predicate = queryDetails.predicates[i]
+		 predicate.value = parseInt(predicate.value) ?
+				   parseInt(predicate.value) :
+				   predicate.value
+
+		 query = conseiljs.ConseilQueryBuilder.addPredicate(query, predicate.attribute , predicate.operator, [predicate.value], false);
+	     }
+
+	     let response = await conseiljs.ConseilDataClient.executeEntityQuery(conseilServer, platform, network, queryDetails.entity, query);
+	     console.log(response)
+	     document.getElementById("results").innerHTML = JSON.stringify(response)
+	 }
+
+	</script>
+	
+    </head>
+    <body onload="initializeEntityMenu()">    
+	<button onclick="executeQuery()">Send</button><br>
+	<br>
+	<label for="entities">Show</label>
+	<select id="entities" onchange="initializeAtributeMenu()">	</select>
+
+	<label for="attributes"> where </label>
+	<select id="attributes"  onChange="initializeOperatorMenu(this)"> </select>
+
+	<label for="operators"></label>
+	<select id="operators" onChange="initializeValueMenus(this)"> </select>	
+
+	<p id="results"></p>
+
+    </body>
+
+
+</html>
