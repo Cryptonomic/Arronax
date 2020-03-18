@@ -10,7 +10,8 @@ import {
   ConseilSortDirection,
   AttributeDefinition,
   AttrbuteDataType,
-  TezosConseilClient
+  TezosConseilClient,
+  EntityDefinition
 } from 'conseiljs';
 
 import {
@@ -178,7 +179,8 @@ export const fetchInitEntityAction = (
   attributes: AttributeDefinition[],
   urlEntity: string,
   urlQuery: any
-) => async (dispatch: any) => {
+) => async (dispatch: any, state: any) => {
+  const { entities } = state().app;
   let defaultQuery: any = (urlEntity === entity && urlQuery) ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
   defaultQuery = {...ConseilQueryBuilder.blankQuery(), ...defaultQuery};
   let columns: any[] = [];
@@ -279,7 +281,8 @@ export const fetchInitEntityAction = (
   }
 
   const items = await executeEntityQuery(serverInfo, platform, network, entity, query).catch(() => {
-    dispatch(createMessageAction(`Unable to retrieve data for ${entity} request.`, true)); // TODO: use metadata
+    const name = entities.find((e: EntityDefinition) => e.name === entity)?.displayName.toLowerCase();
+    dispatch(createMessageAction(`Unable to retrieve data for ${name} request.`, true));
     return [];
   });
   

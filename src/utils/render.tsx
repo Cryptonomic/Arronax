@@ -12,32 +12,32 @@ import { AttributeDefinition, AttrbuteDataType, ConseilFunction } from 'conseilj
 import { truncateHash, formatNumber } from './general';
 
 type StyledCircleProps = SvgIconProps & { newcolor: string };
-const StyledCircle1 = styled(Circle) <{ newcolor: string }>`
-  color: ${({ newcolor }) => newcolor};
+const StyledCircle1 = styled(Circle)<{ newcolor: string }>`
+    color: ${({ newcolor }) => newcolor};
 ` as React.ComponentType<StyledCircleProps>;
 
-const StyledCircle2 = styled(Circle) <{ newcolor: string }>`
-  color: ${({ newcolor }) => newcolor};
-  margin-left: -4px;
-  margin-right: 7px;
+const StyledCircle2 = styled(Circle)<{ newcolor: string }>`
+    color: ${({ newcolor }) => newcolor};
+    margin-left: -4px;
+    margin-right: 7px;
 ` as React.ComponentType<StyledCircleProps>;
 
 const LinkDiv = styled.div`
-  color: #56c2d9;
-  cursor: pointer;
-  text-decoration: underline;
+    color: #56c2d9;
+    cursor: pointer;
+    text-decoration: underline;
 `;
 
 const LinkSpan = styled.span`
-  color: #56c2d9;
-  cursor: pointer;
-  text-decoration: underline;
+    color: #56c2d9;
+    cursor: pointer;
+    text-decoration: underline;
 `;
 
 const PrimaryKeyList: any = {
     blocks: ['hash', 'level'],
     accounts: ['account_id'],
-    operations: ['operation_group_hash']
+    operations: ['operation_group_hash'],
 };
 
 const formatReferenceValue = (attribute: any, displayValue: string, value: any, onClickPrimaryKey: any) => {
@@ -52,7 +52,7 @@ const formatReferenceValue = (attribute: any, displayValue: string, value: any, 
     }
 
     return displayValue;
-}
+};
 
 const formatAggregatedValue = (attribute: AttributeDefinition, value: any, aggregation: ConseilFunction) => {
     let aggregationAttribute = { ...attribute };
@@ -67,10 +67,21 @@ const formatAggregatedValue = (attribute: AttributeDefinition, value: any, aggre
     }
 
     return formatNumber(Number(value), aggregationAttribute);
-}
+};
 
-export const formatValueForDisplay = (platform: string, network: string, entity: string, value: any, attribute: AttributeDefinition, onClickPrimaryKey: (entity: string, key: string, value: string | number) => void, aggregation?: ConseilFunction, truncate: boolean = true) => {
-    if (value == null || value.length === 0) { return ''; }
+export const formatValueForDisplay = (
+    platform: string,
+    network: string,
+    entity: string,
+    value: any,
+    attribute: AttributeDefinition,
+    onClickPrimaryKey: (entity: string, key: string, value: string | number) => void,
+    aggregation?: ConseilFunction,
+    truncate: boolean = true
+) => {
+    if (value == null || value.length === 0) {
+        return '';
+    }
 
     if (/*platform === 'tezos' &&*/ entity === 'operations' && attribute.name === 'errors') {
         const errors = value.substring(1, value.length - 1).split(',');
@@ -112,54 +123,70 @@ export const formatValueForDisplay = (platform: string, network: string, entity:
         return errors.join(', ');
     }
 
-    const { dataFormat, dataType } = attribute;
+    if (!!aggregation) {
+        formatAggregatedValue(attribute, value, aggregation);
+    }
 
-    if (!!aggregation) { return formatAggregatedValue(attribute, value, aggregation); }
+    const { dataFormat, dataType, valueMap } = attribute;
+    const displayValueMap = valueMap && valueMap[value];
 
-    if (dataType === AttrbuteDataType.BOOLEAN) {
-        const svalue = value.toString();
-        return svalue.charAt(0).toUpperCase() + svalue.slice(1);
-    } else if (dataType === AttrbuteDataType.DATETIME) {
-        if (!dataFormat) { return value; }
-        return (
-            <Moment format={dataFormat}>{value}</Moment>
-        )
-    } else if (dataType === AttrbuteDataType.ACCOUNT_ADDRESS) {
-        const colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255) / 74)).toString('hex');
-        const address = formatReferenceValue(attribute, (truncate ? truncateHash(value) : value), value, onClickPrimaryKey)
-        return (
-            <React.Fragment>
-                <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
-                <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
-                {address}
-                <Clipboard value={value} />
-            </React.Fragment>
-        );
-    } else if (dataType === AttrbuteDataType.HASH) {
-        const hash = formatReferenceValue(attribute, (truncate ? truncateHash(value) : value), value, onClickPrimaryKey);
-        return (
-            <React.Fragment>
-                {hash}
-                <Clipboard value={value} />
-            </React.Fragment>
-        );
-    } else if (dataType === AttrbuteDataType.DECIMAL || dataType === AttrbuteDataType.INT || dataType === AttrbuteDataType.CURRENCY) {
-        return formatNumber(Number(value), attribute, truncate);
-    } else if (dataType === AttrbuteDataType.STRING && value.length > 100) {
-        return (
-            <React.Fragment>
-                {value.substring(0, 100)}
-                <Clipboard value={value} />
-            </React.Fragment>
-        );
-    } else if (dataType === AttrbuteDataType.STRING && value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
-        return value.split('_').map((s: any) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
-    } else {
-        return formatReferenceValue(attribute, value, value, onClickPrimaryKey);
+    switch (dataType) {
+        case AttrbuteDataType.BOOLEAN:
+            const svalue = value.toString();
+            return svalue.charAt(0).toUpperCase() + svalue.slice(1);
+        case AttrbuteDataType.DATETIME:
+            if (!dataFormat) {
+                return value;
+            }
+            return <Moment format={dataFormat}>{value}</Moment>;
+        case AttrbuteDataType.ACCOUNT_ADDRESS:
+            const colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255) / 74)).toString('hex');
+            const address = formatReferenceValue(attribute, displayValueMap || (truncate ? truncateHash(value) : value), value, onClickPrimaryKey);
+            return (
+                <React.Fragment>
+                    <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
+                    <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
+                    {address}
+                    <Clipboard value={value} />
+                </React.Fragment>
+            );
+        case AttrbuteDataType.HASH:
+            const hash = formatReferenceValue(attribute, displayValueMap || (truncate ? truncateHash(value) : value), value, onClickPrimaryKey);
+            return (
+                <React.Fragment>
+                    {hash}
+                    <Clipboard value={value} />
+                </React.Fragment>
+            );
+        case AttrbuteDataType.DECIMAL:
+        case AttrbuteDataType.INT:
+        case AttrbuteDataType.CURRENCY:
+            return formatNumber(Number(value), attribute, truncate);
+        case AttrbuteDataType.STRING:
+            if (value.length > 100) {
+                return (
+                    <React.Fragment>
+                        {displayValueMap || value.substring(0, 100)}
+                        <Clipboard value={value} />
+                    </React.Fragment>
+                );
+            }
+            if (value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
+                return (
+                    displayValueMap ||
+                    value
+                        .split('_')
+                        .map((s: any) => s.charAt(0).toUpperCase() + s.slice(1))
+                        .join(' ')
+                );
+            }
+            return formatReferenceValue(attribute, displayValueMap || value, value, onClickPrimaryKey);
+        default:
+            return formatReferenceValue(attribute, displayValueMap || value, value, onClickPrimaryKey);
     }
 };
 
-export const formatValueWithLink = (props: { value: number, onClick: () => void }) => {
+export const formatValueWithLink = (props: { value: number; onClick: () => void }) => {
     const { value, onClick } = props;
-    return <LinkSpan onClick={onClick}>{value}</LinkSpan>
-}
+    return <LinkSpan onClick={onClick}>{value}</LinkSpan>;
+};
