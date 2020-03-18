@@ -69,6 +69,7 @@ const Toolbar: React.FC<ToolbarProps> = props => {
         isactive={isCollapsed && selectedTool === ToolType.AGGREGATION}
         onClick={() => onChangeTool(ToolType.AGGREGATION)}
       >
+        <ColumnIcon size="20px" color="#4a4a4a" iconName="icon-aggregate" />
         <BadgeWrapper color="secondary" badgeContent={aggCount}>
           {t('components.toolBar.aggregation')}
         </BadgeWrapper>
