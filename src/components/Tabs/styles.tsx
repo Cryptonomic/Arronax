@@ -7,6 +7,7 @@ import { TabsWrapperProps } from './types';
 
 export const TabsWrapper = withStyles({
   root: {
+    width: '100%',
     borderBottom: 'none',
     padding: (props: TabsWrapperProps) =>
       props.variant === 'scrollable' ? '0 15px' : '0 55px',

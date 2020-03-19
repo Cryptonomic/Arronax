@@ -1,8 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import Tooltip from '@material-ui/core/Tooltip';
-import Clipboard from '../Clipboard';
-
 
 import { ToolType } from '../../types';
 

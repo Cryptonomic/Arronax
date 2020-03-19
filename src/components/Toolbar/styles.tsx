@@ -8,6 +8,7 @@ import { ArronaxIcon } from '../ArronaxIcon';
 export const Container = styled.div`
   position: relative;
   display: flex;
+  flex: 1 1 auto;
   padding: 33px 15px 35px 15px;
 `;
 
@@ -94,7 +95,6 @@ export const ShareTool = styled(ToolItem)`
   left: 451px;
   padding-left: 18px;
   border: none;
-  margin: 0 auto 0 0;
 `;
 
 export const ExportTool = styled(ToolItem)`

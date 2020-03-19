@@ -3,6 +3,8 @@ import { withStyles } from '@material-ui/core/styles';
 import DialogContent from '@material-ui/core/DialogContent';
 
 export const Container = styled.div`
+  display: flex;
+  flex-wrap: wrap;
   padding: 50px 0;
   min-height: calc(100vh - 405px);
 `;
