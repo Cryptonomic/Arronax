@@ -178,7 +178,7 @@
             "proto": "Protocol Index",
             "signature": "Signature",
             "timestamp": "Timestamp",
-            "validation_pass": "Validation pass",
+            "validation_pass": "Validation Pass",
             "period_kind": "Voting Period",
             "priority": "Priority"
         },
@@ -204,7 +204,7 @@
         },
         "operation_groups": {
             "protocol": "Protocol Hash",
-            "chain_id": "Chain id",
+            "chain_id": "Chain Id",
             "hash": "Hash",
             "branch": "Branch",
             "signature": "Signature",
@@ -229,7 +229,7 @@
             "amount": "Amount",
             "destination": "Destination",
             "parameters": "Parameters",
-            "manager_pubkey": "Manager pubkey",
+            "manager_pubkey": "Manager Key",
             "balance": "Balance",
             "spendable": "Spendable",
             "delegatable": "Delegatable",
@@ -280,13 +280,13 @@
             "voting_period_kind": "Voting Period",
             "block_hash": "Block Hash",
             "proposal_hash": "Proposal",
-            "yay_count": "Yea votes",
-            "nay_count": "Nay votes",
-            "pass_count": "Pass votes",
-            "yay_rolls": "Yea rolls",
-            "nay_rolls": "Nay rolls",
-            "pass_rolls": "Pass rolls",
-            "total_rolls": "Total rolls"
+            "yay_count": "Yea Votes",
+            "nay_count": "Nay Votes",
+            "pass_count": "Pass Votes",
+            "yay_rolls": "Yea Rolls",
+            "nay_rolls": "Nay Rolls",
+            "pass_rolls": "Pass Rolls",
+            "total_rolls": "Total Rolls"
         }
     },
     "operators": {
