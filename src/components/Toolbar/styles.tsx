@@ -9,7 +9,7 @@ export const Container = styled.div`
   position: relative;
   display: flex;
   flex: 1 1 auto;
-  padding: 33px 15px 35px 15px;
+  padding: 33px 0px 35px 15px;
 `;
 
 export const ToolItem = styled.div`
