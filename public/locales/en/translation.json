@@ -252,7 +252,8 @@
             "number_of_slots": "Number of Slots",
             "errors": "Error",
             "parameters_entrypoints": "Contract Function",
-            "ballot_period": "Vote Period"
+            "ballot_period": "Vote Period",
+            "parameters_micheline": "Parameters (Micheline)"
         },
         "baking_rights": {
             "block_hash": "Block Hash",
