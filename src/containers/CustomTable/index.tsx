@@ -5,7 +5,6 @@ import { ConseilSortDirection } from 'conseiljs';
 import ReactDynamicImport from 'react-dynamic-import';
 import {
   getSelectedConfig,
-  getRows,
   getColumns,
   getEntity,
   getAttributesAll,
