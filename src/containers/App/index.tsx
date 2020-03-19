@@ -17,6 +17,7 @@ import CustomTable from '../CustomTable';
 import ConfigModal from '../../components/ConfigModal';
 import Loader from '../../components/Loader';
 import Tabs from '../../components/Tabs';
+import CustomPaginator from '../../components/CustomPaginator';
 import { getItemByPrimaryKey } from '../../reducers/app/thunks';
 import {
   getLoading,
@@ -30,7 +31,8 @@ import {
   getColumns,
   getEntities,
   getAggregations,
-  getAttributesAll
+  getAttributesAll,
+  getRows
 } from '../../reducers/app/selectors';
 import { getErrorState, getMessageTxt } from '../../reducers/message/selectors';
 import {
@@ -88,7 +90,8 @@ class Arronax extends React.Component<Props, States> {
       searchedEntity: '',
       searchedItem: [],
       searchedSubItems: [],
-      expandedTabs: false
+      expandedTabs: false,
+      page: 0
     };
 
     this.settingRef = React.createRef();
@@ -280,6 +283,10 @@ class Arronax extends React.Component<Props, States> {
     this.updateRoute(true);
   };
 
+  handleChangePage = (page: number) => {
+    this.setState({ page });
+  };
+
   render() {
     const {
       isLoading,
@@ -297,11 +304,12 @@ class Arronax extends React.Component<Props, States> {
       message,
       removeConfig,
       attributes,
-      t
+      t,
+      rowsPerPage
     } = this.props;
     const {
       isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal, isOpenEntityModal,
-      searchedItem, searchedEntity, searchedSubItems, primaryKeyClicked, expandedTabs
+      searchedItem, searchedEntity, searchedSubItems, primaryKeyClicked, expandedTabs, page
     } = this.state;
     const { EntityModal } = this;
     const isRealLoading = isLoading || !isFullLoaded;
@@ -310,6 +318,12 @@ class Arronax extends React.Component<Props, States> {
     const modalItems = primaryKeyClicked ? selectedModalItem : searchedItem;
     const fullTabsList = entities.map(entity => entity.name);
     const shortTabsList = selectedConfig.entities || [];
+
+    const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
+    const realRows = items.slice(
+      page * rowCount,
+      page * rowCount + rowCount
+    );
     
     return (
       <MainContainer>
@@ -341,6 +355,13 @@ class Arronax extends React.Component<Props, States> {
                 onExportCsv={this.onExportCsv}
                 onShareReport={this.onShareReport}
               />
+              <CustomPaginator
+                rowsPerPage={rowCount}
+                page={page}
+                totalNumber={items.length}
+                onChangePage={this.handleChangePage}
+                onExportCsv={this.onExportCsv}
+              />
               <SettingsPanel
                 ref={this.settingRef}
                 isCollapsed={isSettingCollapsed}
@@ -353,7 +374,7 @@ class Arronax extends React.Component<Props, States> {
                   <CustomTable 
                     isModalUrl={isModalUrl} 
                     isLoading={isLoading} 
-                    items={items} 
+                    items={realRows}
                     onExportCsv={this.onExportCsv}
                     updateRoute={this.updateRoute}
                   /> 
@@ -432,7 +453,8 @@ const mapStateToProps = (state: any) => ({
   isError: getErrorState(state),
   message: getMessageTxt(state),
   aggCount: getAggregations(state).length,
-  attributes: getAttributesAll(state)
+  attributes: getAttributesAll(state),
+  rowsPerPage: getRows(state),
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

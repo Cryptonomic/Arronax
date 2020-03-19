@@ -3,7 +3,6 @@ import { EntityDefinition } from 'conseiljs';
 import { Sort, Config, Aggregation } from '../../types';
 
 export interface Props {
-  rowsPerPage: number;
   items: any[];
   selectedColumns: any[];
   selectedConfig: Config;
@@ -24,7 +23,6 @@ export interface Props {
 }
 
 export interface State {
-  page: number;
   isOpenedModal: boolean;
   selectedPrimaryKey: string;
   selectedPrimaryValue: string | number;

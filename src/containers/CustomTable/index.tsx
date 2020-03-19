@@ -19,7 +19,6 @@ import { getItemByPrimaryKey, submitQuery } from '../../reducers/app/thunks';
 import { setSortAction } from '../../reducers/app/actions';
 import CustomTableRow from '../../components/CustomTableRow';
 import CustomTableHeader from '../../components/TableHeader';
-import CustomPaginator from '../../components/CustomPaginator';
 import { getEntityModalName } from '../../utils/hashtable';
 import {
   TableContainer,
@@ -36,7 +35,6 @@ class CustomTable extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      page: 0,
       isOpenedModal: false,
       selectedPrimaryKey: '',
       selectedPrimaryValue: '',
@@ -54,10 +52,6 @@ class CustomTable extends React.Component<Props, State> {
       }
     }
   }
-
-  handleChangePage = (page: number) => {
-    this.setState({ page });
-  };
 
   handleRequestSort = async (orderBy: string) => {
     const { selectedSort, selectedEntity, onSetSort, onSubmitQuery } = this.props;
@@ -96,7 +90,6 @@ class CustomTable extends React.Component<Props, State> {
       items,
       selectedConfig,
       selectedColumns,
-      rowsPerPage,
       selectedEntity,
       selectedModalItem,
       selectedModalSubItem,
@@ -105,15 +98,9 @@ class CustomTable extends React.Component<Props, State> {
       isLoading,
       entities,
       aggregations,
-      onExportCsv
     } = this.props;
 
-    const { page, referenceEntity, isOpenedModal} = this.state;
-    const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
-    const realRows = items.slice(
-      page * rowCount,
-      page * rowCount + rowCount
-    );
+    const { referenceEntity, isOpenedModal} = this.state;
     const selectedObjectEntity: any = entities.find(entity => entity.name === referenceEntity);
     const { network, platform } = selectedConfig;
     return (
@@ -128,7 +115,7 @@ class CustomTable extends React.Component<Props, State> {
               createSortHandler={this.handleRequestSort}
             />
             <TableBody>
-              {realRows.map((row, index) => {
+              {items.map((row, index) => {
                 return (
                   <CustomTableRow
                     network={network}
@@ -145,13 +132,6 @@ class CustomTable extends React.Component<Props, State> {
             </TableBody>
           </TableContainer>
         </Overflow>
-        <CustomPaginator
-          rowsPerPage={rowCount}
-          page={page}
-          totalNumber={items.length}
-          onChangePage={this.handleChangePage}
-          onExportCsv={onExportCsv}
-        />
         {isOpenedModal && 
           <EntityModal
             attributes={attributes[referenceEntity]}
@@ -172,7 +152,6 @@ class CustomTable extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: any) => ({
-  rowsPerPage: getRows(state),
   selectedConfig: getSelectedConfig(state),
   selectedColumns: getColumns(state),
   selectedEntity: getEntity(state),
