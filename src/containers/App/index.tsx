@@ -251,9 +251,8 @@ class Arronax extends React.Component<Props, States> {
   }
 
   onShareReport = () => {
-    const { shareReport, location } = this.props;
-    const isSearchQuery = !!(location.search && reQuery.test(location.search));
-    shareReport(isSearchQuery);
+    const { shareReport } = this.props;
+    shareReport();
   }
 
   handleErrorClose = () => {
@@ -467,7 +466,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   initLoad: (p: string, n: string, e: string, i: string, t: boolean) => dispatch(initLoad(p, n, e, i, t)),
   submitQuery: () => dispatch(submitQuery()),
   exportCsvData: () => dispatch(exportCsvData()),
-  shareReport: (isSearchQuery: boolean) => dispatch(shareReport(isSearchQuery)),
+  shareReport: () => dispatch(shareReport()),
   initMessage: () => dispatch(clearMessageAction()),
   addConfig: (config: Config, isUse: boolean) => dispatch(addConfigAction(config, isUse)),
   removeConfig: (index: number) => dispatch(removeConfigAction(index)),

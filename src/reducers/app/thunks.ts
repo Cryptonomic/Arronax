@@ -472,9 +472,7 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
 };
 
 export const fetchAttributes = async (platform: string, entity: string, network: string, serverInfo: any) => {
-  const attributes = await getAttributes(serverInfo, platform, network, entity).catch(err => {
-    throw entity;
-  });
+  const attributes = await getAttributes(serverInfo, platform, network, entity).catch(err => { throw err; } );
   return { entity, attributes };
 };
 
@@ -526,7 +524,7 @@ const getMainQuery = (attributeNames: string[], selectedFilters: Filter[], order
   return query;
 }
 
-export const shareReport = (isSearchQuery: boolean) => async (dispatch: any, state: any) => {
+export const shareReport = () => async (dispatch: any, state: any) => {
   const { selectedEntity, columns, sort, selectedFilters, selectedConfig, aggregations } = state().app;
   const attributeNames = getAttributeNames(columns[selectedEntity]);
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
@@ -534,9 +532,7 @@ export const shareReport = (isSearchQuery: boolean) => async (dispatch: any, sta
   const serializedQuery = JSON.stringify(query);
   const hostUrl = window.location.origin;
   const encodedUrl = base64url(serializedQuery);
-  const shareLink = isSearchQuery ? 
-      `${hostUrl}?e=${encodeURIComponent(selectedConfig.displayName)}/${encodeURIComponent(selectedEntity)}&q=${encodedUrl}` : 
-      `${hostUrl}/${selectedConfig.platform}/${selectedConfig.network}/${selectedEntity}/query/${encodedUrl}`;
+  const shareLink = `${hostUrl}/${selectedConfig.platform}/${selectedConfig.network}/${selectedEntity}/query/${encodedUrl}`;
   const textField = document.createElement('textarea');
   textField.innerText = shareLink;
   document.body.appendChild(textField);
