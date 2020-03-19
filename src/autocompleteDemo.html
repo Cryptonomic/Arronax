@@ -37,6 +37,7 @@
 
 	 const stringDataTypes = [ "String", "Hash", "AccountAddress"]
 
+	 let predicates = []
 
 	 function addOption(menu, text, value) {
 	     var opt = document.createElement('option')
@@ -55,8 +56,11 @@
 
 	 function createMenuInBody(elementId) {
 	     var newMenu = document.createElement("select")
-	     newMenu.setAttribute("id", elementId)
+	     if (elementId) {
+		 newMenu.setAttribute("id", elementId)
+	     }
 	     document.body.insertBefore(newMenu, document.getElementById("results"))
+	     return newMenu
 	 }
 
 	 function createTextboxInBody(elementId) {
@@ -113,6 +117,18 @@
 	 }
 
 	 function newPredicate() {
+	     let attributeMenu = createMenuInBody()
+	     let operatorMenu = createMenuInBody()
+
+	     attributeMenu.onchange = initializeOperatorMenu(operatorMenu, attributeMenu) 
+	     operatorMenu.onchange = initializeValueMenu(operatorMenu)
+
+	     initializeAttributeMenu(attributeMenu)
+	     initializeOperatorMenu(operatorMenu, attributeMenu)
+	     
+	     let predicate = {"attribute_menu" : attributeMenu,
+			      "operator_menu" : operatorMenu}
+	     predicates.push(predicate)
 	     //create attributes menu
 	     //create operator menu
 	     //create predicate objects
@@ -129,11 +145,11 @@
 	     addOptions(entityMenu, entityDisplayNames, entityNames)
 	 }
 
-	 async function initializeAtributeMenu() {
+	 async function initializeAttributeMenu(toInitialize) {
 	     resetMenus(["attributes", "operators"])
 	     deleteMenus(["value"])
 	     deleteTextboxes()
-	     let attributeMenu = document.getElementById("attributes")
+	     let attributeMenu = toInitialize
 
 	     const attributes = await getAttributesForEntity(getSelectedEntity())
 	     const attributeDisplayNames = attributes.map( attribute => attribute.displayName )
@@ -142,15 +158,20 @@
 	     addOptions(attributeMenu, attributeDisplayNames, attributeNames)
 	 }
 
-	 async function initializeOperatorMenu(menu) {
+	 async function initializeAttributeMenus() {
+	     for (let i = 0; i < predicates.length; i++) {
+		 initializeAttributeMenu(predicates[i].attributeMenu)
+	     }
+	 }
+	 async function initializeOperatorMenu(toInitialize, attributesMenu) {
 	     resetMenus(["operators"])
 	     deleteMenus(["value"])	     
 	     deleteTextboxes()
-	     let operatorMenu =  document.getElementById("operators")
+	     let operatorMenu =  toInitialize
 
 	     const selectedEntity = getSelectedEntity();
 	     const attributes = await getAttributesForEntity(selectedEntity)
-	     const attributeDataType = getObjectFromName(attributes, menu.value).dataType
+	     const attributeDataType = getObjectFromName(attributes, attributesMenu.value).dataType
 
 	     const  operatorsAvailable = (stringDataTypes.includes(attributeDataType)) ?
 					 stringOperators :
@@ -165,7 +186,7 @@
 
 	 }
 
-	 async function initializeValueMenus(menu) {
+	 async function initializeValueMenu(menu) {
 	     deleteMenus(["value"])
 	     deleteTextboxes()
 
@@ -246,22 +267,19 @@
 	     document.getElementById("results").innerHTML = JSON.stringify(response)
 	 }
 
+	 async function initialize() {
+	     newPredicate();
+	     initializeEntityMenu();
+	 }
+
 	</script>
 	
     </head>
-    <body onload="initializeEntityMenu()">    
+    <body onload="initialize()">    
 	<button onclick="executeQuery()">Send</button><br>
 	<br>
 	<label for="entities">Show</label>
-	<select id="entities" onchange="initializeAtributeMenu()">	</select>
-
-	<label for="attributes"> where </label>
-	<select id="attributes"  onChange="initializeOperatorMenu(this)"> </select>
-
-	<label for="operators"></label>
-	<select id="operators" onChange="initializeValueMenus(this)"> </select>	
-
-	<p id="results"></p>
+	<select id="entities" onchange="initializeAttributeMenus()">	</select>
 
     </body>
 
