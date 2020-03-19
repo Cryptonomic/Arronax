@@ -77,7 +77,7 @@
             "columns": "Columns",
             "aggregation": "Aggregation",
             "share": "Share",
-            "export_csv": "Export CSV",
+            "export": "Export",
             "share_report": "Share Report"
         },
         "valueInput": {
