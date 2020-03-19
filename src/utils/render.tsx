@@ -8,7 +8,7 @@ import Circle from '@material-ui/icons/FiberManualRecord';
 
 import Clipboard from '../components/Clipboard';
 
-import { AttributeDefinition, AttrbuteDataType, ConseilFunction } from 'conseiljs';
+import { AttributeDefinition, AttrbuteDataType, ConseilFunction, ConseilQuery } from 'conseiljs';
 import { truncateHash, formatNumber } from './general';
 
 type StyledCircleProps = SvgIconProps & { newcolor: string };
@@ -190,3 +190,13 @@ export const formatValueWithLink = (props: { value: number; onClick: () => void 
     const { value, onClick } = props;
     return <LinkSpan onClick={onClick}>{value}</LinkSpan>;
 };
+
+export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: ConseilQuery): string => {
+    let title = entity;
+
+    for (let p of query.predicates) {
+        title += ` ${p.field} ${p.operation} ${p.set.join(', ')}`; // TODO: inverse, group
+    }
+
+    return title;
+}
