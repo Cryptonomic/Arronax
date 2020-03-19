@@ -619,6 +619,8 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
   if (entity === 'blocks') {
     query_operations = blankQuery();
     query_operations = addPredicate(query_operations, 'block_hash', ConseilOperator.EQ, [value], false);
+    query_operations = addOrdering(query_operations, 'kind', ConseilSortDirection.DESC);
+    query_operations = addOrdering(query_operations, 'amount', ConseilSortDirection.DESC);
   }
 
   const items = await executeEntityQuery(serverInfo, platform, network, entity, query);

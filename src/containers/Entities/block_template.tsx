@@ -91,7 +91,7 @@ class EntityModal extends React.Component<BlockProps, BlockState> {
       value: subItems.length,
       onClick: this.onClickSubItem
     });
-    const cols = (!isLoading && subItemsView && this.opsColsName(['kind', 'amount', 'fee', 'operation_group_hash'])) || [];
+    const cols = (!isLoading && subItemsView && this.opsColsName(['kind', 'amount', 'fee', 'operation_group_hash', 'source', 'destination', 'parameters'])) || [];
     const opsItems = (!isLoading && subItemsView && this.opsItems(cols)) || [];
 
     return (
