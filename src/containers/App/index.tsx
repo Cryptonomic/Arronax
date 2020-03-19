@@ -47,7 +47,7 @@ import {
 import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../../reducers/app/actions';
 import { clearMessageAction } from '../../reducers/message/actions';
 import { getEntityModalName } from '../../utils/hashtable';
-import { defaultPath } from '../../router/routes';
+import { defaultPath, reQuery } from '../../router/routes';
 import octopusSrc from '../../assets/sadOctopus.svg';
 
 import { 
@@ -100,10 +100,34 @@ class Arronax extends React.Component<Props, States> {
 
   async componentDidMount() {
     window.addEventListener('beforeunload', this.onBeforeunload.bind(this));
-    const { initLoad, match, history, selectedConfig } = this.props;
+    const { initLoad, match, history, location, selectedConfig, configs } = this.props;
     const { url, params: { platform, network, entity, id } } = match;
-    const isQuery = url.includes('/query/');
-    const [redirect, changePath, openModal] = await initLoad(platform, network, entity, id, isQuery);
+    // support search query
+    const isSearchQuery = location.search && reQuery.test(location.search);
+    let isQuery = isSearchQuery || url.includes('/query/');
+    let searchParams: URLSearchParams | null = null;
+    let searchQuery: string = '';
+    let searchEntity: string = '';
+    let searchNetwork: string = '';
+    let searchPlatform: string = '';
+    let searchConfig: Config | undefined;
+    if (isSearchQuery) {
+      isQuery = reQuery.test(location.search);
+      searchParams = new URLSearchParams(location.search);
+      [searchNetwork, searchEntity] = searchParams.get('e')?.split('/');
+      searchConfig = configs.find((c: Config) => c.displayName === searchNetwork);
+      if (!searchConfig) {
+        history.replace(defaultPath);
+        return;
+      }
+      searchQuery = searchParams.get('q') || '';
+      searchPlatform = searchConfig.platform;
+      searchNetwork = searchConfig.network;
+    }
+    const [redirect, changePath, openModal] = 
+      isSearchQuery ? 
+      await initLoad(searchPlatform, searchNetwork, searchEntity, searchQuery, isQuery) : 
+      await initLoad(platform, network, entity, id, isQuery);
     redirect && history.replace(defaultPath);
     changePath && history.push(`/${platform}/${network}/${entity}`);
     if (openModal && openModal.items && openModal.items.length > 0) {
