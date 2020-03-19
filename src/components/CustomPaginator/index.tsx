@@ -11,12 +11,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { ArronaxIcon } from '../ArronaxIcon';
 
 const Container = styled.div`
-  position: absolute;
-  right: 30px;
-  top: 225px;
-  height: 52px;
   display: flex;
   align-items: center;
+  width: 400px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  padding: 33px 15px 35px 0px;
 `;
 
 const SelectContainer = muiStyled(FormControl)({

@@ -1,13 +1,15 @@
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import Badge from '@material-ui/core/Badge';
+import Tooltip from '@material-ui/core/Tooltip';
+
 import { ArronaxIcon } from '../ArronaxIcon';
 
 export const Container = styled.div`
   position: relative;
-  width: 100%;
-  height: 77px;
-  padding: 25px 30px 0 30px;
+  display: flex;
+  flex: 1 1 auto;
+  padding: 33px 0px 35px 15px;
 `;
 
 export const ToolItem = styled.div`
@@ -19,8 +21,6 @@ export const ToolItem = styled.div`
   font-weight: 500;
   color: rgb(74, 74, 74);
   cursor: pointer;
-  position: absolute;
-  top: 25px;
   z-index: 1;
   &:hover {
     border-color: rgb(180, 231, 242);
@@ -75,8 +75,8 @@ export const ColumnsTool = styled(ToolItem)<{ isactive: boolean }>`
 `;
 
 export const AggTool = styled(ToolItem)<{ isactive: boolean }>`
-  width: 145px;
-  padding-left: 13px;
+  border-radius: 0px 5px 5px 0px;
+  padding: 0px 13px;
   left: 307px;
   color: ${({ isactive }) =>
     isactive ? 'rgb(86, 194, 217)' : 'rgb(74, 74, 74)'};
@@ -94,7 +94,15 @@ export const ShareTool = styled(ToolItem)`
   width: 120px;
   left: 451px;
   padding-left: 18px;
-  border-radius: 0px 5px 5px 0px;
+  border: none;
+`;
+
+export const ExportTool = styled(ToolItem)`
+  width: 120px;
+  left: 451px;
+  padding-left: 18px;
+  border: none;
+  margin: 0 0 0 auto;
 `;
 
 export const FilterIcon = styled(ArronaxIcon)`
@@ -121,3 +129,14 @@ export const BadgeWrapper = withStyles({
     boxShadow: '0px 0px 4px 0px rgba(0, 0, 0, 0.5)',
   },
 })(Badge);
+
+export const TooltipWrapper = withStyles({
+  tooltip: {
+    backgroundColor: 'white',
+    color: 'rgb(155, 155, 155)',
+    fontSize: '16px',
+    lineHeight: '24px',
+    fontWeight: 500,
+    boxShadow: '0px 0px 4px 0px rgba(0, 0, 0, 0.3)'
+  }
+})(Tooltip);
