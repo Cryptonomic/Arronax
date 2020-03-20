@@ -105,7 +105,7 @@ class CustomTable extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <Overflow>
-          <TableContainer>
+          <TableContainer stickyHeader>
             <CustomTableHeader
               rows={selectedColumns}
               aggregations={aggregations}
