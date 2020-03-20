@@ -66,8 +66,13 @@ class CustomTable extends React.Component<Props, State> {
   syncScroll = (e: any) => {
     const tableOffset = this.tableEl.current.scrollHeight - this.tableEl.current.clientHeight;
     const bodyOffset = e.target.scrollHeight - e.target.clientHeight;
-    if (e.target.scrollTop >= this.state.tableDetails.top) {
+    if (this.state.tableDetails.top) {
       this.tableEl.current.scrollTop = (tableOffset * e.target.scrollTop / bodyOffset);
+      return;
+    }
+
+    if (e.target.scrollTop >= this.state.tableDetails.top - this.tableEl.current.clientHeight) {
+      this.tableEl.current.scrollTop = (tableOffset * (e.target.scrollTop - this.tableEl.current.clientHeight) / bodyOffset);
     }
   }
 
