@@ -27,4 +27,5 @@ export interface State {
   selectedPrimaryKey: string;
   selectedPrimaryValue: string | number;
   referenceEntity: string;
+  tableDetails: any;
 }

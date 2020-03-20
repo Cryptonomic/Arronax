@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import { connect } from 'react-redux';
 import TableBody from '@material-ui/core/TableBody';
 import { ConseilSortDirection } from 'conseiljs';
@@ -31,17 +31,21 @@ const entityloader = (f: any) => import(`../Entities/${f}`);
 
 class CustomTable extends React.Component<Props, State> {
   EntityModal: any = null;
+  tableEl: React.RefObject<any>;
   constructor(props: Props) {
     super(props);
     this.state = {
       isOpenedModal: false,
       selectedPrimaryKey: '',
       selectedPrimaryValue: '',
-      referenceEntity: props.selectedEntity
+      referenceEntity: props.selectedEntity,
+      tableDetails: null
     };
+    this.tableEl = createRef();
   }
 
   componentDidMount() {
+    window.addEventListener('scroll', this.syncScroll, true);
     const { selectedEntity, isModalUrl, selectedColumns, items } = this.props;
     if(isModalUrl) {
       const uniqueAttribute = selectedColumns.find(attribute => attribute.keyType === 'UniqueKey');
@@ -49,6 +53,21 @@ class CustomTable extends React.Component<Props, State> {
         const uniqueValue = items[0][uniqueAttribute.name];
         this.onOpenModal(selectedEntity, uniqueAttribute.name, uniqueValue);
       }
+    }
+    this.setState({
+      tableDetails: this.tableEl.current.getBoundingClientRect()
+    });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.syncScroll);
+  }
+
+  syncScroll = (e: any) => {
+    const tableOffset = this.tableEl.current.scrollHeight - this.tableEl.current.clientHeight;
+    const bodyOffset = e.target.scrollHeight - e.target.clientHeight;
+    if (e.target.scrollTop >= this.state.tableDetails.top) {
+      this.tableEl.current.scrollTop = (tableOffset * e.target.scrollTop / bodyOffset);
     }
   }
 
@@ -102,9 +121,14 @@ class CustomTable extends React.Component<Props, State> {
     const { referenceEntity, isOpenedModal} = this.state;
     const selectedObjectEntity: any = entities.find(entity => entity.name === referenceEntity);
     const { network, platform } = selectedConfig;
+    const { tableDetails } = this.state;
     return (
       <React.Fragment>
-        <Overflow>
+        <Overflow ref={this.tableEl} style={{ 
+            position: tableDetails ? 'sticky' : 'relative', 
+            maxHeight: tableDetails ? tableDetails.height : '',
+            height: tableDetails ? '100vh' : ''
+          }}>
           <TableContainer stickyHeader>
             <CustomTableHeader
               rows={selectedColumns}
@@ -131,6 +155,11 @@ class CustomTable extends React.Component<Props, State> {
             </TableBody>
           </TableContainer>
         </Overflow>
+        <div style={{ 
+          width: tableDetails ? tableDetails.width : '100%', 
+          height: tableDetails ? tableDetails.height : '100%',
+          backgroundColor: 'transparent' 
+          }}></div>
         {isOpenedModal && 
           <EntityModal
             attributes={attributes[referenceEntity]}
