@@ -10,4 +10,7 @@ export const TableContainer = muiStyled(Table)({
 
 export const Overflow = styled.div`
   overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  top: 0;
 `;
