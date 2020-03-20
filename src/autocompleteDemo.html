@@ -9,11 +9,11 @@
 	</script>
 
 	<script>
-	 const conseilServer = { url: 'https://conseil-staging.cryptonomic-infra.tech:443', apiKey: 'hooman' };
-	 const platform = "tezos"
-	 const network = "mainnet"
-	 
 
+	 const conseilServer = { url: 'https://conseil-dev.cryptonomic-infra.tech:443', apiKey: 'hooman' };
+	 const platform = "tezos"
+	 const network = "babylonnet"
+	 
 	 const stringOperators = [ { displayName: "is",   value: conseiljs.ConseilOperator.EQ }, 
 				   { displayName: "in" , value: conseiljs.ConseilOperator.IN }, 
 				   { displayName: "like", value: conseiljs.ConseilOperator.LIKE },
@@ -37,7 +37,12 @@
 
 	 const stringDataTypes = [ "String", "Hash", "AccountAddress"]
 
+
 	 let predicates = []
+
+	 /* ========================== */
+	 /* Dropdown menu manupulating */
+	 /* ========================== */
 
 	 function addOption(menu, text, value) {
 	     var opt = document.createElement('option')
@@ -54,47 +59,88 @@
 	     }
 	 }
 
-	 function createMenuInBody(elementId) {
-	     var newMenu = document.createElement("select")
-	     if (elementId) {
-		 newMenu.setAttribute("id", elementId)
+	 /* ================================== */
+	 /* HTML Element creation and deletion */
+	 /* ================================== */
+
+	 function createMenuInBody(before) {
+	     let newMenu = document.createElement("select")
+	     let insertBefore = document.getElementById("results")
+	     if (before) {
+		 insertBefore = before
 	     }
-	     document.body.insertBefore(newMenu, document.getElementById("results"))
+	     document.body.insertBefore(newMenu, insertBefore)
 	     return newMenu
 	 }
 
-	 function createTextboxInBody(elementId) {
-	     var newTextbox = document.createElement("input")
-	     newTextbox.setAttribute("id", elementId)
+	 function createLabelInBody(before, content) {
+	     let newLabel = document.createElement("label")
+	     let insertBefore = document.getElementById("results")
+	     newLabel.innerHTML = content
+	     if (before) {
+		 insertBefore = before
+	     }
+	     document.body.insertBefore(newLabel, insertBefore)
+	     return newLabel
+	 }
+
+	 function createTextboxInBody(before) {
+	     let newTextbox = document.createElement("input")
+	     let insertBefore = document.getElementById("results")
+
 	     newTextbox.setAttribute("type", "text")
-	     document.body.insertBefore(newTextbox, document.getElementById("results"))
+	     if (before) {
+		 insertBefore = before
+	     }
+	     document.body.insertBefore(newTextbox, insertBefore)
+
+	     return newTextbox
 	 }
 
-	 function resetMenus(toReset) {
-	     let menus = document.getElementsByTagName("select")
-	     for (i = 0; i < menus.length; i++) {
-		 if (toReset.includes(menus[i].id)) {
-		     menus[i].options.length = 0;
-		 }
+	 function newAndMenu() {
+	     let menu = createMenuInBody()
+	     addOption(menu, "continue?", "continue?")
+	     addOption(menu, "and", "and")
+	     addOption(menu, ".", "end")
+	     return menu
+	 }
+
+	 function deleteElement(element) {
+	     element.parentNode.removeChild(element)
+	 }
+
+	 function deleteElementsIn(obj) {
+	     let values = Object.values(obj)
+	     for (element of values) {
+		 deleteElement(element)
 	     }
 	 }
 
-	 function deleteTextboxes() {
-	     let textboxes = document.getElementsByTagName("input")
-	     const length = textboxes.length
-	     for (i = length-1; i >= 0; i--) {
-		 textboxes[i].parentNode.removeChild(textboxes[i])
-	     }
+	 function resetValueElements(value) {
+	     deleteElementsIn(value)
+	     Object.keys(value).forEach(function(key) { delete value[key]; });
 	 }
 
-	 function deleteMenus(toDelete) {
-	     let menus = document.getElementsByTagName("select")
-	     const length = menus.length
-	     for (i = length-1; i >= 0; i--) {
-		 if (toDelete.includes(menus[i].id)) {
-		     menus[i].parentNode.removeChild(menus[i])
-		 }
+	 function deletePredicate(predicate) {
+	     if (predicate.andMenu.options[1].value != "and") {
+		 let nextPredicate = predicates[predicate.andMenu.options[1].value]
+		 deletePredicate(nextPredicate)
 	     }
+
+	     predicates.splice(predicates.indexOf(predicate), 1)
+	     resetValueElements(predicate.value)
+	     deleteElement(predicate.attributeMenu)
+	     deleteElement(predicate.operatorMenu)
+	     deleteElement(predicate.label)
+	     deleteElement(predicate.andMenu)
+	 }
+
+	 /* ================= */
+	 /* Getter functions  */
+	 /* ================= */
+
+	 function getSelectedEntity() {
+	     return document.getElementById("entities").value
 	 }
 
 	 function getObjectFromName(objArr, name) {
@@ -103,75 +149,90 @@
 	     }
 	 }
 
-	 function getSelectedEntity() {
-	     return document.getElementById("entities").value
-	 }
-
-	 function createPredicate(attribute, operator, value) {
-	     return { "attribute" : attribute, "operator" : operator, "value" : value }
-	 }
-
 	 async function getAttributesForEntity(entity) {
 	     const attributes = await conseiljs.ConseilMetadataClient.getAttributes(conseilServer, platform, network, entity)
 	     return attributes
 	 }
 
-	 function newPredicate() {
-	     let attributeMenu = createMenuInBody()
-	     let operatorMenu = createMenuInBody()
+	 function getQuery() {
+	     let query = conseiljs.ConseilQueryBuilder.blankQuery();
+	     for (predicate of predicates) {
+		 if (predicate.operatorMenu.value == conseiljs.ConseilOperator.BETWEEN) {
+		     let beforeValue = parseInt(predicate.value.beforeElement.value) ?
+				       parseInt(predicate.value.beforeElement.value) :
+				       predicate.value.beforeElement.value
 
-	     attributeMenu.onchange = initializeOperatorMenu(operatorMenu, attributeMenu) 
-	     operatorMenu.onchange = initializeValueMenu(operatorMenu)
-
-	     initializeAttributeMenu(attributeMenu)
-	     initializeOperatorMenu(operatorMenu, attributeMenu)
-	     
-	     let predicate = {"attribute_menu" : attributeMenu,
-			      "operator_menu" : operatorMenu}
-	     predicates.push(predicate)
-	     //create attributes menu
-	     //create operator menu
-	     //create predicate objects
-
+		     let afterValue = parseInt(predicate.value.afterElement.value) ?
+				      parseInt(predicate.value.afterElement.value) :
+				      predicate.value.afterElement.value
+		     
+		     query = conseiljs.ConseilQueryBuilder.addPredicate(query,
+									predicate.attributeMenu.value,
+									conseiljs.ConseilOperator.BEFORE,
+									[beforeValue], false);
+		     query = conseiljs.ConseilQueryBuilder.addPredicate(query,
+									predicate.attributeMenu.value,
+									conseiljs.ConseilOperator.AFTER,
+									[afterValue], false);
+		 }
+		 else {
+		     let value = parseInt(predicate.value.valueElement.value) ?
+				 parseInt(predicate.value.valueElement.value) :
+				 predicate.value.valueElement.value
+		     query = conseiljs.ConseilQueryBuilder.addPredicate(query,
+									predicate.attributeMenu.value,
+									predicate.operatorMenu.value,
+									[value], false);
+		 }
+	     }
+	     return query
 	 }
+
 	 /* =============================================================================== */
 
+	 function newPredicate() {
+	     let andMenu = newAndMenu()
+	     let label = createLabelInBody(andMenu, " where ")
+	     let attributeMenu = createMenuInBody(andMenu)
+	     let operatorMenu = createMenuInBody(andMenu)
+	     let value = {}
 
-	 async function initializeEntityMenu() {
-	     const entities = await conseiljs.ConseilMetadataClient.getEntities(conseilServer, platform, network)
-	     let entityMenu =  document.getElementById("entities")
-	     entityNames = entities.map( entity => entity.name )
-	     entityDisplayNames = entities.map( entity => entity.displayName ) 
-	     addOptions(entityMenu, entityDisplayNames, entityNames)
+	     let predicate = { "label" : label,
+			       "attributeMenu" : attributeMenu,
+			       "operatorMenu" : operatorMenu,
+			       "value" : value,
+			       "andMenu" : andMenu }
+
+	     attributeMenu.onchange = function(){ updateOperatorMenu(predicate); }
+	     operatorMenu.onchange = function() { updateValueElements(predicate) }
+	     andMenu.onchange = function() { updateActivePredicates(predicate) }
+
+	     predicates.push(predicate)
+	     return predicate
 	 }
-
-	 async function initializeAttributeMenu(toInitialize) {
-	     resetMenus(["attributes", "operators"])
-	     deleteMenus(["value"])
-	     deleteTextboxes()
-	     let attributeMenu = toInitialize
-
-	     const attributes = await getAttributesForEntity(getSelectedEntity())
+	 
+	 async function updateAttributeMenu(predicate) {
+	     let menu = predicate.attributeMenu
+	     const entity = getSelectedEntity()
+	     const attributes = await getAttributesForEntity(entity)
 	     const attributeDisplayNames = attributes.map( attribute => attribute.displayName )
 	     const attributeNames = attributes.map( attribute => attribute.name  ) 
 
-	     addOptions(attributeMenu, attributeDisplayNames, attributeNames)
+	     addOptions(menu, attributeDisplayNames, attributeNames)
+	     
 	 }
+	 
 
-	 async function initializeAttributeMenus() {
-	     for (let i = 0; i < predicates.length; i++) {
-		 initializeAttributeMenu(predicates[i].attributeMenu)
-	     }
-	 }
-	 async function initializeOperatorMenu(toInitialize, attributesMenu) {
-	     resetMenus(["operators"])
-	     deleteMenus(["value"])	     
-	     deleteTextboxes()
-	     let operatorMenu =  toInitialize
+	 async function updateOperatorMenu(predicate) {
+	     let value = predicate.value
+	     let attributeMenu = predicate.attributeMenu
+	     let operatorMenu = predicate.operatorMenu
+
+	     resetValueElements(value)
 
 	     const selectedEntity = getSelectedEntity();
 	     const attributes = await getAttributesForEntity(selectedEntity)
-	     const attributeDataType = getObjectFromName(attributes, attributesMenu.value).dataType
+	     const attributeDataType = getObjectFromName(attributes, attributeMenu.value).dataType
 
 	     const  operatorsAvailable = (stringDataTypes.includes(attributeDataType)) ?
 					 stringOperators :
@@ -186,100 +247,99 @@
 
 	 }
 
-	 async function initializeValueMenu(menu) {
-	     deleteMenus(["value"])
-	     deleteTextboxes()
+	 async function updateValueElements(predicate) {
+	     let value = predicate.value
+	     let attributeMenu = predicate.attributeMenu
+	     let operatorMenu = predicate.operatorMenu
+	     let andMenu = predicate.andMenu
+
+	     resetValueElements(value)
 
 	     const entity = getSelectedEntity()
 	     const attributes = await getAttributesForEntity(entity)
-	     const attributeObject = getObjectFromName(attributes, document.getElementById("attributes").value)
+	     const attributeObject = getObjectFromName(attributes, attributeMenu.value)
 	     const cardinality = attributeObject.cardinality
 	     const cardinalityThreshold = 20
+	     console.log(cardinality)
+	     console.log(attributeObject)
+	     if (operatorMenu.value == conseiljs.ConseilOperator.BETWEEN) {
+		 value["afterElement"] = createTextboxInBody(andMenu)
+		 value["labelElement"] = createLabelInBody(andMenu, " and ")
+		 value["beforeElement"] = createTextboxInBody(andMenu)
 
-	     if (menu.value == conseiljs.ConseilOperator.BETWEEN) {
-		 createTextboxInBody("after")
-		 createTextboxInBody("before")
 	     }
 	     else if (cardinality < cardinalityThreshold
-		      && menu.value == conseiljs.ConseilOperator.EQ ) {
-		 createMenuInBody("value")
-		 populateAttributeValueMenu(document.getElementById("value"), menu.value)
+		      && operatorMenu.value == conseiljs.ConseilOperator.EQ ) {
+
+		 let valueMenu = createMenuInBody(andMenu)
+		 const attributeValues = await conseiljs.ConseilMetadataClient.getAttributeValues(conseilServer, platform,
+												  network, entity,
+												  attributeMenu.value )
+		 addOptions(valueMenu, attributeValues, attributeValues)
+		 value["valueElement"] = valueMenu
 	     }
 	     else { 
-		 createTextboxInBody("value")
+		 value["valueElement"] = createTextboxInBody(andMenu) 
 	     }
-
-	     //create "and" menu whose onchange takes the references to the menuse created by new
-	 }
-
-	 async function populateAttributeValueMenu(menu, attribute) {
-	     const entity = getSelectedEntity()
-	     const attributeValues = await conseiljs.ConseilMetadataClient.getAttributeValues(conseilServer, platform, network, entity, attribute )
-	     addOptions(menu, attributeValues, attributeValues)
-	 }
-	 
-	 async function getQueryDetails() {
-	     const entity = getSelectedEntity()
-
-	     // the following will be gotten from an array of predicate objects
-	     // instead of get elementby id
-	     const attribute = document.getElementById("attributes").value
-	     const operator = document.getElementById("operators").value
-
-	     let predicates = []
-	     
-	     if (operator == conseiljs.ConseilOperator.BETWEEN) {
-		 const beforeValue = document.getElementById("before").value
-		 const afterValue = document.getElementById("after").value
-		 const beforePredicate = createPredicate(attribute, conseiljs.ConseilOperator.BEFORE, beforeValue)
-		 const afterPredicate = createPredicate(attribute, conseiljs.ConseilOperator.AFTER, afterValue)
-		 predicates.push(beforePredicate)
-		 predicates.push(afterPredicate)
-	     }
-	     else {
-		 const value = document.getElementById("value").value
-		 predicates.push(createPredicate(attribute, operator, value))
-	     }
-
-	     const query = {"entity" : entity,
-			    "predicates" : predicates}
-
-	     return query
-
 	 }
 
 
-	 async function executeQuery() {
-	     const queryDetails = await getQueryDetails()
-	     let query = conseiljs.ConseilQueryBuilder.blankQuery();
-	     console.log(queryDetails)
-	     for (let i = 0; i < queryDetails.predicates.length; i++) {
-		 let predicate = queryDetails.predicates[i]
-		 predicate.value = parseInt(predicate.value) ?
-				   parseInt(predicate.value) :
-				   predicate.value
-
-		 query = conseiljs.ConseilQueryBuilder.addPredicate(query, predicate.attribute , predicate.operator, [predicate.value], false);
+	 function updateActivePredicates(predicate) {
+	     let andMenu = predicate.andMenu
+	     if (andMenu.value == "and") {
+		 let newPred = newPredicate()
+		 updateAttributeMenu(newPred)
+		 andMenu.options[1].value = predicates.indexOf(newPred)
 	     }
+	     else if (andMenu.value == "end" && andMenu.options[1].value != "and") {
+		 deletePredicate(predicates[andMenu.options[1].value])
+		 andMenu.options[1].value = "and"
+	     }
+	 }
 
-	     let response = await conseiljs.ConseilDataClient.executeEntityQuery(conseilServer, platform, network, queryDetails.entity, query);
-	     console.log(response)
-	     document.getElementById("results").innerHTML = JSON.stringify(response)
+	 function resetPredicates() {
+	     let firstPredicate = predicates[0]
+	     deletePredicate(firstPredicate)
+	     updateAttributeMenu(newPredicate())
 	 }
 
 	 async function initialize() {
-	     newPredicate();
-	     initializeEntityMenu();
-	 }
+	     let entityMenu = document.getElementById("entities")
 
+	     entityMenu.onchange = resetPredicates
+
+	     const entities = await conseiljs.ConseilMetadataClient.getEntities(conseilServer, platform, network)
+	     entityNames = entities.map( entity => entity.name )
+	     entityDisplayNames = entities.map( entity => entity.displayName ) 
+	     addOptions(entityMenu, entityDisplayNames, entityNames)
+
+	     newPredicate()
+
+	 }
+	 
+
+	 async function executeQuery() {
+	     let query = getQuery()
+	     let response = await conseiljs.ConseilDataClient.executeEntityQuery(conseilServer,
+										 platform,
+										 network,
+										 getSelectedEntity(),
+										 query);
+
+	     document.getElementById("results").innerHTML = JSON.stringify(response)
+	 }
+	 
 	</script>
 	
     </head>
-    <body onload="initialize()">    
-	<button onclick="executeQuery()">Send</button><br>
-	<br>
+    
+    <body onload="initialize()">
+	<button onclick="executeQuery()">Send</button><br><br>
 	<label for="entities">Show</label>
-	<select id="entities" onchange="initializeAttributeMenus()">	</select>
+	<select id="entities">	</select>
+
+
+	<p id="results"> </p>
 
     </body>
 
