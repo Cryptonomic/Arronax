@@ -153,8 +153,35 @@
 	     return attributes
 	 }
 
-	 async function executeQuery() {
-	     
+	 function getQuery() {
+	     let query = conseiljs.ConseilQueryBuilder.blankQuery();
+	     for (predicate of predicates) {
+		 if (predicate.operatorMenu.value == conseiljs.ConseilOperator.BETWEEN) {
+		     let beforeValue = parseInt(predicate.value.before.value) ?
+				       parseInt(predicate.value.before.value) :
+				       predicate.value.before.value
+
+		     let afterValue = parseInt(predicate.value.after.value) ?
+				      parseInt(predicate.value.after.value) :
+				      predicate.value.after.value
+		     
+		     query = conseiljs.ConseilQueryBuilder.addPredicate(query,
+									predicate.attributeMenu.value,
+									conseiljs.ConseilOperator.BEFORE,
+									[beforeValue], false);
+		     query = conseiljs.ConseilQueryBuilder.addPredicate(query,
+									predicate.attributeMenu.value,
+									conseiljs.ConseilOperator.AFTER,
+									[afterValue], false);
+		 }
+		 else {
+		     query = conseiljs.ConseilQueryBuilder.addPredicate(query,
+									predicate.attributeMenu.value,
+									predicate.operatorMenu.value,
+									[predicate.value.value.value], false);
+		 }
+	     }
+	     return query
 	 }
 
 	 /* =============================================================================== */
@@ -229,12 +256,13 @@
 	     const attributeObject = getObjectFromName(attributes, attributeMenu.value)
 	     const cardinality = attributeObject.cardinality
 	     const cardinalityThreshold = 20
+	     console.log(cardinality)
+	     console.log(attributeObject)
 	     if (operatorMenu.value == conseiljs.ConseilOperator.BETWEEN) {
 		 value["after"] = createTextboxInBody(andMenu)
 		 value["before"] = createTextboxInBody(andMenu)
 	     }
-	     else if (cardinality != 0
-		      && cardinality < cardinalityThreshold
+	     else if (cardinality < cardinalityThreshold
 		      && operatorMenu.value == conseiljs.ConseilOperator.EQ ) {
 
 		 let valueMenu = createMenuInBody(andMenu)
@@ -284,14 +312,26 @@
 	 }
 	 
 
+	 async function executeQuery() {
+	     let query = getQuery()
+	     let response = await conseiljs.ConseilDataClient.executeEntityQuery(conseilServer,
+										 platform,
+										 network,
+										 getSelectedEntity(),
+										 query);
 
+	     document.getElementById("results").innerHTML = JSON.stringify(response)
+	 }
+	 
 	</script>
 	
     </head>
     
     <body onload="initialize()">
+	<button onclick="executeQuery()">Send</button><br><br>
 	<label for="entities">Show</label>
 	<select id="entities">	</select>
+
 
 	<p id="results"> </p
 
