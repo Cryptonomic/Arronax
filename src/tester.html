@@ -75,7 +75,7 @@
 	 function createLabelInBody(before) {
 	     let newLabel = document.createElement("label")
 	     let insertBefore = document.getElementById("results")
-	     newLabel.innerHTML = "where "
+	     newLabel.innerHTML = " where "
 	     if (before) {
 		 insertBefore = before
 	     }
@@ -110,11 +110,30 @@
 
 	 function deleteElementsIn(obj) {
 	     let values = Object.values(obj)
-	     console.log(values)
 	     for (element of values) {
 		 deleteElement(element)
 	     }
 	 }
+
+	 function resetValueElements(value) {
+	     deleteElementsIn(value)
+	     Object.keys(value).forEach(function(key) { delete value[key]; });
+	 }
+
+	 function deletePredicate(predicate) {
+	     if (predicate.andMenu.options[1].value != "and") {
+		 let nextPredicate = predicates[predicate.andMenu.options[1].value]
+		 deletePredicate(nextPredicate)
+	     }
+
+	     predicates.splice(predicates.indexOf(predicate), 1)
+	     resetValueElements(predicate.value)
+	     deleteElement(predicate.attributeMenu)
+	     deleteElement(predicate.operatorMenu)
+	     deleteElement(predicate.label)
+	     deleteElement(predicate.andMenu)
+	 }
+
 	 /* ================= */
 	 /* Getter functions  */
 	 /* ================= */
@@ -134,12 +153,13 @@
 	     return attributes
 	 }
 
+	 async function executeQuery() {
+	     
+	 }
+
 	 /* =============================================================================== */
 
 	 function newPredicate() {
-	     //make it so that createMenuInBody takes a "before" parameter
-	     //andmenu onchange should havea a reference to the predicate obj
-	     //
 	     let andMenu = newAndMenu()
 	     let label = createLabelInBody(andMenu)
 	     let attributeMenu = createMenuInBody(andMenu)
@@ -160,59 +180,24 @@
 	     return predicate
 	 }
 	 
-	 function updateActivePredicates(predicate) {
-	     let andMenu = predicate.andMenu
-	     if (andMenu.value == "and") {
-		 let newPred = newPredicate()
-		 //intialzize newpred.attributeMenu
-		 andMenu.options[1].value = predicates.length
-	     }
-	     else if (andMenu.value == "end" && andMenu.options[1].value != "and") {
-		 //deletePredicate(predicates[andMenu.options[1].value])
-	     }
-	 }
-	 
-	 async function updateValueElements(predicate) {
-	     let value = predicate.value
-	     let attributeMenu = predicate.attributeMenu
-	     let operatorMenu = predicate.operatorMenu
-	     let andMenu = predicate.andMenu
-
-	     deleteElementsIn(value)
-	     Object.keys(value).forEach(function(key) { delete value[key]; });
-
+	 async function updateAttributeMenu(predicate) {
+	     let menu = predicate.attributeMenu
 	     const entity = getSelectedEntity()
 	     const attributes = await getAttributesForEntity(entity)
-	     const attributeObject = getObjectFromName(attributes, attributeMenu.value)
-	     const cardinality = attributeObject.cardinality
-	     const cardinalityThreshold = 20
+	     const attributeDisplayNames = attributes.map( attribute => attribute.displayName )
+	     const attributeNames = attributes.map( attribute => attribute.name  ) 
 
-	     if (operatorMenu.value == conseiljs.ConseilOperator.BETWEEN) {
-		 value["after"] = createTextboxInBody(andMenu)
-		 value["before"] = createTextboxInBody(andMenu)
-	     }
-	     else if (cardinality < cardinalityThreshold
-		      && operatorMenu.value == conseiljs.ConseilOperator.EQ ) {
-
-		 let valueMenu = createMenuInBody(andMenu)
-		 const attributeValues = await conseiljs.ConseilMetadataClient.getAttributeValues(conseilServer, platform,
-												  network, entity,
-												  attributeMenu.value )
-		 addOptions(valueMenu, attributeValues, attributeValues)
-		 value["value"] = valueMenu
-	     }
-	     else { 
-		 value["value"] = createTextboxInBody(andMenu) 
-	     }
+	     addOptions(menu, attributeDisplayNames, attributeNames)
+	     
 	 }
+	 
 
 	 async function updateOperatorMenu(predicate) {
 	     let value = predicate.value
 	     let attributeMenu = predicate.attributeMenu
 	     let operatorMenu = predicate.operatorMenu
 
-	     deleteElementsIn(value)
-	     Object.keys(value).forEach(function(key) { delete value[key]; });
+	     resetValueElements(value)
 
 	     const selectedEntity = getSelectedEntity();
 	     const attributes = await getAttributesForEntity(selectedEntity)
@@ -231,25 +216,63 @@
 
 	 }
 
-	 async function updateAttributeMenus() {
+	 async function updateValueElements(predicate) {
+	     let value = predicate.value
+	     let attributeMenu = predicate.attributeMenu
+	     let operatorMenu = predicate.operatorMenu
+	     let andMenu = predicate.andMenu
+
+	     resetValueElements(value)
+
 	     const entity = getSelectedEntity()
 	     const attributes = await getAttributesForEntity(entity)
-	     const attributeDisplayNames = attributes.map( attribute => attribute.displayName )
-	     const attributeNames = attributes.map( attribute => attribute.name  ) 
-
-	     for (let i = 0; i < predicates.length; i++) {
-		 let attributeMenu = predicates[i].attributeMenu
-		 let value = predicates[i].value
-		 addOptions(attributeMenu, attributeDisplayNames, attributeNames)
-		 deleteElementsIn(value)
-		 Object.keys(value).forEach(function(key) { delete value[key]; });
+	     const attributeObject = getObjectFromName(attributes, attributeMenu.value)
+	     const cardinality = attributeObject.cardinality
+	     const cardinalityThreshold = 20
+	     if (operatorMenu.value == conseiljs.ConseilOperator.BETWEEN) {
+		 value["after"] = createTextboxInBody(andMenu)
+		 value["before"] = createTextboxInBody(andMenu)
 	     }
+	     else if (cardinality != 0
+		      && cardinality < cardinalityThreshold
+		      && operatorMenu.value == conseiljs.ConseilOperator.EQ ) {
+
+		 let valueMenu = createMenuInBody(andMenu)
+		 const attributeValues = await conseiljs.ConseilMetadataClient.getAttributeValues(conseilServer, platform,
+												  network, entity,
+												  attributeMenu.value )
+		 addOptions(valueMenu, attributeValues, attributeValues)
+		 value["value"] = valueMenu
+	     }
+	     else { 
+		 value["value"] = createTextboxInBody(andMenu) 
+	     }
+	 }
+
+
+	 function updateActivePredicates(predicate) {
+	     let andMenu = predicate.andMenu
+	     if (andMenu.value == "and") {
+		 let newPred = newPredicate()
+		 updateAttributeMenu(newPred)
+		 andMenu.options[1].value = predicates.indexOf(newPred)
+	     }
+	     else if (andMenu.value == "end" && andMenu.options[1].value != "and") {
+		 deletePredicate(predicates[andMenu.options[1].value])
+		 andMenu.options[1].value = "and"
+	     }
+	 }
+
+	 function resetPredicates() {
+	     let firstPredicate = predicates[0]
+	     deletePredicate(firstPredicate)
+	     updateAttributeMenu(newPredicate())
 	 }
 
 	 async function initialize() {
 	     let entityMenu = document.getElementById("entities")
 
-	     entityMenu.onchange = updateAttributeMenus
+	     entityMenu.onchange = resetPredicates
 
 	     const entities = await conseiljs.ConseilMetadataClient.getEntities(conseilServer, platform, network)
 	     entityNames = entities.map( entity => entity.name )
