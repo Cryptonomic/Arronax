@@ -36,6 +36,9 @@
         "customPaginator": {
             "limit_query": "Queries on Arronax are limited to 1000 results. <1>Export to CSV</1> to get a larger result set."
         },
+        "dialog": {
+            "exporting": "Exporting"
+        },
         "entityModal": {
             "details": "{{title}} Details",
             "clear": "clear",

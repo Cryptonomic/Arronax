@@ -3,10 +3,6 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import ReactDynamicImport from 'react-dynamic-import';
 
 import Header from '../../components/Header';
@@ -18,6 +14,7 @@ import ConfigModal from '../../components/ConfigModal';
 import Loader from '../../components/Loader';
 import Tabs from '../../components/Tabs';
 import CustomPaginator from '../../components/CustomPaginator';
+import CustomDialog from '../../components/CustomDialog';
 import { getItemByPrimaryKey } from '../../reducers/app/thunks';
 import {
   getLoading,
@@ -61,9 +58,7 @@ import {
   TryTxt,
   ButtonContainer,
   ClearButton,
-  TryButton,
-  DismissButton,
-  DialogContentWrapper
+  TryButton
 } from './styles';
 
 import { ToolType, Config } from '../../types';
@@ -91,7 +86,8 @@ class Arronax extends React.Component<Props, States> {
       searchedItem: [],
       searchedSubItems: [],
       expandedTabs: false,
-      page: 0
+      page: 0,
+      exportCsv: false
     };
 
     this.settingRef = React.createRef();
@@ -254,7 +250,13 @@ class Arronax extends React.Component<Props, States> {
 
   onExportCsv = async () => {
     const { exportCsvData } = this.props;
-    exportCsvData();
+    this.setState((prev) => ({ 
+      exportCsv: !prev.exportCsv
+    }))
+    await exportCsvData();
+    this.setState((prev) => ({ 
+      exportCsv: !prev.exportCsv
+    }))
   }
 
   onShareReport = () => {
@@ -333,7 +335,7 @@ class Arronax extends React.Component<Props, States> {
     } = this.props;
     const {
       isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal, isOpenEntityModal,
-      searchedItem, searchedEntity, searchedSubItems, primaryKeyClicked, expandedTabs, page
+      searchedItem, searchedEntity, searchedSubItems, primaryKeyClicked, expandedTabs, page, exportCsv
     } = this.state;
     const { EntityModal } = this;
     const isRealLoading = isLoading || !isFullLoaded;
@@ -422,22 +424,17 @@ class Arronax extends React.Component<Props, States> {
         </Container>
         <Footer />
         {isRealLoading && <Loader />}
-        <Dialog
+        <CustomDialog 
+          open={exportCsv}
+          title="components.dialog.exporting"
+        />
+        <CustomDialog 
           open={isError}
+          title="general.nouns.error"
+          dismiss="general.verbs.dismiss"
+          message={message}
           onClose={this.handleErrorClose}
-          aria-labelledby='alert-dialog-title'
-          aria-describedby='alert-dialog-description'
-        >
-          <DialogTitle id='alert-dialog-title'>{t('general.nouns.error')}</DialogTitle>
-          <DialogContentWrapper>
-            <DialogContentText id='alert-dialog-description'>
-              {message}
-            </DialogContentText>
-          </DialogContentWrapper>
-          <DialogActions>
-            <DismissButton onClick={this.handleErrorClose}>{t('general.verbs.dismiss')}</DismissButton>
-          </DialogActions>
-        </Dialog>
+        />
         <ConfigModal
           t={t}
           open={isOpenConfigMdoal}

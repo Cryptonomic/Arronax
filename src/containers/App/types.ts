@@ -46,6 +46,7 @@ export interface States {
   primaryKeyClicked: boolean;
   expandedTabs: boolean;
   page: number;
+  exportCsv: boolean;
 }
 
 export interface RouteComponentWithParmas extends RouteComponentProps {

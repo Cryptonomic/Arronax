@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-import { withStyles } from '@material-ui/core/styles';
-import DialogContent from '@material-ui/core/DialogContent';
 
 export const Container = styled.div`
   display: flex;
@@ -78,14 +76,3 @@ export const TryButton = styled(CustomButton)`
   background: rgb(86, 194, 217);
   margin-left: 22px;
 `;
-
-export const DismissButton = styled(CustomButton)`
-  color: white;
-  background: rgb(86, 194, 217);
-`;
-
-export const DialogContentWrapper = withStyles({
-  root: {
-    minWidth: '350px'
-  }
-})(DialogContent);
