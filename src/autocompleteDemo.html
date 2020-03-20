@@ -1,4 +1,3 @@
-<!-- saved from url=(0092)https://cryptonomic.tech/_matrix/media/r0/download/cryptonomic.tech/iMTLWSuCVJbIoqrjaBHKRXdl -->
 <html>
     <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -37,31 +36,11 @@
 
 	 const stringDataTypes = [ "String", "Hash", "AccountAddress"]
 
-
 	 let predicates = []
 
-	 /* ========================== */
-	 /* Dropdown menu manupulating */
-	 /* ========================== */
-
-	 function addOption(menu, text, value) {
-	     var opt = document.createElement('option')
-	     opt.value = value
-	     opt.text = text
-	     menu.options.add(opt)
-	 }
-
-	 function addOptions(menu, textAr, valueAr) {
-	     menu.options.length = 0
-	     addOption(menu, "pick a value", "pick a value")
-	     for (i = 0; i < textAr.length; i++) {
-		 addOption(menu, textAr[i], valueAr[i])
-	     }
-	 }
-
-	 /* ================================== */
-	 /* HTML Element creation and deletion */
-	 /* ================================== */
+	 /* ========================= */
+	 /* HTML Element manipulation */
+	 /* ========================= */
 
 	 function createMenuInBody(before) {
 	     let newMenu = document.createElement("select")
@@ -95,6 +74,21 @@
 	     document.body.insertBefore(newTextbox, insertBefore)
 
 	     return newTextbox
+	 }
+
+	 function addOption(menu, text, value) {
+	     var opt = document.createElement('option')
+	     opt.value = value
+	     opt.text = text
+	     menu.options.add(opt)
+	 }
+
+	 function addOptions(menu, textAr, valueAr) {
+	     menu.options.length = 0
+	     addOption(menu, "pick a value", "pick a value")
+	     for (i = 0; i < textAr.length; i++) {
+		 addOption(menu, textAr[i], valueAr[i])
+	     }
 	 }
 
 	 function newAndMenu() {
@@ -165,7 +159,6 @@
 		     let afterValue = parseInt(predicate.value.afterElement.value) ?
 				      parseInt(predicate.value.afterElement.value) :
 				      predicate.value.afterElement.value
-		     
 		     query = conseiljs.ConseilQueryBuilder.addPredicate(query,
 									predicate.attributeMenu.value,
 									conseiljs.ConseilOperator.BEFORE,
@@ -188,7 +181,31 @@
 	     return query
 	 }
 
-	 /* =============================================================================== */
+	 /* ====================================================== */
+	 /* Functions for query construction and view manpulations */
+	 /* ====================================================== 
+	    A query is seperated into the following elements:
+
+	    - Entity
+	    - Predicate
+	    
+	    The entity to be queried is set by the "entities" menu.
+	    Only one entity can be set, but multiple predicates can
+	    be applied (stored in the "predicates" array). 
+
+	    Predicates are broken down into the following sub-parts:
+	    
+	    - Attribute
+	    - Operator
+	    - Value
+	    
+	    Each is set by their respective menu by the user and are
+	    grouped by predicate. 
+	    
+	    The "andMenu" stores the index to the next predicate
+	    added in the value for the "and" option 
+	    ====================================================== */
+
 
 	 function newPredicate() {
 	     let andMenu = newAndMenu()
@@ -219,30 +236,25 @@
 	     const attributeNames = attributes.map( attribute => attribute.name  ) 
 
 	     addOptions(menu, attributeDisplayNames, attributeNames)
-	     
 	 }
-	 
 
 	 async function updateOperatorMenu(predicate) {
 	     let value = predicate.value
 	     let attributeMenu = predicate.attributeMenu
 	     let operatorMenu = predicate.operatorMenu
 
-	     resetValueElements(value)
-
 	     const selectedEntity = getSelectedEntity();
 	     const attributes = await getAttributesForEntity(selectedEntity)
 	     const attributeDataType = getObjectFromName(attributes, attributeMenu.value).dataType
-
 	     const  operatorsAvailable = (stringDataTypes.includes(attributeDataType)) ?
 					 stringOperators :
 					 (attributeDataType == "DateTime") ?
 					 dateOperators :
 					 numberOperators
-
 	     const operatorDisplayNames = operatorsAvailable.map( operator => operator.displayName )
 	     const operatorValues = operatorsAvailable.map( operator => operator.value )
 
+	     resetValueElements(value)
 	     addOptions(operatorMenu, operatorDisplayNames, operatorValues)
 
 	 }
@@ -253,15 +265,14 @@
 	     let operatorMenu = predicate.operatorMenu
 	     let andMenu = predicate.andMenu
 
-	     resetValueElements(value)
-
 	     const entity = getSelectedEntity()
 	     const attributes = await getAttributesForEntity(entity)
 	     const attributeObject = getObjectFromName(attributes, attributeMenu.value)
 	     const cardinality = attributeObject.cardinality
 	     const cardinalityThreshold = 20
-	     console.log(cardinality)
-	     console.log(attributeObject)
+
+	     resetValueElements(value)
+
 	     if (operatorMenu.value == conseiljs.ConseilOperator.BETWEEN) {
 		 value["afterElement"] = createTextboxInBody(andMenu)
 		 value["labelElement"] = createLabelInBody(andMenu, " and ")
@@ -270,7 +281,6 @@
 	     }
 	     else if (cardinality < cardinalityThreshold
 		      && operatorMenu.value == conseiljs.ConseilOperator.EQ ) {
-
 		 let valueMenu = createMenuInBody(andMenu)
 		 const attributeValues = await conseiljs.ConseilMetadataClient.getAttributeValues(conseilServer, platform,
 												  network, entity,
@@ -298,23 +308,19 @@
 	 }
 
 	 function resetPredicates() {
-	     let firstPredicate = predicates[0]
-	     deletePredicate(firstPredicate)
+	     deletePredicate(predicates[0])
 	     updateAttributeMenu(newPredicate())
 	 }
 
 	 async function initialize() {
 	     let entityMenu = document.getElementById("entities")
+	     const entities = await conseiljs.ConseilMetadataClient.getEntities(conseilServer, platform, network)
 
 	     entityMenu.onchange = resetPredicates
-
-	     const entities = await conseiljs.ConseilMetadataClient.getEntities(conseilServer, platform, network)
 	     entityNames = entities.map( entity => entity.name )
 	     entityDisplayNames = entities.map( entity => entity.displayName ) 
 	     addOptions(entityMenu, entityDisplayNames, entityNames)
-
 	     newPredicate()
-
 	 }
 	 
 
@@ -325,7 +331,7 @@
 										 network,
 										 getSelectedEntity(),
 										 query);
-
+	     console.log(response)
 	     document.getElementById("results").innerHTML = JSON.stringify(response)
 	 }
 	 
