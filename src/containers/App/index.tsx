@@ -17,6 +17,7 @@ import CustomTable from '../CustomTable';
 import ConfigModal from '../../components/ConfigModal';
 import Loader from '../../components/Loader';
 import Tabs from '../../components/Tabs';
+import FilterResults from '../../components/FilterResults';
 import CustomPaginator from '../../components/CustomPaginator';
 import { getItemByPrimaryKey } from '../../reducers/app/thunks';
 import {
@@ -369,6 +370,7 @@ class Arronax extends React.Component<Props, States> {
                 selected={selectedEntity}
                 onChange={this.onClickTab}
               />
+              <FilterResults />
               <Toolbar
                 isCollapsed={isSettingCollapsed}
                 selectedTool={selectedTool}

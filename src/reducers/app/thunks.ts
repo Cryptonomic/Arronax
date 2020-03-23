@@ -30,7 +30,8 @@ import {
   initMainParamsAction,
   setSubmitAction,
   setAggregationAction,
-  initItemsAction
+  initItemsAction,
+  setQueryFilters
 } from './actions';
 import { createMessageAction } from '../message/actions';
 import { Config, Sort, Filter, Aggregation } from '../../types';
@@ -590,6 +591,7 @@ export const submitQuery = () => async (dispatch: any, state: any) => {
   try {
     const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
     await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length));
+    await dispatch(setQueryFilters(query))
     dispatch(setLoadingAction(false));
   } catch (e) {
     const message = `Unable to submit query`;
