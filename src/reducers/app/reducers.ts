@@ -93,8 +93,6 @@ let initialState: AppState = {
     dateTime: [
       { name: 'eq', displayName: 'is' },
       { name: 'noteq', displayName: 'is not' },
-      { name: 'in', displayName: 'is in' },
-      { name: 'notin', displayName: 'is not in' },
       { name: 'between', displayName: 'is between' },
       { name: 'before', displayName: 'is before' },
       { name: 'after', displayName: 'is after' },
