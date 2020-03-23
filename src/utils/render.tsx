@@ -191,12 +191,71 @@ export const formatValueWithLink = (props: { value: number; onClick: () => void 
     return <LinkSpan onClick={onClick}>{value}</LinkSpan>;
 };
 
-export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: ConseilQuery): string => {
-    let title = entity;
+export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: ConseilQuery): any => {
+    const timestamp = query.predicates && query.predicates.length && query.predicates.find(p => p.field === 'timestamp');
+    let title = entity.slice(0, 1).toLocaleUpperCase() + entity.slice(1);
+    let renderTimestamp;
 
-    for (let p of query.predicates) {
-        title += ` ${p.field} ${p.operation} ${p.set.join(', ')}`; // TODO: inverse, group
+    if (timestamp) {
+        let operation = '';
+
+        switch (timestamp.operation) {
+            case 'eq':
+                operation = !timestamp.inverse ? 'at' : 'excluding';
+                break;
+            case 'after':
+                operation = 'since';
+                break;
+            case 'isnull':
+                operation = '';
+                break;
+            default:
+                operation = timestamp.operation;
+        };
+
+        renderTimestamp = (
+            <span>
+                {operation}
+                {' '}
+                <Moment format="YYYY/MM/DD">{timestamp.set[0]}</Moment>
+                {timestamp.operation === 'between' && <> and <Moment format="YYYY/MM/DD">{timestamp.set[1]}</Moment></>}
+            </span>
+        )
     }
 
-    return title;
+    const renderFilters: any = query.predicates && query.predicates.length && query.predicates.filter((f: any) => f.field !== 'timestamp').map((f: any, i: number) => {
+        const isLast = (query.predicates.length - 1) === i;
+        let operation = '';
+
+        switch (f.operation) {
+            case 'eq':
+            case 'isnull':
+                operation = '';
+                break;
+            default:
+                operation = f.operation;
+        };
+
+        return (
+            <span key={f.field}>
+                {f.field}
+                {' '}
+                {operation}
+                {' '}
+                {f.set[0]}
+                {f.operation === 'between' && <> and {f.set[1]}</>}
+                {isLast ? '' : ', '}
+            </span>
+        );
+    })
+
+    return (
+        <span>
+            {title}
+            {' '}
+            {renderTimestamp}
+            {renderFilters.length && ' with '}
+            {renderFilters}
+        </span>
+    )
 }
