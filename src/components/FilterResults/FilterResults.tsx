@@ -13,7 +13,7 @@ const FilterResults = () => {
     const { platform, network } = selectedConfig;
     let result: string | React.ReactElement = '';
 
-    if (queryFilters && queryFilters.predicates && queryFilters.predicates.length) {
+    if (queryFilters[selectedEntity] && queryFilters[selectedEntity].predicates && queryFilters[selectedEntity].predicates.length) {
         result = formatQueryForNaturalLanguage(platform, network, selectedEntity, queryFilters);
     }
     return <Container>{result}</Container>;

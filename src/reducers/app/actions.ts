@@ -242,7 +242,8 @@ export function setSubmitAction(entity: string, items: any[], filterCount: numbe
   }
 }
 
-export const setQueryFilters = (queryFilters: any): any => ({
+export const setQueryFilters = (entity: string, queryFilters: any): any => ({
   type: SET_QUERY_FILTERS,
+  entity,
   queryFilters
 })

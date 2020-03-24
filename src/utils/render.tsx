@@ -191,10 +191,9 @@ export const formatValueWithLink = (props: { value: number; onClick: () => void 
     return <LinkSpan onClick={onClick}>{value}</LinkSpan>;
 };
 
-export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: ConseilQuery): any => {
-    console.log('QUERY', query.predicates)
-    const timestamp = (query.predicates && query.predicates.length && query.predicates.find(p => p.field === 'timestamp')) || null;
-    const filters = (query.predicates && query.predicates.length && query.predicates.filter((f: any) => f.field !== 'timestamp')) || [];
+export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: any): any => {
+    const timestamp = (query[entity].predicates && query[entity].predicates.length && query[entity].predicates.find((p: any) => p.field === 'timestamp')) || null;
+    const filters = (query[entity].predicates && query[entity].predicates.length && query[entity].predicates.filter((f: any) => f.field !== 'timestamp')) || [];
     let title = entity.slice(0, 1).toLocaleUpperCase() + entity.slice(1);
     let renderTimestamp;
 
@@ -233,6 +232,9 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
             case 'eq':
             case 'isnull':
                 operation = '';
+                break;
+            case 'gt':
+                operation = 'greater than';
                 break;
             default:
                 operation = f.operation;

@@ -300,8 +300,9 @@ export const app = (state = initialState, action: any) => {
     }
 
     case SET_QUERY_FILTERS: {
-      const { queryFilters } = action;
-      return { ...state, queryFilters }
+      const { queryFilters, entity } = action;
+      const filters = { ...state.queryFilters, [entity]: queryFilters }
+      return { ...state, queryFilters: filters }
     }
   }
   return state;
