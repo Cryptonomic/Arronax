@@ -114,10 +114,11 @@ export const ColumnIcon = styled(ArronaxIcon)`
 export const BadgeWrapper = withStyles({
   badge: {
     top: 5,
-    right: -20,
+    left: '-5px',
     color: '#fff',
     backgroundColor: 'rgb(86, 194, 217)',
     boxShadow: '0px 0px 4px 0px rgba(0, 0, 0, 0.5)',
+    position: 'relative'
   },
 })(Badge);
 
