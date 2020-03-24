@@ -78,8 +78,7 @@ export const formatValueForDisplay = (
     onClickPrimaryKey: (entity: string, key: string, value: string | number) => void,
     aggregation?: ConseilFunction,
     truncate: boolean = true,
-    renderInlineText?: boolean,
-    customDateFormat?: string,
+    renderInlineText?: boolean
 ) => {
     if (value == null || value.length === 0) {
         return '';
@@ -129,9 +128,8 @@ export const formatValueForDisplay = (
         formatAggregatedValue(attribute, value, aggregation);
     }
 
-    const { dataType, valueMap } = attribute;
+    const { dataFormat, dataType, valueMap } = attribute;
     const displayValueMap = valueMap && valueMap[value];
-    const dataFormat = customDateFormat || attribute.dataFormat;
 
     switch (dataType) {
         case AttrbuteDataType.BOOLEAN:
@@ -212,15 +210,14 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
     if (timestamp) {
         const attribute = attributes.filter(a => a.name === timestamp.field)[0] as AttributeDefinition;
         const operation = operators[getOperatorType(attribute.dataType)].filter((o: any) => !timestamp.inverse ? o['name'] === timestamp.operation : o['name'] === 'not' + timestamp.operation)[0]['displayName'];
-        const shouldShowTime = moment.default(Number(timestamp.set[0])).hour() > 0 || moment.default(Number(timestamp.set[0])).minute() > 0;
-        const value = formatValueForDisplay(platform, network, timestamp.field, timestamp.set[0], attribute, () => {}, undefined, true, false, `${shouldShowTime ? 'HH:mm a on' : ''} MMMM Do, YYYY`);
+        const value = formatValueForDisplay(platform, network, timestamp.field, timestamp.set[0], attribute, () => {}, undefined, true, false);
 
         renderTimestamp = (
             <span>
                 {operation}
                 {' '}
                 {value}
-                {timestamp.operation === 'between' && <> and {formatValueForDisplay(platform, network, timestamp.field, timestamp.set[1], attribute, () => {}, undefined, true, false, 'HH:mm a on MMMM Do, YYYY')}</>}
+                {timestamp.operation === 'between' && <> and {formatValueForDisplay(platform, network, timestamp.field, timestamp.set[1], attribute, () => {}, undefined, true, false)}</>}
             </span>
         )
     }
@@ -250,8 +247,7 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
 
         })[0]['displayName'] + '';
 
-        const shouldShowTime = f.field === 'estimated_time' && (moment.default(Number(f.set[0])).hour() > 0 || moment.default(Number(f.set[0])).minute() > 0);
-        const value = formatValueForDisplay(platform, network, f.field, f.set[0], attribute, () => {}, undefined, true, true, `${shouldShowTime ? 'HH:mm a on' : ''} MMMM Do, YYYY`);
+        const value = formatValueForDisplay(platform, network, f.field, f.set[0], attribute, () => {}, undefined, true, true);
 
         return (
             <span key={f.field}>
