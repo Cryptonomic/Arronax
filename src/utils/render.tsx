@@ -77,7 +77,9 @@ export const formatValueForDisplay = (
     attribute: AttributeDefinition,
     onClickPrimaryKey: (entity: string, key: string, value: string | number) => void,
     aggregation?: ConseilFunction,
-    truncate: boolean = true
+    truncate: boolean = true,
+    renderInlineText?: boolean,
+    customDateFormat?: string,
 ) => {
     if (value == null || value.length === 0) {
         return '';
@@ -127,8 +129,9 @@ export const formatValueForDisplay = (
         formatAggregatedValue(attribute, value, aggregation);
     }
 
-    const { dataFormat, dataType, valueMap } = attribute;
+    const { dataType, valueMap } = attribute;
     const displayValueMap = valueMap && valueMap[value];
+    const dataFormat = customDateFormat || attribute.dataFormat;
 
     switch (dataType) {
         case AttrbuteDataType.BOOLEAN:
@@ -138,28 +141,35 @@ export const formatValueForDisplay = (
             if (!dataFormat) { return value; }
 
             if (truncate) {
-                return <time>{moment.default(value).format(dataFormat).replace(/[\.,]?\s?[0]{1,2}:00[:00]?/, '')}</time>
+                return <time>{moment.default(value).format(dataFormat).replace(/[.,]?\s?[0]{1,2}:00[:00]?(\sam)?/, '')}</time>
             }
 
             return <Moment format={dataFormat}>{value}</Moment>;
         case AttrbuteDataType.ACCOUNT_ADDRESS:
+            if (renderInlineText) {
+                return displayValueMap || (truncate && value.length >= 6 ? truncateHash(value) : value)
+            }
+
             const colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255) / 74)).toString('hex');
             const address = formatReferenceValue(attribute, displayValueMap || (truncate ? truncateHash(value) : value), value, onClickPrimaryKey);
             return (
-                <React.Fragment>
+                <>
                     <StyledCircle1 newcolor={`#${colors.substring(0, 6)}`} />
                     <StyledCircle2 newcolor={`#${colors.slice(-6)}`} />
                     {address}
                     <Clipboard value={value} />
-                </React.Fragment>
+                </>
             );
         case AttrbuteDataType.HASH:
+            if (renderInlineText) {
+                return displayValueMap || (truncate && value.length >= 6 ? truncateHash(value) : value)
+            }
             const hash = formatReferenceValue(attribute, displayValueMap || (truncate ? truncateHash(value) : value), value, onClickPrimaryKey);
             return (
-                <React.Fragment>
+                <>
                     {hash}
                     <Clipboard value={value} />
-                </React.Fragment>
+                </>
             );
         case AttrbuteDataType.DECIMAL:
         case AttrbuteDataType.INT:
@@ -168,10 +178,10 @@ export const formatValueForDisplay = (
         case AttrbuteDataType.STRING:
             if (value.length > 100) {
                 return (
-                    <React.Fragment>
+                    <>
                         {displayValueMap || value.substring(0, 100)}
                         <Clipboard value={value} />
-                    </React.Fragment>
+                    </>
                 );
             }
             if (value.length > 0 && attribute.cardinality && attribute.cardinality < 20) {
@@ -197,21 +207,21 @@ export const formatValueWithLink = (props: { value: number; onClick: () => void 
 export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: ConseilQuery, attributes: AttributeDefinition[], operators: any) => {
     const timestamp = (query.predicates && query.predicates.length && query.predicates.find((p: any) => p.field === 'timestamp')) || null;
     const filters = (query.predicates && query.predicates.length && query.predicates.filter((f: any) => f.field !== 'timestamp')) || [];
-    let title = entity.slice(0, 1).toLocaleUpperCase() + entity.slice(1);
     let renderTimestamp;
 
     if (timestamp) {
         const attribute = attributes.filter(a => a.name === timestamp.field)[0] as AttributeDefinition;
 
         const operation = operators[getOperatorType(attribute.dataType)].filter((o: any) => o['name'] === timestamp.operation)[0]['displayName'];
-        const value = formatValueForDisplay(platform, network, timestamp.field, timestamp.set[0], attribute, () => {}, undefined, true);
+        const value = formatValueForDisplay(platform, network, timestamp.field, timestamp.set[0], attribute, () => {}, undefined, true, false, 'HH:mm a on MMMM Do, YYYY');
+        const isTime = /[.,]?\s?[\d\d]{1,2}:\d\d[:\d\d]?\s?(am|pm)?/.test(value.props.children);
 
         renderTimestamp = (
             <span>
-                {operation}
+                {isTime ? operation : ''}
                 {' '}
                 {value}
-                {timestamp.operation === 'between' && <> and {formatValueForDisplay(platform, network, timestamp.field, timestamp.set[1], attribute, () => {}, undefined, true)}</>}
+                {timestamp.operation === 'between' && <> and {formatValueForDisplay(platform, network, timestamp.field, timestamp.set[1], attribute, () => {}, undefined, true, false, 'HH:mm a on MMMM Do, YYYY')}</>}
             </span>
         )
     }
@@ -222,8 +232,8 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
         const attribute = attributes.filter(a => a.name === f.field)[0] as AttributeDefinition;
 
         const field = attribute.displayName;
-        const operation = operators[getOperatorType(attribute.dataType)].filter((o: any) => o['name'] === f.operation)[0]['displayName'] + '';
-        const value = formatValueForDisplay(platform, network, f.field, f.set[0], attribute, () => {}, undefined, true);
+        const operation = operators[getOperatorType(attribute.dataType)].filter((o: any) => !f.inverse ? o['name'] === f.operation : o['name'] === 'not' + f.operation)[0]['displayName'] + '';
+        const value = formatValueForDisplay(platform, network, f.field, f.set[0], attribute, () => {}, undefined, true, true);
 
         return (
             <span key={f.field}>
@@ -242,7 +252,7 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
 
     return (
         <span>
-            {title}
+            {entity}
             {' '}
             {renderTimestamp}
             {renderFilters.length ? ' with ' : null}
