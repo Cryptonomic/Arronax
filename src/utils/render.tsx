@@ -209,6 +209,8 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
     const filters = (query.predicates && query.predicates.length && query.predicates.filter((f: any) => f.field !== 'timestamp')) || [];
     let renderTimestamp;
 
+    console.log('ops', operators, query.predicates)
+
     if (timestamp) {
         const attribute = attributes.filter(a => a.name === timestamp.field)[0] as AttributeDefinition;
         const shouldShowTime = moment.default(Number(timestamp.set[0])).hour() > 0 || moment.default(Number(timestamp.set[0])).minute() > 0;
@@ -231,7 +233,25 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
         const attribute = attributes.filter(a => a.name === f.field)[0] as AttributeDefinition;
 
         const field = attribute.displayName;
-        const operation = operators[getOperatorType(attribute.dataType)].filter((o: any) => !f.inverse ? o['name'] === f.operation : o['name'] === 'not' + f.operation)[0]['displayName'] + '';
+
+        const operation = operators[getOperatorType(attribute.dataType)].filter((o: any) => {
+            //Fix to match NOT fields
+            if (!f.inverse) {
+                return o['name'] === f.operation;
+            }
+
+            if (f.operation === 'startsWith') {
+                return o['name'] === 'notstartWith';
+            }
+
+            if (f.operation === 'endsWith') {
+                return o['name'] === 'notendWith';
+            }
+
+            return o['name'] === 'not' + f.operation;
+
+        })[0]['displayName'] + '';
+
         const value = formatValueForDisplay(platform, network, f.field, f.set[0], attribute, () => {}, undefined, true, true);
 
         return (
