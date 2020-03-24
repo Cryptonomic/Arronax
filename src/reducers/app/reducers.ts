@@ -25,7 +25,8 @@ import {
   INIT_ATTRIBUTES,
   SET_AGGREGATIONS,
   SET_SUBMIT,
-  INIT_ITEMS
+  INIT_ITEMS,
+  SET_QUERY_FILTERS
 } from './types';
 
 import { EntityDefinition } from 'conseiljs';
@@ -44,6 +45,7 @@ export interface AppState {
   items: object;
   operators: object;
   selectedFilters: any;
+  queryFilters: any;
   isLoading: boolean;
   selectedEntity: string;
   isFullLoaded: boolean;
@@ -65,6 +67,7 @@ let initialState: AppState = {
   attributes,
   items: {},
   selectedFilters: {},
+  queryFilters: {},
   operators: {
     numeric: [
       { name: 'eq', displayName: 'is' },
@@ -292,6 +295,12 @@ export const app = (state = initialState, action: any) => {
       const items = { ...state.items, [action.entity]: action.items };
       const filterCount = { ...state.filterCount, [action.entity]: action.filterCount };
       return { ...state, items, filterCount };
+    }
+
+    case SET_QUERY_FILTERS: {
+      const { queryFilters, entity } = action;
+      const filters = { ...state.queryFilters, [entity]: queryFilters }
+      return { ...state, queryFilters: filters }
     }
   }
   return state;

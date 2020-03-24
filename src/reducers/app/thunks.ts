@@ -30,7 +30,8 @@ import {
   initMainParamsAction,
   setSubmitAction,
   setAggregationAction,
-  initItemsAction
+  initItemsAction,
+  setQueryFilters
 } from './actions';
 import { createMessageAction } from '../message/actions';
 import { Config, Sort, Filter, Aggregation } from '../../types';
@@ -285,7 +286,7 @@ export const fetchInitEntityAction = (
     dispatch(createMessageAction(`Unable to retrieve data for ${name} request.`, true));
     return [];
   });
-  
+  await dispatch(setQueryFilters(entity, query));
   await dispatch(initEntityPropertiesAction(entity, filters, sorts, columns, items, aggregations));
   await Promise.all(cardinalityPromises);
 };
@@ -590,6 +591,7 @@ export const submitQuery = () => async (dispatch: any, state: any) => {
   try {
     const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
     await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length));
+    await dispatch(setQueryFilters(selectedEntity, query));
     dispatch(setLoadingAction(false));
   } catch (e) {
     const message = `Unable to submit query`;

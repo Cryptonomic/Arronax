@@ -191,12 +191,75 @@ export const formatValueWithLink = (props: { value: number; onClick: () => void 
     return <LinkSpan onClick={onClick}>{value}</LinkSpan>;
 };
 
-export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: ConseilQuery): string => {
-    let title = entity;
+export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: Record<string, ConseilQuery>) => {
+    const timestamp = (query[entity].predicates && query[entity].predicates.length && query[entity].predicates.find((p: any) => p.field === 'timestamp')) || null;
+    const filters = (query[entity].predicates && query[entity].predicates.length && query[entity].predicates.filter((f: any) => f.field !== 'timestamp')) || [];
+    let title = entity.slice(0, 1).toLocaleUpperCase() + entity.slice(1);
+    let renderTimestamp;
 
-    for (let p of query.predicates) {
-        title += ` ${p.field} ${p.operation} ${p.set.join(', ')}`; // TODO: inverse, group
+    if (timestamp) {
+        let operation = '';
+
+        switch (timestamp.operation) {
+            case 'eq':
+                operation = !timestamp.inverse ? 'at' : 'excluding';
+                break;
+            case 'after':
+                operation = 'since';
+                break;
+            case 'isnull':
+                operation = '';
+                break;
+            default:
+                operation = timestamp.operation;
+        };
+
+        renderTimestamp = (
+            <span>
+                {operation}
+                {' '}
+                <Moment format="HH:mm a on MMMM Do, YYYY">{timestamp.set[0]}</Moment>
+                {timestamp.operation === 'between' && <> and <Moment format="HH:mm a on MMMM Do, YYYY">{timestamp.set[1]}</Moment></>}
+            </span>
+        )
     }
 
-    return title;
+    const renderFilters: any = filters.map((f: any, i: number) => {
+        const isLast = (filters.length - 1) === i;
+        let operation = '';
+
+        switch (f.operation) {
+            case 'eq':
+            case 'isnull':
+                operation = '';
+                break;
+            case 'gt':
+                operation = 'greater than';
+                break;
+            default:
+                operation = f.operation;
+        };
+
+        return (
+            <span key={f.field}>
+                {f.field.replace('_', ' ')}
+                {' '}
+                {operation}
+                {' '}
+                {(f.field === 'hash' || f.field === 'operations_hash' || f.field === 'predecessor') ? truncateHash(f.set[0]) : f.set[0]}
+                {f.operation === 'between' && <> and {f.set[1]}</>}
+                {isLast ? '' : ', '}
+            </span>
+        );
+    })
+
+    return (
+        <span>
+            {title}
+            {' '}
+            {renderTimestamp}
+            {renderFilters.length ? ' with ' : null}
+            {renderFilters}
+        </span>
+    )
 }

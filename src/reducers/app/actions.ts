@@ -25,7 +25,8 @@ import {
   REMOVE_CONFIG,
   SET_AGGREGATIONS,
   SET_SUBMIT,
-  INIT_ITEMS
+  INIT_ITEMS,
+  SET_QUERY_FILTERS
 } from './types';
 
 import { AttributeDefinition, EntityDefinition } from 'conseiljs';
@@ -240,3 +241,9 @@ export function setSubmitAction(entity: string, items: any[], filterCount: numbe
     filterCount
   }
 }
+
+export const setQueryFilters = (entity: string, queryFilters: any): any => ({
+  type: SET_QUERY_FILTERS,
+  entity,
+  queryFilters
+})
