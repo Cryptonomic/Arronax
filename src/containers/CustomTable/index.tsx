@@ -32,6 +32,7 @@ const entityloader = (f: any) => import(`../Entities/${f}`);
 class CustomTable extends React.Component<Props, State> {
   EntityModal: any = null;
   tableEl: React.RefObject<any>;
+  rootEl: null | Element;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -42,10 +43,12 @@ class CustomTable extends React.Component<Props, State> {
       tableDetails: null
     };
     this.tableEl = createRef();
+    this.rootEl = null;
   }
 
   componentDidMount() {
     window.addEventListener('scroll', this.syncScroll, true);
+    this.rootEl = document.getElementById('root');
     const { selectedEntity, isModalUrl, selectedColumns, items } = this.props;
     if(isModalUrl) {
       const uniqueAttribute = selectedColumns.find(attribute => attribute.keyType === 'UniqueKey');
@@ -61,10 +64,11 @@ class CustomTable extends React.Component<Props, State> {
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.syncScroll);
+    this.rootEl = null;
   }
 
   syncScroll = (e: any) => {
-    if (!this.tableEl.current) {
+    if (!this.tableEl.current || e.target !== this.rootEl) {
       return;
     }
     const tableOffset = this.tableEl.current.scrollHeight - this.tableEl.current.clientHeight;
