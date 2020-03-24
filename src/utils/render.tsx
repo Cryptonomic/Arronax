@@ -211,8 +211,8 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
 
     if (timestamp) {
         const attribute = attributes.filter(a => a.name === timestamp.field)[0] as AttributeDefinition;
-        const shouldShowTime = moment.default(Number(timestamp.set[0])).hour() > 0 || moment.default(Number(timestamp.set[0])).minute() > 0;
         const operation = operators[getOperatorType(attribute.dataType)].filter((o: any) => !timestamp.inverse ? o['name'] === timestamp.operation : o['name'] === 'not' + timestamp.operation)[0]['displayName'];
+        const shouldShowTime = moment.default(Number(timestamp.set[0])).hour() > 0 || moment.default(Number(timestamp.set[0])).minute() > 0;
         const value = formatValueForDisplay(platform, network, timestamp.field, timestamp.set[0], attribute, () => {}, undefined, true, false, `${shouldShowTime ? 'HH:mm a on' : ''} MMMM Do, YYYY`);
 
         renderTimestamp = (
@@ -250,7 +250,8 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
 
         })[0]['displayName'] + '';
 
-        const value = formatValueForDisplay(platform, network, f.field, f.set[0], attribute, () => {}, undefined, true, true);
+        const shouldShowTime = f.field === 'estimated_time' && (moment.default(Number(f.set[0])).hour() > 0 || moment.default(Number(f.set[0])).minute() > 0);
+        const value = formatValueForDisplay(platform, network, f.field, f.set[0], attribute, () => {}, undefined, true, true, `${shouldShowTime ? 'HH:mm a on' : ''} MMMM Do, YYYY`);
 
         return (
             <span key={f.field}>
