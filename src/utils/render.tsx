@@ -212,7 +212,7 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
     if (timestamp) {
         const attribute = attributes.filter(a => a.name === timestamp.field)[0] as AttributeDefinition;
 
-        const operation = operators[getOperatorType(attribute.dataType)].filter((o: any) => o['name'] === timestamp.operation)[0]['displayName'];
+        const operation = operators[getOperatorType(attribute.dataType)].filter((o: any) => !timestamp.inverse ? o['name'] === timestamp.operation : o['name'] === 'not' + timestamp.operation)[0]['displayName'];
         const value = formatValueForDisplay(platform, network, timestamp.field, timestamp.set[0], attribute, () => {}, undefined, true, false, 'HH:mm a on MMMM Do, YYYY');
         const isTime = /[.,]?\s?[\d\d]{1,2}:\d\d[:\d\d]?\s?(am|pm)?/.test(value.props.children);
 
