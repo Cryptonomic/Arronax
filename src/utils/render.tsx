@@ -192,9 +192,9 @@ export const formatValueWithLink = (props: { value: number; onClick: () => void 
 };
 
 export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: Record<string, ConseilQuery>) => {
-    const timestamp = (query[entity].predicates && query[entity].predicates.length && query[entity].predicates.find((p: any) => p.field === 'timestamp')) || null;
-    const filters = (query[entity].predicates && query[entity].predicates.length && query[entity].predicates.filter((f: any) => f.field !== 'timestamp')) || [];
-    let title = entity.slice(0, 1).toLocaleUpperCase() + entity.slice(1);
+    const timestamp = (query[entity].predicates && query[entity].predicates.length && query[entity].predicates.find((p: any) => p.field === 'timestamp' || p.field === 'estimated_time')) || null;
+    const filters = (query[entity].predicates && query[entity].predicates.length && query[entity].predicates.filter((f: any) => f.field !== 'timestamp' && f.field !== 'estimated_time')) || [];
+    let title = entity.slice(0, 1).toLocaleUpperCase() + entity.slice(1).replace('_', ' ');
     let renderTimestamp;
 
     if (timestamp) {
@@ -236,6 +236,15 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
             case 'gt':
                 operation = 'greater than';
                 break;
+            case 'lt':
+                operation = 'less than';
+                break;
+            case 'startsWith':
+                operation = !f.inverse ? 'starts' : 'not start';
+                break;
+            case 'endsWith':
+                operation = !f.inverse ? 'ends' : 'not ends';
+                break;
             default:
                 operation = f.operation;
         };
@@ -246,7 +255,7 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
                 {' '}
                 {operation}
                 {' '}
-                {(f.field === 'hash' || f.field === 'operations_hash' || f.field === 'predecessor') ? truncateHash(f.set[0]) : f.set[0]}
+                {(f.field === 'hash' || f.field === 'operations_hash' || f.field === 'predecessor') && f.field.length >= 6 ? truncateHash(f.set[0]) : f.set[0].toString().replace('_', ' ')}
                 {f.operation === 'between' && <> and {f.set[1]}</>}
                 {isLast ? '' : ', '}
             </span>
