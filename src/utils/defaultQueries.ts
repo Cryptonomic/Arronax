@@ -50,17 +50,19 @@ export const defaultQueries: any = {
         limit: 1000
     },
     governance: {
-        fields: ["voting_period", "proposal_hash", "voting_period_kind", "yay_count", "yay_rolls", "pass_count", "pass_rolls", "nay_count", "nay_rolls"],
+        fields:["voting_period","proposal_hash","voting_period_kind","yay_count","yay_rolls","pass_count","pass_rolls","nay_count","nay_rolls","level"],
         predicates: [],
-        orderBy: [ { field: "voting_period", direction: "desc"} ],
+        orderBy: [{field:"max_level", direction: "desc"}],
         aggregation: [
-            { field: "nay_count", function: "sum"},
-            { field: "nay_rolls", function: "sum"},
-            { field: "pass_count", function: "sum"},
-            { field: "pass_rolls", function: "sum"},
-            { field: "yay_count", function: "sum"},
-            { field: "yay_rolls", function: "sum"} ],
-        limit: 1000},
+            {field:"level", function:"max"},
+            {field:"yay_count", function:"max"},
+            {field:"yay_rolls", function:"max"},
+            {field:"pass_count", function:"max"},
+            {field:"pass_rolls", function:"max"},
+            {field:"nay_count", function:"max"},
+            {field:"nay_rolls", function:"max"}],
+        limit: 1000
+    },
     baking_rights: {
         fields: ['level', 'priority', 'delegate', 'estimated_time'],
         predicates: [{ field: 'priority', operation: 'in', set: ['0','1'], inverse: false }, { field: 'estimated_time', operation: 'after', set: [-1966080000], inverse: false}],
