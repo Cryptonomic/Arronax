@@ -2,14 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Moment from 'react-moment';
-import 'moment-timezone';
+import * as moment from 'moment';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import Circle from '@material-ui/icons/FiberManualRecord';
 
 import Clipboard from '../components/Clipboard';
 
 import { AttributeDefinition, AttrbuteDataType, ConseilFunction, ConseilQuery } from 'conseiljs';
-import { truncateHash, formatNumber } from './general';
+import { truncateHash, formatNumber, getOperatorType } from './general';
 
 type StyledCircleProps = SvgIconProps & { newcolor: string };
 const StyledCircle1 = styled(Circle)<{ newcolor: string }>`
@@ -135,9 +135,12 @@ export const formatValueForDisplay = (
             const svalue = value.toString();
             return svalue.charAt(0).toUpperCase() + svalue.slice(1);
         case AttrbuteDataType.DATETIME:
-            if (!dataFormat) {
-                return value;
+            if (!dataFormat) { return value; }
+
+            if (truncate) {
+                return <time>{moment.default(value).format(dataFormat).replace(/[\.,]?\s?[0]{1,2}:00[:00]?/, '')}</time>
             }
+
             return <Moment format={dataFormat}>{value}</Moment>;
         case AttrbuteDataType.ACCOUNT_ADDRESS:
             const colors = Buffer.from(Buffer.from(value.substring(3, 6) + value.slice(-3), 'utf8').map(b => Math.floor((b - 48) * 255) / 74)).toString('hex');
@@ -191,64 +194,48 @@ export const formatValueWithLink = (props: { value: number; onClick: () => void 
     return <LinkSpan onClick={onClick}>{value}</LinkSpan>;
 };
 
-export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: Record<string, ConseilQuery>) => {
-    const timestamp = (query[entity].predicates && query[entity].predicates.length && query[entity].predicates.find((p: any) => p.field === 'timestamp')) || null;
-    const filters = (query[entity].predicates && query[entity].predicates.length && query[entity].predicates.filter((f: any) => f.field !== 'timestamp')) || [];
+export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: ConseilQuery, attributes: AttributeDefinition[], operators: any) => {
+    const timestamp = (query.predicates && query.predicates.length && query.predicates.find((p: any) => p.field === 'timestamp')) || null;
+    const filters = (query.predicates && query.predicates.length && query.predicates.filter((f: any) => f.field !== 'timestamp')) || [];
     let title = entity.slice(0, 1).toLocaleUpperCase() + entity.slice(1);
     let renderTimestamp;
 
     if (timestamp) {
-        let operation = '';
+        const attribute = attributes.filter(a => a.name === timestamp.field)[0] as AttributeDefinition;
 
-        switch (timestamp.operation) {
-            case 'eq':
-                operation = !timestamp.inverse ? 'at' : 'excluding';
-                break;
-            case 'after':
-                operation = 'since';
-                break;
-            case 'isnull':
-                operation = '';
-                break;
-            default:
-                operation = timestamp.operation;
-        };
+        const operation = operators[getOperatorType(attribute.dataType)].filter((o: any) => o['name'] === timestamp.operation)[0]['displayName'];
+        const value = formatValueForDisplay(platform, network, timestamp.field, timestamp.set[0], attribute, () => {}, undefined, true);
 
         renderTimestamp = (
             <span>
                 {operation}
                 {' '}
-                <Moment format="HH:mm a on MMMM Do, YYYY">{timestamp.set[0]}</Moment>
-                {timestamp.operation === 'between' && <> and <Moment format="HH:mm a on MMMM Do, YYYY">{timestamp.set[1]}</Moment></>}
+                {value}
+                {timestamp.operation === 'between' && <> and {formatValueForDisplay(platform, network, timestamp.field, timestamp.set[1], attribute, () => {}, undefined, true)}</>}
             </span>
         )
     }
 
     const renderFilters: any = filters.map((f: any, i: number) => {
+        const isNextToLast = (filters.length - 2) === i;
         const isLast = (filters.length - 1) === i;
-        let operation = '';
+        const attribute = attributes.filter(a => a.name === f.field)[0] as AttributeDefinition;
 
-        switch (f.operation) {
-            case 'eq':
-            case 'isnull':
-                operation = '';
-                break;
-            case 'gt':
-                operation = 'greater than';
-                break;
-            default:
-                operation = f.operation;
-        };
+        const field = attribute.displayName;
+        const operation = operators[getOperatorType(attribute.dataType)].filter((o: any) => o['name'] === f.operation)[0]['displayName'] + '';
+        const value = formatValueForDisplay(platform, network, f.field, f.set[0], attribute, () => {}, undefined, true);
 
         return (
             <span key={f.field}>
-                {f.field.replace('_', ' ')}
+                {field}
                 {' '}
                 {operation}
                 {' '}
-                {(f.field === 'hash' || f.field === 'operations_hash' || f.field === 'predecessor') ? truncateHash(f.set[0]) : f.set[0]}
-                {f.operation === 'between' && <> and {f.set[1]}</>}
+                {value}
+                {f.operation === 'between' && <> and {formatValueForDisplay(platform, network, f.field, f.set[1], attribute, () => {}, undefined, true)}</>}
+                {f.operation === 'in' && <>,  {f.set.slice(1).map((v: any) => formatValueForDisplay(platform, network, f.field, v, attribute, () => {}, undefined, true)).join(', ')}</>}
                 {isLast ? '' : ', '}
+                {isNextToLast ? ' and ' : ''}
             </span>
         );
     })

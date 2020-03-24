@@ -64,6 +64,7 @@ export const formatNumber = (value: number, attribute: AttributeDefinition, trun
     }
 
     if (attribute.dataType === AttrbuteDataType.CURRENCY) {
+        if (truncate && value === 0) { t = '0'; }
         if (attribute.currencySymbol !== undefined) {
             t = `${attribute.currencySymbol} ${t}`;
         } else if (attribute.currencySymbolCode !== undefined) {
