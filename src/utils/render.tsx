@@ -191,7 +191,7 @@ export const formatValueWithLink = (props: { value: number; onClick: () => void 
     return <LinkSpan onClick={onClick}>{value}</LinkSpan>;
 };
 
-export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: any): any => {
+export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: Record<string, ConseilQuery>) => {
     const timestamp = (query[entity].predicates && query[entity].predicates.length && query[entity].predicates.find((p: any) => p.field === 'timestamp')) || null;
     const filters = (query[entity].predicates && query[entity].predicates.length && query[entity].predicates.filter((f: any) => f.field !== 'timestamp')) || [];
     let title = entity.slice(0, 1).toLocaleUpperCase() + entity.slice(1);
