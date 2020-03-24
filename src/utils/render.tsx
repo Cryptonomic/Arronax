@@ -192,7 +192,9 @@ export const formatValueWithLink = (props: { value: number; onClick: () => void 
 };
 
 export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: ConseilQuery): any => {
-    const timestamp = query.predicates && query.predicates.length && query.predicates.find(p => p.field === 'timestamp');
+    console.log('QUERY', query.predicates)
+    const timestamp = (query.predicates && query.predicates.length && query.predicates.find(p => p.field === 'timestamp')) || null;
+    const filters = (query.predicates && query.predicates.length && query.predicates.filter((f: any) => f.field !== 'timestamp')) || [];
     let title = entity.slice(0, 1).toLocaleUpperCase() + entity.slice(1);
     let renderTimestamp;
 
@@ -217,14 +219,14 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
             <span>
                 {operation}
                 {' '}
-                <Moment format="YYYY/MM/DD">{timestamp.set[0]}</Moment>
-                {timestamp.operation === 'between' && <> and <Moment format="YYYY/MM/DD">{timestamp.set[1]}</Moment></>}
+                <Moment format="HH:mm a on MMMM Do, YYYY">{timestamp.set[0]}</Moment>
+                {timestamp.operation === 'between' && <> and <Moment format="HH:mm a on MMMM Do, YYYY">{timestamp.set[1]}</Moment></>}
             </span>
         )
     }
 
-    const renderFilters: any = query.predicates && query.predicates.length && query.predicates.filter((f: any) => f.field !== 'timestamp').map((f: any, i: number) => {
-        const isLast = (query.predicates.length - 1) === i;
+    const renderFilters: any = filters.map((f: any, i: number) => {
+        const isLast = (filters.length - 1) === i;
         let operation = '';
 
         switch (f.operation) {
@@ -238,11 +240,11 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
 
         return (
             <span key={f.field}>
-                {f.field}
+                {f.field.replace('_', ' ')}
                 {' '}
                 {operation}
                 {' '}
-                {f.set[0]}
+                {(f.field === 'hash' || f.field === 'operations_hash' || f.field === 'predecessor') ? truncateHash(f.set[0]) : f.set[0]}
                 {f.operation === 'between' && <> and {f.set[1]}</>}
                 {isLast ? '' : ', '}
             </span>
@@ -254,7 +256,7 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
             {title}
             {' '}
             {renderTimestamp}
-            {renderFilters.length && ' with '}
+            {renderFilters.length ? ' with ' : null}
             {renderFilters}
         </span>
     )
