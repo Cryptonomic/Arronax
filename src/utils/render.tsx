@@ -209,8 +209,6 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
     const filters = (query.predicates && query.predicates.length && query.predicates.filter((f: any) => f.field !== 'timestamp')) || [];
     let renderTimestamp;
 
-    console.log('ops', operators, query.predicates)
-
     if (timestamp) {
         const attribute = attributes.filter(a => a.name === timestamp.field)[0] as AttributeDefinition;
         const shouldShowTime = moment.default(Number(timestamp.set[0])).hour() > 0 || moment.default(Number(timestamp.set[0])).minute() > 0;
