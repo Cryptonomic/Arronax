@@ -12,15 +12,43 @@ const FilterResults = () => {
     const selectedEntityKey = useSelector(({ app }: FilterResultsProps) => app.selectedEntity, shallowEqual);
     const attributes: any = useSelector(({ app }: FilterResultsProps) => app.attributes, shallowEqual);
     const entities = useSelector(({ app }: FilterResultsProps) => app.entities, shallowEqual);
-    const operators = useSelector(({ app }: FilterResultsProps) => app.operators, shallowEqual);
+    const operators: any = useSelector(({ app }: FilterResultsProps) => app.operators, shallowEqual);
+    let customOperators = { ...operators };
+
+    // replace default operators
+    for (let key in customOperators) {
+        customOperators[key] = customOperators[key].map((o: Record<string, string>) => {
+            switch (o.name) {
+                case 'eq':
+                    o.displayName = key === 'dateTime' ? 'at' : '';
+                    break;
+                case 'after':
+                    o.displayName = key === 'dateTime' ? 'since' : o.displayName;
+                    break;
+                case 'noteq':
+                    o.displayName = key === 'dateTime' ? 'excluding' : 'not';
+                    break;
+                default:
+                    return o;
+            }
+            return o;
+        });
+    }
 
     const { platform, network } = selectedConfig;
-    const selectedEntity = (entities.filter(e => e.name === selectedEntityKey)[0]).displayNamePlural;
+    const selectedEntity = entities.filter(e => e.name === selectedEntityKey)[0].displayNamePlural;
 
     let result: string | React.ReactElement = '';
 
     if (queryFilters[selectedEntityKey] && queryFilters[selectedEntityKey].predicates && queryFilters[selectedEntityKey].predicates.length) {
-        result = formatQueryForNaturalLanguage(platform, network, selectedEntity, queryFilters[selectedEntityKey], attributes[selectedEntityKey], operators);
+        result = formatQueryForNaturalLanguage(
+            platform,
+            network,
+            selectedEntity,
+            queryFilters[selectedEntityKey],
+            attributes[selectedEntityKey],
+            customOperators
+        );
     }
     return <Container>{result}</Container>;
 };
