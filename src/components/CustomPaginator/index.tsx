@@ -16,7 +16,7 @@ const Container = styled.div`
   max-width: 400px;
   justify-content: flex-end;
   margin: 0 0 0 auto;
-  padding: 33px 15px 35px 0px;
+  padding: 33px 30px 35px 0px;
 `;
 
 const SelectContainer = muiStyled(FormControl)({

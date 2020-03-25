@@ -15,7 +15,7 @@ export const MainContainer = styled.div`
 `;
 
 export const TabContainer = styled.div`
-  padding: 0px 15px;
+  padding: 0px 30px;
   width: 100%;
 `;
 
