@@ -184,7 +184,6 @@ class CustomTable extends React.Component<Props, State> {
             title={selectedObjectEntity.displayName}
             onClickPrimaryKey={this.onOpenModal}
             onClose={this.onCloseModal}
-            selectedConfig={this.props.selectedConfig}
           />
         }
       </React.Fragment>
