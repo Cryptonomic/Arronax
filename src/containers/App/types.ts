@@ -44,7 +44,6 @@ export interface States {
   searchedItem: any[];
   searchedSubItems: any[];
   primaryKeyClicked: boolean;
-  expandedTabs: boolean;
   page: number;
 }
 
