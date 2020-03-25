@@ -84,10 +84,10 @@ export const formatValueForDisplay = (
         return '';
     }
 
-    if (/*platform === 'tezos' &&*/ entity === 'operations' && attribute.name === 'errors') {
+    if (platform === 'tezos' && entity === 'operations' && attribute.name === 'errors') {
         const errors = value.substring(1, value.length - 1).split(',');
 
-        for (let i = 0; i < errors.length; i++) {
+        for (let i = 0; i < errors.length; i++) { //https://tezos.gitlab.io/api/errors.html
             if (errors[i].includes('gas_exhausted')) {
                 errors[i] = 'Gas exhausted'; // TODO: translations
             } else if (errors[i].includes('cannot_pay_storage_fee')) {
@@ -114,10 +114,16 @@ export const formatValueForDisplay = (
                 errors[i] = 'Invalid syntactic constant';
             } else if (errors[i].includes('storage_exhausted')) {
                 errors[i] = 'Storage exhausted';
-            } else if (errors[i].includes('scriptRejectedRuntimeError')) {
+            } else if (errors[i].includes('scriptRejectedRuntimeError') || errors[i].includes('script_rejected')) {
                 errors[i] = 'Contract rejected';
-            } else if (errors[i].includes('scriptRuntimeError')) {
+            } else if (errors[i].includes('scriptRuntimeError') || errors[i].includes('runtime_error')) {
                 errors[i] = 'Contract runtime error';
+            } else if (errors[i].includes('ill_typed_contract')) {
+                errors[i] = 'Contact type error';
+            } else if (errors[i].includes('invalid_primitive')) {
+                errors[i] = 'Invalid primitive';
+            } else if (errors[i].includes('empty_implicit_delegated_contract')) {
+                errors[i] = 'Empty implicit account';
             }
         }
 
@@ -125,7 +131,7 @@ export const formatValueForDisplay = (
     }
 
     if (!!aggregation) {
-        formatAggregatedValue(attribute, value, aggregation);
+        return formatAggregatedValue(attribute, value, aggregation);
     }
 
     const { dataFormat, dataType, valueMap } = attribute;
@@ -230,21 +236,15 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
         const field = attribute.displayName;
 
         const operation = operators[getOperatorType(attribute.dataType)].filter((o: any) => {
-            //Fix to match NOT fields
-            if (!f.inverse) {
-                return o['name'] === f.operation;
-            }
+            if (!f.inverse) { return o['name'] === f.operation; }
 
-            if (f.operation === 'startsWith') {
-                return o['name'] === 'notstartWith';
-            }
+            if (f.operation === 'startsWith') { return o['name'] === 'notstartWith'; }
 
-            if (f.operation === 'endsWith') {
-                return o['name'] === 'notendWith';
-            }
+            if (f.operation === 'endsWith') { return o['name'] === 'notendWith'; }
+
+            if (f.operation === 'isnull') { return o['name'] === 'isnotnull'; }
 
             return o['name'] === 'not' + f.operation;
-
         })[0]['displayName'] + '';
 
         const value = formatValueForDisplay(platform, network, f.field, f.set[0], attribute, () => {}, undefined, true, true);
