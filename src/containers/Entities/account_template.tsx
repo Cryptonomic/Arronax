@@ -2,10 +2,7 @@ import React, { Fragment } from 'react';
 import { withTranslation } from 'react-i18next';
 import Modal from '@material-ui/core/Modal';
 
-import { ConseilDataClient, ConseilQueryBuilder, ConseilOperator, ConseilFunction, AttrbuteDataType, AttrbuteKeyType } from 'conseiljs';
-
 import { formatValueForDisplay } from '../../utils/render';
-import { formatNumber } from '../../utils/general';
 import { getNoEmptyFields } from '../../utils/attributes';
 import Loader from '../../components/Loader';
 
@@ -23,7 +20,7 @@ class EntityModal extends React.Component<DefaultProps, DefaultState> {
 
   constructor(props: any) {
     super(props);
-    this.state = { count: 0, receivedTotal: 0, sentTotal: 0 };
+    this.state = { count: 0 };
   }
 
   changeCount = (count: number) => { this.setState({count}); }
@@ -35,42 +32,6 @@ class EntityModal extends React.Component<DefaultProps, DefaultState> {
     this.explicitKeys.push(key);
     if (processedValues.find(i => i.name === key) === undefined) { return ''; }
     return formatValueForDisplay(platform, network, 'accounts', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], onClickPrimaryKey, undefined, truncate);
-  }
-
-  async componentDidMount() {
-    const { platform, network, url, apiKey } = this.props['selectedConfig'];
-    const { items, attributes } = this.props;
-    const { count } = this.state;
-    const total = items ? items.length : 0;
-    const processedValues = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
-
-    try { // TODO: move
-        const address = processedValues.find(a => a.name === 'account_id').value;
-        let q = ConseilQueryBuilder.blankQuery();
-        q = ConseilQueryBuilder.setLimit(q, 1);
-        q = ConseilQueryBuilder.addFields(q, 'amount');
-        q = ConseilQueryBuilder.addPredicate(q, 'destination', ConseilOperator.EQ, [address]);
-        q = ConseilQueryBuilder.addPredicate(q, 'kind', ConseilOperator.EQ, ['transaction']);
-        q = ConseilQueryBuilder.addPredicate(q, 'status', ConseilOperator.EQ, ['applied']);
-        q = ConseilQueryBuilder.addAggregationFunction(q, 'amount', ConseilFunction.sum);
-
-        const r = await ConseilDataClient.executeEntityQuery({ url, apiKey, network }, platform, network, 'operations', q);
-        this.setState({ receivedTotal: Number(r[0]['sum_amount'] || '0') });
-    } catch { }
-
-    try { // TODO: move
-        const address = processedValues.find(a => a.name === 'account_id').value;
-        let q = ConseilQueryBuilder.blankQuery();
-        q = ConseilQueryBuilder.setLimit(q, 1);
-        q = ConseilQueryBuilder.addFields(q, 'amount');
-        q = ConseilQueryBuilder.addPredicate(q, 'source', ConseilOperator.EQ, [address]);
-        q = ConseilQueryBuilder.addPredicate(q, 'kind', ConseilOperator.EQ, ['transaction']);
-        q = ConseilQueryBuilder.addPredicate(q, 'status', ConseilOperator.EQ, ['applied']);
-        q = ConseilQueryBuilder.addAggregationFunction(q, 'amount', ConseilFunction.sum);
-
-        const r = await ConseilDataClient.executeEntityQuery({ url, apiKey, network }, platform, network, 'operations', q);
-        this.setState({ sentTotal: Number(r[0]['sum_amount'] || '0') });
-    } catch { }
   }
 
 render() {
@@ -159,16 +120,6 @@ render() {
                         <BottomColContent>{this.formatValue(processedValues, attributes, name)}</BottomColContent>
                       </BottomCol>
                     ))}
-
-                    <BottomCol>
-                      <BottomColTitle>Total Received</BottomColTitle>
-                      <BottomColContent>{formatNumber(this.state.receivedTotal, { name: '', displayName: '', dataType: AttrbuteDataType.CURRENCY, cardinality: 0, keyType: AttrbuteKeyType.NONKEY, entity: '', dataFormat: '', visible: true, scale: 6})}</BottomColContent>
-                    </BottomCol>
-
-                    <BottomCol>
-                      <BottomColTitle>Total Sent</BottomColTitle>
-                      <BottomColContent>{formatNumber(this.state.sentTotal, { name: '', displayName: '', dataType: AttrbuteDataType.CURRENCY, cardinality: 0, keyType: AttrbuteKeyType.NONKEY, entity: '', dataFormat: '', visible: true, scale: 6})}</BottomColContent>
-                    </BottomCol>
                   </BottomRowContainer>
 
                 </ListContainer>
