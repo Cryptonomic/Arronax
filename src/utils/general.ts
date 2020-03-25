@@ -91,8 +91,8 @@ export const getOperatorType = (dataType: string) => {
 export const sortAttributes = (attributes: AttributeDefinition[]) => {
     return [...attributes].sort((a: any, b: any) => {
     if (typeof a.displayOrder === 'undefined' && typeof b.displayOrder === 'undefined') {
-        if(a.displayName < b.displayName) { return -1; }
-        if(a.displayName > b.displayName) { return 1; }
+        if (a.displayName < b.displayName) { return -1; }
+        if (a.displayName > b.displayName) { return 1; }
     }
 
     if (typeof a.displayOrder === 'undefined' && typeof b.displayOrder !== 'undefined'){

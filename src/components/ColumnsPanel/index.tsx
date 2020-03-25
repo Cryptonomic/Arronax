@@ -162,7 +162,7 @@ class ColumnsPanel extends React.Component<Props, States> {
                 moveItem={this.onMoveItem}
               />
             ))}
-            {attributes.sort((a: AttributeDefinition, b: AttributeDefinition) => (a.displayName.toLowerCase() < b.displayName.toLowerCase() ? -1 : 1))
+            {attributes.sort((a: AttributeDefinition, b: AttributeDefinition) => (a.displayName < b.displayName ? -1 : 1))
               .map((attribute: AttributeDefinition, index: number) => {
                 const pos = selected.findIndex((item: AttributeDefinition) => item.name === attribute.name);
                 if (pos !== -1) {
