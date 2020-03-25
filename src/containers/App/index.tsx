@@ -91,7 +91,6 @@ class Arronax extends React.Component<Props, States> {
       searchedEntity: '',
       searchedItem: [],
       searchedSubItems: [],
-      expandedTabs: false,
       page: 0
     };
 
@@ -200,12 +199,6 @@ class Arronax extends React.Component<Props, States> {
   };
 
   onClickTab = (value: string) => {
-    const { selectedEntity } = this.props;
-    if (value === selectedEntity) return;
-    if (value === 'more') {
-      this.setState((prevState) => ({ expandedTabs: !prevState.expandedTabs }));
-      return;
-    }
     this.updateRoute(false, value)
   }
 
@@ -334,7 +327,7 @@ class Arronax extends React.Component<Props, States> {
     } = this.props;
     const {
       isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal, isOpenEntityModal,
-      searchedItem, searchedEntity, searchedSubItems, primaryKeyClicked, expandedTabs, page
+      searchedItem, searchedEntity, searchedSubItems, primaryKeyClicked, page
     } = this.state;
     const { EntityModal } = this;
     const isRealLoading = isLoading || !isFullLoaded;
@@ -366,7 +359,6 @@ class Arronax extends React.Component<Props, States> {
               <Tabs
                 full={fullTabsList}
                 short={shortTabsList}
-                expanded={expandedTabs}
                 selected={selectedEntity}
                 onChange={this.onClickTab}
               />

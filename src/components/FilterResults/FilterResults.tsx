@@ -38,9 +38,9 @@ const FilterResults = () => {
     const { platform, network } = selectedConfig;
     const selectedEntity = entities.filter(e => e.name === selectedEntityKey)[0].displayNamePlural;
 
-    let result: string | React.ReactElement = '';
+    let result: string | React.ReactElement = selectedEntity;
 
-    if (queryFilters[selectedEntityKey] && queryFilters[selectedEntityKey].predicates && queryFilters[selectedEntityKey].predicates.length) {
+    if (queryFilters[selectedEntityKey]) {
         result = formatQueryForNaturalLanguage(
             platform,
             network,
