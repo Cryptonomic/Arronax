@@ -40,7 +40,7 @@ const FilterResults = () => {
 
     let result: string | React.ReactElement = selectedEntity;
 
-    if (queryFilters[selectedEntityKey] && queryFilters[selectedEntityKey].predicates && queryFilters[selectedEntityKey].predicates.length) {
+    if (queryFilters[selectedEntityKey]) {
         result = formatQueryForNaturalLanguage(
             platform,
             network,

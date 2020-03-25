@@ -211,7 +211,7 @@ export const formatValueWithLink = (props: { value: number; onClick: () => void 
 export const formatQueryForNaturalLanguage = (platform: string, network: string, entity: string, query: ConseilQuery, attributes: AttributeDefinition[], operators: any) => {
     const timestamp = (query.predicates && query.predicates.length && query.predicates.find((p: any) => p.field === 'timestamp')) || null;
     const filters = (query.predicates && query.predicates.length && query.predicates.filter((f: any) => f.field !== 'timestamp')) || [];
-    let renderTimestamp;
+    let renderTimestamp = undefined;
 
     if (timestamp) {
         const attribute = attributes.filter(a => a.name === timestamp.field)[0] as AttributeDefinition;
@@ -225,7 +225,7 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
                 {value}
                 {timestamp.operation === 'between' && <> and {formatValueForDisplay(platform, network, timestamp.field, timestamp.set[1], attribute, () => {}, undefined, true, false)}</>}
             </span>
-        )
+        );
     }
 
     const renderFilters: any = filters.map((f: any, i: number) => {
@@ -266,6 +266,7 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
 
     return (
         <span>
+            {(renderFilters.length || renderTimestamp) ? null : 'Latest '}
             {entity}
             {' '}
             {renderTimestamp}
