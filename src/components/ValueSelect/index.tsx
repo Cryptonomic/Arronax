@@ -123,7 +123,7 @@ class ValueSelect extends React.Component<Props, States> {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  onGetItem = (value, index) => {
+  onGetItem = (value: any, index: any) => {
     const { operator, selectedValues } = this.props;
     if (operator === ConseilOperator.IN || operator === 'notin') {
       return (
@@ -155,8 +155,8 @@ class ValueSelect extends React.Component<Props, States> {
 
   render() {
     const { anchorEl } = this.state;
-    const { values, selectedValues, placeholder } = this.props;
-    let menuTitle = '';
+    const { values, selectedValues, placeholder = '' } = this.props;
+    let menuTitle: string = '';
     if (selectedValues[0] !== '') {
       selectedValues.forEach((value, index) => {
         if (index === 0) {

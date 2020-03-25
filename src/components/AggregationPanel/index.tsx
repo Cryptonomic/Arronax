@@ -197,7 +197,7 @@ class AggregationPanel extends React.Component<Props, States> {
 const mapStateToProps = (state: any) => ({
   aggregations: getAggregations(state),
   aggFunctions: getAggFunctions(state),
-  columns: getColumns(state).concat().sort((a, b) => a['displayName'] > b['displayName']),
+  columns: getColumns(state).concat().sort((a: any, b: any) => a['displayName'] > b['displayName']),
   selectedEntity: getEntity(state)
 });
 

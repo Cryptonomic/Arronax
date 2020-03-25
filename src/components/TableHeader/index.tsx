@@ -32,7 +32,7 @@ const TableHeader: React.FC<Props> = props => {
   const { rows, aggregations, order, orderBy, createSortHandler } = props;
   const { t } = useTranslation();
 
-  function getRealLabel(keyName, value, description) {
+  function getRealLabel(keyName: any, value: any, description: any) {
     if (description) {
       return (
         <Tooltip title={description}>
@@ -58,7 +58,7 @@ const TableHeader: React.FC<Props> = props => {
     );
   }
 
-  function getRealCell(keyName, value, description) {
+  function getRealCell(keyName: any, value: any, description: any) {
     return (
       <TableCellWrapper
         key={keyName}

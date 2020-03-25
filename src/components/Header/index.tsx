@@ -21,34 +21,15 @@ const HeaderContainer = styled.div`
   padding: 0 30px;
   display: flex;
   align-items: center;
-  background: linear-gradient(
-    -225deg,
-    #bcfcff 0%,
-    #9cd9e1 12.85%,
-    #84bfca 22.66%,
-    #75aebc 28.69%,
-    #417895 48.65%,
-    #395d94 85.37%,
-    #34386e 100%
-  );
+  background: linear-gradient(-225deg, rgb(188, 252, 255) 0%, rgb(156, 217, 225) 12.85%, rgb(132, 191, 202) 22.66%, rgb(117, 174, 188) 28.69%, rgb(65, 120, 149) 48.65%, rgb(57, 93, 148) 85.37%, rgb(52, 56, 110) 100%);
 `;
+
 const HeaderLogo = styled.div`
   font-family: 'Futura';
   font-weight: 400;
   font-size: 36px;
   color: #fffffe;
   letter-spacing: 5.46px;
-`;
-
-const IconContainer = styled.div`
-  width: 35px;
-  height: 35px;
-  background: #669fb1;
-  border-radius: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: auto;
 `;
 
 const SelectContainer = styled.div`
@@ -168,8 +149,8 @@ const Header: React.FC<Props> = props => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [searchKey, setSearchKey] = React.useState('');
   const { t } = useTranslation();
-  const localConfigs = [];
-  const mainConfigs = [];
+  const localConfigs: any = [];
+  const mainConfigs: any = [];
   configs.forEach(config => {
     if (config.isLocal) {
       localConfigs.push(config);
@@ -178,7 +159,7 @@ const Header: React.FC<Props> = props => {
     }
   });
 
-  function handleClick(event) {
+  function handleClick(event: any) {
     setAnchorEl(event.currentTarget);
   }
 
@@ -241,7 +222,7 @@ const Header: React.FC<Props> = props => {
           <MenuHeaderItem value="" disabled>
             {t('components.header.select_prefered_network')}
           </MenuHeaderItem>
-          {mainConfigs.map(config => {
+          {mainConfigs.map((config: any) => {
             const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&
               selectedConfig.url === config.url && selectedConfig.apiKey === config.apiKey;
             return (
@@ -259,7 +240,7 @@ const Header: React.FC<Props> = props => {
             );
           })}
           {localConfigs.length > 0 && <Divider />}
-          {localConfigs.map((config, index) => {
+          {localConfigs.map((config: any, index: any) => {
             const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&
               selectedConfig.url === config.url && selectedConfig.apiKey === config.apiKey;
             return (

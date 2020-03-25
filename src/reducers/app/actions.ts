@@ -25,7 +25,8 @@ import {
   REMOVE_CONFIG,
   SET_AGGREGATIONS,
   SET_SUBMIT,
-  INIT_ITEMS
+  INIT_ITEMS,
+  SET_QUERY_FILTERS
 } from './types';
 
 import { AttributeDefinition, EntityDefinition } from 'conseiljs';
@@ -166,10 +167,11 @@ export function setFilterCountAction(count: number) {
   }
 }
 
-export function setModalItemAction(item: any[]) {
+export function setModalItemAction(item: any[], subItem: object[]) {
   return {
     type: SET_MODAL_ITEM,
-    item
+    item,
+    subItem
   }
 }
 
@@ -205,11 +207,16 @@ export function initFilterAction(entity: string, filters: Filter[]) {
   }
 }
 
-export function initMainParamsAction(configName: string, entity: string) {
-  return { type: INIT_MAIN_PARAMS, configName, entity }
+export function initMainParamsAction(platform: string, network: string, entity: string) {
+  return { 
+    type: INIT_MAIN_PARAMS, 
+    platform,
+    network,
+    entity 
+  }
 }
 
-export function initAttributesAction(attributes) {
+export function initAttributesAction(attributes: any) {
   return {
     type: INIT_ATTRIBUTES,
     attributes
@@ -234,3 +241,9 @@ export function setSubmitAction(entity: string, items: any[], filterCount: numbe
     filterCount
   }
 }
+
+export const setQueryFilters = (entity: string, queryFilters: any): any => ({
+  type: SET_QUERY_FILTERS,
+  entity,
+  queryFilters
+})

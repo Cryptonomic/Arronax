@@ -40,6 +40,10 @@ const SwipeableViewsWrapper = styled(SwipeableViews)`
   }
 `;
 
+const CollapseWrapper = styled(Collapse)`
+  width: 100%;
+`;
+
 
 interface Props {
   isCollapsed: boolean;
@@ -73,7 +77,7 @@ class SettingsPanel extends React.Component<Props, {}> {
       activeIndex = 2;
     }
     return (
-      <Collapse in={isCollapsed}>
+      <CollapseWrapper in={isCollapsed}>
         <Container>
           <CloseIconContainer onClick={onClose}>
             <CloseIconWrapper />
@@ -90,7 +94,7 @@ class SettingsPanel extends React.Component<Props, {}> {
             <AggregationPanel onSubmit={onSubmit} swipeRef={this.swipeableActions} />
           </SwipeableViewsWrapper>
         </Container>
-      </Collapse>
+      </CollapseWrapper>
     );
   }
 };

@@ -16,7 +16,7 @@ export const HeaderTxt = styled.div`
 
 export const MainContainer = styled.div`
   width: 100%;
-  background: #fbfbfb;
+  background: #FFFFFF;
   border: 1px solid #ededed;
   border-radius: 3px;
 `;
@@ -28,7 +28,7 @@ export const FilterItemContainer = styled.div`
   padding: 18px 24px 0 30px;
 `;
 
-export const FilterItemGr = styled.div<{isFull: boolean}>`
+export const FilterItemGr = styled.div<{isFull?: boolean}>`
   border-radius: 5px;
   border: 1px solid #ecedef;
   display: flex;

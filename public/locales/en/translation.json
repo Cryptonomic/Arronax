@@ -77,7 +77,7 @@
             "columns": "Columns",
             "aggregation": "Aggregation",
             "share": "Share",
-            "export_csv": "Export CSV",
+            "export": "Export",
             "share_report": "Share Report"
         },
         "valueInput": {
@@ -106,14 +106,15 @@
             "baking_rights": "Baking Rights",
             "endorsing_rights": "Endorsing Rights",
             "nothing_found": "The {{entityName}} was not found.",
-            "accounts_history": "Account History"
+            "accounts_history": "Account History",
+            "governance": "Governance"
         }
     },
     "attributes": {
         "accounts": {
             "account_id": "Address",
             "block_id": "Block Hash",
-            "manager": "Manager",
+            "manager": "Manager (legacy)",
             "spendable": "Spendable",
             "delegate_setable": "Delegatable",
             "delegate_value": "Delegate",
@@ -177,7 +178,7 @@
             "proto": "Protocol Index",
             "signature": "Signature",
             "timestamp": "Timestamp",
-            "validation_pass": "Validation pass",
+            "validation_pass": "Validation Pass",
             "period_kind": "Voting Period",
             "priority": "Priority"
         },
@@ -203,7 +204,7 @@
         },
         "operation_groups": {
             "protocol": "Protocol Hash",
-            "chain_id": "Chain id",
+            "chain_id": "Chain Id",
             "hash": "Hash",
             "branch": "Branch",
             "signature": "Signature",
@@ -217,18 +218,18 @@
             "delegate": "Delegate",
             "slots": "Slots",
             "nonce": "Nonce",
-            "pkh": "Pkh",
+            "pkh": "PKH",
             "secret": "Secret",
             "source": "Source",
             "fee": "Fee",
             "counter": "Counter",
             "gas_limit": "Gas Limit",
             "storage_limit": "Storage Limit",
-            "public_key": "Public key",
+            "public_key": "Public Key",
             "amount": "Amount",
             "destination": "Destination",
             "parameters": "Parameters",
-            "manager_pubkey": "Manager pubkey",
+            "manager_pubkey": "Manager Key",
             "balance": "Balance",
             "spendable": "Spendable",
             "delegatable": "Delegatable",
@@ -248,13 +249,11 @@
             "cycle": "Cycle",
             "branch": "Branch",
             "period": "Period",
-            "number_of_slots": "Number of Slots"
-        },
-        "proposals": {
-            "protocol_hash": "Protocol hash",
-            "block_id": "Block Hash",
-            "block_level": "Block level",
-            "supporters": "Supporters"
+            "number_of_slots": "Number of Slots",
+            "errors": "Error",
+            "parameters_entrypoints": "Contract Function",
+            "ballot_period": "Ballot Period",
+            "parameters_micheline": "Parameters (Micheline)"
         },
         "baking_rights": {
             "block_hash": "Block Hash",
@@ -273,6 +272,21 @@
             "slot": "Slot",
             "cycle": "Cycle",
             "governance_period": "Period"
+        },
+        "governance": {
+            "voting_period": "Period",
+            "cycle": "Cycle",
+            "level": "Block Level",
+            "voting_period_kind": "Voting Period",
+            "block_hash": "Block Hash",
+            "proposal_hash": "Proposal",
+            "yay_count": "Yea Votes",
+            "nay_count": "Nay Votes",
+            "pass_count": "Pass Votes",
+            "yay_rolls": "Yea Rolls",
+            "nay_rolls": "Nay Rolls",
+            "pass_rolls": "Pass Rolls",
+            "total_rolls": "Total Rolls"
         }
     },
     "operators": {

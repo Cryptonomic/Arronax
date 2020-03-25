@@ -25,11 +25,12 @@ import {
   INIT_ATTRIBUTES,
   SET_AGGREGATIONS,
   SET_SUBMIT,
-  INIT_ITEMS
+  INIT_ITEMS,
+  SET_QUERY_FILTERS
 } from './types';
 
 import { EntityDefinition } from 'conseiljs';
-import { Filter, Config, Aggregation } from '../../types';
+import { Filter, Config } from '../../types';
 import { getLocalAttributes } from '../../utils/attributes';
 import { getConfigs, saveConfigs } from '../../utils/getconfig';
 
@@ -38,18 +39,20 @@ const configs = getConfigs();
 
 export interface AppState {
   entities: EntityDefinition[];
-  availableValues: object;
+  availableValues: any;
   columns: object;
   attributes: object;
   items: object;
   operators: object;
-  selectedFilters: object;
+  selectedFilters: any;
+  queryFilters: any;
   isLoading: boolean;
   selectedEntity: string;
   isFullLoaded: boolean;
   rowCount: number;
-  filterCount: object;
+  filterCount: any;
   selectedModalItem: object[];
+  selectedModalSubItem: object[];
   sort: object;
   configs: Config[];
   selectedConfig: Config;
@@ -64,24 +67,25 @@ let initialState: AppState = {
   attributes,
   items: {},
   selectedFilters: {},
+  queryFilters: {},
   operators: {
     numeric: [
       { name: 'eq', displayName: 'is' },
       { name: 'noteq', displayName: 'is not' },
-      { name: 'in', displayName: 'is in' },
-      { name: 'notin', displayName: 'is not in' },
-      { name: 'between', displayName: 'is between' },
-      { name: 'lt', displayName: 'is less than' },
-      { name: 'gt', displayName: 'is greater than' },
+      { name: 'in', displayName: 'in' },
+      { name: 'notin', displayName: 'not in' },
+      { name: 'between', displayName: 'between' },
+      { name: 'lt', displayName: 'less than' },
+      { name: 'gt', displayName: 'greater than' },
       { name: 'isnull', displayName: 'is null' },
       { name: 'isnotnull', displayName: 'is not null' },
     ],
     string: [
       { name: 'eq', displayName: 'is' },
       { name: 'noteq', displayName: 'is not' },
-      { name: 'in', displayName: 'is in' },
-      { name: 'notin', displayName: 'is not in' },
-      { name: 'like', displayName: 'is like' },
+      { name: 'in', displayName: 'in' },
+      { name: 'notin', displayName: 'not in' },
+      { name: 'like', displayName: 'like' },
       { name: 'startsWith', displayName: 'starts with' },
       { name: 'notstartWith', displayName: 'does not start with' },
       { name: 'endsWith', displayName: 'ends with' },
@@ -92,11 +96,9 @@ let initialState: AppState = {
     dateTime: [
       { name: 'eq', displayName: 'is' },
       { name: 'noteq', displayName: 'is not' },
-      { name: 'in', displayName: 'is in' },
-      { name: 'notin', displayName: 'is not in' },
-      { name: 'between', displayName: 'is between' },
-      { name: 'before', displayName: 'is before' },
-      { name: 'after', displayName: 'is after' },
+      { name: 'between', displayName: 'between' },
+      { name: 'before', displayName: 'before' },
+      { name: 'after', displayName: 'after' },
       { name: 'isnull', displayName: 'is null' },
       { name: 'isnotnull', displayName: 'is not null' },
     ],
@@ -110,6 +112,7 @@ let initialState: AppState = {
   rowCount: 50,
   filterCount: {},
   selectedModalItem: [],
+  selectedModalSubItem: [],
   sort: {},
   aggregations: {},
   aggFunctions: {
@@ -131,7 +134,7 @@ let initialState: AppState = {
   }
 };
 
-export const app = (state = initialState, action) => {
+export const app = (state = initialState, action: any) => {
   switch (action.type) {
     case SET_FILTER:
       return { ...state, filters: action.filters };
@@ -228,13 +231,14 @@ export const app = (state = initialState, action) => {
     case COMPLETE_FULL_LOAD:
       return { ...state, isFullLoaded: action.isFullLoaded };
     case SET_MODAL_ITEM:
-      return { ...state, selectedModalItem: action.item };
+      return { ...state, selectedModalItem: action.item, selectedModalSubItem: action.subItem };
     case SET_SORT: {
       const sort = {...state.sort, [action.entity]: action.sorts};
       return { ...state, sort };
     }
     case SET_ENTITIES: {
-      const entities = action.entities;
+      const { hiddenEntities } = state.selectedConfig;
+      const entities = (hiddenEntities && hiddenEntities.length && action.entities.filter((entity: EntityDefinition) => !hiddenEntities.includes(entity.name))) || action.entities;
       const selectedEntity = !action.isChange && state.selectedEntity ? state.selectedEntity : entities[0].name;
       return { ...state, entities, selectedEntity };
     }
@@ -265,14 +269,14 @@ export const app = (state = initialState, action) => {
       return { ...state, selectedFilters, filterCount };
     }
     case INIT_MAIN_PARAMS: {
-      const config = configs.filter(c => c.displayName === action.configName)[0];
-      // TODO: error handling
+      const { platform, network, entity } = action;
+      const config = configs.filter((c: Config) => c.network === action.network)[0];
       return {
         ...state,
-        platform: action.platform,
-        network: action.network,
+        platform: platform,
+        network: network,
         selectedConfig: config,
-        selectedEntity: action.entity
+        selectedEntity: entity
       };
     }
     case INIT_ATTRIBUTES: {
@@ -291,6 +295,12 @@ export const app = (state = initialState, action) => {
       const items = { ...state.items, [action.entity]: action.items };
       const filterCount = { ...state.filterCount, [action.entity]: action.filterCount };
       return { ...state, items, filterCount };
+    }
+
+    case SET_QUERY_FILTERS: {
+      const { queryFilters, entity } = action;
+      const filters = { ...state.queryFilters, [entity]: queryFilters }
+      return { ...state, queryFilters: filters }
     }
   }
   return state;

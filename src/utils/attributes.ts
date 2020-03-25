@@ -7,7 +7,7 @@ export const getLocalAttributes = () => {
     return {};
 };
 
-export const saveAttributes = (attributes, timestamp, version) => {
+export const saveAttributes = (attributes: any, timestamp: any, version: any) => {
     localStorage.setItem('attributes', JSON.stringify(attributes));
     localStorage.setItem('timestamp', timestamp);
     localStorage.setItem('version', version);
@@ -34,10 +34,10 @@ export function validateCache(version: number) {
     }
 }
 
-export function getNoEmptyFields(attributes, item): ProcessedValue[] {
+export function getNoEmptyFields(attributes: any, item: any): ProcessedValue[] {
     return attributes
-        .filter(c => item[c.name] != null && item[c.name] !== undefined)
-        .sort((a, b) => {
+        .filter((c: any) => item[c.name] != null && item[c.name] !== undefined)
+        .sort((a: any, b: any) => {
             if (a.displayOrder === undefined && b.displayOrder === undefined) {
                 if(a.displayName < b.displayName) { return -1; }
                 if(a.displayName > b.displayName) { return 1; }
@@ -52,7 +52,7 @@ export function getNoEmptyFields(attributes, item): ProcessedValue[] {
             }
 
             return a.displayOrder - b.displayOrder;
-        }).map(c => {
+        }).map((c: any) => {
             return { displayName: c.displayName, value: item[c.name], name: c.name, entity: c.entity };
         });
 }
