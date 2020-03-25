@@ -1,5 +1,5 @@
 import React from 'react';
-import { withTranslation, WithTranslation } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import Modal from '@material-ui/core/Modal';
 
 import { formatValueForDisplay, formatValueWithLink } from '../../utils/render';
@@ -16,24 +16,7 @@ import {
   CloseButton, BottomRowContainer, BottomCol, BottomColTitle, BottomColContent
 } from './style';
 
-type OwnProps = {
-  open: boolean;
-  items: any[];
-  subItems: any[];
-  attributes: any[];
-  opsAttributes: any[];
-  isLoading: boolean;
-  title: string;
-  onClose: () => void;
-  onClickPrimaryKey: () => void
-};
-
-interface States {
-  count: number;
-  subItemsView: boolean;
-}
-
-type Props = OwnProps & WithTranslation;
+import { BlockProps, BlockState } from './types';
 
 const Button = styled.div`
   color: #56c2d9;
@@ -42,7 +25,7 @@ const Button = styled.div`
   align-items: center;
 `;
 
-class EntityModal extends React.Component<Props, States> {
+class EntityModal extends React.Component<BlockProps, BlockState> {
   explicitKeys: string[] = [];
   explicitMinorKeys: string[] = []//['fitness', 'signature', 'chain_id', 'operations_hash', 'nonce_hash'];
 
@@ -56,10 +39,10 @@ class EntityModal extends React.Component<Props, States> {
   onClickModal = (event: any) => { event.stopPropagation(); }
 
   formatValue = (processedValues: any[], attributes: any[], key: string, truncate: boolean = false) => {
-    const { onClickPrimaryKey } = this.props;
+    const { onClickPrimaryKey, selectedConfig: { platform, network } } = this.props;
     this.explicitKeys.push(key);
     if (processedValues.find(i => i.name === key) === undefined) { return ''; }
-    return formatValueForDisplay('platform', 'network', 'blocks', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], onClickPrimaryKey, undefined, truncate);
+    return formatValueForDisplay(platform, network, 'blocks', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], onClickPrimaryKey, undefined, truncate);
   }
 
   opsColsName = (cols: string[]) => {
@@ -108,7 +91,7 @@ class EntityModal extends React.Component<Props, States> {
       value: subItems.length,
       onClick: this.onClickSubItem
     });
-    const cols = (!isLoading && subItemsView && this.opsColsName(['kind', 'amount', 'fee', 'operation_group_hash'])) || [];
+    const cols = (!isLoading && subItemsView && this.opsColsName(['kind', 'amount', 'fee', 'operation_group_hash', 'source', 'destination', 'parameters'])) || [];
     const opsItems = (!isLoading && subItemsView && this.opsItems(cols)) || [];
 
     return (

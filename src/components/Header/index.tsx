@@ -21,17 +21,9 @@ const HeaderContainer = styled.div`
   padding: 0 30px;
   display: flex;
   align-items: center;
-  background: linear-gradient(
-    -225deg,
-    #bcfcff 0%,
-    #9cd9e1 12.85%,
-    #84bfca 22.66%,
-    #75aebc 28.69%,
-    #417895 48.65%,
-    #395d94 85.37%,
-    #34386e 100%
-  );
+  background: linear-gradient(-225deg, rgb(188, 252, 255) 0%, rgb(156, 217, 225) 12.85%, rgb(132, 191, 202) 22.66%, rgb(117, 174, 188) 28.69%, rgb(65, 120, 149) 48.65%, rgb(57, 93, 148) 85.37%, rgb(52, 56, 110) 100%);
 `;
+
 const HeaderLogo = styled.div`
   font-family: 'Futura';
   font-weight: 400;

@@ -1,8 +1,8 @@
 import React from 'react';
-import { withTranslation, WithTranslation } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
-import { ConseilOperator, AttributeDefinition } from 'conseiljs';
+import { ConseilOperator } from 'conseiljs';
 import { ArronaxIcon } from '../ArronaxIcon';
 import { fetchValues, resetFilters } from '../../reducers/app/thunks';
 import {
@@ -39,24 +39,9 @@ import {
   ResetButton
 } from './style';
 
-type OwnProps = {
-  availableValues: any;
-  selectedEntity: string;
-  attributes: AttributeDefinition[];
-  filters: Filter[];
-  operators: any;
-  swipeRef: any;
-  fetchValues: (value: string) => void;
-  addFilter: (entity: string) => void;
-  removeFilter: (entity: string, index: number) => void;
-  changeFilter: (entity: string, filter: Filter, index: number) => void;
-  resetFilters: () => void;
-  onSubmit: () => void;
-};
+import { FilterPanelProps } from './types';
 
-type Props = OwnProps & WithTranslation;
-
-class FilterPanel extends React.Component<Props, {}> {
+class FilterPanel extends React.Component<FilterPanelProps, {}> {
   onAddFilter = async () => {
     const { addFilter, selectedEntity, swipeRef } = this.props;
     await addFilter(selectedEntity);
@@ -170,10 +155,12 @@ class FilterPanel extends React.Component<Props, {}> {
         <MainContainer>
           {filters.map((filter: Filter, index) => {
             const filterAttr = newAttributes.find(attr => attr.name === filter.name);
+            const isFull = !!(filter.operator && filter.operator !== 'isnull' && filter.operator !== 'isnotnull' && !filter.isLowCardinality && filter.operatorType === 'string')
             return (
               <FilterItemContainer key={index}>
-                <FilterItemGr isFull={!filter.isLowCardinality}>
+                <FilterItemGr isFull={isFull}>
                   <FilterSelect
+                    borderRadius='4px 0 0 4px'
                     value={filter.name}
                     placeholder={t('components.aggregationPanel.select_attribute', { entityName })}
                     items={newAttributes}
@@ -183,6 +170,8 @@ class FilterPanel extends React.Component<Props, {}> {
                   {filter.name && <HR />}
                   {filter.name && (
                     <FilterSelect
+                      backgroundColor="#ecedef"
+                      borderRadius={filter.operator !== 'isnotnull' && filter.operator !== 'isnull' ? '' : '0 4px 4px 0'}
                       value={filter.operator}
                       placeholder={t('components.filterPanel.select_operator')}
                       items={operators[filter.operatorType]}
@@ -192,7 +181,7 @@ class FilterPanel extends React.Component<Props, {}> {
                       }
                     />
                   )}
-                  {filter.operator && <HR />}
+                  {filter.operator && filter.operator !== 'isnotnull' && filter.operator !== 'isnull' && <HR />}
                   {filter.operator && filter.isLowCardinality && (
                     <ValueSelect
                       placeholder={t('components.filterPanel.select_value')}

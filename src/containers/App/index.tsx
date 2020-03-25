@@ -16,6 +16,9 @@ import Toolbar from '../../components/Toolbar';
 import CustomTable from '../CustomTable';
 import ConfigModal from '../../components/ConfigModal';
 import Loader from '../../components/Loader';
+import Tabs from '../../components/Tabs';
+import FilterResults from '../../components/FilterResults';
+import CustomPaginator from '../../components/CustomPaginator';
 import { getItemByPrimaryKey } from '../../reducers/app/thunks';
 import {
   getLoading,
@@ -29,7 +32,8 @@ import {
   getColumns,
   getEntities,
   getAggregations,
-  getAttributesAll
+  getAttributesAll,
+  getRows
 } from '../../reducers/app/selectors';
 import { getErrorState, getMessageTxt } from '../../reducers/message/selectors';
 import {
@@ -44,7 +48,7 @@ import {
 import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../../reducers/app/actions';
 import { clearMessageAction } from '../../reducers/message/actions';
 import { getEntityModalName } from '../../utils/hashtable';
-import { defaultPath } from '../../router/routes';
+import { defaultPath, reQuery } from '../../router/routes';
 import octopusSrc from '../../assets/sadOctopus.svg';
 
 import { 
@@ -60,8 +64,6 @@ import {
   ClearButton,
   TryButton,
   DismissButton,
-  TabsWrapper,
-  TabWrapper,
   DialogContentWrapper
 } from './styles';
 
@@ -88,7 +90,9 @@ class Arronax extends React.Component<Props, States> {
       isOpenEntityModal: false,
       searchedEntity: '',
       searchedItem: [],
-      searchedSubItems: []
+      searchedSubItems: [],
+      expandedTabs: false,
+      page: 0
     };
 
     this.settingRef = React.createRef();
@@ -97,10 +101,34 @@ class Arronax extends React.Component<Props, States> {
 
   async componentDidMount() {
     window.addEventListener('beforeunload', this.onBeforeunload.bind(this));
-    const { initLoad, match, history, selectedConfig } = this.props;
+    const { initLoad, match, history, location, selectedConfig, configs } = this.props;
     const { url, params: { platform, network, entity, id } } = match;
-    const isQuery = url.includes('/query/');
-    const [redirect, changePath, openModal] = await initLoad(platform, network, entity, id, isQuery);
+    // support search query
+    const isSearchQuery = location.search && reQuery.test(location.search);
+    let isQuery = isSearchQuery || url.includes('/query/');
+    let searchParams: URLSearchParams | null = null;
+    let searchQuery: string = '';
+    let searchEntity: string = '';
+    let searchNetwork: string = '';
+    let searchPlatform: string = '';
+    let searchConfig: Config | undefined;
+    if (isSearchQuery) {
+      isQuery = reQuery.test(location.search);
+      searchParams = new URLSearchParams(location.search);
+      [searchNetwork, searchEntity] = searchParams.get('e')?.split('/');
+      searchConfig = configs.find((c: Config) => c.displayName === searchNetwork);
+      if (!searchConfig) {
+        history.replace(defaultPath);
+        return;
+      }
+      searchQuery = searchParams.get('q') || '';
+      searchPlatform = searchConfig.platform;
+      searchNetwork = searchConfig.network;
+    }
+    const [redirect, changePath, openModal] = 
+      isSearchQuery ? 
+      await initLoad(searchPlatform, searchNetwork, searchEntity, searchQuery, isQuery) : 
+      await initLoad(platform, network, entity, id, isQuery);
     redirect && history.replace(defaultPath);
     changePath && history.push(`/${platform}/${network}/${entity}`);
     if (openModal && openModal.items && openModal.items.length > 0) {
@@ -174,6 +202,10 @@ class Arronax extends React.Component<Props, States> {
   onClickTab = (value: string) => {
     const { selectedEntity } = this.props;
     if (value === selectedEntity) return;
+    if (value === 'more') {
+      this.setState((prevState) => ({ expandedTabs: !prevState.expandedTabs }));
+      return;
+    }
     this.updateRoute(false, value)
   }
 
@@ -276,6 +308,10 @@ class Arronax extends React.Component<Props, States> {
     this.updateRoute(true);
   };
 
+  handleChangePage = (page: number) => {
+    this.setState({ page });
+  };
+
   render() {
     const {
       isLoading,
@@ -293,17 +329,26 @@ class Arronax extends React.Component<Props, States> {
       message,
       removeConfig,
       attributes,
-      t
+      t,
+      rowsPerPage
     } = this.props;
     const {
       isSettingCollapsed, selectedTool, isModalUrl, isOpenConfigMdoal, isOpenEntityModal,
-      searchedItem, searchedEntity, searchedSubItems, primaryKeyClicked
+      searchedItem, searchedEntity, searchedSubItems, primaryKeyClicked, expandedTabs, page
     } = this.state;
     const { EntityModal } = this;
     const isRealLoading = isLoading || !isFullLoaded;
     const selectedObjectEntity: any = entities.find(entity => entity.name === searchedEntity);
 
     const modalItems = primaryKeyClicked ? selectedModalItem : searchedItem;
+    const fullTabsList = entities.map(entity => entity.name);
+    const shortTabsList = selectedConfig.entities || [];
+
+    const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
+    const realRows = items.slice(
+      page * rowCount,
+      page * rowCount + rowCount
+    );
     
     return (
       <MainContainer>
@@ -318,19 +363,14 @@ class Arronax extends React.Component<Props, States> {
         <Container>
           {isFullLoaded && (
             <React.Fragment>
-              <TabsWrapper
-                value={selectedEntity}
-                variant='scrollable'
-                onChange={(event, newValue) => this.onClickTab(newValue)}
-              >
-                {entities.map((entity, index) => (
-                  <TabWrapper
-                    key={index}
-                    value={entity.name}
-                    label={t(`containers.arronax.${entity.name}`)}
-                  />
-                ))}
-              </TabsWrapper>
+              <Tabs
+                full={fullTabsList}
+                short={shortTabsList}
+                expanded={expandedTabs}
+                selected={selectedEntity}
+                onChange={this.onClickTab}
+              />
+              <FilterResults />
               <Toolbar
                 isCollapsed={isSettingCollapsed}
                 selectedTool={selectedTool}
@@ -340,6 +380,13 @@ class Arronax extends React.Component<Props, States> {
                 onChangeTool={this.onChangeTool}
                 onExportCsv={this.onExportCsv}
                 onShareReport={this.onShareReport}
+              />
+              <CustomPaginator
+                rowsPerPage={rowCount}
+                page={page}
+                totalNumber={items.length}
+                onChangePage={this.handleChangePage}
+                onExportCsv={this.onExportCsv}
               />
               <SettingsPanel
                 ref={this.settingRef}
@@ -353,7 +400,7 @@ class Arronax extends React.Component<Props, States> {
                   <CustomTable 
                     isModalUrl={isModalUrl} 
                     isLoading={isLoading} 
-                    items={items} 
+                    items={realRows}
                     onExportCsv={this.onExportCsv}
                     updateRoute={this.updateRoute}
                   /> 
@@ -401,15 +448,16 @@ class Arronax extends React.Component<Props, States> {
         />
         {isOpenEntityModal && 
           <EntityModal
-            open={isOpenEntityModal}
-            title={selectedObjectEntity.displayName}
             attributes={attributes[searchedEntity]}
-            opsAttributes={attributes.operations}
-            subItems={searchedSubItems}
-            items={modalItems}
             isLoading={isLoading}
-            onClose={this.onCloseEntityModal}
+            items={modalItems}
+            open={isOpenEntityModal}
+            opsAttributes={attributes.operations}
+            selectedConfig={selectedConfig}
+            subItems={searchedSubItems}
+            title={selectedObjectEntity.displayName}
             onClickPrimaryKey={this.onClickPrimaryKey}
+            onClose={this.onCloseEntityModal}
           />
         }
       </MainContainer>
@@ -431,7 +479,8 @@ const mapStateToProps = (state: any) => ({
   isError: getErrorState(state),
   message: getMessageTxt(state),
   aggCount: getAggregations(state).length,
-  attributes: getAttributesAll(state)
+  attributes: getAttributesAll(state),
+  rowsPerPage: getRows(state),
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

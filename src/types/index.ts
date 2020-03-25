@@ -22,6 +22,7 @@ export interface Config {
   network: string;
   displayName: string;
   entities?: string[];
+  hiddenEntities?: string[];
   isLocal?: boolean;
 };
 

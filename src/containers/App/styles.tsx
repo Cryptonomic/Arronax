@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import DialogContent from '@material-ui/core/DialogContent';
 
 export const Container = styled.div`
+  display: flex;
+  flex-wrap: wrap;
   padding: 50px 0;
   min-height: calc(100vh - 405px);
 `;
@@ -83,34 +83,6 @@ export const DismissButton = styled(CustomButton)`
   color: white;
   background: rgb(86, 194, 217);
 `;
-
-export const TabsWrapper = withStyles({
-  root: {
-    borderBottom: 'none',
-  },
-  indicator: {
-    backgroundColor: '#a6dfe2',
-    height: '5px'
-  },
-})(Tabs);
-
-export const TabWrapper = withStyles({
-  root: {
-    textTransform: 'capitalize',
-    padding: 0,
-    minWidth: '50px',
-    fontWeight: 300,
-    color: '#2e3b6c',
-    fontSize: '24px',
-    letterSpacing: '3px',
-    maxWidth: '500px',
-    marginRight: '50px',
-    '&$selected': {
-      fontWeight: 'normal',
-    },
-  },
-  selected: {},
-})(Tab);
 
 export const DialogContentWrapper = withStyles({
   root: {

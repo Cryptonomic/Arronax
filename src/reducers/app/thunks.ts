@@ -7,8 +7,11 @@ import {
   ConseilQueryBuilder,
   ConseilOperator,
   ConseilOutput,
-  ConseilSortDirection, AttributeDefinition,
-  TezosConseilClient
+  ConseilSortDirection,
+  AttributeDefinition,
+  AttrbuteDataType,
+  TezosConseilClient,
+  EntityDefinition
 } from 'conseiljs';
 
 import {
@@ -27,7 +30,8 @@ import {
   initMainParamsAction,
   setSubmitAction,
   setAggregationAction,
-  initItemsAction
+  initItemsAction,
+  setQueryFilters
 } from './actions';
 import { createMessageAction } from '../message/actions';
 import { Config, Sort, Filter, Aggregation } from '../../types';
@@ -176,7 +180,8 @@ export const fetchInitEntityAction = (
   attributes: AttributeDefinition[],
   urlEntity: string,
   urlQuery: any
-) => async (dispatch: any) => {
+) => async (dispatch: any, state: any) => {
+  const { entities } = state().app;
   let defaultQuery: any = (urlEntity === entity && urlQuery) ? JSON.parse(base64url.decode(urlQuery)) : defaultQueries[entity];
   defaultQuery = {...ConseilQueryBuilder.blankQuery(), ...defaultQuery};
   let columns: any[] = [];
@@ -246,6 +251,17 @@ export const fetchInitEntityAction = (
       };
     });
 
+    predicates.forEach((predicate: any) => {
+        const selectedAttribute: any = attributes.find(attr => attr.name === predicate.field);
+        if (selectedAttribute.dataType === AttrbuteDataType.DATETIME){
+            for (let i = 0; i < predicate.set.length; i++) {
+                if (Number(predicate.set[i]) < 0) {
+                    predicate.set[i] = (new Date()).getTime() + predicate.set[i];
+                }
+            }
+        }
+    });
+
     if (!!query.aggregation && query.aggregation.length > 0) {
       aggregations = query.aggregation.map((agg: any) => {
         const selectedAttribute: any = attributes.find(attr => attr.name === agg.field);
@@ -266,10 +282,11 @@ export const fetchInitEntityAction = (
   }
 
   const items = await executeEntityQuery(serverInfo, platform, network, entity, query).catch(() => {
-    dispatch(createMessageAction(`Unable to retrieve data for ${entity} request.`, true)); // TODO: use metadata
+    const name = entities.find((e: EntityDefinition) => e.name === entity)?.displayName.toLowerCase();
+    dispatch(createMessageAction(`Unable to retrieve data for ${name} request.`, true));
     return [];
   });
-  
+  await dispatch(setQueryFilters(entity, query));
   await dispatch(initEntityPropertiesAction(entity, filters, sorts, columns, items, aggregations));
   await Promise.all(cardinalityPromises);
 };
@@ -294,8 +311,8 @@ export const initLoadByNetwork = () => async (dispatch: any, state: any) => {
 
   if (selectedConfig.entities && selectedConfig.entities.length > 0) {
     entities = [
-      ...selectedConfig.entities.map((name: any) => entities.find(item => item.name === name && item.name !== 'rolls')),
-      ...entities.filter(item => !selectedConfig.entities.includes(item.name) && item.name !== 'rolls')
+      ...selectedConfig.entities.map((name: any) => entities.find(item => item.name === name)),
+      ...entities.filter(item => !selectedConfig.entities.includes(item.name))
     ];
 }
 
@@ -378,8 +395,8 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
 
   if (selectedConfig.entities && selectedConfig.entities.length > 0) {
       entities = [
-        ...selectedConfig.entities.map((name: any) => entities.find(item => item.name === name && item.name !== 'rolls')),
-        ...entities.filter(item => !selectedConfig.entities.includes(item.name) && item.name !== 'rolls')
+        ...selectedConfig.entities.map((name: any) => entities.find(item => item.name === name)),
+        ...entities.filter(item => !selectedConfig.entities.includes(item.name))
       ];
   }
 
@@ -459,9 +476,7 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
 };
 
 export const fetchAttributes = async (platform: string, entity: string, network: string, serverInfo: any) => {
-  const attributes = await getAttributes(serverInfo, platform, network, entity).catch(err => {
-    throw entity;
-  });
+  const attributes = await getAttributes(serverInfo, platform, network, entity).catch(err => { throw err; } );
   return { entity, attributes };
 };
 
@@ -521,7 +536,7 @@ export const shareReport = () => async (dispatch: any, state: any) => {
   const serializedQuery = JSON.stringify(query);
   const hostUrl = window.location.origin;
   const encodedUrl = base64url(serializedQuery);
-  const shareLink = `${hostUrl}?e=${encodeURIComponent(selectedConfig.displayName)}/${encodeURIComponent(selectedEntity)}&q=${encodedUrl}`;
+  const shareLink = `${hostUrl}/${selectedConfig.platform}/${selectedConfig.network}/${selectedEntity}/query/${encodedUrl}`;
   const textField = document.createElement('textarea');
   textField.innerText = shareLink;
   document.body.appendChild(textField);
@@ -573,10 +588,16 @@ export const submitQuery = () => async (dispatch: any, state: any) => {
 
   let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
   query = setLimit(query, 1000);
-  const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
-
-  await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length))
-  dispatch(setLoadingAction(false));
+  try {
+    const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
+    await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length));
+    await dispatch(setQueryFilters(selectedEntity, query));
+    dispatch(setLoadingAction(false));
+  } catch (e) {
+    const message = `Unable to submit query`;
+    dispatch(createMessageAction(message, true));
+    dispatch(setLoadingAction(false));
+  }
 };
 
 export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: string | number) => async (dispatch: any, state: any) => {
@@ -598,6 +619,8 @@ export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: s
   if (entity === 'blocks') {
     query_operations = blankQuery();
     query_operations = addPredicate(query_operations, 'block_hash', ConseilOperator.EQ, [value], false);
+    query_operations = addOrdering(query_operations, 'kind', ConseilSortDirection.DESC);
+    query_operations = addOrdering(query_operations, 'amount', ConseilSortDirection.DESC);
   }
 
   const items = await executeEntityQuery(serverInfo, platform, network, entity, query);

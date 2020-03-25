@@ -19,6 +19,7 @@ export interface OwnProps {
   message: string;
   attributes: any;
   selectedModalItem: object;
+  rowsPerPage: number;
   removeAllFilters: (entity: string) => void;
   changeNetwork(config: Config): void;
   changeTab: (type: string) => void;
@@ -43,6 +44,8 @@ export interface States {
   searchedItem: any[];
   searchedSubItems: any[];
   primaryKeyClicked: boolean;
+  expandedTabs: boolean;
+  page: number;
 }
 
 export interface RouteComponentWithParmas extends RouteComponentProps {

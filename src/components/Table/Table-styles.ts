@@ -6,7 +6,7 @@ import muiStyled from '@material-ui/styles/styled';
 
 export const useOverflow  = () => styled.div`
   overflow-x: auto;
-  height: 500px
+  height: 660px
 `;
 
 export const useTableBodyCellChild  = () => styled.div`
@@ -43,4 +43,4 @@ export const useTableBodyCellStyles = () => styled(TableCell)`
     letter-spacing: -0.55px;
     border: none;
   }
-`
+`;

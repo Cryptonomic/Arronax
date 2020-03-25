@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { withTranslation, WithTranslation } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import Modal from '@material-ui/core/Modal';
 import IconButton from '@material-ui/core/IconButton';
 
@@ -14,23 +14,9 @@ import {
   CloseButton, BottomRowContainer, BottomCol, BottomColTitle, BottomColContent
 } from './style';
 
-type OwnProps = {
-  open: boolean;
-  items: any[];
-  attributes: any[];
-  isLoading: boolean;
-  title: string;
-  onClose: () => void;
-  onClickPrimaryKey: () => void
-};
+import { DefaultProps, DefaultState } from './types';
 
-interface States {
-  count: number;
-}
-
-type Props = OwnProps & WithTranslation;
-
-class EntityModal extends React.Component<Props, States> {
+class EntityModal extends React.Component<DefaultProps, DefaultState> {
   explicitKeys: string[] = [];
   explicitMinorKeys: string[] = [];
 
@@ -44,10 +30,10 @@ class EntityModal extends React.Component<Props, States> {
   onClickModal = (event: any) => { event.stopPropagation(); }
 
   formatValue = (processedValues: any[], attributes: any[], key: string, truncate: boolean = false) => {
-    const { onClickPrimaryKey } = this.props  
+    const { onClickPrimaryKey, selectedConfig: { platform, network } } = this.props  
     this.explicitKeys.push(key);
     if (processedValues.find(i => i.name === key) === undefined) { return ''; }
-    return formatValueForDisplay('platform', 'network', 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], onClickPrimaryKey, undefined, truncate);
+    return formatValueForDisplay(platform, network, 'operations', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], onClickPrimaryKey, undefined, truncate);
   }
 
   render() {
@@ -62,6 +48,8 @@ class EntityModal extends React.Component<Props, States> {
 
     const internal = processedValues.find(a => a.name === 'internal');
     const isInternal = internal !== undefined ? internal.value : 'undefined';
+    const error = processedValues.find(a => a.name === 'errors');
+    const hasError = error !== undefined && error.value.length > 0;
 
     if (opKind === 'transaction' && processedValues.find(i => i.name === 'parameters') !== undefined) {
         this.explicitMinorKeys = ['counter', 'internal', 'storage_limit', 'storage_size'];
@@ -134,6 +122,13 @@ class EntityModal extends React.Component<Props, States> {
                         </ContentTxt>
                       </RowContainer>
 
+                      {hasError && (
+                        <RowContainer>
+                          <TitleTxt>{t('attributes.operations.errors')}</TitleTxt>
+                          <ContentTxt>{this.formatValue(processedValues, attributes, 'errors')}</ContentTxt>
+                        </RowContainer>
+                      )}
+
                       <RowContainer>
                         <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
                         <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')}</ContentTxt>
@@ -184,6 +179,13 @@ class EntityModal extends React.Component<Props, States> {
                           {t('components.entityModal.operation.at_level', { level: this.formatValue(processedValues, attributes, 'block_level') })} {t('components.entityModal.operation.in_cycle', { cycle: this.formatValue(processedValues, attributes, 'cycle') })}: &nbsp; {this.formatValue(processedValues, attributes, 'block_hash', true)}
                         </ContentTxt>
                       </RowContainer>
+
+                      {hasError && (
+                        <RowContainer>
+                          <TitleTxt>{t('attributes.operations.errors')}</TitleTxt>
+                          <ContentTxt>{this.formatValue(processedValues, attributes, 'errors')}</ContentTxt>
+                        </RowContainer>
+                      )}
 
                       <RowContainer>
                         <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
@@ -247,6 +249,13 @@ class EntityModal extends React.Component<Props, States> {
                         </ContentTxt>
                       </RowContainer>
 
+                      {hasError && (
+                        <RowContainer>
+                          <TitleTxt>{t('attributes.operations.errors')}</TitleTxt>
+                          <ContentTxt>{this.formatValue(processedValues, attributes, 'errors')}</ContentTxt>
+                        </RowContainer>
+                      )}
+
                       <RowContainer>
                         <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
                         <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')}</ContentTxt>
@@ -276,6 +285,13 @@ class EntityModal extends React.Component<Props, States> {
                         </ContentTxt>
                       </RowContainer>
 
+                      {hasError && (
+                        <RowContainer>
+                          <TitleTxt>{t('attributes.operations.errors')}</TitleTxt>
+                          <ContentTxt>{this.formatValue(processedValues, attributes, 'errors')}</ContentTxt>
+                        </RowContainer>
+                      )}
+
                       <RowContainer>
                         <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
                         <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')}</ContentTxt>
@@ -304,6 +320,13 @@ class EntityModal extends React.Component<Props, States> {
                           {t('components.entityModal.operation.at_level', { level: this.formatValue(processedValues, attributes, 'block_level') })} {t('components.entityModal.operation.in_cycle', { cycle: this.formatValue(processedValues, attributes, 'cycle') })}: &nbsp; {this.formatValue(processedValues, attributes, 'block_hash', true)}
                         </ContentTxt>
                       </RowContainer>
+
+                      {hasError && (
+                        <RowContainer>
+                          <TitleTxt>{t('attributes.operations.errors')}</TitleTxt>
+                          <ContentTxt>{this.formatValue(processedValues, attributes, 'errors')}</ContentTxt>
+                        </RowContainer>
+                      )}
 
                       <RowContainer>
                         <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>

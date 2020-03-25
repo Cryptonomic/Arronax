@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 const FooterContainer = styled.div`
   width: 100%;
-  background: linear-gradient(-198.43494882292202deg, #4A9396 0%, #4A4F96 100%);
+  background: linear-gradient(-198.435deg, rgb(74, 147, 150) 0%, rgb(74, 79, 150) 100%);
   padding: 50px 50px 10px 50px;
 `;
 

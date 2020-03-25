@@ -64,6 +64,7 @@ export const formatNumber = (value: number, attribute: AttributeDefinition, trun
     }
 
     if (attribute.dataType === AttrbuteDataType.CURRENCY) {
+        if (truncate && value === 0) { t = '0'; }
         if (attribute.currencySymbol !== undefined) {
             t = `${attribute.currencySymbol} ${t}`;
         } else if (attribute.currencySymbolCode !== undefined) {
@@ -90,8 +91,8 @@ export const getOperatorType = (dataType: string) => {
 export const sortAttributes = (attributes: AttributeDefinition[]) => {
     return [...attributes].sort((a: any, b: any) => {
     if (typeof a.displayOrder === 'undefined' && typeof b.displayOrder === 'undefined') {
-        if(a.displayName < b.displayName) { return -1; }
-        if(a.displayName > b.displayName) { return 1; }
+        if (a.displayName < b.displayName) { return -1; }
+        if (a.displayName > b.displayName) { return 1; }
     }
 
     if (typeof a.displayOrder === 'undefined' && typeof b.displayOrder !== 'undefined'){

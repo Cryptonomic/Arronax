@@ -82,6 +82,15 @@ const getIconByName = (iconName: string) => {
     case 'icon-export': {
       return toUnicode('e911');
     }
+    case 'icon-aggregate': {
+        return toUnicode('e912');
+    }
+    case 'icon-share': {
+        return toUnicode('e913');
+    }
+    case 'icon-download': {
+        return toUnicode('e914');
+    }
     default: {
       console.error(`${iconName} No such icon in Tezos icons font`);
     }

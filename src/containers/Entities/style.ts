@@ -5,7 +5,7 @@ export const ScrollContainer = styled.div`
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  padding: 77px 0;
+  padding: 50px 0;
 `;
 
 export const ModalContainer = styled.div`
@@ -61,7 +61,7 @@ align-items: center;
 
 export const ButtonContainer = styled.div`
   display: flex;
-  padding: 15px;
+  padding: 10px;
   justify-content: flex-end;
 `;
 
