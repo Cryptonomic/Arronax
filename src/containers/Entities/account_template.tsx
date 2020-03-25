@@ -34,7 +34,7 @@ class EntityModal extends React.Component<DefaultProps, DefaultState> {
     return formatValueForDisplay(platform, network, 'accounts', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], onClickPrimaryKey, undefined, truncate);
   }
 
-  render() {
+render() {
     const { open, items, attributes, isLoading, onClose, title, t } = this.props;
     const { count } = this.state;
     const total = items ? items.length : 0;
@@ -44,6 +44,7 @@ class EntityModal extends React.Component<DefaultProps, DefaultState> {
         isBaker = processedValues.find((a: any) => a.name === 'is_baker').value === true;
         // TODO: query delegates
     } catch { }
+
     this.explicitMinorKeys = ['delegate_setable', 'spendable'];
     this.explicitKeys = ['is_baker', ...this.explicitMinorKeys];
 

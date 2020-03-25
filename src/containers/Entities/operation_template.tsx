@@ -224,7 +224,7 @@ class EntityModal extends React.Component<DefaultProps, DefaultState> {
 
                       <RowContainer>
                         <TitleTxt>{t('attributes.operations.timestamp')}</TitleTxt>
-                        <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')} &nbps; {t('components.entityModal.in')} &nbps; {this.formatValue(processedValues, attributes, 'block_hash', true)} {t('components.entityModal.operation.at_level', { level: this.formatValue(processedValues, attributes, 'block_level') })}
+                        <ContentTxt>{this.formatValue(processedValues, attributes, 'timestamp')} &nbsp; {t('components.entityModal.in')} &nbsp; {this.formatValue(processedValues, attributes, 'block_hash', true)} {t('components.entityModal.operation.at_level', { level: this.formatValue(processedValues, attributes, 'block_level') })}
                         </ContentTxt>
                       </RowContainer>
                     </Fragment>
