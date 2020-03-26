@@ -8,7 +8,7 @@ import Circle from '@material-ui/icons/FiberManualRecord';
 
 import Clipboard from '../components/Clipboard';
 
-import { AttributeDefinition, AttrbuteDataType, ConseilFunction, ConseilQuery } from 'conseiljs';
+import { AttributeDefinition, AttrbuteDataType, ConseilFunction, ConseilQuery, BabylonDelegationHelper, Tzip7ReferenceTokenHelper, TezosContractIntrospector } from 'conseiljs';
 import { truncateHash, formatNumber, getOperatorType } from './general';
 
 type StyledCircleProps = SvgIconProps & { newcolor: string };
@@ -274,4 +274,34 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
             {renderFilters}
         </span>
     )
+}
+
+export const identifyContract = async (address: string, script: string): Promise<{type: string, entryPoints: string[]}> => {
+    let contractType = 'unidentified';
+    let entryPoints: string[] = [];
+    let metadata: any = {};
+
+    try {
+        if (BabylonDelegationHelper.verifyScript(script)) {
+            contractType = 'Babylon Delegation Contract';
+        }
+    } catch { }
+
+    try {
+        if (Tzip7ReferenceTokenHelper.verifyScript(script)) {
+            contractType = 'FA1.2 Token Contract';
+
+            //await Tzip7ReferenceTokenHelper.getSimpleStorage(tezosnode, address) // tezos node needs to be added to config
+            //{mapid: number, supply: number, administrator: string, paused: boolean}> {
+               
+        }
+    } catch (e) { console.log(e); }
+
+    const parsedCalls = await TezosContractIntrospector.generateEntryPointsFromCode(script);
+
+    for (const entryPoint of parsedCalls) {
+        entryPoints.push(`${entryPoint.name}(${entryPoint.parameters.map((p: any) => `${p.name ? p.name + ': ' : ''}${p.type}`).join(', ')})`);
+    }
+
+    return { type: contractType, entryPoints };
 }

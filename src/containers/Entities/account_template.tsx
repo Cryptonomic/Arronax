@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { withTranslation } from 'react-i18next';
 import Modal from '@material-ui/core/Modal';
 
-import { formatValueForDisplay } from '../../utils/render';
+import { formatValueForDisplay, identifyContract } from '../../utils/render';
 import { getNoEmptyFields } from '../../utils/attributes';
 import Loader from '../../components/Loader';
 
@@ -14,14 +14,43 @@ import {
 
 import { DefaultProps, DefaultState } from './types';
 
-class EntityModal extends React.Component<DefaultProps, DefaultState> {
+export interface AccountModalState extends DefaultState {
+    contractInfo: any;
+}
+
+class EntityModal extends React.Component<DefaultProps, AccountModalState> {
   explicitKeys: string[] = [];
   explicitMinorKeys: string[] = [];
 
   constructor(props: any) {
     super(props);
-    this.state = { count: 0 };
+    this.state = { count: 0, contractInfo: {} };
   }
+
+    componentDidMount = async () => {
+        const { items, attributes } = this.props;
+        const { count } = this.state;
+        const total = items ? items.length : 0;
+        const processedValues: any = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
+        let isBaker = false;
+        let isContract = false;
+        const address = processedValues.find((a: any) => a.name === 'account_id').value as string;
+
+        try {
+            isBaker = processedValues.find((a: any) => a.name === 'is_baker').value === true;
+        } catch { }
+
+        try {
+            isContract = address.startsWith('KT1');
+        } catch { }
+
+        if (isContract) {
+            try {
+                const contractInfo = await identifyContract(address, processedValues.find((a: any) => a.name === 'script').value as string);
+                this.setState({ contractInfo: { type: contractInfo.type, entryPoints: contractInfo.entryPoints.join(', ') } });
+            } catch { }
+        }
+    }
 
   changeCount = (count: number) => { this.setState({count}); }
 
@@ -39,10 +68,15 @@ render() {
     const { count } = this.state;
     const total = items ? items.length : 0;
     const processedValues: any = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
-    let isBaker: any = false;
+    let isBaker = false;
+    let isContract = false;
+
     try {
         isBaker = processedValues.find((a: any) => a.name === 'is_baker').value === true;
-        // TODO: query delegates
+    } catch { }
+
+    try {
+        isContract = (processedValues.find((a: any) => a.name === 'account_id').value as string).startsWith('KT1');
     } catch { }
 
     this.explicitMinorKeys = ['delegate_setable', 'spendable'];
@@ -74,27 +108,39 @@ render() {
                             <TitleTxt>{t('components.entityModal.account.baker')}</TitleTxt>
                             <ContentTxt>{this.formatValue(processedValues, attributes, 'account_id')}</ContentTxt>
                         </RowContainer>
+                    </Fragment>
+                )}
 
+                {(isContract) && (
+                    <Fragment>
                         <RowContainer>
-                            <TitleTxt>{t('attributes.accounts.balance')}</TitleTxt>
-                            <ContentTxt>{this.formatValue(processedValues, attributes, 'balance')}</ContentTxt>
+                            <TitleTxt>{t('components.entityModal.account.contract')}</TitleTxt>
+                            <ContentTxt>{this.formatValue(processedValues, attributes, 'account_id')}</ContentTxt>
+                        </RowContainer>
+                        <RowContainer>
+                            <TitleTxt>{t('components.entityModal.account.contractType')}</TitleTxt>
+                            <ContentTxt>{this.state.contractInfo.type}</ContentTxt>
+                        </RowContainer>
+                        <RowContainer>
+                            <TitleTxt>{t('components.entityModal.account.entryPoints')}</TitleTxt>
+                            <ContentTxt>{this.state.contractInfo.entryPoints}</ContentTxt>
                         </RowContainer>
                     </Fragment>
                 )}
 
-                {!isBaker && (
+                {(!isBaker && !isContract) && (
                     <Fragment>
                         <RowContainer>
                             <TitleTxt>{t('attributes.accounts.account_id')}</TitleTxt>
                             <ContentTxt>{this.formatValue(processedValues, attributes, 'account_id')}</ContentTxt>
                         </RowContainer>
-
-                        <RowContainer>
-                            <TitleTxt>{t('attributes.accounts.balance')}</TitleTxt>
-                            <ContentTxt>{this.formatValue(processedValues, attributes, 'balance')}</ContentTxt>
-                        </RowContainer>
                     </Fragment>
                 )}
+
+                  <RowContainer>
+                    <TitleTxt>{t('attributes.accounts.balance')}</TitleTxt>
+                    <ContentTxt>{this.formatValue(processedValues, attributes, 'balance')}</ContentTxt>
+                  </RowContainer>
 
                   <RowContainer>
                     <TitleTxt>{t('components.entityModal.account.last_active_title')}</TitleTxt>

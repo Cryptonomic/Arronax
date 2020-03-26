@@ -49,7 +49,10 @@
             "account": {
                 "last_active_title": "Last Active",
                 "at_level": "at level {{level}}",
-                "baker": "Baker"
+                "baker": "Baker",
+                "contract": "Contract",
+                "contractType": "Type",
+                "entryPoints": "Entry Points"
             },
             "block": {},
             "operation": {
