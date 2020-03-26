@@ -110,7 +110,11 @@
             "endorsing_rights": "Endorsing Rights",
             "nothing_found": "The {{entityName}} was not found.",
             "accounts_history": "Account History",
-            "governance": "Governance"
+            "governance": "Governance",
+            "registered_tokens": "Registered Tokens",
+            "originated_account_maps": "Map Owners",
+            "big_maps": "Map Definitons",
+            "big_map_contents": "Map Content"
         }
     },
     "attributes": {
@@ -290,6 +294,27 @@
             "nay_rolls": "Nay Rolls",
             "pass_rolls": "Pass Rolls",
             "total_rolls": "Total Rolls"
+        },
+        "registered_tokens": {
+            "account_id": "Address",
+            "id": "Id",
+            "name": "Name",
+            "standard": "Standard"
+        },
+        "originated_account_maps":{
+            "big_map_id": "Map Index",
+            "account_id": "Address"
+        },
+        "big_maps": {
+            "big_map_id": "Map Index",
+            "key_type": "Key Type",
+            "value_type": "Value Type"
+        },
+        "big_map_contents": {
+            "big_map_id": "Map Index",
+            "key": "Key",
+            "key_hash": "Hashed Key",
+            "value": "Value"
         }
     },
     "operators": {
