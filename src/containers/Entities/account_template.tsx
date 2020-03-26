@@ -46,7 +46,8 @@ class EntityModal extends React.Component<DefaultProps, AccountModalState> {
 
         if (isContract) {
             try {
-                const contractInfo = await identifyContract(address, processedValues.find((a: any) => a.name === 'script').value as string);
+                const { nodeUrl } = this.props.selectedConfig;
+                const contractInfo = await identifyContract(address, nodeUrl, processedValues.find((a: any) => a.name === 'script').value as string);
                 this.setState({ contractInfo: { type: contractInfo.type, entryPoints: contractInfo.entryPoints.join(', ') } });
             } catch { }
         }

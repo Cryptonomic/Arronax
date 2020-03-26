@@ -276,7 +276,7 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
     )
 }
 
-export const identifyContract = async (address: string, script: string): Promise<{type: string, entryPoints: string[]}> => {
+export const identifyContract = async (address: string, nodeUrl: string = '', script: string): Promise<{type: string, entryPoints: string[]}> => {
     let contractType = 'unidentified';
     let entryPoints: string[] = [];
     let metadata: any = {};
