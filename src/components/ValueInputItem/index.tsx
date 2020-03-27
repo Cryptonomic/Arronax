@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { AttributeDefinition, AttrbuteDataType } from 'conseiljs';
+import { AttributeDefinition, AttrbuteDataType, AttributeCacheConfig } from 'conseiljs';
 import { withStyles } from '@material-ui/core/styles';
 import InputBase from '@material-ui/core/InputBase';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -100,7 +100,6 @@ interface States {
   suggestions: any[];
   searchedVal: string;
   availableValues: string[];
-  valueMapSelected: string[] | [];
 }
 
 class InputItem extends React.Component<Props, States> {
@@ -111,8 +110,7 @@ class InputItem extends React.Component<Props, States> {
       stateVal: '',
       suggestions: [],
       searchedVal: '',
-      availableValues: [],
-      valueMapSelected: []
+      availableValues: []
     };
     this.autocompleteSearchDebounce = debounce(300, this.autocompleteSearch);
     this.inputValueChange = debounce(300, (value: string) => this.props.onChange(value));
@@ -124,63 +122,77 @@ class InputItem extends React.Component<Props, States> {
   static defaultProps: any = {
     disabled: false
   };
+
+  // componentDidMount() {
+  //   const { attribute: { valueMap }, value } = this.props;
+  //   console.log('did_mount')
+  //   if (valueMap && Object.keys(valueMap).length) {
+  //     const valueMapEntries = Object.entries(valueMap);
+  //     const re = RegExp(`^${value}`);
+  //     const valueMapSelected: any = (value && valueMapEntries.find((v: string[]) => re.test(value))) || [];
+  //     this.setState({ valueMapEntries, valueMapSelected })
+  //   }
+  // }
   
   static getDerivedStateFromProps(props: Props, state: States) {
     if ((props.value !== state.prevValue)) {
-      const { valueMapSelected } = state;
-      const value = valueMapSelected[0] === props.value ? valueMapSelected[1] : props.value;
+      console.log('receive_props', props.value, state.prevValue)
       return {
-        stateVal: value,
-        prevValue: value
-      };
-    }
-    return null;
+          stateVal: props.value,
+          prevValue: props.value
+        };
+      }
+      return null;
   }
 
 
-  autocompleteSearch = (attribute: string, value: string, valueMap: any) => {
-    const valueMapEntries: any[] = Object.entries(valueMap);
-    if (valueMapEntries && valueMapEntries.length && valueMap) {
-      const re = RegExp(`^${value}`);
-      const suggestionFromValueMap: string[] | undefined = valueMapEntries.find((v: string[]) => re.test(v[0]));
-      if (suggestionFromValueMap) {
-        const [ searchedKey, searchedVal ] = suggestionFromValueMap
-        const re = RegExp(`^${searchedVal}`);
-        const suggestions: any[] = valueMapEntries.filter((v: any[]) => re.test(v[1])).map((s: string[]) => s[1]);
+  autocompleteSearch = (attribute: string, value: string, valueMap?: Record<string, string>, cacheConfig?: AttributeCacheConfig) => {
+    const valueMapEntries = valueMap && Object.entries(valueMap);
+    
+    if (valueMapEntries) {
+      const matchKey: string[] | undefined = valueMapEntries.find((v: string[]) => RegExp(`^${value}`).test(v[0]));
+      
+      if (matchKey) {
+        console.log('foundKeys', matchKey)
+        const [ searchedKey, searchedVal ] = matchKey
+        const suggestions: any[] = valueMapEntries.filter((v: any[]) => RegExp(`^${searchedVal}`).test(v[1])).map((s: string[]) => s[1]);
         this.setState({
           availableValues: suggestions,
           suggestions: suggestions,
           searchedVal: searchedKey,
-          valueMapSelected: suggestionFromValueMap
         });
         return;
       }
     }
 
-    const { fetchValues } = this.props;
-    fetchValues(attribute, value).then((values: any) => {
-      this.setState({
-        availableValues: values,
-        suggestions: values, 
-        searchedVal: value, 
-        stateVal: value, 
-        valueMapSelected: []
-      });
-    });
+    // if ('sss') {
+    //   console.log('fetch')
+    //   const { fetchValues } = this.props;
+    //   fetchValues(attribute, value).then((values: any) => {
+    //     this.setState({
+    //       availableValues: values,
+    //       suggestions: values, 
+    //       searchedVal: value,
+    //       valueMapSelected: []
+    //     });
+    //   });
+    //   return;
+    // }
   }
 
   onHighCardValueChange = async (event: React.FocusEvent<HTMLInputElement>, { newValue }: any) => {
     const { attribute: { name, valueMap, cacheConfig } } = this.props;
-    const { searchedVal, valueMapSelected } = this.state;
-    const splitVals = newValue.split(',');
+    const { searchedVal } = this.state;
+    const splitVals = newValue.toString().split(',');
     const filterVal = splitVals[splitVals.length - 1].trim();
     const filterValLength = filterVal.length;
     if(searchedVal && (filterValLength <= (cacheConfig?.minMatchLength || 4))) {
       this.setState({ availableValues: [], suggestions: [], searchedVal: '' });
     };
 
-    if (filterValLength >= (cacheConfig?.minMatchLength || 4) && valueMapSelected[1] !== filterVal) {
-      this.autocompleteSearchDebounce(name, filterVal, valueMap);
+    if (filterValLength >= (cacheConfig?.minMatchLength || 4)) {
+      console.log('runs', valueMap)
+      this.autocompleteSearchDebounce(name, filterVal, valueMap, cacheConfig);
     }
 
     this.setState({stateVal: newValue})
@@ -258,8 +270,14 @@ class InputItem extends React.Component<Props, States> {
 
   onBlurAutosuggest = (e: React.FocusEvent<HTMLInputElement>) => {
     const { onChange } = this.props;
-    const { valueMapSelected } = this.state;
-    onChange(valueMapSelected[0] || e.target.value);
+    // const { valueMapSelected } = this.state;
+    let val = e.target.value;
+
+    // if (valueMapSelected.length && valueMapSelected[1] === val) {
+    //   val = valueMapSelected[0];
+    // }
+    console.log('blur', val)
+    onChange(val);
   }
 
   render () {
@@ -292,7 +310,7 @@ class InputItem extends React.Component<Props, States> {
       )
     }
 
-    if (attribute.cardinality && attribute.cardinality >= CARDINALITY_NUMBER && attribute.cacheConfig && attribute.cacheConfig.cached) {
+    if (attribute.cardinality && attribute.cardinality >= CARDINALITY_NUMBER && ((attribute.cacheConfig && attribute.cacheConfig.cached) || attribute.valueMap)) {
       const autosuggestProps = {
         renderInputComponent: this.renderInputComponent,
         suggestions,
