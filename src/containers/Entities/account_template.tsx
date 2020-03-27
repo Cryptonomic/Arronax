@@ -131,10 +131,18 @@ render() {
                             <TitleTxt>{t('components.entityModal.account.contract')}</TitleTxt>
                             <ContentTxt>{this.formatValue(processedValues, attributes, 'account_id')}</ContentTxt>
                         </RowContainer>
+                    </Fragment>
+                )}
+                {(isContract && this.state.contractInfo.type !== 'Unidentified') && (
+                    <Fragment>
                         <RowContainer>
                             <TitleTxt>{t('components.entityModal.account.contractType')}</TitleTxt>
                             <ContentTxt>{this.state.contractInfo.type}</ContentTxt>
                         </RowContainer>
+                    </Fragment>
+                )}
+                {(isContract) && (
+                    <Fragment>
                         <RowContainer>
                             <TitleTxt>{t('components.entityModal.account.entryPoints')}</TitleTxt>
                             <MultiLineContainer>
