@@ -328,7 +328,7 @@ export const initLoadByNetwork = () => async (dispatch: any, state: any) => {
   }); // TODO: remove, use metadata when available
 
   dispatch(setEntitiesAction(entities, !isSelectedEntity));
-  validateCache(2);
+  validateCache(3);
   
   const attrPromises = entities.map(entity => fetchAttributes(platform, entity.name, network, serverInfo));
   const attrObjsList = await Promise.all(attrPromises)
@@ -413,7 +413,7 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
 
   await dispatch(setEntitiesAction(entities));
   await dispatch(initMainParamsAction(platform, network, entityParam || entities[0].name));
-  validateCache(2);
+  validateCache(3);
 
   try {
     const localDate = getTimeStampFromLocal();
