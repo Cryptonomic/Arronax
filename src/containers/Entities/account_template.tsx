@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { withTranslation } from 'react-i18next';
 import Modal from '@material-ui/core/Modal';
+import { AttributeDefinition, AttrbuteDataType, AttrbuteKeyType } from 'conseiljs';
 
 import { formatValueForDisplay, identifyContract } from '../../utils/render';
 import { getNoEmptyFields } from '../../utils/attributes';
@@ -34,6 +35,9 @@ class EntityModal extends React.Component<DefaultProps, AccountModalState> {
         const processedValues: any = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
         let isBaker = false;
         let isContract = false;
+
+        if (processedValues.length === 0) { return; }
+
         const address = processedValues.find((a: any) => a.name === 'account_id').value as string;
 
         try {
@@ -46,9 +50,8 @@ class EntityModal extends React.Component<DefaultProps, AccountModalState> {
 
         if (isContract) {
             try {
-                const { nodeUrl } = this.props.selectedConfig;
-                const contractInfo = await identifyContract(address, nodeUrl, processedValues.find((a: any) => a.name === 'script').value as string);
-                this.setState({ contractInfo: { type: contractInfo.type, entryPoints: contractInfo.entryPoints } });
+                const contractInfo = await identifyContract(address, this.props.selectedConfig, processedValues.find((a: any) => a.name === 'script').value as string);
+                this.setState({ contractInfo: { type: contractInfo.type, entryPoints: contractInfo.entryPoints, metadata: contractInfo.metadata} });
             } catch { }
         }
     }
@@ -64,9 +67,19 @@ class EntityModal extends React.Component<DefaultProps, AccountModalState> {
     return formatValueForDisplay(platform, network, 'accounts', processedValues.find(i => i.name === key).value, attributes.filter(a => a.name === key)[0], onClickPrimaryKey, undefined, truncate);
   }
 
+  formatSpecificValue = (value: string, dataType: AttrbuteDataType, truncate: boolean = false) => {
+    if (!value) { return ''; }
+
+    const { onClickPrimaryKey, selectedConfig: { platform, network } } = this.props;
+
+    const attribute: AttributeDefinition = { name: '', displayName: '', dataType: dataType, cardinality: 1, keyType: AttrbuteKeyType.NONKEY, entity: '', dataFormat: '', visible: true }
+
+    return formatValueForDisplay(platform, network, 'accounts', value, attribute, onClickPrimaryKey, undefined, truncate);
+  }
+
 render() {
     const { open, items, attributes, isLoading, onClose, title, t } = this.props;
-    const { count, contractInfo: { entryPoints } } = this.state;
+    const { count, contractInfo: { type, entryPoints, metadata } } = this.state;
     const total = items ? items.length : 0;
     const processedValues: any = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
     let isBaker = false;
@@ -89,11 +102,11 @@ render() {
           <ModalContainer onClick={(event) => this.onClickModal(event)}>
             <CloseIcon onClick={onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
               <ModalTitle>
-                {(processedValues.find((i: any) => i.name === 'script') === undefined) && (
+                {!isContract && (
                   t('components.entityModal.details', {title})
                 )}
 
-                {(processedValues.find((i: any) => i.name === 'script') !== undefined) && (
+                {isContract && (
                   t('components.entityModal.details', {title: 'Contract'})
                 )}
               </ModalTitle>
@@ -129,6 +142,39 @@ render() {
                             </MultiLineContainer>
                         </RowContainer>
                     </Fragment>
+                )}
+
+                {(isContract && this.state.contractInfo.metadata?.mapSummary) && (
+                    <Fragment>
+                        <RowContainer>
+                            <TitleTxt>{t('components.entityModal.account.maps')}</TitleTxt>
+                            <MultiLineContainer>
+                                {this.state.contractInfo.metadata?.mapSummary?.map((item: any) => <MultiLineItem>{item}</MultiLineItem>)}
+                            </MultiLineContainer>
+                        </RowContainer>
+                    </Fragment>
+                )}
+
+                {this.state.contractInfo.type?.startsWith('FA1.2') && (
+                    <Fragment>
+                        <RowContainer>
+                            <TitleTxt>{t('components.entityModal.account.tokenAdmin')}</TitleTxt>
+                            <ContentTxt>{this.formatSpecificValue(this.state.contractInfo.metadata?.manager, AttrbuteDataType.ACCOUNT_ADDRESS, false)}</ContentTxt>
+                        </RowContainer>
+                        <RowContainer>
+                            <TitleTxt>{t('components.entityModal.account.tokenSvpply')}</TitleTxt>
+                            <ContentTxt>{this.formatSpecificValue(this.state.contractInfo.metadata?.supply, AttrbuteDataType.DECIMAL, true)}</ContentTxt>
+                        </RowContainer>
+                </Fragment>
+                )}
+                
+                {this.state.contractInfo.type === 'Babylon Delegation Contract' && (
+                    <Fragment>
+                        <RowContainer>
+                            <TitleTxt>{t('components.entityModal.account.admin')}</TitleTxt>
+                            <ContentTxt>{this.formatSpecificValue(this.state.contractInfo.metadata?.manager, AttrbuteDataType.ACCOUNT_ADDRESS, false)}</ContentTxt>
+                        </RowContainer>
+                </Fragment>
                 )}
 
                 {(!isBaker && !isContract) && (

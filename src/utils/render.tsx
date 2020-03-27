@@ -8,8 +8,9 @@ import Circle from '@material-ui/icons/FiberManualRecord';
 
 import Clipboard from '../components/Clipboard';
 
-import { AttributeDefinition, AttrbuteDataType, ConseilFunction, ConseilQuery, BabylonDelegationHelper, Tzip7ReferenceTokenHelper, TezosContractIntrospector } from 'conseiljs';
+import { AttributeDefinition, AttrbuteDataType, ConseilFunction, ConseilQuery, BabylonDelegationHelper, Tzip7ReferenceTokenHelper, TezosContractIntrospector, TezosConseilClient } from 'conseiljs';
 import { truncateHash, formatNumber, getOperatorType } from './general';
+import { Config } from '../types';
 
 type StyledCircleProps = SvgIconProps & { newcolor: string };
 const StyledCircle1 = styled(Circle)<{ newcolor: string }>`
@@ -39,11 +40,6 @@ const PrimaryKeyList: any = {
     accounts: ['account_id'],
     operations: ['operation_group_hash'],
 };
-
-const CodePre = styled.pre`
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-`;
 
 const formatReferenceValue = (attribute: any, displayValue: string, value: any, onClickPrimaryKey: any) => {
     const { entity, name } = attribute;
@@ -188,7 +184,7 @@ export const formatValueForDisplay = (
             if (value.length > 100) {
                 return (
                     <>
-                        {displayValueMap || displayName === 'Script' ? <CodePre>{value.substring(0, 100)}</CodePre> : value.substring(0, 100)}
+                        {displayValueMap || displayName === 'Script' ? value.substring(0, 200) : value.substring(0, 100)}
                         <Clipboard value={value} />
                     </>
                 );
@@ -281,32 +277,50 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
     )
 }
 
-export const identifyContract = async (address: string, nodeUrl: string = '', script: string): Promise<{type: string, entryPoints: string[]}> => {
-    let contractType = 'unidentified';
+export const identifyContract = async (address: string, config: Config, script: string): Promise<{type: string, entryPoints: string[], metadata: any}> => {
+    let contractType = 'Unidentified';
     let entryPoints: string[] = [];
     let metadata: any = {};
 
     try {
         if (BabylonDelegationHelper.verifyScript(script)) {
             contractType = 'Babylon Delegation Contract';
+            const storage = await BabylonDelegationHelper.getSimpleStorage(config.nodeUrl || '', address);
+            metadata.manager = storage.administrator;
         }
     } catch { }
 
     try {
         if (Tzip7ReferenceTokenHelper.verifyScript(script)) {
-            contractType = 'FA1.2 Token Contract';
+            contractType = 'FA1.2 Token Contract (TZIP7)';
 
-            //await Tzip7ReferenceTokenHelper.getSimpleStorage(tezosnode, address) // tezos node needs to be added to config
-            //{mapid: number, supply: number, administrator: string, paused: boolean}> {
-               
+            const storage = await Tzip7ReferenceTokenHelper.getSimpleStorage(config.nodeUrl || '', address);
+            metadata.manager = storage.administrator;
+            metadata.supply = storage.supply;
+            //storage.mapid
+            //storage.paused
         }
-    } catch (e) { console.log(e); }
+    } catch { }
 
-    const parsedCalls = await TezosContractIntrospector.generateEntryPointsFromCode(script);
+    try {
+        const mapData = await TezosConseilClient.getBigMapData({ url: config.url, apiKey: config.apiKey, network: config.network }, address);
+        let mapSummary: any[] = [];
 
-    for (const entryPoint of parsedCalls) {
-        entryPoints.push(`${entryPoint.name}(${entryPoint.parameters.map((p: any) => `${p.name ? p.name + ': ' : ''}${p.type}`).join(', ')})`);
-    }
+        if (mapData) {
+                for (const map of mapData.maps) {
+                mapSummary.push(`${map.definition.index} - ${map.definition.key}:${map.definition.value}, ${map.content.length} item${(map.content.length === 1) ? '' : 's'}`);
+            }
+            if (mapSummary.length > 0) { metadata.mapSummary = mapSummary };
+        }
+    } catch { }
 
-    return { type: contractType, entryPoints };
+    try {
+        const parsedCalls = await TezosContractIntrospector.generateEntryPointsFromCode(script);
+
+        for (const entryPoint of parsedCalls) {
+            entryPoints.push(`${entryPoint.name}(${entryPoint.parameters.map((p: any) => `${p.name ? p.name + ': ' : ''}${p.type}`).join(', ')})`);
+        }
+    } catch { }
+
+    return { type: contractType, entryPoints, metadata };
 }

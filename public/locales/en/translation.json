@@ -52,7 +52,11 @@
                 "baker": "Baker",
                 "contract": "Contract",
                 "contractType": "Type",
-                "entryPoints": "Entry Points"
+                "entryPoints": "Entry Points",
+                "tokenAdmin": "Token Admin",
+                "tokenSvpply": "Token Supply",
+                "admin": "Admin",
+                "maps": "Maps"
             },
             "block": {},
             "operation": {
