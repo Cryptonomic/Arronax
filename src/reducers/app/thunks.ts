@@ -689,5 +689,9 @@ export const getHightCardinalityValues = (attribute: string, prefix: string) => 
   const { selectedConfig, selectedEntity } = state().app;
   const { platform, network, url, apiKey } = selectedConfig;
   const serverInfo = { url, apiKey, network };
-  return await getAttributeValuesForPrefix(serverInfo, platform, network, selectedEntity, attribute, prefix);
+  try {
+    return await getAttributeValuesForPrefix(serverInfo, platform, network, selectedEntity, attribute, prefix);
+  } catch (e) {
+    return [];
+  }
 };
