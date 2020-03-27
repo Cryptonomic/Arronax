@@ -9,7 +9,7 @@ import Loader from '../../components/Loader';
 import {
   ScrollContainer, ModalContainer, ListContainer, CloseIcon,
   ModalTitle, RowContainer, TitleTxt, ContentTxt, ButtonContainer,
-  CloseButton, BottomRowContainer, BottomCol, BottomColTitle, BottomColContent
+  CloseButton, BottomRowContainer, BottomCol, BottomColTitle, BottomColContent, MultiLineContainer, MultiLineItem
 } from './style';
 
 import { DefaultProps, DefaultState } from './types';
@@ -48,7 +48,7 @@ class EntityModal extends React.Component<DefaultProps, AccountModalState> {
             try {
                 const { nodeUrl } = this.props.selectedConfig;
                 const contractInfo = await identifyContract(address, nodeUrl, processedValues.find((a: any) => a.name === 'script').value as string);
-                this.setState({ contractInfo: { type: contractInfo.type, entryPoints: contractInfo.entryPoints.join(', ') } });
+                this.setState({ contractInfo: { type: contractInfo.type, entryPoints: contractInfo.entryPoints } });
             } catch { }
         }
     }
@@ -66,7 +66,7 @@ class EntityModal extends React.Component<DefaultProps, AccountModalState> {
 
 render() {
     const { open, items, attributes, isLoading, onClose, title, t } = this.props;
-    const { count } = this.state;
+    const { count, contractInfo: { entryPoints } } = this.state;
     const total = items ? items.length : 0;
     const processedValues: any = total > 0 ? getNoEmptyFields(attributes, items[count]) : [];
     let isBaker = false;
@@ -124,7 +124,9 @@ render() {
                         </RowContainer>
                         <RowContainer>
                             <TitleTxt>{t('components.entityModal.account.entryPoints')}</TitleTxt>
-                            <ContentTxt>{this.state.contractInfo.entryPoints}</ContentTxt>
+                            <MultiLineContainer>
+                              {entryPoints?.map((item: any) => <MultiLineItem key={item}>{item}</MultiLineItem>)}
+                            </MultiLineContainer>
                         </RowContainer>
                     </Fragment>
                 )}
