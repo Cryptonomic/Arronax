@@ -40,6 +40,11 @@ const PrimaryKeyList: any = {
     operations: ['operation_group_hash'],
 };
 
+const CodePre = styled.pre`
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+`;
+
 const formatReferenceValue = (attribute: any, displayValue: string, value: any, onClickPrimaryKey: any) => {
     const { entity, name } = attribute;
 
@@ -134,7 +139,7 @@ export const formatValueForDisplay = (
         return formatAggregatedValue(attribute, value, aggregation);
     }
 
-    const { dataFormat, dataType, valueMap } = attribute;
+    const { dataFormat, dataType, valueMap, displayName } = attribute;
     const displayValueMap = valueMap && valueMap[value];
 
     switch (dataType) {
@@ -183,7 +188,7 @@ export const formatValueForDisplay = (
             if (value.length > 100) {
                 return (
                     <>
-                        {displayValueMap || value.substring(0, 100)}
+                        {displayValueMap || displayName === 'Script' ? <CodePre>{value.substring(0, 100)}</CodePre> : value.substring(0, 100)}
                         <Clipboard value={value} />
                     </>
                 );
@@ -276,7 +281,7 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
     )
 }
 
-export const identifyContract = async (address: string, script: string): Promise<{type: string, entryPoints: string[]}> => {
+export const identifyContract = async (address: string, nodeUrl: string = '', script: string): Promise<{type: string, entryPoints: string[]}> => {
     let contractType = 'unidentified';
     let entryPoints: string[] = [];
     let metadata: any = {};
