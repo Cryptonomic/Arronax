@@ -100,6 +100,7 @@ interface States {
   suggestions: any[];
   searchedVal: string;
   availableValues: string[];
+  valueMapSelected: string[] | [];
 }
 
 class InputItem extends React.Component<Props, States> {
@@ -110,7 +111,8 @@ class InputItem extends React.Component<Props, States> {
       stateVal: '',
       suggestions: [],
       searchedVal: '',
-      availableValues: []
+      availableValues: [],
+      valueMapSelected: []
     };
     this.autocompleteSearchDebounce = debounce(300, this.autocompleteSearch);
     this.inputValueChange = debounce(300, (value: string) => this.props.onChange(value));
@@ -124,39 +126,64 @@ class InputItem extends React.Component<Props, States> {
   };
   
   static getDerivedStateFromProps(props: Props, state: States) {
-    if (props.value !== state.prevValue) {
+    if ((props.value !== state.prevValue)) {
+      const { valueMapSelected } = state;
+      const value = valueMapSelected[0] === props.value ? valueMapSelected[1] : props.value;
       return {
-        stateVal: props.value,
-        prevValue: props.value
+        stateVal: value,
+        prevValue: value
       };
     }
     return null;
   }
 
-  autocompleteSearch = (attribute: string, value: string) => {
+
+  autocompleteSearch = (attribute: string, value: string, valueMap: any) => {
+    const valueMapEntries: any[] = Object.entries(valueMap);
+    if (valueMapEntries && valueMapEntries.length && valueMap) {
+      const re = RegExp(`^${value}`);
+      const suggestionFromValueMap: string[] | undefined = valueMapEntries.find((v: string[]) => re.test(v[0]));
+      if (suggestionFromValueMap) {
+        const [ searchedKey, searchedVal ] = suggestionFromValueMap
+        const re = RegExp(`^${searchedVal}`);
+        const suggestions: any[] = valueMapEntries.filter((v: any[]) => re.test(v[1])).map((s: string[]) => s[1]);
+        this.setState({
+          availableValues: suggestions,
+          suggestions: suggestions,
+          searchedVal: searchedKey,
+          valueMapSelected: suggestionFromValueMap
+        });
+        return;
+      }
+    }
+
     const { fetchValues } = this.props;
     fetchValues(attribute, value).then((values: any) => {
-      this.setState({availableValues: values, suggestions: values, searchedVal: value});
+      this.setState({
+        availableValues: values,
+        suggestions: values, 
+        searchedVal: value, 
+        stateVal: value, 
+        valueMapSelected: []
+      });
     });
   }
 
-  onHighCardValueChange = async (event: any, { newValue }: any) => {
-    const { value, onChange, attribute } = this.props;
-    const { searchedVal } = this.state;
+  onHighCardValueChange = async (event: React.FocusEvent<HTMLInputElement>, { newValue }: any) => {
+    const { attribute: { name, valueMap, cacheConfig } } = this.props;
+    const { searchedVal, valueMapSelected } = this.state;
     const splitVals = newValue.split(',');
     const filterVal = splitVals[splitVals.length - 1].trim();
     const filterValLength = filterVal.length;
-    if(filterValLength === 0) {
-      this.setState({availableValues: [], suggestions: [], searchedVal: ''});
-    } else if (filterValLength > 2 && (!searchedVal || searchedVal.length > filterValLength)) {
-      this.autocompleteSearchDebounce(attribute.name, filterVal);
+    if(searchedVal && (filterValLength <= (cacheConfig?.minMatchLength || 4))) {
+      this.setState({ availableValues: [], suggestions: [], searchedVal: '' });
+    };
+
+    if (filterValLength >= (cacheConfig?.minMatchLength || 4) && valueMapSelected[1] !== filterVal) {
+      this.autocompleteSearchDebounce(name, filterVal, valueMap);
     }
 
-    if (value.length > newValue.length && filterValLength === 0) {
-      this.setState({stateVal: newValue});
-    } else {
-      onChange(newValue);
-    }
+    this.setState({stateVal: newValue})
   }
 
   onValueChange = (event: any) => {
@@ -172,7 +199,8 @@ class InputItem extends React.Component<Props, States> {
   }
 
   renderInputComponent = (inputProps: any) => {
-    const { classes, inputRef = () => {}, ref, ...other } = inputProps;
+    const { inputRef = () => {}, ref, ...other } = inputProps;
+    const { classes } = this.props;
     return (
       <InputBase
         className={classes.input}
@@ -226,6 +254,13 @@ class InputItem extends React.Component<Props, States> {
     this.setState({suggestions: []});
   };
 
+  handleShouldRenderSuggestions = (value: string) => value.length >= 4;
+
+  onBlurAutosuggest = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { onChange } = this.props;
+    const { valueMapSelected } = this.state;
+    onChange(valueMapSelected[0] || e.target.value);
+  }
 
   render () {
     const {
@@ -256,14 +291,16 @@ class InputItem extends React.Component<Props, States> {
         />
       )
     }
+
     if (attribute.cardinality && attribute.cardinality >= CARDINALITY_NUMBER && attribute.cacheConfig && attribute.cacheConfig.cached) {
       const autosuggestProps = {
         renderInputComponent: this.renderInputComponent,
         suggestions,
         onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
         onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
+        shouldRenderSuggestions: this.handleShouldRenderSuggestions,
         getSuggestionValue: this.getSuggestionValue,
-        renderSuggestion: this.renderSuggestion,
+        renderSuggestion: this.renderSuggestion
       };
       return (
         <Container isLong={isLong}>
@@ -274,6 +311,7 @@ class InputItem extends React.Component<Props, States> {
               placeholder: attribute.placeholder ? attribute.placeholder : t('components.valueInputItem.insert_value'),
               value: stateVal,
               onChange: this.onHighCardValueChange,
+              onBlur: this.onBlurAutosuggest,
               disabled
             }}
             theme={{
