@@ -8,8 +8,9 @@ import Circle from '@material-ui/icons/FiberManualRecord';
 
 import Clipboard from '../components/Clipboard';
 
-import { AttributeDefinition, AttrbuteDataType, ConseilFunction, ConseilQuery } from 'conseiljs';
+import { AttributeDefinition, AttrbuteDataType, ConseilFunction, ConseilQuery, BabylonDelegationHelper, Tzip7ReferenceTokenHelper, TezosContractIntrospector, TezosConseilClient } from 'conseiljs';
 import { truncateHash, formatNumber, getOperatorType } from './general';
+import { Config } from '../types';
 
 type StyledCircleProps = SvgIconProps & { newcolor: string };
 const StyledCircle1 = styled(Circle)<{ newcolor: string }>`
@@ -134,7 +135,7 @@ export const formatValueForDisplay = (
         return formatAggregatedValue(attribute, value, aggregation);
     }
 
-    const { dataFormat, dataType, valueMap } = attribute;
+    const { dataFormat, dataType, valueMap, displayName } = attribute;
     const displayValueMap = valueMap && valueMap[value];
 
     switch (dataType) {
@@ -183,7 +184,7 @@ export const formatValueForDisplay = (
             if (value.length > 100) {
                 return (
                     <>
-                        {displayValueMap || value.substring(0, 100)}
+                        {displayValueMap || displayName === 'Script' ? value.substring(0, 200) : value.substring(0, 100)}
                         <Clipboard value={value} />
                     </>
                 );
@@ -274,4 +275,52 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
             {renderFilters}
         </span>
     )
+}
+
+export const identifyContract = async (address: string, config: Config, script: string): Promise<{type: string, entryPoints: string[], metadata: any}> => {
+    let contractType = 'Unidentified';
+    let entryPoints: string[] = [];
+    let metadata: any = {};
+
+    try {
+        if (BabylonDelegationHelper.verifyScript(script)) {
+            contractType = 'Babylon Delegation Contract';
+            const storage = await BabylonDelegationHelper.getSimpleStorage(config.nodeUrl || '', address);
+            metadata.manager = storage.administrator;
+        }
+    } catch { }
+
+    try {
+        if (Tzip7ReferenceTokenHelper.verifyScript(script)) {
+            contractType = 'FA1.2 Token Contract (TZIP7)';
+
+            const storage = await Tzip7ReferenceTokenHelper.getSimpleStorage(config.nodeUrl || '', address);
+            metadata.manager = storage.administrator;
+            metadata.supply = storage.supply;
+            //storage.mapid
+            //storage.paused
+        }
+    } catch { }
+
+    try {
+        const mapData = await TezosConseilClient.getBigMapData({ url: config.url, apiKey: config.apiKey, network: config.network }, address);
+        let mapSummary: any[] = [];
+
+        if (mapData) {
+                for (const map of mapData.maps) {
+                mapSummary.push(`${map.definition.index} - ${map.definition.key}:${map.definition.value}, ${map.content.length} item${(map.content.length === 1) ? '' : 's'}`);
+            }
+            if (mapSummary.length > 0) { metadata.mapSummary = mapSummary };
+        }
+    } catch { }
+
+    try {
+        const parsedCalls = await TezosContractIntrospector.generateEntryPointsFromCode(script);
+
+        for (const entryPoint of parsedCalls) {
+            entryPoints.push(`${entryPoint.name}(${entryPoint.parameters.map((p: any) => `${p.name ? p.name + ': ' : ''}${p.type}`).join(', ')})`);
+        }
+    } catch { }
+
+    return { type: contractType, entryPoints, metadata };
 }

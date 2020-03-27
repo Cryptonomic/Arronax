@@ -21,6 +21,7 @@ export interface Config {
   platform: string;
   network: string;
   displayName: string;
+  nodeUrl?: string;
   entities?: string[];
   hiddenEntities?: string[];
   isLocal?: boolean;
