@@ -325,10 +325,10 @@ export const initLoadByNetwork = () => async (dispatch: any, state: any) => {
     if (typeof e.displayNamePlural === 'undefined' || e.displayNamePlural.length === 0) {
       e.displayNamePlural = e.displayName;
     }
-  }); // TODO: remove, use metadata when available
+  });
 
   dispatch(setEntitiesAction(entities, !isSelectedEntity));
-  validateCache(2);
+  validateCache(4);
   
   const attrPromises = entities.map(entity => fetchAttributes(platform, entity.name, network, serverInfo));
   const attrObjsList = await Promise.all(attrPromises)
@@ -413,7 +413,7 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
 
   await dispatch(setEntitiesAction(entities));
   await dispatch(initMainParamsAction(platform, network, entityParam || entities[0].name));
-  validateCache(2);
+  validateCache(4);
 
   try {
     const localDate = getTimeStampFromLocal();
@@ -428,7 +428,7 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
           return curr;
         }, {});
         await dispatch(initAttributesAction(attrMap));
-        saveAttributes(attrMap, currentDate, 2);
+        saveAttributes(attrMap, currentDate, 4);
       } else {
         await dispatch(completeFullLoadAction(true));
         return responseWithNoAction;
