@@ -28,7 +28,7 @@
     "@types/throttle-debounce": "^2.1.0",
     "autosuggest-highlight": "^3.1.1",
     "base64url": "^3.0.1",
-    "conseiljs": "0.4.1-beta.3",
+    "conseiljs": "0.4.1",
     "i18next": "^19.1.0",
     "i18next-browser-languagedetector": "^4.0.1",
     "i18next-xhr-backend": "^3.2.2",

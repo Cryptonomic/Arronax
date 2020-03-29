@@ -318,7 +318,9 @@ export const identifyContract = async (address: string, config: Config, script: 
         const parsedCalls = await TezosContractIntrospector.generateEntryPointsFromCode(script);
 
         for (const entryPoint of parsedCalls) {
-            entryPoints.push(`${entryPoint.name}(${entryPoint.parameters.map((p: any) => `${p.name ? p.name + ': ' : ''}${p.type}`).join(', ')})`);
+            const treePattern = entryPoint.structure.replace(/Pair/g, '').replace(/\$PARAM/g, '').replace(/\(/g, '').replace(/\)/g, '').replace(/[a-z]/g, '');
+            entryPoints.push(`${entryPoint.name} (${entryPoint.parameters.map((p: any) => `${p.name ? p.name + ': ' : ''}${p.type}`).join(', ')}), ${treePattern}`);
+            
         }
     } catch { }
 
