@@ -100,6 +100,7 @@ interface States {
   suggestions: any[];
   searchedVal: string;
   availableValues: string[];
+  suggestionSelected: string;
 }
 
 class InputItem extends React.Component<Props, States> {
@@ -110,7 +111,8 @@ class InputItem extends React.Component<Props, States> {
       stateVal: '',
       suggestions: [],
       searchedVal: '',
-      availableValues: []
+      availableValues: [],
+      suggestionSelected: ''
     };
     this.autocompleteSearchDebounce = debounce(300, this.autocompleteSearch);
     this.inputValueChange = debounce(300, (value: string) => this.props.onChange(value));
@@ -122,21 +124,9 @@ class InputItem extends React.Component<Props, States> {
   static defaultProps: any = {
     disabled: false
   };
-
-  // componentDidMount() {
-  //   const { attribute: { valueMap }, value } = this.props;
-  //   console.log('did_mount')
-  //   if (valueMap && Object.keys(valueMap).length) {
-  //     const valueMapEntries = Object.entries(valueMap);
-  //     const re = RegExp(`^${value}`);
-  //     const valueMapSelected: any = (value && valueMapEntries.find((v: string[]) => re.test(value))) || [];
-  //     this.setState({ valueMapEntries, valueMapSelected })
-  //   }
-  // }
   
   static getDerivedStateFromProps(props: Props, state: States) {
     if ((props.value !== state.prevValue)) {
-      console.log('receive_props', props.value, state.prevValue)
       return {
           stateVal: props.value,
           prevValue: props.value
@@ -145,42 +135,41 @@ class InputItem extends React.Component<Props, States> {
       return null;
   }
 
-
   autocompleteSearch = (attribute: string, value: string, valueMap?: Record<string, string>, cacheConfig?: AttributeCacheConfig) => {
     const valueMapEntries = valueMap && Object.entries(valueMap);
     
     if (valueMapEntries) {
-      const matchKey: string[] | undefined = valueMapEntries.find((v: string[]) => RegExp(`^${value}`).test(v[0]));
-      
-      if (matchKey) {
-        console.log('foundKeys', matchKey)
-        const [ searchedKey, searchedVal ] = matchKey
-        const suggestions: any[] = valueMapEntries.filter((v: any[]) => RegExp(`^${searchedVal}`).test(v[1])).map((s: string[]) => s[1]);
+      const matchKey: string[] | undefined = valueMapEntries.find((e: string[]) => RegExp(`^${value}`).test(e[0]));
+      const matchValue: string[] | undefined = valueMapEntries.find((e: string[]) => RegExp(`^${value}`).test(e[1]));
+      const matchValueMap = (matchKey || matchValue) || [];
+      const matchIndex = matchValueMap && (matchKey ? 0 : 1);
+
+      if (matchValueMap && matchValueMap.length && (matchIndex === 0 || matchIndex === 1)) {
+        const searchedVal = matchValueMap[matchIndex];
+        const suggestions: any[] = valueMapEntries.filter((v: any[]) => RegExp(`^${value}`).test(v[matchIndex])).map((s: string[]) => s[1]);
         this.setState({
           availableValues: suggestions,
           suggestions: suggestions,
-          searchedVal: searchedKey,
+          searchedVal
         });
         return;
       }
     }
 
-    // if ('sss') {
-    //   console.log('fetch')
-    //   const { fetchValues } = this.props;
-    //   fetchValues(attribute, value).then((values: any) => {
-    //     this.setState({
-    //       availableValues: values,
-    //       suggestions: values, 
-    //       searchedVal: value,
-    //       valueMapSelected: []
-    //     });
-    //   });
-    //   return;
-    // }
+    if (cacheConfig && cacheConfig.cached) {
+      const { fetchValues } = this.props;
+      fetchValues(attribute, value).then((values: string[]) => {
+        this.setState({
+          availableValues: values,
+          suggestions: values, 
+          searchedVal: value,
+        });
+      });
+      return;
+    }
   }
 
-  onHighCardValueChange = async (event: React.FocusEvent<HTMLInputElement>, { newValue }: any) => {
+  onHighCardValueChange = async (event: React.FocusEvent<HTMLInputElement>, { newValue }: Autosuggest.ChangeEvent) => {
     const { attribute: { name, valueMap, cacheConfig } } = this.props;
     const { searchedVal } = this.state;
     const splitVals = newValue.toString().split(',');
@@ -191,7 +180,6 @@ class InputItem extends React.Component<Props, States> {
     };
 
     if (filterValLength >= (cacheConfig?.minMatchLength || 4)) {
-      console.log('runs', valueMap)
       this.autocompleteSearchDebounce(name, filterVal, valueMap, cacheConfig);
     }
 
@@ -232,8 +220,8 @@ class InputItem extends React.Component<Props, States> {
     return (
       <MenuItem selected={isHighlighted} component="div">
         <div>
-          {parts.map(part => (
-            <span key={part.text} style={{ fontWeight: part.highlight ? 500 : 400 }}>
+          {parts.map((part, index) => (
+            <span key={index} style={{ fontWeight: part.highlight ? 500 : 400 }}>
               {part.text}
             </span>
           ))}
@@ -266,18 +254,33 @@ class InputItem extends React.Component<Props, States> {
     this.setState({suggestions: []});
   };
 
-  handleShouldRenderSuggestions = (value: string) => value.length >= 4;
+  handleShouldRenderSuggestions = (value: string) => value.length >= 4 && value !== this.state.suggestionSelected;
+
+  handleSuggestionSelected = ((e: React.FormEvent, selected: any) => {
+    const { suggestionValue } = selected;
+    const { suggestionSelected } = this.state;
+    if (suggestionValue && suggestionSelected !== suggestionValue) {
+      this.setState({
+        suggestionSelected: suggestionValue
+      })
+    }
+  })
 
   onBlurAutosuggest = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { onChange } = this.props;
-    // const { valueMapSelected } = this.state;
-    let val = e.target.value;
+    const { onChange, attribute: { valueMap } } = this.props;
+    let inputValue = e.target.value;
 
-    // if (valueMapSelected.length && valueMapSelected[1] === val) {
-    //   val = valueMapSelected[0];
-    // }
-    console.log('blur', val)
-    onChange(val);
+    this.setState({
+      suggestionSelected: ''
+    })
+
+    const valueMapEntries = valueMap && Object.entries(valueMap);
+
+    if (valueMapEntries) {
+      inputValue = valueMapEntries.find((e: string[]) => e[1] === inputValue)?.[0] || inputValue
+    }
+
+    onChange(inputValue);
   }
 
   render () {
@@ -290,6 +293,10 @@ class InputItem extends React.Component<Props, States> {
       classes
     } = this.props;
     const { stateVal, suggestions } = this.state;
+
+    const valueMapEntries = attribute.valueMap && Object.entries(attribute.valueMap);
+    const searchInputValue = valueMapEntries && valueMapEntries.find((e: any) => e[0] === stateVal)?.[1];
+    const autosuggestValue = searchInputValue || stateVal;
 
     const isLong = attribute.dataType === AttrbuteDataType.STRING || attribute.dataType === AttrbuteDataType.HASH || attribute.dataType === AttrbuteDataType.ACCOUNT_ADDRESS;
     
@@ -318,7 +325,8 @@ class InputItem extends React.Component<Props, States> {
         onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
         shouldRenderSuggestions: this.handleShouldRenderSuggestions,
         getSuggestionValue: this.getSuggestionValue,
-        renderSuggestion: this.renderSuggestion
+        renderSuggestion: this.renderSuggestion,
+        onSuggestionSelected: this.handleSuggestionSelected
       };
       return (
         <Container isLong={isLong}>
@@ -327,7 +335,7 @@ class InputItem extends React.Component<Props, States> {
             inputProps={{
               id: 'high-cardinality-input',
               placeholder: attribute.placeholder ? attribute.placeholder : t('components.valueInputItem.insert_value'),
-              value: stateVal,
+              value: autosuggestValue,
               onChange: this.onHighCardValueChange,
               onBlur: this.onBlurAutosuggest,
               disabled
