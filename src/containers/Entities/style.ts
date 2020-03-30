@@ -39,8 +39,18 @@ export const ModalTitle = styled.div`
   align-items: center;
 `;
 
+export const MultiLineContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const MultiLineItem = styled.div`
+  align-items: center;
+`
+
 export const RowContainer = styled.div`
   display: flex;
+  align-items: center;
   padding: 15px 0;
   font-size: 16px;
   line-height: 19px;
@@ -56,6 +66,7 @@ export const TitleTxt = styled.div`
 
 export const ContentTxt = styled.span`
 display: flex;
+flex: 1;
 align-items: center;
 `;
 
