@@ -258,7 +258,7 @@ export const formatQueryForNaturalLanguage = (platform: string, network: string,
                 {' '}
                 {value}
                 {f.operation === 'between' && <> and {formatValueForDisplay(platform, network, f.field, f.set[1], attribute, () => {}, undefined, true)}</>}
-                {f.operation === 'in' && <>,  {f.set.slice(1).map((v: any) => formatValueForDisplay(platform, network, f.field, v, attribute, () => {}, undefined, true)).join(', ')}</>}
+                {f.operation === 'in' && <>, {f.set.slice(1).map((v: any) => formatValueForDisplay(platform, network, f.field, v, attribute, () => {}, undefined, true, true)).join(', ')}</>}
                 {isLast ? '' : ', '}
                 {isNextToLast ? ' and ' : ''}
             </span>
@@ -318,7 +318,9 @@ export const identifyContract = async (address: string, config: Config, script: 
         const parsedCalls = await TezosContractIntrospector.generateEntryPointsFromCode(script);
 
         for (const entryPoint of parsedCalls) {
-            entryPoints.push(`${entryPoint.name}(${entryPoint.parameters.map((p: any) => `${p.name ? p.name + ': ' : ''}${p.type}`).join(', ')})`);
+            const treePattern = entryPoint.structure.replace(/Pair/g, '').replace(/\$PARAM/g, '').replace(/\(/g, '').replace(/\)/g, '').replace(/[a-z]/g, '');
+            entryPoints.push(`${entryPoint.name} (${entryPoint.parameters.map((p: any) => `${p.name ? p.name + ': ' : ''}${p.type}`).join(', ')}), ${treePattern}`);
+            
         }
     } catch { }
 
