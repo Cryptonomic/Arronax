@@ -28,7 +28,7 @@
     "@types/throttle-debounce": "^2.1.0",
     "autosuggest-highlight": "^3.1.1",
     "base64url": "^3.0.1",
-    "conseiljs": "0.4.1",
+    "conseiljs": "0.4.2-beta.1",
     "i18next": "^19.1.0",
     "i18next-browser-languagedetector": "^4.0.1",
     "i18next-xhr-backend": "^3.2.2",
@@ -59,7 +59,7 @@
   "scripts": {
     "start": "REACT_APP_VERSION=development REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts start",
     "serve": "REACT_APP_VERSION=development REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) BROWSER=none react-scripts start",
-    "build": "REACT_APP_VERSION='March 2020 Release 8' REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts build",
+    "build": "REACT_APP_VERSION='March 2020 Release 8.1' REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
