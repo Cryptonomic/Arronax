@@ -13,7 +13,6 @@ export const saveAttributes = (attributes: any, timestamp: any, version: any) =>
     localStorage.setItem('version', version);
 };
 
-
 export const getTimeStampFromLocal = () => {
     const timestamp = localStorage.getItem('timestamp');
     if (timestamp) {
@@ -22,7 +21,7 @@ export const getTimeStampFromLocal = () => {
     return 0;
 };
 
-export function validateCache(version: number) {
+export async function validateCache(version: number) {
     if (!localStorage.getItem('version')) {
         localStorage.clear();
         return;
@@ -39,20 +38,25 @@ export function getNoEmptyFields(attributes: any, item: any): ProcessedValue[] {
         .filter((c: any) => item[c.name] != null && item[c.name] !== undefined)
         .sort((a: any, b: any) => {
             if (a.displayOrder === undefined && b.displayOrder === undefined) {
-                if(a.displayName < b.displayName) { return -1; }
-                if(a.displayName > b.displayName) { return 1; }
+                if (a.displayName < b.displayName) {
+                    return -1;
+                }
+                if (a.displayName > b.displayName) {
+                    return 1;
+                }
             }
 
-            if (a.displayOrder === undefined && b.displayOrder !== undefined){
+            if (a.displayOrder === undefined && b.displayOrder !== undefined) {
                 return 1;
             }
 
-            if (a.displayOrder !== undefined && b.displayOrder === undefined){
+            if (a.displayOrder !== undefined && b.displayOrder === undefined) {
                 return -1;
             }
 
             return a.displayOrder - b.displayOrder;
-        }).map((c: any) => {
+        })
+        .map((c: any) => {
             return { displayName: c.displayName, value: item[c.name], name: c.name, entity: c.entity };
         });
 }
