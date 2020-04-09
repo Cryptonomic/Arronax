@@ -121,7 +121,7 @@ class Arronax extends React.Component<Props, States> {
         } = prevProps;
         const {
             match: {
-                params: { platform: currPlatform, network: currNetwork, entity: currEntity, id },
+                params: { platform: currPlatform, network: currNetwork, entity: currEntity },
             },
             initLoad,
             isLoading,
