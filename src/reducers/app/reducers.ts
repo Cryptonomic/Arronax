@@ -36,6 +36,7 @@ const configs = getConfigs();
 
 export interface AppState {
     entities: EntityDefinition[];
+    commonEntites: EntityDefinition[];
     availableValues: any;
     columns: object;
     attributes: object;
@@ -61,6 +62,7 @@ let initialState: AppState = {
     configs,
     selectedConfig: configs[0],
     entities: [],
+    commonEntites: [],
     attributes,
     items: {},
     selectedFilters: {},
@@ -228,7 +230,7 @@ export const app = (state = initialState, action: any) => {
             return { ...state, sort };
         }
         case SET_ENTITIES: {
-            return { ...state, entities: action.entities };
+            return { ...state, entities: action.entities, commonEntites: action.commonEntites };
         }
         case SET_ENTITY: {
             return { ...state, selectedEntity: action.entity };

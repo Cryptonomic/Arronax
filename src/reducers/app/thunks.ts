@@ -300,7 +300,7 @@ const loadEntities = () => async (dispatch: any, state: any) => {
             }
         });
 
-        await dispatch(setEntitiesAction(entities));
+        await dispatch(setEntitiesAction(entities, response));
     } catch (e) {
         const message =
             e.message ||
@@ -311,13 +311,13 @@ const loadEntities = () => async (dispatch: any, state: any) => {
 
 const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
     const { platform, network, url, apiKey } = state().app.selectedConfig;
-    const entities = state().app.entities;
+    const commonEntites = state().app.commonEntites;
 
     try {
         const localDate = getTimeStampFromLocal();
         const currentDate = Date.now();
         if (currentDate - localDate > CACHE_TIME) {
-            const attrPromises = entities.map((entity: EntityDefinition) => fetchAttributes(platform, entity.name, network, { url, apiKey, network }));
+            const attrPromises = commonEntites.map((entity: EntityDefinition) => fetchAttributes(platform, entity.name, network, { url, apiKey, network }));
             const attrObjsList = await Promise.all(attrPromises);
 
             if (!attrObjsList.length) {
