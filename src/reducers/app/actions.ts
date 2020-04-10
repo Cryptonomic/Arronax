@@ -156,11 +156,10 @@ export function setSortAction(entity: string, sorts: Sort[]) {
     return { type: SET_SORT, entity, sorts };
 }
 
-export function setEntitiesAction(entities: EntityDefinition[], commonEntites: EntityDefinition[]) {
+export function setEntitiesAction(entities: EntityDefinition[]) {
     return {
         type: SET_ENTITIES,
         entities,
-        commonEntites
     };
 }
 
