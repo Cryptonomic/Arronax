@@ -312,11 +312,12 @@ const loadEntities = () => async (dispatch: any, state: any) => {
 const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
     const { platform, network, url, apiKey } = state().app.selectedConfig;
     const entities = state().app.entities;
+    const attrs = { ...state().app.attributes };
 
     try {
         const localDate = getTimeStampFromLocal();
         const currentDate = Date.now();
-        if (currentDate - localDate > CACHE_TIME) {
+        if (!attrs[network] || currentDate - localDate > CACHE_TIME) {
             const attrPromises = entities.map((entity: EntityDefinition) => fetchAttributes(platform, entity.name, network, { url, apiKey, network }));
             const attrObjsList = await Promise.all(attrPromises);
 
@@ -327,10 +328,12 @@ const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
             const attrMap = [...attrObjsList].reduce((curr: any, next: any) => {
                 curr[next.entity] = sortAttributes(next.attributes);
                 return curr;
-            }, {});
+            }, {}) as {};
 
-            await dispatch(setAttributesAction(attrMap));
-            saveAttributes(attrMap, currentDate, CACHE_VERSION);
+            attrs[network] = { ...attrMap };
+
+            await dispatch(setAttributesAction(attrs));
+            saveAttributes(attrs, currentDate, CACHE_VERSION);
         }
     } catch (e) {
         const message = `Unable to load attribute data: ${e}.`;
@@ -340,7 +343,9 @@ const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
     const { attributes, selectedEntity } = state().app;
 
     try {
-        await dispatch(fetchInitEntityAction(platform, selectedEntity, network, { url, apiKey, network }, attributes[selectedEntity], selectedEntity, query));
+        await dispatch(
+            fetchInitEntityAction(platform, selectedEntity, network, { url, apiKey, network }, attributes[network][selectedEntity], selectedEntity, query)
+        );
     } catch (e) {
         const message = `Unable to load data: ${e}.`;
         throw Error(message);
@@ -583,7 +588,7 @@ export const changeTab = (entity: string) => async (dispatch: any, state: any) =
     try {
         if (!items[entity] || (items[entity] && items[entity].length === 0)) {
             dispatch(setLoadingAction(true));
-            await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[entity], '', ''));
+            await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[network][entity], '', ''));
             dispatch(setLoadingAction(false));
         }
     } catch (e) {

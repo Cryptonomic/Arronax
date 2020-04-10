@@ -344,6 +344,7 @@ class Arronax extends React.Component<Props, States> {
             page,
         } = this.state;
         const { EntityModal } = this;
+        const { network } = selectedConfig;
         const isRealLoading = isLoading || !isFullLoaded;
         const selectedObjectEntity: any = entities.find((entity) => entity.name === searchedEntity);
 
@@ -434,11 +435,11 @@ class Arronax extends React.Component<Props, States> {
                 <ConfigModal t={t} open={isOpenConfigMdoal} onClose={this.closeConfigModal} addConfig={this.onAddConfig} />
                 {isOpenEntityModal && (
                     <EntityModal
-                        attributes={attributes[searchedEntity]}
+                        attributes={attributes[network][searchedEntity]}
                         isLoading={isLoading}
                         items={modalItems}
                         open={isOpenEntityModal}
-                        opsAttributes={attributes.operations}
+                        opsAttributes={attributes[network].operations}
                         selectedConfig={selectedConfig}
                         subItems={searchedSubItems}
                         title={selectedObjectEntity.displayName}
