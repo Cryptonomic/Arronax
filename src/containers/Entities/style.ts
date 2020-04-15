@@ -103,7 +103,7 @@ export const BottomColTitle = styled.p`
   margin: 0;
 `;
 
-export const BottomColContent = styled.p`
+export const BottomColContent = styled.div`
   color: rgb(74, 74, 74);
   font-size: 16px;
   font-weight: 300;

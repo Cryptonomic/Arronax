@@ -35,6 +35,7 @@ import {
     getAttributesAll,
     getRows,
 } from '../../reducers/app/selectors';
+import { DynamicModal } from '../Entities/Modal/Modal';
 import { getModal } from '../../reducers/modal/selectors';
 import { getErrorState, getMessageTxt } from '../../reducers/message/selectors';
 import { initLoad, submitQuery, exportCsvData, shareReport, changeTab, searchByIdThunk } from '../../reducers/app/thunks';
@@ -63,6 +64,7 @@ import {
 import { ToolType, Config } from '../../types';
 import { Props, States } from './types';
 
+//TODO:
 const entityloader = (f: any) => import(`../Entities/${f}`);
 
 class Arronax extends React.Component<Props, States> {
@@ -100,12 +102,13 @@ class Arronax extends React.Component<Props, States> {
             modal: { open, entity, items },
             selectedConfig,
         } = this.props;
-        if (open && items && items.length > 0) {
+        if (open && items?.[entity] && items?.[entity].length > 0) {
             const { platform, network } = selectedConfig;
+            //TODO:
             const modalName = getEntityModalName(platform, network, entity);
             this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
             this.setState({
-                searchedItem: items,
+                searchedItem: items[entity],
                 searchedEntity: entity,
                 isOpenEntityModal: true,
                 primaryKeyClicked: false,
@@ -283,8 +286,9 @@ class Arronax extends React.Component<Props, States> {
         const { entity, items } = await searchById(realVal);
         if (items.length > 0 && entity) {
             const { platform, network } = selectedConfig;
-            const modalName = getEntityModalName(platform, network, entity);
-            this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
+            //TODO:
+            // const modalName = getEntityModalName(platform, network, entity);
+            // this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
             this.setState({ searchedItem: items, searchedEntity: entity, isOpenEntityModal: true, primaryKeyClicked: false });
             this.updateRoute(true, '', val);
         }
@@ -295,8 +299,9 @@ class Arronax extends React.Component<Props, States> {
         const { getModalItemAction, selectedConfig } = this.props;
         if (searchedEntity === entity) return;
         const { platform, network } = selectedConfig;
-        const modalName = getEntityModalName(platform, network, entity);
-        this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
+        //TODO:
+        // const modalName = getEntityModalName(platform, network, entity);
+        // this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
         getModalItemAction(entity, key, value);
         this.setState({ searchedEntity: entity, primaryKeyClicked: true });
         this.updateRoute(true, '', value);
@@ -330,6 +335,7 @@ class Arronax extends React.Component<Props, States> {
             attributes,
             t,
             rowsPerPage,
+            modal
         } = this.props;
         const {
             isSettingCollapsed,
@@ -434,18 +440,25 @@ class Arronax extends React.Component<Props, States> {
                 </Dialog>
                 <ConfigModal t={t} open={isOpenConfigMdoal} onClose={this.closeConfigModal} addConfig={this.onAddConfig} />
                 {isOpenEntityModal && (
-                    <EntityModal
-                        attributes={attributes[network][searchedEntity]}
+                    <DynamicModal
+                        attributes={attributes[network]}
                         isLoading={isLoading}
-                        items={modalItems}
-                        open={isOpenEntityModal}
-                        opsAttributes={attributes[network].operations}
                         selectedConfig={selectedConfig}
-                        subItems={searchedSubItems}
-                        title={selectedObjectEntity.displayName}
-                        onClickPrimaryKey={this.onClickPrimaryKey}
-                        onClose={this.onCloseEntityModal}
+                        selectedEntity={selectedEntity}
+                        modal={modal}
                     />
+                    // <EntityModal
+                    //     attributes={attributes[network][searchedEntity]}
+                    //     isLoading={isLoading}
+                    //     items={modalItems}
+                    //     open={isOpenEntityModal}
+                    //     opsAttributes={attributes.operations}
+                    //     selectedConfig={selectedConfig}
+                    //     subItems={searchedSubItems}
+                    //     title={selectedObjectEntity.displayName}
+                    //     onClickPrimaryKey={this.onClickPrimaryKey}
+                    //     onClose={this.onCloseEntityModal}
+                    // />
                 )}
             </MainContainer>
         );

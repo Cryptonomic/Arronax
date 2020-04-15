@@ -1,10 +1,10 @@
-import { TOGGLE_MODAL, SET_MODAL, CLEAN_MODAL } from './types';
+import { TOGGLE_MODAL, SET_MODAL, CLEAN_MODAL, SET_BLOCK_OPERATIONS_MODULE } from './types';
 
-const initialState = {
+const initialState: any = {
     entity: '',
     open: false,
-    items: [],
-    subItems: [],
+    items: {},
+    modules: {}
 };
 
 export const modal = (state = initialState, action: any) => {
@@ -12,10 +12,19 @@ export const modal = (state = initialState, action: any) => {
         case TOGGLE_MODAL:
             return { ...state, open: !state.open };
         case SET_MODAL: {
-            return { ...state, entity: action.entity, items: action.items };
+            const items = { ...state.items, [action.entity]: action.items };
+            return {
+                ...state,
+                entity: action.entity,
+                items,
+            };
         }
         case CLEAN_MODAL: {
             return initialState;
+        }
+        case SET_BLOCK_OPERATIONS_MODULE: {
+            const modules = { ...state.modules, [action.name]: action.items };
+            return { ...state, modules };
         }
         default: {
             return state;

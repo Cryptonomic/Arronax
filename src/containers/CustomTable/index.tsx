@@ -21,10 +21,12 @@ import CustomTableHeader from '../../components/TableHeader';
 import { getEntityModalName } from '../../utils/hashtable';
 import { TableContainer, Overflow } from './styles';
 
+
 import { Sort } from '../../types';
 import { Props, State } from './types';
 
-const entityloader = (f: any) => import(`../Entities/${f}`);
+//TODO:
+// const entityloader = (f: any) => import(`../Entities/${f}`);
 
 class CustomTable extends React.Component<Props, State> {
     EntityModal: any = null;
@@ -103,8 +105,9 @@ class CustomTable extends React.Component<Props, State> {
         const { getModalItemAction, selectedConfig, updateRoute } = this.props;
         if (selectedPrimaryKey !== key || selectedPrimaryValue !== value) {
             const { platform, network } = selectedConfig;
-            const modalName = getEntityModalName(platform, network, entity);
-            this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
+            //TODO:
+            // const modalName = getEntityModalName(platform, network, entity);
+            // this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
             getModalItemAction(entity, key, value);
             this.setState({ referenceEntity: entity, selectedPrimaryKey: key, selectedPrimaryValue: value, isOpenedModal: true });
             updateRoute(true, '', value);
@@ -175,7 +178,7 @@ class CustomTable extends React.Component<Props, State> {
                         backgroundColor: 'transparent',
                     }}
                 ></div>
-                {isOpenedModal && (
+                {/*TODO: {isOpenedModal && (
                     <EntityModal
                         attributes={attributes[network][referenceEntity]}
                         isLoading={isLoading}
@@ -188,7 +191,7 @@ class CustomTable extends React.Component<Props, State> {
                         onClickPrimaryKey={this.onOpenModal}
                         onClose={this.onCloseModal}
                     />
-                )}
+                )} */}
             </React.Fragment>
         );
     }
