@@ -8,6 +8,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
+import Table from '../../../components/Table'; // rename to ModalTable
 import { fetchOperationsBlock } from '../../../reducers/modal/thunk';
 import { formatValueForDisplay, identifyContract, formatValueWithLink } from '../../../utils/render';
 import { getNoEmptyFields } from '../../../utils/attributes';
@@ -85,7 +86,7 @@ class EntityModal extends Component<any, any> {
         } = this.props;
         let values: {}[] = [];
 
-        this.explicitKeys = []; // reset keys
+        this.explicitKeys = []; //reset keys for formatValue
 
         switch (name) {
             case 'blocks':
@@ -97,6 +98,8 @@ class EntityModal extends Component<any, any> {
             case 'contract':
                 values = getNoEmptyFields(attributes[entity], items[entity][0]);
                 return this.getContract(values, attributes[entity]);
+            case 'block_operations':
+                return this.getBlockOperations();
             default:
                 return values;
         }
@@ -257,6 +260,38 @@ class EntityModal extends Component<any, any> {
         };
     };
 
+    getBlockOperations = () => {
+        const opsColsName = (cols: string[]) => {
+            const { t } = this.props;
+            return cols.map(col => {
+              return {
+                name: col,
+                displayName: t(`attributes.operations.${col}`)
+              }
+            })
+        }
+
+        const opsItems = (cols: { name: string }[]) => {
+            const { modal: { modules: { blockOperations } }, attributes } = this.props;
+            return blockOperations.map((item: any) => {
+              const newItem = { ...item };
+              const opsValues = getNoEmptyFields(attributes['operations'], item);
+              cols.map((col: { name: string }) => {
+                if (col.name === 'kind') return newItem[col.name] = newItem[col.name].slice(0, 1).toLocaleUpperCase().concat(newItem[col.name].slice(1))
+                return newItem[col.name] = this.formatValue(opsValues, attributes['operations'], col.name, true);
+              })
+              return newItem;
+            })
+          }
+
+        const cols = opsColsName(['kind', 'amount', 'fee', 'operation_group_hash', 'source', 'destination', 'parameters']);
+        const items = (opsItems(cols));
+        return {
+            title: cols,
+            items
+        }
+    }
+
     searchActions = () => {
         const items = [...this.schema.items.list, ...this.schema.items.block];
         items.forEach((item: any) => {
@@ -272,7 +307,19 @@ class EntityModal extends Component<any, any> {
         });
     };
 
-    onClickItem = () => {};
+    onClickItem = () => {
+        const tabs = [...this.state.tabs, 'block_operations'];
+        this.setState({
+            tabs,
+            activeTab: 'block_operations'
+        })
+    };
+
+    onTabChange = (e: any, tabName: any) => {
+        this.setState({
+            activeTab: tabName
+        })
+    }
 
     componentDidMount() {
         const { modal: { entity } } = this.props;
@@ -287,7 +334,7 @@ class EntityModal extends Component<any, any> {
 
     render() {
         const { isLoading, match: { params: { id }}, modal: { entity } } = this.props;
-        this.schema = this.getSchema(entity, id);
+        this.schema = this.getSchema(this.state.activeTab || entity, id);
         const title = this.schema?.title || '';
         const list = this.schema?.items?.list?.length ? this.schema.items.list : [];
         const block = this.schema?.items?.block?.length ? this.schema.items.block : [];
@@ -296,14 +343,14 @@ class EntityModal extends Component<any, any> {
                 <ScrollContainer>
                     <ModalContainer>
                         <CloseIcon onClick={this.onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
-                        <Tabs value={title}>
+                        <Tabs value={this.state.activeTab} onChange={this.onTabChange}>
                             {this.state.tabs.map((tab: string) => {
                                 return <Tab key={tab} value={tab} label={tab} />
                             })}
                         </Tabs>
                         {/* {isLoading && <Loader />} */}
 
-                        {!isLoading && (
+                        {!isLoading && this.state.activeTab !== 'block_operations' && (
                             <>
                                 <ListContainer>
                                     {list.map((item: any, index: any) => (
@@ -321,6 +368,12 @@ class EntityModal extends Component<any, any> {
                                         </BottomCol>
                                     ))}
                                 </BottomRowContainer>
+                            </>
+                        )}
+
+                        {!isLoading && this.state.activeTab === 'block_operations' && (
+                            <>
+                                <Table cols={this.schema.title} items={this.schema.items}/>
                             </>
                         )}
                     </ModalContainer>
