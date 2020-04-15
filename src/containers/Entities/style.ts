@@ -16,6 +16,8 @@ export const ModalContainer = styled.div`
   margin: 0 auto;
   width: 798px;
   min-height: 100%;
+  max-height: 80vh;
+  overflow: auto;
 `;
 
 export const ListContainer = styled.div`
