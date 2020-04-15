@@ -41,7 +41,7 @@ class EntityModal extends Component<any, any> {
         this.state = {
             open: true,
             tabs: [],
-            activeTab: ''
+            activeTab: '',
         };
         this.explicitKeys = [];
         this.schema = {};
@@ -199,7 +199,7 @@ class EntityModal extends Component<any, any> {
                                 {blockOperations?.length > 0 ? (
                                     formatValueWithLink({ value: blockOperations.length, onClick: this.onClickItem })
                                 ) : (
-                                    <CircularProgress size={15}/>
+                                    <CircularProgress size={15} />
                                 )}
                             </>
                         ),
@@ -263,34 +263,39 @@ class EntityModal extends Component<any, any> {
     getBlockOperations = () => {
         const opsColsName = (cols: string[]) => {
             const { t } = this.props;
-            return cols.map(col => {
-              return {
-                name: col,
-                displayName: t(`attributes.operations.${col}`)
-              }
-            })
-        }
+            return cols.map((col) => {
+                return {
+                    name: col,
+                    displayName: t(`attributes.operations.${col}`),
+                };
+            });
+        };
 
         const opsItems = (cols: { name: string }[]) => {
-            const { modal: { modules: { blockOperations } }, attributes } = this.props;
+            const {
+                modal: {
+                    modules: { blockOperations },
+                },
+                attributes,
+            } = this.props;
             return blockOperations.map((item: any) => {
-              const newItem = { ...item };
-              const opsValues = getNoEmptyFields(attributes['operations'], item);
-              cols.map((col: { name: string }) => {
-                if (col.name === 'kind') return newItem[col.name] = newItem[col.name].slice(0, 1).toLocaleUpperCase().concat(newItem[col.name].slice(1))
-                return newItem[col.name] = this.formatValue(opsValues, attributes['operations'], col.name, true);
-              })
-              return newItem;
-            })
-          }
+                const newItem = { ...item };
+                const opsValues = getNoEmptyFields(attributes['operations'], item);
+                cols.map((col: { name: string }) => {
+                    if (col.name === 'kind') return (newItem[col.name] = newItem[col.name].slice(0, 1).toLocaleUpperCase().concat(newItem[col.name].slice(1)));
+                    return (newItem[col.name] = this.formatValue(opsValues, attributes['operations'], col.name, true));
+                });
+                return newItem;
+            });
+        };
 
         const cols = opsColsName(['kind', 'amount', 'fee', 'operation_group_hash', 'source', 'destination', 'parameters']);
-        const items = (opsItems(cols));
+        const items = opsItems(cols);
         return {
             title: cols,
-            items
-        }
-    }
+            items,
+        };
+    };
 
     searchActions = () => {
         const items = [...this.schema.items.list, ...this.schema.items.block];
@@ -311,29 +316,41 @@ class EntityModal extends Component<any, any> {
         const tabs = [...this.state.tabs, 'block_operations'];
         this.setState({
             tabs,
-            activeTab: 'block_operations'
-        })
+            activeTab: 'block_operations',
+        });
     };
 
     onTabChange = (e: any, tabName: any) => {
         this.setState({
-            activeTab: tabName
-        })
-    }
+            activeTab: tabName,
+        });
+    };
+
+    onCloseTab = () => {
+
+    };
 
     componentDidMount() {
-        const { modal: { entity } } = this.props;
+        const {
+            modal: { entity },
+        } = this.props;
         const tabs = [...this.state.tabs, entity];
 
         this.searchActions();
         this.setState({
             tabs,
-            activeTab: entity
-        })
+            activeTab: entity,
+        });
     }
 
     render() {
-        const { isLoading, match: { params: { id }}, modal: { entity } } = this.props;
+        const {
+            isLoading,
+            match: {
+                params: { id },
+            },
+            modal: { entity },
+        } = this.props;
         this.schema = this.getSchema(this.state.activeTab || entity, id);
         const title = this.schema?.title || '';
         const list = this.schema?.items?.list?.length ? this.schema.items.list : [];
@@ -342,10 +359,22 @@ class EntityModal extends Component<any, any> {
             <Modal open={this.state.open} disableEnforceFocus>
                 <ScrollContainer>
                     <ModalContainer>
-                        <CloseIcon onClick={this.onClose} size="19px" color="#9b9b9b" iconName="icon-close" />
+                        <CloseIcon onClick={this.onClose} size="19px" top="30px" right="30px" color="#9b9b9b" iconName="icon-close" />
                         <Tabs value={this.state.activeTab} onChange={this.onTabChange}>
-                            {this.state.tabs.map((tab: string) => {
-                                return <Tab key={tab} value={tab} label={tab} />
+                            {this.state.tabs.map((tab: string, index: number) => {
+                                return (
+                                    <Tab
+                                        key={tab}
+                                        value={tab}
+                                        label={
+                                            <>
+                                                {tab}
+                                                {index > 0 && <CloseIcon onClick={this.onCloseTab} size="9px" top="0px" right="0px" color="#9b9b9b" iconName="icon-close" />}
+                                            </>
+                                        }
+                                        component="div"
+                                    />
+                                );
                             })}
                         </Tabs>
                         {/* {isLoading && <Loader />} */}
@@ -373,7 +402,7 @@ class EntityModal extends Component<any, any> {
 
                         {!isLoading && this.state.activeTab === 'block_operations' && (
                             <>
-                                <Table cols={this.schema.title} items={this.schema.items}/>
+                                <Table cols={this.schema.title} items={this.schema.items} />
                             </>
                         )}
                     </ModalContainer>

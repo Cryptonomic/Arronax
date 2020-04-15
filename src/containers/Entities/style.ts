@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { ThemedStyledFunction } from 'styled-components';
 import { ArronaxIcon } from '../../components/ArronaxIcon';
 
 export const ScrollContainer = styled.div`
@@ -24,11 +24,12 @@ export const ListContainer = styled.div`
   width: 100%;
 `;
 
-export const CloseIcon = styled(ArronaxIcon)`
+export const CloseIcon = styled(ArronaxIcon)<{ top: string, left?: string, right?: string }>`
   cursor: pointer;
   position: absolute;
-  top: 30px;
-  right: 30px;
+  top: ${props => props.top};
+  right: ${props => props.right};
+  left: ${props => props.left};
 `;
 
 export const ModalTitle = styled.div`
