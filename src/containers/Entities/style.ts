@@ -1,4 +1,8 @@
-import styled, { ThemedStyledFunction } from 'styled-components';
+import { withStyles } from '@material-ui/core/styles';
+import styled from 'styled-components';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+
 import { ArronaxIcon } from '../../components/ArronaxIcon';
 
 export const ScrollContainer = styled.div`
@@ -113,3 +117,42 @@ export const BottomColContent = styled.div`
   line-height: 19px;
   margin: 8px 0 0 0;
 `;
+
+export const TabsWrapper = withStyles({
+  root: {
+      width: '100%',
+      borderBottom: 'none',
+      marginBottom: '15px',
+      maxHeight: '16px'
+  },
+  flexContainer: {
+      borderBottom: '5px solid #f9fafc',
+      width: 'max-content',
+  },
+  scrollButtons: {
+      color: '#2e3b6c',
+  },
+  indicator: {
+      backgroundColor: '#a6dfe2',
+      height: '2px',
+  },
+})(Tabs);
+
+export const TabWrapper = withStyles({
+  root: {
+      textTransform: 'capitalize',
+      padding: 0,
+      minWidth: '50px',
+      color: '#2e3b6c',
+      fontSize: '16px',
+      letterSpacing: '2px',
+      marginRight: '25px',
+      '&$selected': {
+          fontWeight: 'normal',
+      },
+      '&:last-child': {
+          marginRight: '0px',
+      },
+  },
+  selected: {},
+})(Tab);

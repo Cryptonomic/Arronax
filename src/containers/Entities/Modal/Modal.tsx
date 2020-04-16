@@ -5,14 +5,28 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import Modal from '@material-ui/core/Modal';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 
-import Table from '../../../components/Table'; // rename to ModalTable
 import { fetchOperationsBlock } from '../../../reducers/modal/thunk';
+import {
+    getLoading,
+    getConfigs,
+    getSelectedConfig,
+    getEntity,
+    getItems,
+    getModalItem,
+    getIsFullLoaded,
+    getFilterCount,
+    getColumns,
+    getEntities,
+    getAggregations,
+    getAttributesAll,
+    getRows,
+} from '../../../reducers/app/selectors';
+import { getModal } from '../../../reducers/modal/selectors';
 import { formatValueForDisplay, identifyContract, formatValueWithLink } from '../../../utils/render';
 import { getNoEmptyFields } from '../../../utils/attributes';
 import Loader from '../../../components/Loader';
+import Table from '../../../components/Table'; // rename to ModalTable
 
 import {
     ScrollContainer,
@@ -31,6 +45,8 @@ import {
     BottomColContent,
     MultiLineContainer,
     MultiLineItem,
+    TabsWrapper,
+    TabWrapper
 } from '../style';
 
 class EntityModal extends Component<any, any> {
@@ -82,6 +98,7 @@ class EntityModal extends Component<any, any> {
     getSchema = (name: string, id: string | number) => {
         const {
             attributes,
+            selectedConfig: { network },
             modal: { items, entity },
         } = this.props;
         let values: {}[] = [];
@@ -360,10 +377,10 @@ class EntityModal extends Component<any, any> {
                 <ScrollContainer>
                     <ModalContainer>
                         <CloseIcon onClick={this.onClose} size="19px" top="30px" right="30px" color="#9b9b9b" iconName="icon-close" />
-                        <Tabs value={this.state.activeTab} onChange={this.onTabChange}>
+                        <TabsWrapper value={this.state.activeTab} onChange={this.onTabChange}>
                             {this.state.tabs.map((tab: string, index: number) => {
                                 return (
-                                    <Tab
+                                    <TabWrapper
                                         key={tab}
                                         value={tab}
                                         label={
@@ -372,11 +389,10 @@ class EntityModal extends Component<any, any> {
                                                 {index > 0 && <CloseIcon onClick={this.onCloseTab} size="9px" top="0px" right="0px" color="#9b9b9b" iconName="icon-close" />}
                                             </>
                                         }
-                                        component="div"
                                     />
                                 );
                             })}
-                        </Tabs>
+                        </TabsWrapper>
                         {/* {isLoading && <Loader />} */}
 
                         {!isLoading && this.state.activeTab !== 'block_operations' && (
