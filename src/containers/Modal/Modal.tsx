@@ -46,7 +46,6 @@ class EntityModal extends Component<any, any> {
             open: true,
             tab: '',
             tabActive: false,
-            type: '',
             count: 0,
         };
         this.explicitKeys = [];
