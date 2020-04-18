@@ -7,7 +7,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import ReactDynamicImport from 'react-dynamic-import';
 
 import Header from '../../components/Header';
 import SettingsPanel from '../../components/SettingsPanel';
@@ -19,29 +18,26 @@ import Loader from '../../components/Loader';
 import Tabs from '../../components/Tabs';
 import FilterResults from '../../components/FilterResults';
 import CustomPaginator from '../../components/CustomPaginator';
-import { getItemByPrimaryKey } from '../../reducers/app/thunks';
+import { fetchItemByPrimaryKey } from '../../reducers/modal/thunk';
 import {
     getLoading,
     getConfigs,
     getSelectedConfig,
     getEntity,
     getItems,
-    getModalItem,
     getIsFullLoaded,
     getFilterCount,
     getColumns,
     getEntities,
     getAggregations,
-    getAttributesAll,
     getRows,
 } from '../../reducers/app/selectors';
-import { DynamicModal } from '../Entities/Modal/Modal';
+import DynamicModal from '../Modal';
 import { getModal } from '../../reducers/modal/selectors';
 import { getErrorState, getMessageTxt } from '../../reducers/message/selectors';
 import { initLoad, submitQuery, exportCsvData, shareReport, changeTab, searchByIdThunk } from '../../reducers/app/thunks';
 import { removeAllFiltersAction, addConfigAction, removeConfigAction } from '../../reducers/app/actions';
 import { clearMessageAction } from '../../reducers/message/actions';
-import { getEntityModalName } from '../../utils/hashtable';
 import { defaultPath, reQuery } from '../../router/routes';
 import octopusSrc from '../../assets/sadOctopus.svg';
 
@@ -64,9 +60,6 @@ import {
 import { ToolType, Config } from '../../types';
 import { Props, States } from './types';
 
-//TODO:
-const entityloader = (f: any) => import(`../Entities/${f}`);
-
 class Arronax extends React.Component<Props, States> {
     static defaultProps: any = {
         items: [],
@@ -77,15 +70,9 @@ class Arronax extends React.Component<Props, States> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            primaryKeyClicked: false,
             isSettingCollapsed: false,
             selectedTool: ToolType.FILTER,
-            isModalUrl: false,
             isOpenConfigMdoal: false,
-            isOpenEntityModal: false,
-            searchedEntity: '',
-            searchedItem: [],
-            searchedSubItems: [],
             page: 0,
         };
 
@@ -98,22 +85,6 @@ class Arronax extends React.Component<Props, States> {
         const { initLoad } = this.props;
         const loadProps = this.getLoadProps();
         await initLoad(loadProps);
-        const {
-            modal: { open, entity, items },
-            selectedConfig,
-        } = this.props;
-        if (open && items?.[entity] && items?.[entity].length > 0) {
-            const { platform, network } = selectedConfig;
-            //TODO:
-            const modalName = getEntityModalName(platform, network, entity);
-            this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
-            this.setState({
-                searchedItem: items[entity],
-                searchedEntity: entity,
-                isOpenEntityModal: true,
-                primaryKeyClicked: false,
-            });
-        }
     }
 
     componentDidUpdate(prevProps: Props) {
@@ -281,34 +252,25 @@ class Arronax extends React.Component<Props, States> {
     };
 
     onSearchById = async (val: string | number) => {
-        const { searchById, selectedConfig } = this.props;
+        const { searchById } = this.props;
         const realVal = !Number(val) ? val : Number(val);
         const { entity, items } = await searchById(realVal);
         if (items.length > 0 && entity) {
-            const { platform, network } = selectedConfig;
-            //TODO:
-            // const modalName = getEntityModalName(platform, network, entity);
-            // this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
-            this.setState({ searchedItem: items, searchedEntity: entity, isOpenEntityModal: true, primaryKeyClicked: false });
             this.updateRoute(true, '', val);
         }
     };
 
     onClickPrimaryKey = (entity: string, key: string, value: string | number) => {
-        const { searchedEntity } = this.state;
-        const { getModalItemAction, selectedConfig } = this.props;
-        if (searchedEntity === entity) return;
-        const { platform, network } = selectedConfig;
-        //TODO:
-        // const modalName = getEntityModalName(platform, network, entity);
-        // this.EntityModal = ReactDynamicImport({ name: modalName, loader: entityloader });
+        const {
+            getModalItemAction,
+            modal: { id },
+        } = this.props;
+        if (value === id) return;
         getModalItemAction(entity, key, value);
-        this.setState({ searchedEntity: entity, primaryKeyClicked: true });
         this.updateRoute(true, '', value);
     };
 
     onCloseEntityModal = () => {
-        this.setState({ isOpenEntityModal: false });
         this.updateRoute(true);
     };
 
@@ -323,7 +285,6 @@ class Arronax extends React.Component<Props, States> {
             selectedConfig,
             selectedEntity,
             items,
-            selectedModalItem,
             isFullLoaded,
             filterCount,
             aggCount,
@@ -332,29 +293,13 @@ class Arronax extends React.Component<Props, States> {
             isError,
             message,
             removeConfig,
-            attributes,
             t,
             rowsPerPage,
-            modal
+            modal: { open },
         } = this.props;
-        const {
-            isSettingCollapsed,
-            selectedTool,
-            isModalUrl,
-            isOpenConfigMdoal,
-            isOpenEntityModal,
-            searchedItem,
-            searchedEntity,
-            searchedSubItems,
-            primaryKeyClicked,
-            page,
-        } = this.state;
-        const { EntityModal } = this;
-        const { network } = selectedConfig;
+        const { isSettingCollapsed, selectedTool, isOpenConfigMdoal, page } = this.state;
         const isRealLoading = isLoading || !isFullLoaded;
-        const selectedObjectEntity: any = entities.find((entity) => entity.name === searchedEntity);
 
-        const modalItems = primaryKeyClicked ? selectedModalItem : searchedItem;
         const fullTabsList = entities.map((entity) => entity.name);
         const shortTabsList = selectedConfig.entities || [];
 
@@ -403,11 +348,11 @@ class Arronax extends React.Component<Props, States> {
                             <TabContainer>
                                 {items.length > 0 && (
                                     <CustomTable
-                                        isModalUrl={isModalUrl}
                                         isLoading={isLoading}
                                         items={realRows}
                                         onExportCsv={this.onExportCsv}
                                         updateRoute={this.updateRoute}
+                                        onClickPrimaryKey={this.onClickPrimaryKey}
                                     />
                                 )}
                                 {items.length === 0 && isFullLoaded && (
@@ -439,27 +384,7 @@ class Arronax extends React.Component<Props, States> {
                     </DialogActions>
                 </Dialog>
                 <ConfigModal t={t} open={isOpenConfigMdoal} onClose={this.closeConfigModal} addConfig={this.onAddConfig} />
-                {isOpenEntityModal && (
-                    <DynamicModal
-                        attributes={attributes[network]}
-                        isLoading={isLoading}
-                        selectedConfig={selectedConfig}
-                        selectedEntity={selectedEntity}
-                        modal={modal}
-                    />
-                    // <EntityModal
-                    //     attributes={attributes[network][searchedEntity]}
-                    //     isLoading={isLoading}
-                    //     items={modalItems}
-                    //     open={isOpenEntityModal}
-                    //     opsAttributes={attributes.operations}
-                    //     selectedConfig={selectedConfig}
-                    //     subItems={searchedSubItems}
-                    //     title={selectedObjectEntity.displayName}
-                    //     onClickPrimaryKey={this.onClickPrimaryKey}
-                    //     onClose={this.onCloseEntityModal}
-                    // />
-                )}
+                {isFullLoaded && open && <DynamicModal onClickPrimaryKey={this.onClickPrimaryKey} onCloseEntityModal={this.onCloseEntityModal} />}
             </MainContainer>
         );
     }
@@ -471,7 +396,6 @@ const mapStateToProps = (state: any) => ({
     configs: getConfigs(state),
     selectedConfig: getSelectedConfig(state),
     selectedEntity: getEntity(state),
-    selectedModalItem: getModalItem(state),
     items: getItems(state),
     isFullLoaded: getIsFullLoaded(state),
     selectedColumns: getColumns(state),
@@ -479,7 +403,6 @@ const mapStateToProps = (state: any) => ({
     isError: getErrorState(state),
     message: getMessageTxt(state),
     aggCount: getAggregations(state).length,
-    attributes: getAttributesAll(state),
     rowsPerPage: getRows(state),
     modal: getModal(state),
 });
@@ -495,7 +418,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     addConfig: (config: Config, isUse: boolean) => dispatch(addConfigAction(config, isUse)),
     removeConfig: (index: number) => dispatch(removeConfigAction(index)),
     searchById: (id: string | number) => dispatch(searchByIdThunk(id)),
-    getModalItemAction: (entity: string, key: string, value: string | number) => dispatch(getItemByPrimaryKey(entity, key, value)),
+    getModalItemAction: (entity: string, key: string, value: string | number) => dispatch(fetchItemByPrimaryKey(entity, key, value)),
 });
 
 export const ArronaxApp: any = compose(withTranslation(), withRouter, connect(mapStateToProps, mapDispatchToProps))(Arronax);

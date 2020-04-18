@@ -12,7 +12,6 @@ import {
     SET_AVAILABLE_VALUES,
     COMPLETE_FULL_LOAD,
     SET_FILTER_COUNT,
-    SET_MODAL_ITEM,
     SET_SORT,
     SET_ENTITIES,
     SET_ENTITY,
@@ -29,6 +28,7 @@ import {
 import { AttributeDefinition, EntityDefinition } from 'conseiljs';
 import { Sort, Filter, Config, Aggregation } from '../../types';
 
+// remove?
 export function setItemsAction(entity: string, items: any[]) {
     return {
         type: SET_ITEMS,
@@ -47,6 +47,7 @@ export function setColumnsAction(entity: string, columns: AttributeDefinition[],
     };
 }
 
+// remove?
 export function setFilterAction(filters: Filter[]) {
     return {
         type: SET_FILTER,
@@ -137,18 +138,11 @@ export function setAvailableValuesAction(entity: string, attribute: string, avai
     };
 }
 
+// remove?
 export function setFilterCountAction(count: number) {
     return {
         type: SET_FILTER_COUNT,
         count,
-    };
-}
-
-export function setModalItemAction(item: any[], subItem: object[]) {
-    return {
-        type: SET_MODAL_ITEM,
-        item,
-        subItem,
     };
 }
 

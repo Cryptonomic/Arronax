@@ -20,7 +20,6 @@ import {
     setColumnsAction,
     setAttributesAction,
     completeFullLoadAction,
-    setModalItemAction,
     setEntitiesAction,
     setEntityAction,
     setEntityPropertiesAction,
@@ -30,8 +29,9 @@ import {
     setAggregationAction,
     setQueryFilters,
 } from './actions';
-import { setModalItems, toggleModal } from '../modal/actions';
+import { setModalItems, setModalOpen } from '../modal/actions';
 import { createMessageAction } from '../message/actions';
+import { loadModal } from '../modal/thunk';
 
 import { getTimeStampFromLocal, saveAttributes, validateCache } from '../../utils/attributes';
 import { defaultQueries, CARDINALITY_NUMBER } from '../../utils/defaultQueries';
@@ -352,23 +352,6 @@ const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
     }
 };
 
-const loadModal = (id: string) => async (dispatch: any, state: any) => {
-    const { platform, network, url, apiKey } = state().app.selectedConfig;
-
-    try {
-        const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
-        const items = await executeEntityQuery({ url, apiKey, network }, platform, network, entity, query);
-        await dispatch(setModalItems(entity, items));
-        await dispatch(toggleModal());
-    } catch (e) {
-        let message = 'Unable to load an object for the id';
-        if (e.message === 'Invalid id parameter') {
-            message = 'Invalid id format entered.';
-        }
-        throw Error(message);
-    }
-};
-
 export const initLoad = (props: InitLoad) => async (dispatch: any, state: any) => {
     const { platform = '', network = '', entity = '', id = '', isQuery = false, history } = props;
 
@@ -550,36 +533,6 @@ export const submitQuery = () => async (dispatch: any, state: any) => {
     }
 };
 
-export const getItemByPrimaryKey = (entity: string, primaryKey: string, value: string | number) => async (dispatch: any, state: any) => {
-    dispatch(setLoadingAction(true));
-    const { network, platform, url, apiKey } = state().app.selectedConfig;
-    const serverInfo = { url, apiKey, network };
-
-    let query = blankQuery();
-    let query_operations = null;
-
-    query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
-    const s = String(value);
-    if (s.startsWith('o')) {
-        query = setLimit(query, 1000);
-    } else {
-        query = setLimit(query, 1);
-    }
-
-    if (entity === 'blocks') {
-        query_operations = blankQuery();
-        query_operations = addPredicate(query_operations, 'block_hash', ConseilOperator.EQ, [value], false);
-        query_operations = addOrdering(query_operations, 'kind', ConseilSortDirection.DESC);
-        query_operations = addOrdering(query_operations, 'amount', ConseilSortDirection.DESC);
-    }
-
-    const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
-    const operations = query_operations ? await executeEntityQuery(serverInfo, platform, network, 'operations', query_operations) : [];
-
-    await dispatch(setModalItemAction(items, operations));
-    dispatch(setLoadingAction(false));
-};
-
 export const changeTab = (entity: string) => async (dispatch: any, state: any) => {
     const { selectedConfig, attributes, items } = state().app;
     const { network, platform, url, apiKey } = selectedConfig;
@@ -606,15 +559,9 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
     const { selectedConfig, entities } = state().app;
     const { platform, network, url, apiKey } = selectedConfig;
     const serverInfo = { url, apiKey, network };
-    let query_operations = null;
     try {
         const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
-        if (entity === 'blocks') {
-            query_operations = blankQuery();
-            query_operations = addPredicate(query_operations, 'block_hash', ConseilOperator.EQ, [id], false);
-        }
         const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
-        const operations = query_operations ? await executeEntityQuery(serverInfo, platform, network, 'operations', query_operations) : [];
         if (items.length > 0) {
             await dispatch(changeTab(entity));
         } else {
@@ -622,7 +569,9 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
             dispatch(createMessageAction(`The ${searchedEntity.displayName.toLowerCase()} was not found.`, true));
         }
         dispatch(setLoadingAction(false));
-        return { entity, items, subItems: operations };
+        await dispatch(setModalItems(entity, items, id));
+        await dispatch(setModalOpen(true));
+        return { entity, items };
     } catch (e) {
         if (e.message === 'Invalid id parameter') {
             dispatch(createMessageAction(`Invalid id format entered.`, true));
