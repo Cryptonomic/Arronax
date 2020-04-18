@@ -191,7 +191,8 @@
             "timestamp": "Timestamp",
             "validation_pass": "Validation Pass",
             "period_kind": "Voting Period",
-            "priority": "Priority"
+            "priority": "Priority",
+            "block_operations": "Block Operations"
         },
         "delegates": {
             "pkh": "Address",
