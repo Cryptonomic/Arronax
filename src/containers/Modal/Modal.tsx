@@ -61,8 +61,7 @@ class EntityModal extends Component<any, any> {
                 return getBlockOperations(type, values);
             case 'contract':
                 const { getContract } = this.props;
-                getContract(type, values);
-                return;
+                return getContract(type, values);
             default:
                 return;
         }
