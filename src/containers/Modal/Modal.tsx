@@ -194,7 +194,7 @@ class EntityModal extends Component<any, any> {
             items: {
                 list: [
                     {
-                        title: t('components.entityModal.account.account_id'),
+                        title: t('attributes.accounts.account_id'),
                         value: <>{this.formatValue(values, attributes, 'account_id')}</>,
                     },
                     {
@@ -927,8 +927,13 @@ class EntityModal extends Component<any, any> {
             doRunActions,
             doModalLoading,
         } = this.props;
+        const { tab, tabActive } = this.state;
         const { actions } = this.schema;
         if (previousId !== currentId) {
+            if (tab && tabActive) {
+                this.onCloseTab();
+            }
+
             if (actions && actions.length) {
                 doRunActions(actions);
                 return;
@@ -953,14 +958,16 @@ class EntityModal extends Component<any, any> {
                     <ModalContainer>
                         <TitleWrapper>
                             <CloseIcon onClick={this.onCloseModal} size="19px" top="30px" right="30px" color="#9b9b9b" iconName="icon-close" />
-                            <ModalTitle>
-                                {!tabActive && title}
-                                {tabActive && (
-                                    <>
-                                        <Button onClick={this.onCloseTab}>{title}</Button>/{t(`attributes.blocks.${tab}`)}
-                                    </>
-                                )}
-                            </ModalTitle>
+                            {!isModalLoading && (
+                                <ModalTitle>
+                                    {!tabActive && title}
+                                    {tabActive && (
+                                        <>
+                                            <Button onClick={this.onCloseTab}>{title}</Button>/{t(`attributes.blocks.${tab}`)}
+                                        </>
+                                    )}
+                                </ModalTitle>
+                            )}
                         </TitleWrapper>
 
                         {isModalLoading && <Loader />}
