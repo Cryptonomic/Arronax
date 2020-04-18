@@ -940,6 +940,7 @@ class EntityModal extends Component<any, any> {
     render() {
         const {
             modal: { open, isModalLoading },
+            t,
         } = this.props;
         const { tab, tabActive } = this.state;
         this.schema = this.getSchema();
@@ -956,7 +957,7 @@ class EntityModal extends Component<any, any> {
                                 {!tabActive && title}
                                 {tabActive && (
                                     <>
-                                        <Button onClick={this.onCloseTab}>{title}</Button>/{tab}
+                                        <Button onClick={this.onCloseTab}>{title}</Button>/{t(`attributes.blocks.${tab}`)}
                                     </>
                                 )}
                             </ModalTitle>
