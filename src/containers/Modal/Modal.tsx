@@ -347,7 +347,6 @@ class EntityModal extends Component<any, any> {
 const mapStateToProps = (state: any) => ({
     isLoading: getLoading(state),
     selectedConfig: getSelectedConfig(state),
-    selectedEntity: getEntity(state),
     attributes: getAttributesAll(state),
     modal: getModal(state),
 });
