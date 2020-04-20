@@ -4,5 +4,6 @@ import blockTemplate from './block';
 import contractTemplate from './contract';
 import operationTemplate from './operation';
 import blockOperationsTemplate from './blockOperations';
+import defautTemplate from './default';
 
-export { accountTemplate, bakerTemplate, blockTemplate, contractTemplate, operationTemplate, blockOperationsTemplate };
+export { accountTemplate, bakerTemplate, blockTemplate, contractTemplate, operationTemplate, blockOperationsTemplate, defautTemplate };

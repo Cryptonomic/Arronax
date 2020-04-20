@@ -34,7 +34,7 @@ import {
     Button,
 } from './style';
 
-import { accountTemplate, bakerTemplate, blockTemplate, contractTemplate, operationTemplate, blockOperationsTemplate } from './templates';
+import { accountTemplate, bakerTemplate, blockTemplate, contractTemplate, operationTemplate, blockOperationsTemplate, defautTemplate } from './templates';
 
 class EntityModal extends Component<any, any> {
     schema: any;
@@ -209,8 +209,10 @@ class EntityModal extends Component<any, any> {
                 const props = { modules, attributes: attributes[network]['operations'], network };
                 return blockOperationsTemplate({ ...defaultProps, ...props });
             }
-            default:
-                return values;
+            default: {
+                const props = { getRestListAttrFields: this.getRestListAttrFields }
+                return defautTemplate({ ...defaultProps, ...props });
+            }
         }
     };
 
