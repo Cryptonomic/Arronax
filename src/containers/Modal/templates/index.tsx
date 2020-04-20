@@ -6,4 +6,27 @@ import operationTemplate from './operation';
 import blockOperationsTemplate from './blockOperations';
 import defautTemplate from './default';
 
-export { accountTemplate, bakerTemplate, blockTemplate, contractTemplate, operationTemplate, blockOperationsTemplate, defautTemplate };
+const templates: any = {
+    tezos: {
+        mainnet: {
+            accountTemplate,
+            bakerTemplate,
+            blockTemplate,
+            contractTemplate,
+            operationTemplate,
+            blockOperationsTemplate,
+            defautTemplate,
+        },
+        carthagenet: {
+            accountTemplate,
+            bakerTemplate,
+            blockTemplate,
+            contractTemplate,
+            operationTemplate,
+            blockOperationsTemplate,
+            defautTemplate,
+        },
+    },
+};
+
+export default templates;

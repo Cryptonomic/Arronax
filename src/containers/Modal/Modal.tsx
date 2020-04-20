@@ -34,7 +34,7 @@ import {
     Button,
 } from './style';
 
-import { accountTemplate, bakerTemplate, blockTemplate, contractTemplate, operationTemplate, blockOperationsTemplate, defautTemplate } from './templates';
+import templates from './templates';
 
 class EntityModal extends Component<any, any> {
     schema: any;
@@ -134,27 +134,28 @@ class EntityModal extends Component<any, any> {
 
     findType = (values: any[]) => {
         const {
+            selectedConfig: { platform, network },
             modal: { entity },
         } = this.props;
         const { tab, tabActive } = this.state;
 
         if (tabActive && tab) {
-            return tab;
+            return `${platform}/${network}/${tab}`;
         }
         if (entity === 'accounts' && values.find((v: any) => v.name === 'is_baker')?.value) {
-            return 'baker';
+            return `${platform}${network}/baker`;
         }
         if (entity === 'accounts' && values.find((v: any) => v.name === 'account_id')?.value.startsWith('KT1')) {
-            return 'contract';
+            return `${platform}/${network}/contract`;
         }
 
-        return entity;
+        return `${platform}/${network}/${entity}`;
     };
 
     getSchema = () => {
         const {
             attributes,
-            selectedConfig: { network },
+            selectedConfig: { platform, network },
             modal,
             match: {
                 params: { id },
@@ -171,17 +172,21 @@ class EntityModal extends Component<any, any> {
         this.explicitMinorKeys = []; //reset keys
 
         switch (type) {
-            case 'blocks': {
+            case 'tezos/mainnet/blocks':
+            case 'tezos/carthagenet/blocks': {
                 const props = { modules, id, fetchData: this.fetchData, onClickItem: this.onClickItem, getRestListAttrFields: this.getRestListAttrFields };
-                return blockTemplate({ ...defaultProps, ...props });
+                return templates[platform][network].blockTemplate({ ...defaultProps, ...props });
             }
-            case 'accounts': {
-                return accountTemplate(defaultProps);
+            case 'tezos/mainnet/accounts':
+            case 'tezos/carthagenet/accounts': {
+                return templates[platform][network].accountTemplate(defaultProps);
             }
-            case 'baker': {
-                return bakerTemplate(defaultProps);
+            case 'tezos/mainnet/baker':
+            case 'tezos/carthagenet/baker': {
+                return templates[platform][network].bakerTemplate(defaultProps);
             }
-            case 'contract': {
+            case 'tezos/mainnet/contract':
+            case 'tezos/carthagenet/contract': {
                 const props = {
                     modules,
                     id,
@@ -190,9 +195,10 @@ class EntityModal extends Component<any, any> {
                     getRestListAttrFields: this.getRestListAttrFields,
                     formatSpecificValue: this.formatSpecificValue,
                 };
-                return contractTemplate({ ...defaultProps, ...props });
+                return templates[platform][network].contractTemplate({ ...defaultProps, ...props });
             }
-            case 'operations': {
+            case 'tezos/mainnet/operations':
+            case 'tezos/carthagenet/operations': {
                 const props = {
                     modal,
                     id,
@@ -203,15 +209,16 @@ class EntityModal extends Component<any, any> {
                     getRestListAttrFields: this.getRestListAttrFields,
                     getRestBlockAttrFileds: this.getRestBlockAttrFileds,
                 };
-                return operationTemplate({ ...defaultProps, ...props });
+                return templates[platform][network].operationTemplate({ ...defaultProps, ...props });
             }
-            case 'block_operations': {
+            case 'tezos/mainnet/block_operations':
+            case 'tezos/carthagenet/block_operations': {
                 const props = { modules, attributes: attributes[network]['operations'], network };
-                return blockOperationsTemplate({ ...defaultProps, ...props });
+                return templates[platform][network].blockOperationsTemplate({ ...defaultProps, ...props });
             }
             default: {
-                const props = { getRestListAttrFields: this.getRestListAttrFields }
-                return defautTemplate({ ...defaultProps, ...props });
+                const props = { getRestListAttrFields: this.getRestListAttrFields };
+                return templates[platform][network].defautTemplate({ ...defaultProps, ...props });
             }
         }
     };
