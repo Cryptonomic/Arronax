@@ -1,26 +1,23 @@
 import account from './tezos/mainnet/account';
-import bakerTemplate from './tezos/mainnet/baker';
-import blockTemplate from './tezos/mainnet/block';
-import contractTemplate from './tezos/mainnet/contract';
-import operationTemplate from './tezos/mainnet/operation';
-import blockOperationsTemplate from './tezos/mainnet/blockOperations';
-import defautTemplate from './tezos/mainnet/default';
+import baker from './tezos/mainnet/baker';
+import block from './tezos/mainnet/block';
+import contract from './tezos/mainnet/contract';
+import operation from './tezos/mainnet/operation';
+import defaultTemplate from './tezos/mainnet/default';
 
 const templates: any = {
-    "tezos/mainnet/blocks": blockTemplate,
+    "tezos/mainnet/blocks": block,
     "tezos/mainnet/accounts": account,
-    "tezos/mainnet/bakers": bakerTemplate,
-    "tezos/mainnet/contracts": contractTemplate,
-    "tezos/mainnet/operations": operationTemplate,
-    "tezos/mainnet/block_operations": blockOperationsTemplate,
-    "tezos/mainnet/default": defautTemplate,
-    "tezos/carthagenet/blocks": blockTemplate,
+    "tezos/mainnet/bakers": baker,
+    "tezos/mainnet/contracts": contract,
+    "tezos/mainnet/operations": operation,
+    "tezos/mainnet/default": defaultTemplate,
+    "tezos/carthagenet/blocks": block,
     "tezos/carthagenet/accounts": account,
-    "tezos/carthagenet/bakers": bakerTemplate,
-    "tezos/carthagenet/contracts": contractTemplate,
-    "tezos/carthagenet/operations": operationTemplate,
-    "tezos/carthagenet/block_operations": blockOperationsTemplate,
-    "tezos/carthagenet/default": defautTemplate,
+    "tezos/carthagenet/bakers": baker,
+    "tezos/carthagenet/contracts": contract,
+    "tezos/carthagenet/operations": operation,
+    "tezos/carthagenet/default": defaultTemplate,
 };
 
 export default templates;
