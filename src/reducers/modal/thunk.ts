@@ -10,18 +10,18 @@ import {
 } from 'conseiljs';
 
 import { createMessageAction } from '../message/actions';
-import { setModule, setModalLoading, setModalItems, setModalOpen } from '../modal/actions';
+import { setModule, setModalLoading, setModalItems, setModalOpen, setModalSelectedItem } from '../modal/actions';
 
 const { executeEntityQuery } = ConseilDataClient;
 const { blankQuery, addOrdering, setLimit, addPredicate } = ConseilQueryBuilder;
 
-export const fetchOperationsBlock = (name: string, values: any) => async (dispatch: any, state: any) => {
+export const fetchOperationsBlock = (name: string, id: any) => async (dispatch: any, state: any) => {
     const { network, platform, url, apiKey } = state().app.selectedConfig;
     const serverInfo = { url, apiKey, network };
 
     try {
         let query = blankQuery();
-        query = addPredicate(query, 'block_hash', ConseilOperator.EQ, [values.id], false);
+        query = addPredicate(query, 'block_hash', ConseilOperator.EQ, [id], false);
         query = addOrdering(query, 'kind', ConseilSortDirection.DESC);
         query = addOrdering(query, 'amount', ConseilSortDirection.DESC);
 
@@ -113,17 +113,23 @@ export const fetchItemByPrimaryKey = (entity: string, primaryKey: string, value:
     }
 
     const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
-    await dispatch(setModalItems(entity, items, value));
+    await dispatch(setModalItems(platform, network, entity, value, items));
     await dispatch(setModalOpen(true));
 };
 
-export const loadModal = (id: string) => async (dispatch: any, state: any) => {
-    const { platform, network, url, apiKey } = state().app.selectedConfig;
+export const loadModal = (platform: string, network: string, id: string) => async (dispatch: any, state: any) => {
+    const config = state().app.configs.find((cfg: any) => cfg.platform === platform && cfg.network === network);
+
+    if (!config) {
+        throw Error('Unable to find config');
+    };
+
+    const { url, apiKey } = config;
 
     try {
         const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
         const items = await executeEntityQuery({ url, apiKey, network }, platform, network, entity, query);
-        await dispatch(setModalItems(entity, items, id));
+        await dispatch(setModalItems(platform, network, entity, id, items));
         await dispatch(setModalOpen(true));
     } catch (e) {
         let message = 'Unable to load an object for the id';

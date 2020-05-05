@@ -386,7 +386,7 @@ export const initLoad = (props: InitLoad) => async (dispatch: any, state: any) =
         await validateCache(CACHE_VERSION);
         await dispatch(loadAttributes(isQuery ? id : ''));
 
-        !isQuery && id && (await dispatch(loadModal(id)));
+        !isQuery && id && (await dispatch(loadModal(config.platform, config.network, id)));
 
         await dispatch(completeFullLoadAction(true));
     } catch (e) {
@@ -569,7 +569,7 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
             dispatch(createMessageAction(`The ${searchedEntity.displayName.toLowerCase()} was not found.`, true));
         }
         dispatch(setLoadingAction(false));
-        await dispatch(setModalItems(entity, items, id));
+        await dispatch(setModalItems(platform, network, entity, id, items ));
         await dispatch(setModalOpen(true));
         return { entity, items };
     } catch (e) {

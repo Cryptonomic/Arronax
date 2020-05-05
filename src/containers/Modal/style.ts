@@ -38,6 +38,7 @@ export const CloseIcon = styled(ArronaxIcon)<{ top?: string; left?: string; righ
     top: ${(props) => props.top};
     right: ${(props) => props.right};
     left: ${(props) => props.left};
+    z-index: 1;
 `;
 
 export const ModalTitle = styled.div`

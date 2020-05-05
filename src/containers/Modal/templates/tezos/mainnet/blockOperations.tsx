@@ -1,4 +1,4 @@
-import { getNoEmptyFields } from '../../../utils/attributes';
+import { getNoEmptyFields } from '../../../../../utils/attributes';
 
 const blockOperationsTemplate = (props: any) => {
     const {

@@ -266,8 +266,9 @@ class Arronax extends React.Component<Props, States> {
             modal: { id },
         } = this.props;
         if (value === id) return;
-        getModalItemAction(entity, key, value);
-        this.updateRoute(true, '', value);
+        console.log('ON_PRIMARY_KEY_CLICK') //FIXME:
+        // getModalItemAction(entity, key, value);
+        // this.updateRoute(true, '', value);
     };
 
     onCloseEntityModal = () => {
