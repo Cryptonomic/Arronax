@@ -636,8 +636,12 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
 };
 
 export const getHightCardinalityValues = (attribute: string, prefix: string) => async (dispatch: any, state: any) => {
-    const { selectedConfig, selectedEntity } = state().app;
-    const { platform, network, url, apiKey } = selectedConfig;
-    const serverInfo = { url, apiKey, network };
+  const { selectedConfig, selectedEntity } = state().app;
+  const { platform, network, url, apiKey } = selectedConfig;
+  const serverInfo = { url, apiKey, network };
+  try {
     return await getAttributeValuesForPrefix(serverInfo, platform, network, selectedEntity, attribute, prefix);
+  } catch (e) {
+    return [];
+  }
 };
