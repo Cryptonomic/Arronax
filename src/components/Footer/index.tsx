@@ -35,7 +35,7 @@ const Link = styled.a`
 // const langs = ['en', 'zh-TW', 'ru', 'fr'];
 
 const Footer: React.FC<{}> = () => {
-  const version: string = `${process.env.REACT_APP_VERSION}-${process.env.REACT_APP_GIT_SHA}`;
+  const version: string = `${process.env.REACT_APP_VERSION?.split('-').map((t: string) => t.slice(0, 1).toLocaleUpperCase() + t.slice(1)).join(' ')}-${process.env.REACT_APP_GIT_SHA}`;
   const commitLink: string = `https://github.com/Cryptonomic/Arronax/tree/${process.env.REACT_APP_GIT_SHA}`;
   // const { i18n } = useTranslation();
 

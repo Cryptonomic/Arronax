@@ -34,7 +34,7 @@ const Tabs = (props: TabsProps) => {
     }
 
     return (
-        <TabsWrapper value={selected} scrollButtons="off" variant={expanded ? 'scrollable' : 'standard'} onChange={(e, newValue) => changeHandler(newValue)}>
+        <TabsWrapper value={selected} scrollButtons="on" variant={expanded ? 'scrollable' : 'standard'} onChange={(e, newValue) => changeHandler(newValue)}>
             {tabs.map((tab: string, index: number) => (
                 <TabWrapper key={index} value={tab} label={t(`containers.arronax.${tab}`)} />
             ))}

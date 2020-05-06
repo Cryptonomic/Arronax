@@ -36,7 +36,11 @@ const FilterResults = () => {
     }
 
     const { platform, network } = selectedConfig;
-    const selectedEntity = entities.filter(e => e.name === selectedEntityKey)[0].displayNamePlural;
+    let selectedEntity = '';
+
+    if (entities.length) {
+        selectedEntity = entities.filter((e) => e.name === selectedEntityKey)[0]?.displayNamePlural;
+    }
 
     let result: string | React.ReactElement = selectedEntity;
 
@@ -46,7 +50,7 @@ const FilterResults = () => {
             network,
             selectedEntity,
             queryFilters[selectedEntityKey],
-            attributes[selectedEntityKey],
+            attributes[network][selectedEntityKey],
             customOperators
         );
     }
