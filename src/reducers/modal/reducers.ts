@@ -1,22 +1,28 @@
-import { TOGGLE_MODAL, SET_MODAL, CLEAN_MODAL } from './types';
+import { SET_MODAL_OPEN, SET_MODAL_ITEMS, CLEAN_MODAL, SET_MODULE, SET_MODAL_LOADING } from './types';
 
-const initialState = {
-    entity: '',
+const initialState: any = {
+    id: '',
     open: false,
-    items: [],
-    subItems: [],
+    isModalLoading: true,
+    list: [],
+    modules: {},
 };
 
 export const modal = (state = initialState, action: any) => {
     switch (action.type) {
-        case TOGGLE_MODAL:
-            return { ...state, open: !state.open };
-        case SET_MODAL: {
-            return { ...state, entity: action.entity, items: action.items };
-        }
-        case CLEAN_MODAL: {
+        case SET_MODAL_OPEN:
+            return { ...state, open: action.value };
+        case SET_MODAL_ITEMS:
+            const { platform, network, entity, id, items } = action;
+            const list = [...state.list, { platform, network, entity, id, items }];
+            return { ...state, id, list };
+        case CLEAN_MODAL:
             return initialState;
-        }
+        case SET_MODULE:
+            const modules = { ...state.modules, [action.name]: action.items };
+            return { ...state, modules };
+        case SET_MODAL_LOADING:
+            return { ...state, isModalLoading: action.value };
         default: {
             return state;
         }

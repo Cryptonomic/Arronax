@@ -18,7 +18,6 @@ export interface OwnProps {
     isError: boolean;
     message: string;
     attributes: any;
-    selectedModalItem: object;
     rowsPerPage: number;
     modal: any;
     removeAllFilters: (entity: string) => void;
@@ -37,13 +36,7 @@ export interface OwnProps {
 export interface States {
     isSettingCollapsed: boolean;
     selectedTool: string;
-    isModalUrl: boolean;
     isOpenConfigMdoal: boolean;
-    isOpenEntityModal: boolean;
-    searchedEntity: string;
-    searchedItem: any[];
-    searchedSubItems: any[];
-    primaryKeyClicked: boolean;
     page: number;
 }
 

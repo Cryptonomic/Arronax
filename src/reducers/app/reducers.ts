@@ -15,7 +15,6 @@ import {
     SET_AVAILABLE_VALUES,
     COMPLETE_FULL_LOAD,
     SET_FILTER_COUNT,
-    SET_MODAL_ITEM,
     SET_SORT,
     SET_ENTITIES,
     SET_ENTITY,
@@ -221,8 +220,6 @@ export const app = (state = initialState, action: any) => {
                 ...state,
                 isFullLoaded,
             };
-        case SET_MODAL_ITEM:
-            return { ...state, selectedModalItem: action.item, selectedModalSubItem: action.subItem };
         case SET_SORT: {
             const sort = { ...state.sort, [action.entity]: action.sorts };
             return { ...state, sort };
