@@ -29,15 +29,16 @@ const Block = (props: any) => {
         list = [
             {
                 title: t('attributes.blocks.hash'),
-                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'hash', true)}</>,
+                value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'hash', true),
             },
             {
                 title: t('attributes.blocks.level'),
                 value: (
                     <>
                         {formatValue(explicitKeys, platform, network, entity, values, attributes, 'level')} {t('components.entityModal.of')}{' '}
-                        {t('attributes.blocks.meta_cycle').toLowerCase()} {formatValue(explicitKeys, platform, network, entity, values, attributes, 'meta_cycle')}{' '}
-                        {t('components.entityModal.in')} {t('attributes.blocks.meta_voting_period').toLowerCase()}{' '}
+                        {t('attributes.blocks.meta_cycle').toLowerCase()}{' '}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'meta_cycle')} {t('components.entityModal.in')}{' '}
+                        {t('attributes.blocks.meta_voting_period').toLowerCase()}{' '}
                         {formatValue(explicitKeys, platform, network, entity, values, attributes, 'meta_voting_period')}
                     </>
                 ),
@@ -62,21 +63,21 @@ const Block = (props: any) => {
             },
             {
                 title: t('general.nouns.period'),
-                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'period_kind')}</>,
+                value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'period_kind'),
             },
         ].concat(
             values
                 .filter((v: any) => !explicitKeys.includes(v.name))
                 .map((item: any) => ({
                     title: t(`attributes.${item.entity}.${item.name}`),
-                    value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, item.name, true)}</>,
+                    value: formatValue(explicitKeys, platform, network, entity, values, attributes, item.name, true),
                 }))
         );
 
         blocks = [
             {
                 title: t('attributes.blocks.block_operations'),
-                value: <>{formatValueWithLink({ value: blockOperations.length, onClick: () => onClickItem('block_operations') })}</>,
+                value: formatValueWithLink({ value: blockOperations.length, onClick: () => onClickItem('block_operations') }),
             },
         ];
     }
@@ -114,16 +115,22 @@ const Block = (props: any) => {
     return (
         <>
             {tab && (
-                <TitleWrapper>
-                    <ModalTitle>
-                        <Button onClick={onCloseTab}>{title}</Button>/{t(`attributes.blocks.${tab}`)}
-                    </ModalTitle>
-                </TitleWrapper>
+                <>
+                    <TitleWrapper>
+                        <ModalTitle>
+                            <Button onClick={onCloseTab}>{title}</Button>/{t(`attributes.blocks.${tab}`)}
+                        </ModalTitle>
+                    </TitleWrapper>
+                    <Table cols={tableCols} items={tableItems} />
+                </>
             )}
-            {tab && <Table cols={tableCols} items={tableItems} />}
-            {!tab && <Title title={title} />}
-            {!tab && <List list={list} />}
-            {!tab && <Blocks blocks={blocks} />}
+            {!tab && (
+                <>
+                    <Title title={title} />
+                    <List list={list} />
+                    <Blocks blocks={blocks} />
+                </>
+            )}
         </>
     );
 };

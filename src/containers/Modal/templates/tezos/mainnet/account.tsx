@@ -12,24 +12,26 @@ const Account = (props: any) => {
     const list = [
         {
             title: t('attributes.accounts.account_id'),
-            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'account_id')}</>,
+            value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'account_id'),
         },
         {
             title: t('attributes.accounts.balance'),
-            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'balance')}</>,
+            value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'balance'),
         },
         {
             title: t('components.entityModal.account.last_active_title'),
             value: (
                 <>
-                    {t('components.entityModal.account.at_level', { level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level') })}:
-                    &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_id', true)}
+                    {t('components.entityModal.account.at_level', {
+                        level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level'),
+                    })}
+                    : &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_id', true)}
                 </>
             ),
         },
         {
             title: t(`attributes.accounts.counter`),
-            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'counter')}</>,
+            value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'counter'),
         },
     ];
 

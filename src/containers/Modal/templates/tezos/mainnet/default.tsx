@@ -13,7 +13,7 @@ const Default = (props: any) => {
         .filter((v: any) => !explicitKeys.includes(v.name))
         .map((item: any) => ({
             title: t(`attributes.${item.entity}.${item.name}`),
-            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, item.name, true)}</>,
+            value: formatValue(explicitKeys, platform, network, entity, values, attributes, item.name, true),
         }));
 
     return (

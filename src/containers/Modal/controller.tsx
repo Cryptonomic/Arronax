@@ -14,7 +14,7 @@ const templateType = (entity: string, values: any) => {
 };
 
 export const getTemplate = (platform: string, network: string, entity: string, items: any, id: string, attributes: any) => (others: any) => {
-    const values = getNoEmptyFields(attributes[platform][network][entity], items); //TODO: add attrs platform support
+    const values = getNoEmptyFields(attributes[platform][network][entity], items);
 
     const props = {
         platform,
