@@ -50,7 +50,7 @@ const FilterResults = () => {
             network,
             selectedEntity,
             queryFilters[selectedEntityKey],
-            attributes[network][selectedEntityKey],
+            attributes[platform][network][selectedEntityKey],
             customOperators
         );
     }

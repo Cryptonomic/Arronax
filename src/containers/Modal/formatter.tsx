@@ -4,6 +4,7 @@ import { formatValueForDisplay } from '../../utils/render';
 
 const formatValue = (onClickPrimaryKey: () => void) => (
     explicitKeys: string[],
+    platform: any,
     network: any,
     entity: any,
     processedValues: any[],
@@ -16,11 +17,11 @@ const formatValue = (onClickPrimaryKey: () => void) => (
         return '';
     }
     return formatValueForDisplay(
-        'tezos',
+        platform,
         network,
         entity,
         processedValues.find((i) => i.name === key).value,
-        attributes[network][entity].filter((a: any) => a.name === key)[0],
+        attributes[platform][network][entity].filter((a: any) => a.name === key)[0],
         onClickPrimaryKey,
         undefined,
         truncate
@@ -28,6 +29,7 @@ const formatValue = (onClickPrimaryKey: () => void) => (
 };
 
 const formatSpecificValue = (onClickPrimaryKey: () => void) => (
+    platform: string,
     network: string,
     entity: string,
     value: string,
@@ -49,7 +51,7 @@ const formatSpecificValue = (onClickPrimaryKey: () => void) => (
         visible: true,
     };
 
-    return formatValueForDisplay('tezos', network, entity, value, attribute, onClickPrimaryKey, undefined, truncate);
+    return formatValueForDisplay(platform, network, entity, value, attribute, onClickPrimaryKey, undefined, truncate);
 };
 
 export const formatter = (props: any) => (template: any) => {

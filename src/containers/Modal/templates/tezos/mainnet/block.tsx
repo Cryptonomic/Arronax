@@ -13,11 +13,10 @@ import Table from '../../../../../components/Table';
 import { ModalTitle, TitleWrapper, Button } from '../../../style';
 
 const Block = (props: any) => {
-    console.log('renderBlockComponent', props);
     const blockOperations = useSelector(({ modal }: any) => modal.modules.blockOperations, shallowEqual);
     const { t } = useTranslation();
     const [tab, setTab] = useState('');
-    const { network, entity, values, attributes, formatValue } = props;
+    const { platform, network, entity, values, attributes, formatValue } = props;
     const explicitKeys: string[] = [];
     const title = t('components.entityModal.details', { title: 'Block' });
     let tableCols: any = [];
@@ -25,20 +24,21 @@ const Block = (props: any) => {
     let list: any = [];
     let blocks: any = [];
 
+    // render block list
     if (!tab) {
         list = [
             {
                 title: t('attributes.blocks.hash'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'hash', true)}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'hash', true)}</>,
             },
             {
                 title: t('attributes.blocks.level'),
                 value: (
                     <>
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'level')} {t('components.entityModal.of')}{' '}
-                        {t('attributes.blocks.meta_cycle').toLowerCase()} {formatValue(explicitKeys, network, entity, values, attributes, 'meta_cycle')}{' '}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'level')} {t('components.entityModal.of')}{' '}
+                        {t('attributes.blocks.meta_cycle').toLowerCase()} {formatValue(explicitKeys, platform, network, entity, values, attributes, 'meta_cycle')}{' '}
                         {t('components.entityModal.in')} {t('attributes.blocks.meta_voting_period').toLowerCase()}{' '}
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'meta_voting_period')}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'meta_voting_period')}
                     </>
                 ),
             },
@@ -46,8 +46,8 @@ const Block = (props: any) => {
                 title: t('attributes.blocks.baker'),
                 value: (
                     <>
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'baker')} {t('components.entityModal.of')}{' '}
-                        {t('attributes.blocks.priority').toLowerCase()} {formatValue(explicitKeys, network, entity, values, attributes, 'priority')}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'baker')} {t('components.entityModal.of')}{' '}
+                        {t('attributes.blocks.priority').toLowerCase()} {formatValue(explicitKeys, platform, network, entity, values, attributes, 'priority')}
                     </>
                 ),
             },
@@ -55,21 +55,21 @@ const Block = (props: any) => {
                 title: t('attributes.blocks.protocol'),
                 value: (
                     <>
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'proto')}:{' '}
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'protocol', true)}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'proto')}:{' '}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'protocol', true)}
                     </>
                 ),
             },
             {
                 title: t('general.nouns.period'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'period_kind')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'period_kind')}</>,
             },
         ].concat(
             values
                 .filter((v: any) => !explicitKeys.includes(v.name))
                 .map((item: any) => ({
                     title: t(`attributes.${item.entity}.${item.name}`),
-                    value: <>{formatValue(explicitKeys, network, entity, values, attributes, item.name, true)}</>,
+                    value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, item.name, true)}</>,
                 }))
         );
 
@@ -81,6 +81,7 @@ const Block = (props: any) => {
         ];
     }
 
+    // render block operations tab
     if (tab) {
         const opsColsName = (cols: string[]) => {
             return cols.map((col) => {
@@ -94,10 +95,10 @@ const Block = (props: any) => {
         const opsItems = (cols: { name: string }[]) => {
             return blockOperations.map((item: any) => {
                 const newItem = { ...item };
-                const opsValues = getNoEmptyFields(attributes[network]['operations'], item);
+                const opsValues = getNoEmptyFields(attributes[platform][network]['operations'], item);
                 cols.map((col: { name: string }) => {
                     if (col.name === 'kind') return (newItem[col.name] = newItem[col.name].slice(0, 1).toLocaleUpperCase().concat(newItem[col.name].slice(1)));
-                    return (newItem[col.name] = formatValue(explicitKeys, network, 'operations', opsValues, attributes, col.name, true));
+                    return (newItem[col.name] = formatValue(explicitKeys, platform, network, 'operations', opsValues, attributes, col.name, true));
                 });
                 return newItem;
             });

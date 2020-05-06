@@ -5,16 +5,15 @@ import Title from '../../../parts/Title';
 import List from '../../../parts/List';
 
 const Default = (props: any) => {
-    console.log('renderDefaultComponent', props);
     const { t } = useTranslation();
-    const { network, entity, values, attributes, formatValue } = props;
+    const { platform, network, entity, values, attributes, formatValue } = props;
     const explicitKeys: string[] = [];
     const title = t('components.entityModal.details', { title: 'Account' });
     const list = values
         .filter((v: any) => !explicitKeys.includes(v.name))
         .map((item: any) => ({
             title: t(`attributes.${item.entity}.${item.name}`),
-            value: <>{formatValue(explicitKeys, network, entity, values, attributes, item.name, true)}</>,
+            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, item.name, true)}</>,
         }));
 
     return (

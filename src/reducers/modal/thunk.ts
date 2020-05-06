@@ -10,7 +10,7 @@ import {
 } from 'conseiljs';
 
 import { createMessageAction } from '../message/actions';
-import { setModule, setModalLoading, setModalItems, setModalOpen, setModalSelectedItem } from '../modal/actions';
+import { setModule, setModalLoading, setModalItems, setModalOpen } from '../modal/actions';
 
 const { executeEntityQuery } = ConseilDataClient;
 const { blankQuery, addOrdering, setLimit, addPredicate } = ConseilQueryBuilder;
@@ -122,7 +122,7 @@ export const loadModal = (platform: string, network: string, id: string) => asyn
 
     if (!config) {
         throw Error('Unable to find config');
-    };
+    }
 
     const { url, apiKey } = config;
 

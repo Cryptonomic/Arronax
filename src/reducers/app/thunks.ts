@@ -330,7 +330,8 @@ const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
                 return curr;
             }, {}) as {};
 
-            attrs[network] = { ...attrMap };
+            attrs[platform] = {};
+            attrs[platform][network] = { ...attrMap };
 
             await dispatch(setAttributesAction(attrs));
             saveAttributes(attrs, currentDate, CACHE_VERSION);
@@ -344,7 +345,7 @@ const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
 
     try {
         await dispatch(
-            fetchInitEntityAction(platform, selectedEntity, network, { url, apiKey, network }, attributes[network][selectedEntity], selectedEntity, query)
+            fetchInitEntityAction(platform, selectedEntity, network, { url, apiKey, network }, attributes[platform][network][selectedEntity], selectedEntity, query)
         );
     } catch (e) {
         const message = `Unable to load data: ${e}.`;
@@ -541,7 +542,7 @@ export const changeTab = (entity: string) => async (dispatch: any, state: any) =
     try {
         if (!items[entity] || (items[entity] && items[entity].length === 0)) {
             dispatch(setLoadingAction(true));
-            await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[network][entity], '', ''));
+            await dispatch(fetchInitEntityAction(platform, entity, network, serverInfo, attributes[platform][network][entity], '', ''));
             dispatch(setLoadingAction(false));
         }
     } catch (e) {

@@ -15,7 +15,7 @@ export const getEntity = createSelector(getAppState, (apps) => apps.selectedEnti
 
 export const getEntities = createSelector(getAppState, (apps) => [...apps.entities]);
 
-export const getAttributes = createSelector(getAppState, (apps) => [...apps.attributes[apps.selectedConfig.network][apps.selectedEntity]] || []);
+export const getAttributes = createSelector(getAppState, (apps) => [...apps.attributes[apps.selectedConfig.platform][apps.selectedConfig.network][apps.selectedEntity]] || []);
 
 export const getAttributesAll = createSelector(getAppState, (apps) => apps.attributes);
 

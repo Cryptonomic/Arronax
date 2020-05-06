@@ -8,28 +8,27 @@ import Title from '../../../parts/Title';
 import List from '../../../parts/List';
 
 const Contract = (props: any) => {
-    console.log('renderContractComponent', props);
     const contract = useSelector(({ modal }: any) => modal.modules.contract, shallowEqual);
     const { t } = useTranslation();
-    const { network, entity, values, attributes, formatValue, formatSpecificValue } = props;
+    const { platform, network, entity, values, attributes, formatValue, formatSpecificValue } = props;
     const explicitKeys: string[] = ['is_baker']; // do not render Baker field
     const title = t('components.entityModal.details', { title: 'Contract' });
 
     let list: any = [
         {
             title: t('components.entityModal.account.contract'),
-            value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'account_id')}</>,
+            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'account_id')}</>,
         },
         {
             title: t('attributes.accounts.balance'),
-            value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'balance')}</>,
+            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'balance')}</>,
         },
         {
             title: t('components.entityModal.account.last_active_title'),
             value: (
                 <>
-                    {t('components.entityModal.account.at_level', { level: formatValue(explicitKeys, network, entity, values, attributes, 'block_level') })}:
-                    &nbsp; {formatValue(explicitKeys, network, entity, values, attributes, 'block_id', true)}
+                    {t('components.entityModal.account.at_level', { level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level') })}:
+                    &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_id', true)}
                 </>
             ),
         },
@@ -62,18 +61,18 @@ const Contract = (props: any) => {
     if (contract?.type?.startsWith('FA1.2')) {
         contractList.push({
             title: t('components.entityModal.account.tokenAdmin'),
-            value: <>{formatSpecificValue(network, entity, contract.metadata.manager, AttrbuteDataType.ACCOUNT_ADDRESS, false)}</>,
+            value: <>{formatSpecificValue(platform, network, entity, contract.metadata.manager, AttrbuteDataType.ACCOUNT_ADDRESS, false)}</>,
         });
         contractList.push({
             title: t('components.entityModal.account.tokenSupply'),
-            value: <>{formatSpecificValue(network, entity, contract.metadata.supply, AttrbuteDataType.DECIMAL, true)}</>,
+            value: <>{formatSpecificValue(platform, network, entity, contract.metadata.supply, AttrbuteDataType.DECIMAL, true)}</>,
         });
     }
 
     if (contract?.type === 'Babylon Delegation Contract') {
         contractList.push({
             title: t('components.entityModal.account.admin'),
-            value: <>{formatSpecificValue(network, entity, contract.metadata.manager, AttrbuteDataType.ACCOUNT_ADDRESS, false)}</>,
+            value: <>{formatSpecificValue(platform, network, entity, contract.metadata.manager, AttrbuteDataType.ACCOUNT_ADDRESS, false)}</>,
         });
     }
 
@@ -82,7 +81,7 @@ const Contract = (props: any) => {
             .filter((v: any) => !explicitKeys.includes(v.name))
             .map((item: any) => ({
                 title: t(`attributes.${item.entity}.${item.name}`),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, item.name, true)}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, item.name, true)}</>,
             }))
     );
 

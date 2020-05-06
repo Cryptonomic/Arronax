@@ -1,5 +1,3 @@
-import React from 'react';
-
 import templates from './templates';
 import { formatter } from './formatter';
 import { getNoEmptyFields } from '../../utils/attributes';
@@ -16,7 +14,7 @@ const templateType = (entity: string, values: any) => {
 };
 
 export const getTemplate = (platform: string, network: string, entity: string, items: any, id: string, attributes: any) => (others: any) => {
-    const values = getNoEmptyFields(attributes[network][entity], items); //TODO: add attrs platform support
+    const values = getNoEmptyFields(attributes[platform][network][entity], items); //TODO: add attrs platform support
 
     const props = {
         platform,
@@ -29,5 +27,5 @@ export const getTemplate = (platform: string, network: string, entity: string, i
         ...others,
     };
 
-    return formatter(props)(templates[`${platform}/${network}/${templateType(entity, values)}`]);
+    return formatter(props)(templates[`${platform}/${network}/${templateType(entity, values)}` || `${platform}/${network}/default`]);
 };

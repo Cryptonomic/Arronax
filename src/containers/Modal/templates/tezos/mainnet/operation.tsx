@@ -1,19 +1,15 @@
 import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import { useTranslation } from 'react-i18next';
-import { useSelector, shallowEqual } from 'react-redux';
 
-import { fetchOperationsBlock } from '../../../../../reducers/modal/thunk';
-import { formatValueWithLink } from '../../../../../utils/render';
 import Title from '../../../parts/Title';
 import List from '../../../parts/List';
 import Blocks from '../../../parts/Blocks';
 import { ArronaxIcon } from '../../../../../components/ArronaxIcon';
 
 const Operation = (props: any) => {
-    console.log('renderOperationComponent', props.values);
     const { t } = useTranslation();
-    const { network, entity, items, values, attributes, formatValue, count, setCount } = props;
+    const { platform, network, entity, items, values, attributes, formatValue, count, setCount } = props;
     const explicitKeys: string[] = [];
     const explicitMinorKeys: string[] = [];
     const total = items[entity] ? items[entity].length : 0;
@@ -73,24 +69,24 @@ const Operation = (props: any) => {
     if (opKind === 'transaction' && values.find((i: any) => i.name === 'parameters') === undefined) {
         list = [
             {
-                title: formatValue(explicitKeys, network, entity, values, attributes, 'kind'),
+                title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'kind'),
                 value: (
                     <>
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'source', true)} &nbsp;&#x27A1;&nbsp;{' '}
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'destination', true)}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'source', true)} &nbsp;&#x27A1;&nbsp;{' '}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'destination', true)}
                     </>
                 ),
             },
             {
                 title: t('attributes.operations.amount'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'amount')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'amount')}</>,
             },
         ];
 
         if (!isInternal) {
             list.push({
                 title: t('attributes.operations.fee'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'fee')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'fee')}</>,
             });
         }
 
@@ -102,12 +98,12 @@ const Operation = (props: any) => {
         }
 
         list.push({
-            title: formatValue(explicitKeys, network, entity, values, attributes, 'status'),
+            title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'status'),
             value: (
                 <>
-                    {t('components.entityModal.operation.at_level', { level: formatValue(explicitKeys, network, entity, values, attributes, 'block_level') })}{' '}
-                    {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, network, entity, values, attributes, 'cycle') })}: &nbsp;{' '}
-                    {formatValue(explicitKeys, network, entity, values, attributes, 'block_hash', true)}
+                    {t('components.entityModal.operation.at_level', { level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level') })}{' '}
+                    {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, platform, network, entity, values, attributes, 'cycle') })}: &nbsp;{' '}
+                    {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
                 </>
             ),
         });
@@ -115,46 +111,46 @@ const Operation = (props: any) => {
         if (hasError) {
             list.push({
                 title: t('attributes.operations.errors'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'errors')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'errors')}</>,
             });
         }
 
         list.push({
             title: t('attributes.operations.timestamp'),
-            value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'timestamp')}</>,
+            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp')}</>,
         });
 
         list.push({
             title: t('attributes.operations.operation_group_hash'),
-            value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'operation_group_hash')}</>,
+            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'operation_group_hash')}</>,
         });
     }
 
     if (opKind === 'transaction' && values.find((i: any) => i.name === 'parameters') !== undefined) {
         list = [
             {
-                title: formatValue(explicitKeys, network, entity, values, attributes, 'kind'),
+                title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'kind'),
                 value: (
                     <>
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'source', true)} &nbsp;&#x27A1;&nbsp;{' '}
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'destination', true)}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'source', true)} &nbsp;&#x27A1;&nbsp;{' '}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'destination', true)}
                     </>
                 ),
             },
             {
                 title: t('attributes.operations.parameters'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'parameters')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'parameters')}</>,
             },
             {
                 title: t('attributes.operations.amount'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'amount')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'amount')}</>,
             },
         ];
 
         if (!isInternal) {
             list.push({
                 title: t('attributes.operations.fee'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'fee')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'fee')}</>,
             });
         }
 
@@ -166,12 +162,12 @@ const Operation = (props: any) => {
         }
 
         list.push({
-            title: formatValue(explicitKeys, network, entity, values, attributes, 'status'),
+            title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'status'),
             value: (
                 <>
-                    {t('components.entityModal.operation.at_level', { level: formatValue(explicitKeys, network, entity, values, attributes, 'block_level') })}{' '}
-                    {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, network, entity, values, attributes, 'cycle') })}: &nbsp;{' '}
-                    {formatValue(explicitKeys, network, entity, values, attributes, 'block_hash', true)}
+                    {t('components.entityModal.operation.at_level', { level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level') })}{' '}
+                    {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, platform, network, entity, values, attributes, 'cycle') })}: &nbsp;{' '}
+                    {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
                 </>
             ),
         });
@@ -179,52 +175,52 @@ const Operation = (props: any) => {
         if (hasError) {
             list.push({
                 title: t('attributes.operations.errors'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'errors')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'errors')}</>,
             });
         }
 
         list.push({
             title: t('attributes.operations.timestamp'),
-            value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'timestamp')}</>,
+            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp')}</>,
         });
 
         list.push({
             title: t('attributes.operations.consumed_gas'),
             value: (
                 <>
-                    {formatValue(explicitKeys, network, entity, values, attributes, 'consumed_gas')} {t('components.entityModal.of')}{' '}
-                    {formatValue(explicitKeys, network, entity, values, attributes, 'gas_limit')}
+                    {formatValue(explicitKeys, platform, network, entity, values, attributes, 'consumed_gas')} {t('components.entityModal.of')}{' '}
+                    {formatValue(explicitKeys, platform, network, entity, values, attributes, 'gas_limit')}
                 </>
             ),
         });
 
         list.push({
             title: t('attributes.operations.operation_group_hash'),
-            value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'operation_group_hash')}</>,
+            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'operation_group_hash')}</>,
         });
     }
 
     if (opKind === 'endorsement') {
         list = [
             {
-                title: formatValue(explicitKeys, network, entity, values, attributes, 'kind'),
+                title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'kind'),
                 value: (
                     <>
-                        {t('components.entityModal.of')} {formatValue(explicitKeys, network, entity, values, attributes, 'branch', true)}{' '}
-                        {t('components.entityModal.operation.at_level', { level: formatValue(explicitKeys, network, entity, values, attributes, 'level') })}
+                        {t('components.entityModal.of')} {formatValue(explicitKeys, platform, network, entity, values, attributes, 'branch', true)}{' '}
+                        {t('components.entityModal.operation.at_level', { level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'level') })}
                     </>
                 ),
             },
             {
                 title: t('attributes.operations.delegate'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'delegate')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'delegate')}</>,
             },
             {
                 title: t('attributes.operations.slots'),
                 value: (
                     <>
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'number_of_slots')}:{' '}
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'slots')}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'number_of_slots')}:{' '}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'slots')}
                     </>
                 ),
             },
@@ -232,10 +228,10 @@ const Operation = (props: any) => {
                 title: t('attributes.operations.timestamp'),
                 value: (
                     <>
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'timestamp')} &nbsp; {t('components.entityModal.in')} &nbsp;{' '}
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'block_hash', true)}{' '}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp')} &nbsp; {t('components.entityModal.in')} &nbsp;{' '}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}{' '}
                         {t('components.entityModal.operation.at_level', {
-                            level: formatValue(explicitKeys, network, entity, values, attributes, 'block_level'),
+                            level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level'),
                         })}
                     </>
                 ),
@@ -246,29 +242,29 @@ const Operation = (props: any) => {
     if (opKind === 'delegation') {
         list = [
             {
-                title: formatValue(explicitKeys, network, entity, values, attributes, 'kind'),
+                title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'kind'),
                 value:
                     values.find((i: any) => i.name === 'delegate') === undefined ? (
                         <>
-                            {formatValue(explicitKeys, network, entity, values, attributes, 'source', true)} {t('components.entityModal.to')}{' '}
+                            {formatValue(explicitKeys, platform, network, entity, values, attributes, 'source', true)} {t('components.entityModal.to')}{' '}
                             {t('components.entityModal.clear')}
                         </>
                     ) : (
                         <>
-                            {formatValue(explicitKeys, network, entity, values, attributes, 'source', true)} {t('components.entityModal.to')}{' '}
-                            {formatValue(explicitKeys, network, entity, values, attributes, 'delegate', true)}
+                            {formatValue(explicitKeys, platform, network, entity, values, attributes, 'source', true)} {t('components.entityModal.to')}{' '}
+                            {formatValue(explicitKeys, platform, network, entity, values, attributes, 'delegate', true)}
                         </>
                     ),
             },
             {
-                title: formatValue(explicitKeys, network, entity, values, attributes, 'status'),
+                title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'status'),
                 value: (
                     <>
                         {t('components.entityModal.operation.at_level', {
-                            level: formatValue(explicitKeys, network, entity, values, attributes, 'block_level'),
+                            level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level'),
                         })}{' '}
-                        {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, network, entity, values, attributes, 'cycle') })}:
-                        &nbsp; {formatValue(explicitKeys, network, entity, values, attributes, 'block_hash', true)}
+                        {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, platform, network, entity, values, attributes, 'cycle') })}:
+                        &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
                     </>
                 ),
             },
@@ -277,21 +273,21 @@ const Operation = (props: any) => {
         if (hasError) {
             list.push({
                 title: t('attributes.operations.errors'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'errors')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'errors')}</>,
             });
         }
 
         list.push({
             title: t('attributes.operations.timestamp'),
-            value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'timestamp')}</>,
+            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp')}</>,
         });
 
         list.push({
             title: t('attributes.operations.consumed_gas'),
             value: (
                 <>
-                    {formatValue(explicitKeys, network, entity, values, attributes, 'consumed_gas')} {t('components.entityModal.of')}{' '}
-                    {formatValue(explicitKeys, network, entity, values, attributes, 'gas_limit')}
+                    {formatValue(explicitKeys, platform, network, entity, values, attributes, 'consumed_gas')} {t('components.entityModal.of')}{' '}
+                    {formatValue(explicitKeys, platform, network, entity, values, attributes, 'gas_limit')}
                 </>
             ),
         });
@@ -300,23 +296,23 @@ const Operation = (props: any) => {
     if (opKind === 'origination') {
         list = [
             {
-                title: formatValue(explicitKeys, network, entity, values, attributes, 'kind'),
+                title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'kind'),
                 value: (
                     <>
-                        {t('components.entityModal.of')} {formatValue(explicitKeys, network, entity, values, attributes, 'originated_contracts', true)}{' '}
-                        {t('components.entityModal.by')} {formatValue(explicitKeys, network, entity, values, attributes, 'source', true)}
+                        {t('components.entityModal.of')} {formatValue(explicitKeys, platform, network, entity, values, attributes, 'originated_contracts', true)}{' '}
+                        {t('components.entityModal.by')} {formatValue(explicitKeys, platform, network, entity, values, attributes, 'source', true)}
                     </>
                 ),
             },
             {
-                title: formatValue(explicitKeys, network, entity, values, attributes, 'status'),
+                title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'status'),
                 value: (
                     <>
                         {t('components.entityModal.operation.at_level', {
-                            level: formatValue(explicitKeys, network, entity, values, attributes, 'block_level'),
+                            level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level'),
                         })}{' '}
-                        {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, network, entity, values, attributes, 'cycle') })}:
-                        &nbsp; {formatValue(explicitKeys, network, entity, values, attributes, 'block_hash', true)}
+                        {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, platform, network, entity, values, attributes, 'cycle') })}:
+                        &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
                     </>
                 ),
             },
@@ -325,21 +321,21 @@ const Operation = (props: any) => {
         if (hasError) {
             list.push({
                 title: t('attributes.operations.errors'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'errors')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'errors')}</>,
             });
         }
 
         list.push({
             title: t('attributes.operations.timestamp'),
-            value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'timestamp')}</>,
+            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp')}</>,
         });
 
         list.push({
             title: t('attributes.operations.consumed_gas'),
             value: (
                 <>
-                    {formatValue(explicitKeys, network, entity, values, attributes, 'consumed_gas')} {t('components.entityModal.of')}{' '}
-                    {formatValue(explicitKeys, network, entity, values, attributes, 'gas_limit')}
+                    {formatValue(explicitKeys, platform, network, entity, values, attributes, 'consumed_gas')} {t('components.entityModal.of')}{' '}
+                    {formatValue(explicitKeys, platform, network, entity, values, attributes, 'gas_limit')}
                 </>
             ),
         });
@@ -348,23 +344,23 @@ const Operation = (props: any) => {
     if (opKind === 'reveal') {
         list = [
             {
-                title: formatValue(explicitKeys, network, entity, values, attributes, 'kind'),
+                title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'kind'),
                 value: (
                     <>
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'public_key', true)} {t('components.entityModal.by')}{' '}
-                        {formatValue(explicitKeys, network, entity, values, attributes, 'source', true)}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'public_key', true)} {t('components.entityModal.by')}{' '}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'source', true)}
                     </>
                 ),
             },
             {
-                title: formatValue(explicitKeys, network, entity, values, attributes, 'status'),
+                title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'status'),
                 value: (
                     <>
                         {t('components.entityModal.operation.at_level', {
-                            level: formatValue(explicitKeys, network, entity, values, attributes, 'block_level'),
+                            level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level'),
                         })}{' '}
-                        {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, network, entity, values, attributes, 'cycle') })}:
-                        &nbsp; {formatValue(explicitKeys, network, entity, values, attributes, 'block_hash', true)}
+                        {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, platform, network, entity, values, attributes, 'cycle') })}:
+                        &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
                     </>
                 ),
             },
@@ -373,21 +369,21 @@ const Operation = (props: any) => {
         if (hasError) {
             list.push({
                 title: t('attributes.operations.errors'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'errors')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'errors')}</>,
             });
         }
 
         list.push({
             title: t('attributes.operations.timestamp'),
-            value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'timestamp')}</>,
+            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp')}</>,
         });
 
         list.push({
             title: t('attributes.operations.consumed_gas'),
             value: (
                 <>
-                    {formatValue(explicitKeys, network, entity, values, attributes, 'consumed_gas')} {t('components.entityModal.of')}{' '}
-                    {formatValue(explicitKeys, network, entity, values, attributes, 'gas_limit')}
+                    {formatValue(explicitKeys, platform, network, entity, values, attributes, 'consumed_gas')} {t('components.entityModal.of')}{' '}
+                    {formatValue(explicitKeys, platform, network, entity, values, attributes, 'gas_limit')}
                 </>
             ),
         });
@@ -396,11 +392,11 @@ const Operation = (props: any) => {
     if (opKind === 'ballot') {
         list = [
             {
-                title: formatValue(explicitKeys, network, entity, values, attributes, 'ballot'),
+                title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'ballot'),
                 value: (
                     <>
-                        {t('components.entityModal.by')} {formatValue(explicitKeys, network, entity, values, attributes, 'source', true)}{' '}
-                        {t('components.entityModal.on')} {formatValue(explicitKeys, network, entity, values, attributes, 'proposal', true)}
+                        {t('components.entityModal.by')} {formatValue(explicitKeys, platform, network, entity, values, attributes, 'source', true)}{' '}
+                        {t('components.entityModal.on')} {formatValue(explicitKeys, platform, network, entity, values, attributes, 'proposal', true)}
                     </>
                 ),
             },
@@ -409,16 +405,16 @@ const Operation = (props: any) => {
                 value: (
                     <>
                         {t('components.entityModal.operation.at_level', {
-                            level: formatValue(explicitKeys, network, entity, values, attributes, 'block_level'),
+                            level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level'),
                         })}{' '}
-                        {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, network, entity, values, attributes, 'cycle') })}:
-                        &nbsp; {formatValue(explicitKeys, network, entity, values, attributes, 'block_hash', true)}
+                        {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, platform, network, entity, values, attributes, 'cycle') })}:
+                        &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
                     </>
                 ),
             },
             {
                 title: t('attributes.operations.timestamp'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'timestamp')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp')}</>,
             },
         ];
     }
@@ -426,28 +422,28 @@ const Operation = (props: any) => {
     if (opKind === 'activate_account') {
         list = [
             {
-                title: formatValue(explicitKeys, network, entity, values, attributes, 'kind'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'pkh', true)}</>,
+                title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'kind'),
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'pkh', true)}</>,
             },
             {
                 title: t('attributes.operations.secret'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'secret')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'secret')}</>,
             },
             {
                 title: t('components.entityModal.recorded'),
                 value: (
                     <>
                         {t('components.entityModal.operation.at_level', {
-                            level: formatValue(explicitKeys, network, entity, values, attributes, 'block_level'),
+                            level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level'),
                         })}{' '}
-                        {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, network, entity, values, attributes, 'cycle') })}:
-                        &nbsp; {formatValue(explicitKeys, network, entity, values, attributes, 'block_hash', true)}
+                        {t('components.entityModal.operation.in_cycle', { cycle: formatValue(explicitKeys, platform, network, entity, values, attributes, 'cycle') })}:
+                        &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
                     </>
                 ),
             },
             {
                 title: t('attributes.operations.timestamp'),
-                value: <>{formatValue(explicitKeys, network, entity, values, attributes, 'timestamp')}</>,
+                value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp')}</>,
             },
         ];
     }
@@ -456,14 +452,14 @@ const Operation = (props: any) => {
         .filter((v: any) => !explicitKeys.includes(v.name))
         .map((item: any) => ({
             title: t(`attributes.${item.entity}.${item.name}`),
-            value: <>{formatValue(explicitKeys, network, entity, values, attributes, item.name, true)}</>,
+            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, item.name, true)}</>,
         }));
 
     const restBlockItems = explicitMinorKeys
         .filter((name: string) => values.find((i: any) => i.name === name) !== undefined)
         .map((name: string) => ({
             title: t(`attributes.operations.${name}`),
-            value: <>{formatValue(explicitKeys, network, entity, values, attributes, name)}</>,
+            value: <>{formatValue(explicitKeys, platform, network, entity, values, attributes, name)}</>,
         }));
 
     list = [...list, ...restListItems];
