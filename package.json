@@ -1,6 +1,6 @@
 {
   "name": "arronax",
-  "version": "8.0.0",
+  "version": "9.0.0",
   "description": "Blockchain analytics and business intelligence tool for the Tezos chain.",
   "author": "Cryptonomic",
   "license": "GPL-3.0",
@@ -28,7 +28,7 @@
     "@types/throttle-debounce": "^2.1.0",
     "autosuggest-highlight": "^3.1.1",
     "base64url": "^3.0.1",
-    "conseiljs": "0.4.2-beta.1",
+    "conseiljs": "5.0.0-alpha.1",
     "i18next": "^19.1.0",
     "i18next-browser-languagedetector": "^4.0.1",
     "i18next-xhr-backend": "^3.2.2",
@@ -54,6 +54,10 @@
     "styled-components": "^5.0.1",
     "throttle-debounce": "^2.1.0",
     "typescript": "~3.8.3"
+  },
+  "engines": {
+    "node": ">=12.16.x",
+    "npm": ">=6.14.x"
   },
   "scripts": {
     "start": "REACT_APP_VERSION=$(git describe --abbrev=0) REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts start",

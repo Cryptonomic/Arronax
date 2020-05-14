@@ -14,15 +14,15 @@ import './utils/i18n';
 import Routes from './router/routes';
 
 function App() {
-  return (
-    <Suspense fallback={<Loader />}>
-      <DndProvider backend={HTML5Backend}>
-        <Router>
-          <Routes />
-        </Router>
-			</DndProvider>
-    </Suspense>
-  );
+    return (
+        <Suspense fallback={<Loader />}>
+            <DndProvider backend={HTML5Backend}>
+                <Router>
+                    <Routes />
+                </Router>
+            </DndProvider>
+        </Suspense>
+    );
 }
 
 
