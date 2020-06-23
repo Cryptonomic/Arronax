@@ -42,10 +42,11 @@ export const defaultQueries: any = {
         orderBy: [],
         limit: 1000
     },
-    delegates: {
-        fields: ['block_level', 'pkh', 'balance', 'delegated_balance', 'staking_balance'],
-        predicates: [{ field: 'deactivated',operation: 'eq',set: [false], inverse: false }],
-        orderBy: [{ field: 'block_level', direction: 'desc' }],
+    bakers: {
+        fields: ["pkh", "balance", "rolls", "delegated_balance", "frozen_balance", "staking_balance", "block_level"],
+        predicates: [{ field: "deactivated", operation: "eq", set: ["false"] },
+            { field: "rolls", operation: "gt", set: [0] }],
+        orderBy: [{ field: "block_level", direction: "desc" }],
         aggregation: [],
         limit: 1000
     },

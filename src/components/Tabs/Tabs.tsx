@@ -10,7 +10,7 @@ const Tabs = (props: TabsProps) => {
     const [expanded, setExpanded] = useState<boolean>(false);
     const { t } = useTranslation();
     const { full, short, selected, onChange } = props;
-    let tabs: string[] = (!short.length && full.slice(0, 3)) || short;
+    let tabs: string[] = (!short.length && full.slice(0, 4)) || short;
 
     useEffect(() => {
         if (!short.includes(selected)) {
