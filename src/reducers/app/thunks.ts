@@ -383,6 +383,7 @@ export const initLoad = (platformParam = '', networkParam = '', entityParam = ''
 
   try {
     entities = await getEntities(serverInfo, platform, network);
+    entities = entities.sort((a: EntityDefinition, b: EntityDefinition) => { return a.displayName.localeCompare(b.displayName); });
   } catch (e) {
     const message = `Unable to load entity data for ${platform.charAt(0).toUpperCase() + platform.slice(1)} ${network.charAt(0).toUpperCase() + network.slice(1)}.`
     await dispatch(createMessageAction(message, true));

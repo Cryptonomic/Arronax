@@ -334,8 +334,11 @@ class Arronax extends React.Component<Props, States> {
     const selectedObjectEntity: any = entities.find(entity => entity.name === searchedEntity);
 
     const modalItems = primaryKeyClicked ? selectedModalItem : searchedItem;
-    const fullTabsList = entities.map(entity => entity.name);
     const shortTabsList = selectedConfig.entities || [];
+    const fullTabsList = [
+        ...shortTabsList,
+        ...entities.map(entity => entity.name).filter(item => !shortTabsList.includes(item))
+    ];
 
     const rowCount = rowsPerPage !== null ? rowsPerPage : 10;
     const realRows = items.slice(
