@@ -4,7 +4,7 @@ USER node
 RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
 COPY --chown=node:node . /home/node/app
-RUN npm install
+RUN npm ci
 RUN npm cache clean --force
 RUN npm run build
 
