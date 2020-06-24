@@ -12,7 +12,7 @@ git clone https://github.com/Cryptonomic/Arronax.git
 cd Arronax
 npm install
 #Read instructions for configuration
-npm run start
+npm start
 ```
 
 ### Configuration Instructions
@@ -30,7 +30,7 @@ const configs: Config[] = [
     url: 'conseil.server',
     apiKey: 'SomeSecret',
     nodeUrl: 'tezos.server',
-    entities: ['blocks', 'operations', 'accounts', 'delegates', 'governance'],
+    entities: ['blocks', 'operations', 'accounts', 'bakers', 'governance'],
     hiddenEntities: ['originated_account_maps', 'big_maps', 'big_map_contents']
   }
 ]

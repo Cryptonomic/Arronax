@@ -4,10 +4,11 @@ USER node
 RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
 COPY --chown=node:node . /home/node/app
-RUN npm install
+RUN npm ci
 RUN npm cache clean --force
 RUN npm run build
 
 FROM nginx:stable
 EXPOSE 80
+COPY default.conf /etc/nginx/conf.d
 COPY --from=build /home/node/app/build /usr/share/nginx/html

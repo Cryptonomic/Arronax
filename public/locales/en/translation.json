@@ -104,7 +104,7 @@
             "blocks": "Blocks",
             "operations": "Operations",
             "accounts": "Accounts",
-            "delegates": "Bakers",
+            "bakers": "Bakers",
             "balance_updates": "Balance Updates",
             "ballots": "Ballots",
             "fees": "Fees",
@@ -118,7 +118,9 @@
             "registered_tokens": "Registered Tokens",
             "originated_account_maps": "Map Owners",
             "big_maps": "Map Definitons",
-            "big_map_contents": "Map Content"
+            "big_map_contents": "Map Content",
+            "known_addresses": "Known Addresses",
+            "baker_registry": "TCF Baker Registry"
         }
     },
     "attributes": {
@@ -134,7 +136,8 @@
             "storage": "Storage",
             "balance": "Balance",
             "block_level": "Block Level",
-            "is_baker": "Baker"
+            "is_baker": "Baker",
+            "is_activated": "Activated"
         },
         "accounts_history": {
             "account_id": "Address",
@@ -146,7 +149,9 @@
             "counter": "Counter",
             "delegate_value": "Delegate",
             "cycle": "Cycle",
-            "is_baker": "Baker"
+            "is_baker": "Registered Baker",
+            "is_active_baker": "Active Baker",
+            "is_activated": "Activated Account"
         },
         "balance_updates": {
             "id": "Id",
@@ -192,9 +197,12 @@
             "validation_pass": "Validation Pass",
             "period_kind": "Voting Period",
             "priority": "Priority",
-            "block_operations": "Block Operations"
+            "utc_year": "Year (UTC)",
+            "utc_month": "Month (UTC)",
+            "utc_day": "Day (UTC)",
+            "utc_time": "Time (UTC)"
         },
-        "delegates": {
+        "bakers": {
             "pkh": "Address",
             "block_id": "Block Hash",
             "balance": "Balance",
@@ -203,7 +211,10 @@
             "delegated_balance": "Delegated Balance",
             "deactivated": "Deactivated",
             "grace_period": "Grace period",
-            "block_level": "Block Level"
+            "block_level": "Block Level",
+            "cycle": "Cycle",
+            "period": "Period",
+            "rolls": "Rolls"
         },
         "fees": {
             "low": "Low",
@@ -265,7 +276,11 @@
             "errors": "Error",
             "parameters_entrypoints": "Contract Function",
             "ballot_period": "Ballot Period",
-            "parameters_micheline": "Parameters (Micheline)"
+            "parameters_micheline": "Parameters (Micheline)",
+            "utc_year": "Year (UTC)",
+            "utc_month": "Month (UTC)",
+            "utc_day": "Day (UTC)",
+            "utc_time": "Time (UTC)"
         },
         "baking_rights": {
             "block_hash": "Block Hash",
@@ -278,6 +293,7 @@
         },
         "endorsing_rights": {
             "block_hash": "Block Hash",
+            "endorsed_block": "Endorsed Block",
             "delegate": "Baker",
             "estimated_time": "Estimated Time",
             "level": "Block Level",
@@ -298,13 +314,19 @@
             "yay_rolls": "Yea Rolls",
             "nay_rolls": "Nay Rolls",
             "pass_rolls": "Pass Rolls",
-            "total_rolls": "Total Rolls"
+            "total_rolls": "Total Rolls",
+            "block_pass_count": "Pass Count",
+            "block_yay_count": "Yea Count",
+            "block_nay_count": "Nay Count",
+            "block_pass_rolls": "Pass Rolls",
+            "block_yay_rolls": "Yay Rolls",
+            "block_nay_rolls": "Nay Rolls"
         },
         "registered_tokens": {
             "account_id": "Address",
             "id": "Id",
             "name": "Name",
-            "standard": "Standard"
+            "contract_type": "Type"
         },
         "originated_account_maps":{
             "big_map_id": "Map Index",
@@ -319,7 +341,42 @@
             "big_map_id": "Map Index",
             "key": "Key",
             "key_hash": "Hashed Key",
-            "value": "Value"
+            "value": "Value",
+            "operation_group_id": "Op Group Hash"
+        },
+        "known_addresses": {
+            "address": "Address",
+            "alias": "Alias"
+        },
+        "baker_registry": {
+            "timestamp": "Timestamp",
+            "name": "Name",
+            "is_accepting_delegation": "Is accepting delegation",
+            "external_data_url": "External data URL",
+            "split": "Split",
+            "payment_accounts": "Payment accounts",
+            "minimum_delegation": "Minimum delegation",
+            "payout_delay": "Payout delay",
+            "payout_frequency": "Payout frequency",
+            "minimum_payout": "Minimum payout",
+            "is_cheap": "Incomplete Payout",
+            "pay_for_own_blocks": "Pay for own blocks",
+            "pay_for_endorsements": "Pay for endorsements",
+            "pay_gained_fees": "Pay gained fees",
+            "pay_for_accusation_gains": "Pay for accusation gains",
+            "subtract_lost_deposits_when_accused": "Subtract lost deposits when accused",
+            "subtract_lost_rewards_when_accused": "Subtract lost rewards when accused",
+            "subtract_lost_fees_when_accused": "Subtract lost fees when accused",
+            "pay_for_revelation": "Pay for revelation",
+            "subtract_lost_rewards_when_miss_revelation": "Subtract lost rewards when miss revelation",
+            "subtract_lost_fees_when_miss_revelation": "Subtract lost fees when miss revelation",
+            "compensate_missed_blocks": "Compensate missed blocks",
+            "pay_for_stolen_blocks": "Pay for stolen blocks",
+            "compensate_missed_endorsements": "Compensate missed endorsements",
+            "compensate_low_priority_endorsement_loss": "Compensate low priority endorsement loss",
+            "overdelegation_threshold": "Overdelegation threshold",
+            "subtract_rewards_from_uninvited_delegation": "Subtract rewards from uninvited delegation",
+            "record_manager": "Record manager"
         }
     },
     "operators": {
