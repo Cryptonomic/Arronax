@@ -4,7 +4,7 @@ USER node
 RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
 COPY --chown=node:node . /home/node/app
-RUN sudo apt-get install libusb-1.0.0
+RUN sudo apt-get install libusb-1.0.0 -y
 RUN npm install
 RUN npm cache clean --force
 RUN npm run build
