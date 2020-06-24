@@ -12,7 +12,7 @@ git clone https://github.com/Cryptonomic/Arronax.git
 cd Arronax
 npm install
 #Read instructions for configuration
-npm run start
+npm start
 ```
 
 ### Configuration Instructions
