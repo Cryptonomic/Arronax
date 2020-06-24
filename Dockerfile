@@ -4,6 +4,7 @@ USER node
 RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
 COPY --chown=node:node . /home/node/app
+ENV PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
 RUN npm install
 RUN npm cache clean --force
 RUN npm run build
