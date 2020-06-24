@@ -11,4 +11,5 @@ before_script:
     - npm ci
 
 script:
+    - unset CI
     - npm run build
