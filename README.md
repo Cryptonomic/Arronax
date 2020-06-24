@@ -30,7 +30,7 @@ const configs: Config[] = [
     url: 'conseil.server',
     apiKey: 'SomeSecret',
     nodeUrl: 'tezos.server',
-    entities: ['blocks', 'operations', 'accounts', 'delegates', 'governance'],
+    entities: ['blocks', 'operations', 'accounts', 'bakers', 'governance'],
     hiddenEntities: ['originated_account_maps', 'big_maps', 'big_map_contents']
   }
 ]
