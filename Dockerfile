@@ -13,5 +13,5 @@ RUN npm run build
 FROM nginx:stable
 EXPOSE 80
 COPY default.conf /etc/nginx/conf.d
-COPY --from=build /home/node/app/build /usr/share/nginx/html
+COPY --from=build /home/node/app/build /usr/share/nginx/html/
 RUN chmod -R ugo+r /usr/share/nginx/html/*
