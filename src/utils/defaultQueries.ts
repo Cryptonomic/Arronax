@@ -37,10 +37,16 @@ export const defaultQueries: any = {
         limit: 1000
     },
     balance_updates: {
-        fields: [],
-        predicates: [{ field: 'level', set: [805066], operation: 'gt', inverse: false }],
-        orderBy: [],
-        limit: 1000
+      "fields": [],
+      "predicates": [],
+      "orderBy": [
+        {
+          "field": "block_level",
+          "direction": "desc"
+        }
+      ],
+      "aggregation": [],
+      "limit": 1000
     },
     bakers: {
         fields: ["pkh", "balance", "rolls", "delegated_balance", "frozen_balance", "staking_balance", "block_level"],
