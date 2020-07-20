@@ -1,17 +1,25 @@
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 import DialogContent from '@material-ui/core/DialogContent';
+import Background from '../../assets/images/main_banner.png';
 
 export const Container = styled.div`
+  align-self: center;
+  flex: 1 1 auto;
   display: flex;
-  flex-wrap: wrap;
-  padding: 50px 0;
-  min-height: calc(100vh - 405px);
+  flex-flow: column nowrap;
+  justify-content: center;
+  text-align: center;
 `;
 
 export const MainContainer = styled.div`
-  position: relative;
+  display:flex;
+  flex-direction: column;
   min-height: 100vh;
+  background-image: url(${Background});
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 `;
 
 export const TabContainer = styled.div`
