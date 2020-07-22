@@ -77,3 +77,21 @@ export const ListContainer = styled.ul`
     padding:0;
 `;
 
+export const styles: any = {
+    outlineBtn: {
+        padding: '10px 30px',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        fontFamily: 'Futura',
+        height: 'auto',
+        lineHeight: '21px',
+        borderRadius: '5px',
+        letterSpacing: '2.42667px',
+        boxShadow:  ' none !important',
+        outline: 'none !important',
+        border: '1px solid #FF7477;',
+        color: '#FF7477',
+        background: '#fff !important'
+    },
+};
+

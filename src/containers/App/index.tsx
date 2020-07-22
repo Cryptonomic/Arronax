@@ -19,8 +19,7 @@ import Tabs from '../../components/Tabs';
 import FilterResults from '../../components/FilterResults';
 import CustomPaginator from '../../components/CustomPaginator';
 import { fetchItemByPrimaryKey } from '../../reducers/modal/thunk';
-import Home from '../Home/index';
-import HomePage from '../Homepage/index';
+import Banner from '../../components/Home/Banner';
 import {ContainerNew} from './styles';
 
 import {
@@ -376,7 +375,7 @@ class Arronax extends React.Component<Props, States> {
                         //         )}
                         //     </TabContainer>
                         // </React.Fragment>
-                        <Home></Home>
+                        <Banner/>
                     )}
                 </Container>
                 </ContainerNew>
@@ -394,7 +393,6 @@ class Arronax extends React.Component<Props, States> {
                 </Dialog>
                 <ConfigModal t={t} open={isOpenConfigMdoal} onClose={this.closeConfigModal} addConfig={this.onAddConfig} />
                 {isFullLoaded && open && <DynamicModal onClickPrimaryKey={this.onClickPrimaryKey} onCloseEntityModal={this.onCloseEntityModal} />}
-                        <HomePage></HomePage>
                         {/* <Footer /> */}
             </MainContainer>
         );
