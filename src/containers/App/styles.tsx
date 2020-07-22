@@ -12,7 +12,7 @@ export const Container = styled.div`
   text-align: center;
 `;
 
-export const MainContainer = styled.div`
+export const ContainerNew = styled.div`
   display:flex;
   flex-direction: column;
   min-height: 100vh;
@@ -20,6 +20,11 @@ export const MainContainer = styled.div`
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  position: relative;
+`;
+
+export const MainContainer = styled.div`
+  
 `;
 
 export const TabContainer = styled.div`

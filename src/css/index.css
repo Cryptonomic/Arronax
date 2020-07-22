@@ -173,32 +173,3 @@ div[class^="Footer"] a {
     color: #56c2d9;
     text-decoration: none;
 }
-
-
-/* Button styles */
-
-.btn {
-    padding: 10px 30px;
-    font-size: 16px;
-    font-weight: bold;
-    font-family: 'Futura';
-    height: auto;
-    line-height: 21px;
-    border: 0;
-    border-radius: 5px;
-    letter-spacing: 2.42667px;
-    box-shadow: none !important;
-    outline: none !important;
-    cursor: pointer;
-    width: max-content;
-    align-self: center;
-}
-
-.btn.btn-primary {
-    background: #FF7477;
-    color: #fff;
-}
-
-.btn.btn-primary:hover {
-    background: rgb(245, 98, 101);
-}
