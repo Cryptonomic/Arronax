@@ -14,6 +14,7 @@ import { SectionTitle } from './style';
 import { Footer } from './style';
 import { ListItem } from './style';
 import { ListContainer } from './style';
+import Banner from '../../components/Home/Banner';
 
 import AskIcon from '../../assets/icons/ask_question_icon.svg';
 import AggregatedDataIcon from '../../assets/icons/aggregated_data_icon.svg';
@@ -47,6 +48,7 @@ const HomePage = (props: any) => {
         <React.Fragment>
             <WhiteBg>
                 <Container maxWidth="lg">
+                    <Banner/>
                     <Padding>
                         <Grid container spacing={0}>
                             <Grid item xs={4}>

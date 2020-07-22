@@ -1,0 +1,113 @@
+import * as d3 from "d3";
+
+export class chartGenerator {
+
+    
+    static seperateAxisPrioritizedBarChartGenerator(height: number, width: number, graphSVGElement: any, axisSVGElement: any, queryResult: Array<object>, xAxisKey: string, yAxisKey: string, axisWidth:number = 100, barColor:string = "rgba(135, 194, 205, 0.58639)") {
+        
+        // Clear SVG Elements of old data
+        graphSVGElement.selectAll("*").remove();
+        axisSVGElement.selectAll("*").remove();
+    
+        // Create an Array for each Axis
+        let xAxisData: any = queryResult.map(d => parseFloat((<any>d)[xAxisKey]));
+        const yAxisData: any = queryResult.map(d => parseFloat((<any>d)[yAxisKey]));
+    
+        // Create a D3 Linear Scale for the Y-Axis
+        const yScale = d3.scaleLinear()
+            .domain([0, d3.max<any>(yAxisData)])
+            .range([0, height]);
+    
+        // Create a D3 Linear Scale for the Y-Axis Label
+        // We negate the height here so that the bars are drawn correctly
+        const yAxisScale: any = d3.scaleLinear<string>()
+            .domain([0, d3.max<any>(yAxisData)])
+            .range(<any>([0, -height]));
+    
+        // Create a D3 Band Scale for the X-Axis
+        // A static SVG will have a fixed size no matter the number of elements
+        // Here, the width parameter is treated as the width of each bar in the graph
+        let range: any = d3.range(xAxisData.length);
+        let xScale = d3.scaleBand()
+            .domain(range)
+            .range([0, width]);
+    
+        // Setup SVG element attributes 
+        graphSVGElement
+            .attr("height", height)
+            .attr("width", width)
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "10")
+            .attr("text-anchor", "end");
+            
+        if(xScale.bandwidth() <= 1) {
+            let rangeData: any = d3.range(xAxisData.length)
+            xScale = d3.scaleBand()
+                .domain(rangeData)
+                .range([0, xAxisData.length * 3]);
+    
+            // Set up SVG element for graph
+            graphSVGElement
+                .attr("height", height)
+                .attr("width", xScale.range()[1] + 25)
+                .attr("font-family", "sans-serif")
+                .attr("font-size", "10")
+                .attr("text-anchor", "end");
+        }
+    
+        // Create selection for bar graph bars
+        const bar = graphSVGElement.selectAll("g")
+            .data(yAxisData) //Attach bars to Y-Axis data
+            .join("g")
+                .attr("transform", (d: any, i: any) => `translate(${xScale(i)}, ${height - yScale(d)})`);
+    
+        bar.append("rect")
+            .attr("fill", barColor)
+            .attr("width", xScale.bandwidth() - 1) // Sets a padding of one pixel between bars
+            .attr("height", yScale);
+        
+        // // Create startup transition
+        // bar.selectAll("rect")
+        //     .transition()
+        //     .duration(800) // 800 milliseconds to transition from height 0 to the correct height
+        //     .attr("height", yScale);
+    
+        // Create a Y-Axis Scale
+        const yAxis = d3.axisLeft(yAxisScale).scale(yAxisScale);
+    
+        // Prepare the Y-Axis Element
+        axisSVGElement
+            .attr("height", height)
+            .attr("class", "axis")
+            .attr("width", axisWidth)
+    
+        // Attach the axis to the SVG Element
+        axisSVGElement
+            .append("g")
+                .attr("transform", `translate(${axisWidth}, ${height})`)
+                .style("color", "black")
+                .call(yAxis);
+    }
+
+    static barGraphFloatingTooltipGenerator(graphSVGElement: any, xLabelFunction: Function, yLabelFunction: Function) {
+        
+        //Select all bar graph bar elements
+        const bar = graphSVGElement.selectAll("g")
+        
+        // Set up tooltip for graph data viewing
+        const tooltip = d3.select("body").append("div").attr("class", "toolTip");
+    
+        // Add event listener for tooltip
+        bar.on("mousemove", function(d: any, i: number) {
+            tooltip
+                .style("left", d3.event.pageX - 50 + "px")
+                .style("top", d3.event.pageY - 70 + "px")
+                .style("display", "inline-block")
+                .html(yLabelFunction(d, i) + "<br>" + xLabelFunction(d, i));
+        })
+            .on("mouseout", function(d: any){ tooltip.style("display", "none");
+        });
+    }
+    
+}
+

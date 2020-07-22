@@ -3,7 +3,7 @@ import { Title } from './style';
 import { Text } from './style';
 import { Title2 } from './style';
 import { BottomDiv } from './style';
-import DownArrow from '../../assets/icons/down-arrow.png';
+import DownArrow from '../../../assets/icons/down-arrow.png';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -28,7 +28,7 @@ const useStyles = makeStyles({
     },
 });
 
-const Home = (props: any) => {
+const Banner = (props: any) => {
     const classes = useStyles();
     return (
         <>
@@ -46,4 +46,4 @@ const Home = (props: any) => {
     );
 };
 
-export default Home;
+export default Banner;
