@@ -57,6 +57,7 @@ export class chartGenerator {
                 .attr("text-anchor", "end");
         }
 
+        // X axis Label
         graphSVGElement.append("text")
             .attr("class", "x label")
             .attr("text-anchor", "end")
@@ -64,11 +65,15 @@ export class chartGenerator {
             .attr("y", height +10)
             .text("Time (hour)");
 
+        // Y axis Label
         graphSVGElement.append("text")
+            
+            .attr("class", "y label")
+            .attr("text-anchor", "end")
+            .attr("x", -height/2)
+            .attr("y", 10)
             .attr("transform", "rotate(-90)")
-            .attr("y", -10)
-            .attr("x",0 - (height / 2))
-            .text("Value"); 
+            .text("XTZ (ꜩ)");
 
         // Create selection for bar graph bars
         const bar = graphSVGElement.selectAll("g")
