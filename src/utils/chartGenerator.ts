@@ -93,7 +93,7 @@ export class chartGenerator {
         const bar = graphSVGElement.selectAll("g")
         
         // Set up tooltip for graph data viewing
-        const tooltip = d3.select("body").append("div").attr("class", "toolTip");
+        const tooltip = d3.select("body").append("div").attr("class", "graphToolTip");
     
         // Add event listener for tooltip
         bar.on("mousemove", function(d: any, i: number) {

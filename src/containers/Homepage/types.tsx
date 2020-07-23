@@ -1,8 +1,11 @@
 export interface Props {
     
     classes: any;
+    hourlytransactions: Transactions[];
+    isError: boolean;
+    message: string;
     loadHourlyTransactions: (date: number) => void;
-    hourlytransactions: Transactions[]
+    initMessage: () => void;
 }
 
 export interface States {

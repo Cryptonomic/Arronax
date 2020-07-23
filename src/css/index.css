@@ -173,3 +173,15 @@ div[class^="Footer"] a {
     color: #56c2d9;
     text-decoration: none;
 }
+
+.graphToolTip:before {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid #313c4e;
+    position: absolute;
+    left: -10px;
+    top: 10px;
+    content: '';
+}

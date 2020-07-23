@@ -5,6 +5,10 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import * as d3 from 'd3';
 import moment from 'moment';
 
@@ -20,6 +24,10 @@ import { ListItem } from './style';
 import { ListContainer, styles } from './style';
 import { BannerHolder } from './style';
 import { MapHolder } from './style';
+import {
+    DismissButton,
+    DialogContentWrapper,
+} from '../App/styles';
 import Banner from '../../components/Home/Banner';
 import {chartGenerator} from '../../utils/chartGenerator';
 import { loadHourlyTransactions } from '../../reducers/app/thunks';
@@ -27,6 +35,8 @@ import {
     getLoadingHome,
     getHourlyTransactions
 } from '../../reducers/app/selectors';
+import { getErrorState, getMessageTxt } from '../../reducers/message/selectors';
+import { clearMessageAction } from '../../reducers/message/actions';
 
 import AskIcon from '../../assets/icons/ask_question_icon.svg';
 import AggregatedDataIcon from '../../assets/icons/aggregated_data_icon.svg';
@@ -113,8 +123,13 @@ class Home extends React.Component<Props, States> {
         chartGenerator.barGraphFloatingTooltipGenerator(svg, xTooltip, yTooltip);
     }
 
+    handleErrorClose = () => {
+        const { initMessage } = this.props;
+        initMessage();
+    };
+
     render() {
-        const { classes } = this.props;
+        const { classes, isError, message } = this.props;
         return (
             <React.Fragment>
                 <BannerHolder>
@@ -239,6 +254,15 @@ class Home extends React.Component<Props, States> {
                         </ListContainer>
                     </Container>
                 </Footer>
+                <Dialog open={isError} onClose={this.handleErrorClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                    <DialogTitle id="alert-dialog-title">Error</DialogTitle>
+                    <DialogContentWrapper>
+                        <DialogContentText id="alert-dialog-description">{message}</DialogContentText>
+                    </DialogContentWrapper>
+                    <DialogActions>
+                        <DismissButton onClick={this.handleErrorClose}>Dismiss</DismissButton>
+                    </DialogActions>
+                </Dialog>
             </React.Fragment>
         );
     }
@@ -248,10 +272,13 @@ class Home extends React.Component<Props, States> {
 const mapStateToProps = (state: any) => ({
     isLoadingHome: getLoadingHome(state),
     hourlytransactions: getHourlyTransactions(state),
+    isError: getErrorState(state),
+    message: getMessageTxt(state),
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     loadHourlyTransactions: (date: number) => dispatch(loadHourlyTransactions(date)),
+    initMessage: () => dispatch(clearMessageAction()),
 });
 
 export const HomePage: any = compose(withStyles(styles), connect(mapStateToProps, mapDispatchToProps))(Home);

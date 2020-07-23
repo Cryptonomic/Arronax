@@ -292,7 +292,9 @@ export const loadHourlyTransactions = (date: number) => async (dispatch: any, st
         const message =
             e.message ||
             `Unable to load transactions data for Home page.`;
-        throw Error(message);
+        if (e.message) {
+            await dispatch(createMessageAction(e.message, true));
+        }
     }
 }
 const loadEntities = () => async (dispatch: any, state: any) => {
