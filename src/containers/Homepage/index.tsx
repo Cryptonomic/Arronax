@@ -110,7 +110,7 @@ class Home extends React.Component<Props, States> {
     async generateHourlyTransactionsGraph(data: Array<any>, label: Array<any>, timestamps: Array<any>) {
         let svg = d3.select(this.transactionPerHour.current);
         
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(280, 380, svg, data, 'date', 'values');
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(280, 500, svg, data, 'date', 'values');
 
         const xTooltip = function(d: any, i: number) {
             return moment(timestamps[i]).format();
