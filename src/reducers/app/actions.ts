@@ -23,6 +23,8 @@ import {
     SET_AGGREGATIONS,
     SET_SUBMIT,
     SET_QUERY_FILTERS,
+    SET_HOME_LOADING,
+    SET_HOURLY_TRANSACTIONS
 } from './types';
 
 import { AttributeDefinition, EntityDefinition } from 'conseiljs';
@@ -214,3 +216,18 @@ export const setQueryFilters = (entity: string, queryFilters: any): any => ({
     entity,
     queryFilters,
 });
+
+export function setHomeLoadingAction(isHomeLoading: boolean) {
+    return {
+        type: SET_HOME_LOADING,
+        isHomeLoading,
+    };
+}
+
+
+export function setHourlyTransactions(hourlytransactions: Array<object>) {
+    return {
+        type: SET_HOURLY_TRANSACTIONS,
+        hourlytransactions,
+    };
+}

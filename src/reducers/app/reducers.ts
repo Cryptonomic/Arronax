@@ -23,6 +23,8 @@ import {
     SET_AGGREGATIONS,
     SET_SUBMIT,
     SET_QUERY_FILTERS,
+    SET_HOME_LOADING,
+    SET_HOURLY_TRANSACTIONS
 } from './types';
 
 import { EntityDefinition } from 'conseiljs';
@@ -54,6 +56,8 @@ export interface AppState {
     selectedConfig: Config;
     aggregations: object;
     aggFunctions: object;
+    isHomeLoading: boolean,
+    hourlytransactions: Array<object>
 }
 
 let initialState: AppState = {
@@ -126,6 +130,8 @@ let initialState: AppState = {
             { name: 'count', displayName: 'Count' },
         ],
     },
+    isHomeLoading: true,
+    hourlytransactions: []
 };
 
 export const app = (state = initialState, action: any) => {
@@ -276,6 +282,10 @@ export const app = (state = initialState, action: any) => {
             const filters = { ...state.queryFilters, [entity]: queryFilters };
             return { ...state, queryFilters: filters };
         }
+        case SET_HOME_LOADING:
+            return { ...state, isHomeLoading: action.isHomeLoading };
+        case SET_HOURLY_TRANSACTIONS: 
+            return { ...state, hourlytransactions: action.hourlytransactions };
     }
     return state;
 };

@@ -44,3 +44,8 @@ export const getSelectedConfig = createSelector(getAppState, (apps) => apps.sele
 export const getAggregations = createSelector(getAppState, (apps) => apps.aggregations[apps.selectedEntity] || []);
 
 export const getAggFunctions = createSelector(getAppState, (apps) => apps.aggFunctions);
+
+// Home Page selectors
+export const getLoadingHome = createSelector(getAppState, (apps) => apps.isHomeLoading);
+
+export const getHourlyTransactions = createSelector(getAppState, (apps) => apps.hourlytransactions);

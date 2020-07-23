@@ -3,11 +3,12 @@ import * as d3 from "d3";
 export class chartGenerator {
 
     
-    static seperateAxisPrioritizedBarChartGenerator(height: number, width: number, graphSVGElement: any, axisSVGElement: any, queryResult: Array<object>, xAxisKey: string, yAxisKey: string, axisWidth:number = 100, barColor:string = "rgba(135, 194, 205, 0.58639)") {
+    static seperateAxisPrioritizedBarChartGenerator(height: number, width: number, graphSVGElement: any, queryResult: Array<object>, xAxisKey: string, yAxisKey: string, axisWidth:number = 100, barColor:string = "rgba(135, 194, 205, 0.58639)") {
         
         // Clear SVG Elements of old data
         graphSVGElement.selectAll("*").remove();
-        axisSVGElement.selectAll("*").remove();
+
+        const margin = {top: 20, right: 20, bottom: 50, left: 70};
     
         // Create an Array for each Axis
         let xAxisData: any = queryResult.map(d => parseFloat((<any>d)[xAxisKey]));
@@ -34,11 +35,12 @@ export class chartGenerator {
     
         // Setup SVG element attributes 
         graphSVGElement
-            .attr("height", height)
-            .attr("width", width)
+            .attr("height", height + margin.top + margin.bottom)
+            .attr("width", width + margin.left + margin.right)
             .attr("font-family", "sans-serif")
             .attr("font-size", "10")
-            .attr("text-anchor", "end");
+            .attr("text-anchor", "end")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
             
         if(xScale.bandwidth() <= 1) {
             let rangeData: any = d3.range(xAxisData.length)
@@ -54,39 +56,30 @@ export class chartGenerator {
                 .attr("font-size", "10")
                 .attr("text-anchor", "end");
         }
-    
+
+        graphSVGElement.append("text")
+            .attr("class", "x label")
+            .attr("text-anchor", "end")
+            .attr("x", width/2)
+            .attr("y", height +10)
+            .text("Time (hour)");
+
+        graphSVGElement.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -10)
+            .attr("x",0 - (height / 2))
+            .text("Value"); 
+
         // Create selection for bar graph bars
         const bar = graphSVGElement.selectAll("g")
             .data(yAxisData) //Attach bars to Y-Axis data
             .join("g")
                 .attr("transform", (d: any, i: any) => `translate(${xScale(i)}, ${height - yScale(d)})`);
-    
+        
         bar.append("rect")
             .attr("fill", barColor)
-            .attr("width", xScale.bandwidth() - 1) // Sets a padding of one pixel between bars
+            .attr("width", xScale.bandwidth() - 5) // Sets a padding of five pixel between bars
             .attr("height", yScale);
-        
-        // // Create startup transition
-        // bar.selectAll("rect")
-        //     .transition()
-        //     .duration(800) // 800 milliseconds to transition from height 0 to the correct height
-        //     .attr("height", yScale);
-    
-        // Create a Y-Axis Scale
-        const yAxis = d3.axisLeft(yAxisScale).scale(yAxisScale);
-    
-        // Prepare the Y-Axis Element
-        axisSVGElement
-            .attr("height", height)
-            .attr("class", "axis")
-            .attr("width", axisWidth)
-    
-        // Attach the axis to the SVG Element
-        axisSVGElement
-            .append("g")
-                .attr("transform", `translate(${axisWidth}, ${height})`)
-                .style("color", "black")
-                .call(yAxis);
     }
 
     static barGraphFloatingTooltipGenerator(graphSVGElement: any, xLabelFunction: Function, yLabelFunction: Function) {
@@ -100,9 +93,11 @@ export class chartGenerator {
         // Add event listener for tooltip
         bar.on("mousemove", function(d: any, i: number) {
             tooltip
-                .style("left", d3.event.pageX - 50 + "px")
+                .style("left", d3.event.pageX + 20 + "px")
                 .style("top", d3.event.pageY - 70 + "px")
                 .style("display", "inline-block")
+                .style("position", "absolute")
+                .style("text-align", "center")
                 .html(yLabelFunction(d, i) + "<br>" + xLabelFunction(d, i));
         })
             .on("mouseout", function(d: any){ tooltip.style("display", "none");

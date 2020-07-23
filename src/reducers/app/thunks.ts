@@ -11,6 +11,7 @@ import {
     AttrbuteDataType,
     TezosConseilClient,
     EntityDefinition,
+    ConseilFunction
 } from 'conseiljs';
 
 import {
@@ -28,6 +29,8 @@ import {
     setSubmitAction,
     setAggregationAction,
     setQueryFilters,
+    setHomeLoadingAction,
+    setHourlyTransactions
 } from './actions';
 import { setModalItems, setModalOpen } from '../modal/actions';
 import { createMessageAction } from '../message/actions';
@@ -263,7 +266,35 @@ export const fetchInitEntityAction = (
     await dispatch(setEntityPropertiesAction(entity, filters, sorts, columns, items, aggregations));
     await Promise.all(cardinalityPromises);
 };
+export const loadHourlyTransactions = (date: number) => async (dispatch: any, state: any) => {
+    
+    try {
+        dispatch(setHomeLoadingAction(true));
+        //const { platform = '', network = '', entity = '', id = '', isQuery = false, history } = props;
+        const { selectedConfig } = state().app;
+        const { network, url, apiKey } = selectedConfig;
+        const serverInfo = { url, apiKey, network };
 
+        let query = ConseilQueryBuilder.blankQuery();
+        query = ConseilQueryBuilder.addFields(query, 'kind');
+        query = ConseilQueryBuilder.addFields(query, 'timestamp');
+        query = ConseilQueryBuilder.addPredicate(query, 'kind', ConseilOperator.EQ, ['transaction']);
+        query = ConseilQueryBuilder.addPredicate(query, 'status', ConseilOperator.EQ, ['applied']);
+        query = ConseilQueryBuilder.addPredicate(query, 'timestamp', ConseilOperator.BETWEEN, [date, new Date().getTime()]);
+        query = ConseilQueryBuilder.addAggregationFunction(query, 'kind', ConseilFunction.count);
+        query = ConseilQueryBuilder.addOrdering(query, "timestamp", ConseilSortDirection.ASC);
+        query = ConseilQueryBuilder.setLimit(query, 1000000000);
+
+        const result = await ConseilDataClient.executeEntityQuery(serverInfo, 'tezos', network, 'operations', query);
+        dispatch(setHourlyTransactions(result));
+        dispatch(setHomeLoadingAction(false));
+    } catch (e) {
+        const message =
+            e.message ||
+            `Unable to load transactions data for Home page.`;
+        throw Error(message);
+    }
+}
 const loadEntities = () => async (dispatch: any, state: any) => {
     const selectedConfig: Config = state().app.selectedConfig;
     const { platform, network, url, apiKey } = selectedConfig;
