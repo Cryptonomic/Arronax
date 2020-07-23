@@ -1,5 +1,14 @@
 import styled from 'styled-components';
 
+export const Holder = styled.h1 `
+    align-self: center;
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    text-align: center;
+`;
+
 export const Title = styled.h1 `
     font-family: Futura;
     font-style: normal;

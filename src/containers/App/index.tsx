@@ -19,9 +19,6 @@ import Tabs from '../../components/Tabs';
 import FilterResults from '../../components/FilterResults';
 import CustomPaginator from '../../components/CustomPaginator';
 import { fetchItemByPrimaryKey } from '../../reducers/modal/thunk';
-import Banner from '../../components/Home/Banner';
-import {ContainerNew} from './styles';
-
 import {
     getLoading,
     getConfigs,
@@ -311,76 +308,71 @@ class Arronax extends React.Component<Props, States> {
 
         return (
             <MainContainer>
-                <ContainerNew>
                 <Header
-                        selectedConfig={selectedConfig}
-                        configs={configs}
-                        onChangeNetwork={this.onChangeNetwork}
-                        openModal={this.openConfigModal}
-                        onRemoveConfig={removeConfig}
-                        onSearch={this.onSearchById}
-                    />
-                    <Container>
-                    
+                    selectedConfig={selectedConfig}
+                    configs={configs}
+                    onChangeNetwork={this.onChangeNetwork}
+                    openModal={this.openConfigModal}
+                    onRemoveConfig={removeConfig}
+                    onSearch={this.onSearchById}
+                />
+                <Container>
                     {isFullLoaded && (
-                        // <React.Fragment>
-                        //     <Tabs full={fullTabsList} short={shortTabsList} selected={selectedEntity} onChange={this.onClickTab} />
-                        //     <FilterResults />
-                        //     <Toolbar
-                        //         isCollapsed={isSettingCollapsed}
-                        //         selectedTool={selectedTool}
-                        //         filterCount={filterCount}
-                        //         aggCount={aggCount}
-                        //         columnsCount={selectedColumns.length}
-                        //         onChangeTool={this.onChangeTool}
-                        //         onExportCsv={this.onExportCsv}
-                        //         onShareReport={this.onShareReport}
-                        //     />
-                        //     <CustomPaginator
-                        //         rowsPerPage={rowCount}
-                        //         page={page}
-                        //         totalNumber={items.length}
-                        //         onChangePage={this.handleChangePage}
-                        //         onExportCsv={this.onExportCsv}
-                        //     />
-                        //     <SettingsPanel
-                        //         ref={this.settingRef}
-                        //         isCollapsed={isSettingCollapsed}
-                        //         selectedTool={selectedTool}
-                        //         onSubmit={this.onSubmit}
-                        //         onClose={this.onCloseFilter}
-                        //     />
-                        //     <TabContainer>
-                        //         {items.length > 0 && (
-                        //             <CustomTable
-                        //                 isLoading={isLoading}
-                        //                 items={realRows}
-                        //                 onExportCsv={this.onExportCsv}
-                        //                 updateRoute={this.updateRoute}
-                        //                 onClickPrimaryKey={this.onClickPrimaryKey}
-                        //             />
-                        //         )}
-                        //         {items.length === 0 && isFullLoaded && (
-                        //             <NoResultContainer>
-                        //                 <OctopusImg src={octopusSrc} />
-                        //                 <NoResultContent>
-                        //                     <NoResultTxt>{t('containers.arronax.no_results')}</NoResultTxt>
-                        //                     <TryTxt>{t('containers.arronax.try_combination')}</TryTxt>
-                        //                     <ButtonContainer>
-                        //                         <ClearButton onClick={this.onClearFilter}>{t('containers.arronax.clear_filters')}</ClearButton>
-                        //                         <TryButton onClick={this.onSettingCollapse}>{t('containers.arronax.try_again')}</TryButton>
-                        //                     </ButtonContainer>
-                        //                 </NoResultContent>
-                        //             </NoResultContainer>
-                        //         )}
-                        //     </TabContainer>
-                        // </React.Fragment>
-                        <Banner/>
+                        <React.Fragment>
+                            <Tabs full={fullTabsList} short={shortTabsList} selected={selectedEntity} onChange={this.onClickTab} />
+                            <FilterResults />
+                            <Toolbar
+                                isCollapsed={isSettingCollapsed}
+                                selectedTool={selectedTool}
+                                filterCount={filterCount}
+                                aggCount={aggCount}
+                                columnsCount={selectedColumns.length}
+                                onChangeTool={this.onChangeTool}
+                                onExportCsv={this.onExportCsv}
+                                onShareReport={this.onShareReport}
+                            />
+                            <CustomPaginator
+                                rowsPerPage={rowCount}
+                                page={page}
+                                totalNumber={items.length}
+                                onChangePage={this.handleChangePage}
+                                onExportCsv={this.onExportCsv}
+                            />
+                            <SettingsPanel
+                                ref={this.settingRef}
+                                isCollapsed={isSettingCollapsed}
+                                selectedTool={selectedTool}
+                                onSubmit={this.onSubmit}
+                                onClose={this.onCloseFilter}
+                            />
+                            <TabContainer>
+                                {items.length > 0 && (
+                                    <CustomTable
+                                        isLoading={isLoading}
+                                        items={realRows}
+                                        onExportCsv={this.onExportCsv}
+                                        updateRoute={this.updateRoute}
+                                        onClickPrimaryKey={this.onClickPrimaryKey}
+                                    />
+                                )}
+                                {items.length === 0 && isFullLoaded && (
+                                    <NoResultContainer>
+                                        <OctopusImg src={octopusSrc} />
+                                        <NoResultContent>
+                                            <NoResultTxt>{t('containers.arronax.no_results')}</NoResultTxt>
+                                            <TryTxt>{t('containers.arronax.try_combination')}</TryTxt>
+                                            <ButtonContainer>
+                                                <ClearButton onClick={this.onClearFilter}>{t('containers.arronax.clear_filters')}</ClearButton>
+                                                <TryButton onClick={this.onSettingCollapse}>{t('containers.arronax.try_again')}</TryButton>
+                                            </ButtonContainer>
+                                        </NoResultContent>
+                                    </NoResultContainer>
+                                )}
+                            </TabContainer>
+                        </React.Fragment>
                     )}
                 </Container>
-                </ContainerNew>
-                
-                
+                <Footer />
                 {isRealLoading && <Loader />}
                 <Dialog open={isError} onClose={this.handleErrorClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">{t('general.nouns.error')}</DialogTitle>
@@ -393,7 +385,6 @@ class Arronax extends React.Component<Props, States> {
                 </Dialog>
                 <ConfigModal t={t} open={isOpenConfigMdoal} onClose={this.closeConfigModal} addConfig={this.onAddConfig} />
                 {isFullLoaded && open && <DynamicModal onClickPrimaryKey={this.onClickPrimaryKey} onCloseEntityModal={this.onCloseEntityModal} />}
-                        {/* <Footer /> */}
             </MainContainer>
         );
     }

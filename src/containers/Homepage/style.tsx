@@ -1,5 +1,18 @@
 import styled from 'styled-components';
 
+import Background from '../../assets/images/main_banner.png';
+
+export const BannerHolder = styled.div `
+    display:flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-image: url(${Background});
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+`;
+
 export const Padding = styled.div`
     padding: 100px 0;
     text-align:center;
@@ -77,6 +90,10 @@ export const ListContainer = styled.ul`
     padding:0;
 `;
 
+export const MapHolder = styled.div`
+    background-color:#fff;
+`;
+
 export const styles: any = {
     outlineBtn: {
         padding: '10px 30px',
@@ -93,5 +110,9 @@ export const styles: any = {
         color: '#FF7477',
         background: '#fff !important'
     },
+    blockDisplay: {
+        display: 'block',
+        margin: '0 auto'
+    }
 };
 
