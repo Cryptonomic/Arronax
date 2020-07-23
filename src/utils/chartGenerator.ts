@@ -82,6 +82,8 @@ export class chartGenerator {
                 .attr("transform", (d: any, i: any) => `translate(${xScale(i)}, ${height - yScale(d)})`);
         
         bar.append("rect")
+            .style("stroke-width", "1")
+            .style("stroke", "#56C2D9") 
             .attr("fill", barColor)
             .attr("width", xScale.bandwidth() - 5) // Sets a padding of five pixel between bars
             .attr("height", yScale);
