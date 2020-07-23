@@ -103,6 +103,13 @@ export class chartGenerator {
                 .style("display", "inline-block")
                 .style("position", "absolute")
                 .style("text-align", "center")
+                .style("background", "#313C4E")
+                .style("box-shadow", "1.5px 2.5px 4px rgba(119, 119, 119, 0.25)")
+                .style("font-size", "8px")
+                .style("line-height", "15px")
+                .style("letter-spacing", "0.4px")
+                .style("color", "#ffffff")
+                .style("padding", "10px 15px")
                 .html(yLabelFunction(d, i) + "<br>" + xLabelFunction(d, i));
         })
             .on("mouseout", function(d: any){ tooltip.style("display", "none");
@@ -110,4 +117,3 @@ export class chartGenerator {
     }
     
 }
-
