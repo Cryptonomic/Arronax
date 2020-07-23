@@ -21,15 +21,15 @@ const HeaderContainer = styled.div`
   padding: 0 30px;
   display: flex;
   align-items: center;
-  background: transparent;
+  background: linear-gradient(-225deg, rgb(188, 252, 255) 0%, rgb(156, 217, 225) 12.85%, rgb(132, 191, 202) 22.66%, rgb(117, 174, 188) 28.69%, rgb(65, 120, 149) 48.65%, rgb(57, 93, 148) 85.37%, rgb(52, 56, 110) 100%);
 `;
 
 const HeaderLogo = styled.div`
   font-family: 'Futura';
-  font-weight: 500;
-  font-size: 25px;
+  font-weight: 400;
+  font-size: 36px;
   color: #fffffe;
-  letter-spacing: 3.79167px;
+  letter-spacing: 5.46px;
 `;
 
 const SelectContainer = styled.div`
@@ -109,7 +109,7 @@ const Divider = styled.div`
 
 const SearchContainer = styled.div`
   width: 540px;
-  height: 52px;
+  height: 60px;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 5px 5px 5px 5px;
   display: flex;
@@ -132,8 +132,7 @@ const InputContainer = muiStyled(InputBase)({
 const RevertSearchIcon = muiStyled(SearchIcon)({
   color: '#ffffff',
   transform: 'rotateY(180deg)',
-  fontSize: 26,
-  fontWeight: 'bold'
+  fontSize: 35
 });
 
 interface Props {
@@ -205,7 +204,7 @@ const Header: React.FC<Props> = props => {
           <RevertSearchIcon />	
         </IconButton>	
       </SearchContainer>
-      {/* <SelectContainer>
+      <SelectContainer>
         <MenuBtn
           aria-controls="simple-menu"
           aria-haspopup="true"
@@ -269,7 +268,7 @@ const Header: React.FC<Props> = props => {
           })}
           <AddButton onClick={openConfigModal}>{t('components.configModal.add_network')}</AddButton>
         </Menu>
-      </SelectContainer> */}
+      </SelectContainer>
       
     </HeaderContainer>
   );

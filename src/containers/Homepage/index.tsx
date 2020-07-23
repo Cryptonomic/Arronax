@@ -18,6 +18,8 @@ import { SectionTitle } from './style';
 import { Footer } from './style';
 import { ListItem } from './style';
 import { ListContainer, styles } from './style';
+import { BannerHolder } from './style';
+import { MapHolder } from './style';
 import Banner from '../../components/Home/Banner';
 import {chartGenerator} from '../../utils/chartGenerator';
 import { loadHourlyTransactions } from '../../reducers/app/thunks';
@@ -98,7 +100,7 @@ class Home extends React.Component<Props, States> {
     async generateHourlyTransactionsGraph(data: Array<any>, label: Array<any>, timestamps: Array<any>) {
         let svg = d3.select(this.transactionPerHour.current);
         
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(300, 500, svg, data, 'date', 'values');
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(280, 380, svg, data, 'date', 'values');
 
         const xTooltip = function(d: any, i: number) {
             return moment(timestamps[i]).format();
@@ -115,9 +117,11 @@ class Home extends React.Component<Props, States> {
         const { classes } = this.props;
         return (
             <React.Fragment>
+                <BannerHolder>
+                    <Banner/>
+                </BannerHolder>
                 <WhiteBg>
                     <Container maxWidth="lg">
-                        <Banner/>
                         <Padding>
                             <Grid container spacing={0}>
                                 <Grid item xs={4}>
@@ -153,7 +157,7 @@ class Home extends React.Component<Props, States> {
                 </WhiteBg>
                 <Container maxWidth="lg">
                     <Padding>
-                        <Grid container spacing={0}>
+                        <Grid container alignItems="center" spacing={3}>
                             <Grid item xs={12}>
                                 <SectionTitle>
                                     <img style={{marginRight: '20px'}} src={ThoughtBubbleIcon} alt="img"/>
@@ -164,14 +168,16 @@ class Home extends React.Component<Props, States> {
                                 <img src={PlaceholderImage} alt="img"/>
                             </Grid>
                             <Grid item xs={6}>
-                                <svg ref={this.transactionPerHour}></svg>
+                                <MapHolder>
+                                    <svg className={classes.blockDisplay} ref={this.transactionPerHour}></svg>
+                                </MapHolder>
                             </Grid>
                         </Grid>
                     </Padding>
                 </Container>
                 <Container maxWidth="lg">
                     <Padding>
-                        <Grid container spacing={0}>
+                        <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <SectionTitle>
                                     <img style={{marginRight: '20px'}} src={ThoughtBubbleIcon} alt="img"/>
@@ -189,7 +195,7 @@ class Home extends React.Component<Props, States> {
                 </Container>
                 <Container maxWidth="lg">
                     <Padding>
-                        <Grid container spacing={0}>
+                        <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <SectionTitle>
                                     <img style={{marginRight: '20px'}} src={ThoughtBubbleIcon} alt="img"/>
