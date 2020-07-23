@@ -61,8 +61,10 @@ export class chartGenerator {
         graphSVGElement.append("text")
             .attr("class", "x label")
             .attr("text-anchor", "end")
+            .attr("font-family", "Roboto")
+            .attr("font-size", "12px")
             .attr("x", width/2)
-            .attr("y", height +10)
+            .attr("y", height +20)
             .text("Time (hour)");
 
         // Y axis Label
@@ -70,6 +72,8 @@ export class chartGenerator {
             
             .attr("class", "y label")
             .attr("text-anchor", "end")
+            .attr("font-family", "Roboto")
+            .attr("font-size", "12px")
             .attr("x", -height/2)
             .attr("y", 10)
             .attr("transform", "rotate(-90)")
@@ -85,7 +89,7 @@ export class chartGenerator {
             .style("stroke-width", "1")
             .style("stroke", "#56C2D9") 
             .attr("fill", barColor)
-            .attr("width", xScale.bandwidth() - 5) // Sets a padding of five pixel between bars
+            .attr("width", xScale.bandwidth() - 7) // Sets a padding of five pixel between bars
             .attr("height", yScale);
     }
 
@@ -107,6 +111,7 @@ export class chartGenerator {
                 .style("text-align", "center")
                 .style("background", "#313C4E")
                 .style("box-shadow", "1.5px 2.5px 4px rgba(119, 119, 119, 0.25)")
+                .style("font-family", "Roboto")
                 .style("font-size", "8px")
                 .style("line-height", "15px")
                 .style("letter-spacing", "0.4px")
