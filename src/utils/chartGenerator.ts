@@ -37,8 +37,9 @@ export class chartGenerator {
         graphSVGElement
             .attr("height", height + margin.top + margin.bottom)
             .attr("width", width + margin.left + margin.right)
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "10")
+            .attr("font-family", "roboto")
+            .attr("font-size", "12")
+            .attr("font-weight", "500")
             .attr("text-anchor", "end")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
             
@@ -52,8 +53,9 @@ export class chartGenerator {
             graphSVGElement
                 .attr("height", height)
                 .attr("width", xScale.range()[1] + 25)
-                .attr("font-family", "sans-serif")
-                .attr("font-size", "10")
+                .attr("font-family", "roboto")
+                .attr("font-size", "12")
+                .attr("font-weight", "500")
                 .attr("text-anchor", "end");
         }
         // graphSVGElement.append("g")

@@ -284,7 +284,7 @@ class Home extends React.Component<Props> {
                 </Container>
                 <Container maxWidth="lg">
                     <Padding>
-                        <Grid container spacing={3}>
+                        <Grid alignItems="center" container spacing={3}>
                             <Grid item xs={12}>
                                 <SectionTitle>
                                     <img style={{marginRight: '20px'}} src={ThoughtBubbleIcon} alt="img"/>
