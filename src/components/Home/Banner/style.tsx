@@ -48,3 +48,23 @@ export const Title2 = styled.h4 `
     letter-spacing: 3.04333px;
     color: #FFFFFF;
 `;
+
+export const styles: any = {
+    primaryBtn: {
+        padding: '10px 30px',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        fontFamily: 'Futura',
+        height: 'auto',
+        lineHeight: '21px',
+        borderRadius: '5px',
+        letterSpacing: '2.42667px',
+        boxShadow:  ' none !important',
+        outline: 'none !important',
+        border: '1px solid #FF7477;',
+        background: '#FF7477 !important',
+        color: '#fff',
+        width: 'max-content',
+        alignSelf: 'center',
+    },
+};

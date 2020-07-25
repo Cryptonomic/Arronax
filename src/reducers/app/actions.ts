@@ -23,8 +23,12 @@ import {
     SET_AGGREGATIONS,
     SET_SUBMIT,
     SET_QUERY_FILTERS,
-    SET_HOME_LOADING,
-    SET_HOURLY_TRANSACTIONS
+    SET_HOURLY_TRANSACTIONS_LOADING,
+    SET_HOURLY_TRANSACTIONS,
+    SET_TOP_ACCOUNTS,
+    SET_TOP_BAKERS,
+    SET_TOP_ACCOUNTS_LOADING,
+    SET_TOP_BAKERS_LOADING
 } from './types';
 
 import { AttributeDefinition, EntityDefinition } from 'conseiljs';
@@ -217,10 +221,10 @@ export const setQueryFilters = (entity: string, queryFilters: any): any => ({
     queryFilters,
 });
 
-export function setHomeLoadingAction(isHomeLoading: boolean) {
+export function setHourlyTransactionsLoadingAction(isTransactionsLoading: boolean) {
     return {
-        type: SET_HOME_LOADING,
-        isHomeLoading,
+        type: SET_HOURLY_TRANSACTIONS_LOADING,
+        isTransactionsLoading,
     };
 }
 
@@ -230,4 +234,32 @@ export function setHourlyTransactions(hourlytransactions: Array<object>) {
         type: SET_HOURLY_TRANSACTIONS,
         hourlytransactions,
     };
+}
+
+export function setTopAccounts(topAccounts: Array<object>) {
+    return {
+        type: SET_TOP_ACCOUNTS,
+        topAccounts,
+    }
+}
+
+export function setTopAccountsLoadingAction(isTopAccountsLoading: boolean) {
+    return {
+        type: SET_TOP_ACCOUNTS_LOADING,
+        isTopAccountsLoading,
+    }
+}
+
+export function setTopBakers(topBakers: Array<object>) {
+    return {
+        type: SET_TOP_BAKERS,
+        topBakers,
+    }
+}
+
+export function setTopBakersLoadingAction(isTopBakersLoading: boolean) {
+    return {
+        type: SET_TOP_BAKERS_LOADING,
+        isTopBakersLoading,
+    }
 }

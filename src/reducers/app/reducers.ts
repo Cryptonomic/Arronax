@@ -23,8 +23,12 @@ import {
     SET_AGGREGATIONS,
     SET_SUBMIT,
     SET_QUERY_FILTERS,
-    SET_HOME_LOADING,
-    SET_HOURLY_TRANSACTIONS
+    SET_HOURLY_TRANSACTIONS_LOADING,
+    SET_HOURLY_TRANSACTIONS,
+    SET_TOP_ACCOUNTS,
+    SET_TOP_ACCOUNTS_LOADING,
+    SET_TOP_BAKERS,
+    SET_TOP_BAKERS_LOADING
 } from './types';
 
 import { EntityDefinition } from 'conseiljs';
@@ -56,8 +60,12 @@ export interface AppState {
     selectedConfig: Config;
     aggregations: object;
     aggFunctions: object;
-    isHomeLoading: boolean,
-    hourlytransactions: Array<object>
+    isTransactionsLoading: boolean,
+    hourlytransactions: Array<object>,
+    topAccounts: Array<object>,
+    isTopAccountsLoading: boolean,
+    topBakers: Array<object>,
+    isTopBakersLoading: boolean,
 }
 
 let initialState: AppState = {
@@ -130,8 +138,12 @@ let initialState: AppState = {
             { name: 'count', displayName: 'Count' },
         ],
     },
-    isHomeLoading: true,
-    hourlytransactions: []
+    isTransactionsLoading: false,
+    hourlytransactions: [],
+    topAccounts: [],
+    isTopAccountsLoading: false,
+    topBakers: [],
+    isTopBakersLoading: false
 };
 
 export const app = (state = initialState, action: any) => {
@@ -282,10 +294,18 @@ export const app = (state = initialState, action: any) => {
             const filters = { ...state.queryFilters, [entity]: queryFilters };
             return { ...state, queryFilters: filters };
         }
-        case SET_HOME_LOADING:
-            return { ...state, isHomeLoading: action.isHomeLoading };
+        case SET_HOURLY_TRANSACTIONS_LOADING:
+            return { ...state, isTransactionsLoading: action.isTransactionsLoading };
         case SET_HOURLY_TRANSACTIONS: 
             return { ...state, hourlytransactions: action.hourlytransactions };
+        case SET_TOP_ACCOUNTS:
+            return { ...state, topAccounts: action.topAccounts };
+        case SET_TOP_ACCOUNTS_LOADING:
+            return { ...state, isTopAccountsLoading: action.isTopAccountsLoading };
+        case SET_TOP_BAKERS:
+            return { ...state, topBakers: action.topBakers };
+        case SET_TOP_BAKERS_LOADING:
+            return { ...state, isTopBakersLoading: action.isTopBakersLoading };
     }
     return state;
 };

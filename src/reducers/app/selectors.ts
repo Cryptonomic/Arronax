@@ -46,6 +46,14 @@ export const getAggregations = createSelector(getAppState, (apps) => apps.aggreg
 export const getAggFunctions = createSelector(getAppState, (apps) => apps.aggFunctions);
 
 // Home Page selectors
-export const getLoadingHome = createSelector(getAppState, (apps) => apps.isHomeLoading);
+export const getHourlyTransactionsLoading = createSelector(getAppState, (apps) => apps.isTransactionsLoading);
 
 export const getHourlyTransactions = createSelector(getAppState, (apps) => apps.hourlytransactions);
+
+export const getTopAccounts = createSelector(getAppState, (apps) => apps.topAccounts);
+
+export const getTopAccountsLoading = createSelector(getAppState, (apps) => apps.isTopAccountsLoading);
+
+export const getTopBakers = createSelector(getAppState, (apps) => apps.topBakers); 
+
+export const getTopBakersLoading = createSelector(getAppState, (apps) => apps.isTopBakersLoading);

@@ -29,8 +29,12 @@ import {
     setSubmitAction,
     setAggregationAction,
     setQueryFilters,
-    setHomeLoadingAction,
-    setHourlyTransactions
+    setHourlyTransactionsLoadingAction,
+    setHourlyTransactions,
+    setTopAccounts,
+    setTopAccountsLoadingAction,
+    setTopBakers,
+    setTopBakersLoadingAction
 } from './actions';
 import { setModalItems, setModalOpen } from '../modal/actions';
 import { createMessageAction } from '../message/actions';
@@ -266,10 +270,11 @@ export const fetchInitEntityAction = (
     await dispatch(setEntityPropertiesAction(entity, filters, sorts, columns, items, aggregations));
     await Promise.all(cardinalityPromises);
 };
+
 export const loadHourlyTransactions = (date: number) => async (dispatch: any, state: any) => {
     
     try {
-        dispatch(setHomeLoadingAction(true));
+        dispatch(setHourlyTransactionsLoadingAction(true));
         //const { platform = '', network = '', entity = '', id = '', isQuery = false, history } = props;
         const { selectedConfig } = state().app;
         const { network, url, apiKey } = selectedConfig;
@@ -287,7 +292,7 @@ export const loadHourlyTransactions = (date: number) => async (dispatch: any, st
 
         const result = await ConseilDataClient.executeEntityQuery(serverInfo, 'tezos', network, 'operations', query);
         dispatch(setHourlyTransactions(result));
-        dispatch(setHomeLoadingAction(false));
+        dispatch(setHourlyTransactionsLoadingAction(false));
     } catch (e) {
         const message =
             e.message ||
@@ -296,7 +301,64 @@ export const loadHourlyTransactions = (date: number) => async (dispatch: any, st
             await dispatch(createMessageAction(e.message, true));
         }
     }
-}
+};
+
+export const fetchTopAccounts = (limit: number) => async (dispatch: any, state: any) => {
+    
+    try {
+        dispatch(setTopAccountsLoadingAction(true));
+        const { selectedConfig } = state().app;
+        const { network, url, apiKey } = selectedConfig;
+        const serverInfo = { url, apiKey, network };
+
+        let query = ConseilQueryBuilder.blankQuery();
+        query = ConseilQueryBuilder.addFields(query, 'balance');
+        query = ConseilQueryBuilder.addFields(query, 'account_id');
+        query = ConseilQueryBuilder.addOrdering(query, "balance", ConseilSortDirection.DESC);
+        query = ConseilQueryBuilder.setLimit(query, limit);
+
+        const result = await ConseilDataClient.executeEntityQuery(serverInfo, 'tezos', network, 'accounts', query)
+        dispatch(setTopAccounts(result));
+        dispatch(setTopAccountsLoadingAction(false));
+    } catch (e) {
+        const message =
+            e.message ||
+            `Unable to load transactions data for Home page.`;
+        if (e.message) {
+            await dispatch(createMessageAction(e.message, true));
+        }
+    }
+};
+
+export const fetchTopBakers = (date: number, limit: number) => async (dispatch: any, state: any) => {
+    
+    try {
+        dispatch(setTopBakersLoadingAction(true));
+        const { selectedConfig } = state().app;
+        const { network, url, apiKey } = selectedConfig;
+        const serverInfo = { url, apiKey, network };
+
+        let query = ConseilQueryBuilder.blankQuery();
+        query = ConseilQueryBuilder.addFields(query, 'baker');
+        query = ConseilQueryBuilder.addFields(query, 'hash');
+        query = ConseilQueryBuilder.addPredicate(query, 'timestamp', ConseilOperator.AFTER, [date]);
+        query = ConseilQueryBuilder.addAggregationFunction(query, "hash", ConseilFunction.count);
+        query = ConseilQueryBuilder.addOrdering(query, "count_hash", ConseilSortDirection.DESC);
+        query = ConseilQueryBuilder.setLimit(query, limit);
+
+        const result = await ConseilDataClient.executeEntityQuery(serverInfo, 'tezos', network, 'blocks', query);
+        dispatch(setTopBakers(result));
+        dispatch(setTopBakersLoadingAction(false));
+    } catch (e) {
+        const message =
+            e.message ||
+            `Unable to load transactions data for Home page.`;
+        if (e.message) {
+            await dispatch(createMessageAction(e.message, true));
+        }
+    }
+};
+
 const loadEntities = () => async (dispatch: any, state: any) => {
     const selectedConfig: Config = state().app.selectedConfig;
     const { platform, network, url, apiKey } = selectedConfig;

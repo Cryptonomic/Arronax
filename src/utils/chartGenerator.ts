@@ -3,7 +3,7 @@ import * as d3 from "d3";
 export class chartGenerator {
 
     
-    static seperateAxisPrioritizedBarChartGenerator(height: number, width: number, graphSVGElement: any, queryResult: Array<object>, xAxisKey: string, yAxisKey: string, axisWidth:number = 100, barColor:string = "rgba(135, 194, 205, 0.58639)") {
+    static seperateAxisPrioritizedBarChartGenerator(height: number, width: number, graphSVGElement: any, queryResult: Array<object>, xAxisKey: string, yAxisKey: string, barColor:string = "rgba(135, 194, 205, 0.58639)", labelX: string, labelY: string, spacing: number, stroke: string = "#56C2D9") {
         
         // Clear SVG Elements of old data
         graphSVGElement.selectAll("*").remove();
@@ -11,8 +11,8 @@ export class chartGenerator {
         const margin = {top: 20, right: 20, bottom: 50, left: 70};
     
         // Create an Array for each Axis
-        let xAxisData: any = queryResult.map(d => parseFloat((<any>d)[xAxisKey]));
-        const yAxisData: any = queryResult.map(d => parseFloat((<any>d)[yAxisKey]));
+        let xAxisData: any = queryResult.map(d => (<any>d)[xAxisKey]);
+        const yAxisData: any = queryResult.map(d => (<any>d)[yAxisKey]);
     
         // Create a D3 Linear Scale for the Y-Axis
         const yScale = d3.scaleLinear()
@@ -56,6 +56,9 @@ export class chartGenerator {
                 .attr("font-size", "10")
                 .attr("text-anchor", "end");
         }
+        // graphSVGElement.append("g")
+        //         .attr('class', 'grid')
+        //         .attr("transform", "translate("+10+",0)");
 
         // X axis Label
         graphSVGElement.append("text")
@@ -66,11 +69,10 @@ export class chartGenerator {
             .attr("font-size", "12px")
             .attr("x", width/2)
             .attr("y", height +20)
-            .text("Time (hour)");
+            .text(labelX);
 
         // Y axis Label
         graphSVGElement.append("text")
-            
             .attr("class", "y label")
             .attr("text-anchor", "end")
             .attr("font-family", "Roboto")
@@ -79,7 +81,7 @@ export class chartGenerator {
             .attr("x", -height/2)
             .attr("y", 10)
             .attr("transform", "rotate(-90)")
-            .text("XTZ (ꜩ)");
+            .text(labelY);
 
         // Create selection for bar graph bars
         const bar = graphSVGElement.selectAll("g")
@@ -89,9 +91,9 @@ export class chartGenerator {
         
         bar.append("rect")
             .style("stroke-width", "1")
-            .style("stroke", "#56C2D9") 
+            .style("stroke", stroke) 
             .attr("fill", barColor)
-            .attr("width", xScale.bandwidth() - 7) // Sets a padding of five pixel between bars
+            .attr("width", xScale.bandwidth() - spacing) // Sets a padding of five pixel between bars
             .attr("height", yScale);
     }
 
