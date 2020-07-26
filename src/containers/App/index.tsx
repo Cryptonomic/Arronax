@@ -73,7 +73,7 @@ class Arronax extends React.Component<Props, States> {
             isSettingCollapsed: false,
             selectedTool: ToolType.FILTER,
             isOpenConfigMdoal: false,
-            page: 0,
+            page: 0
         };
 
         this.settingRef = React.createRef();
@@ -315,6 +315,8 @@ class Arronax extends React.Component<Props, States> {
                     openModal={this.openConfigModal}
                     onRemoveConfig={removeConfig}
                     onSearch={this.onSearchById}
+                    renderSelectContainer={true}
+                    showLogo={true}
                 />
                 <Container>
                     {isFullLoaded && (

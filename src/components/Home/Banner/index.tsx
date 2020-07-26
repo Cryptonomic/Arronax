@@ -15,7 +15,7 @@ import Button from '@material-ui/core/Button';
 const Banner = (props: any) => {
     return (
         <Holder>
-            <Title>ARRONAX</Title>
+            <Title ref={props.actionBtnRef}>ARRONAX</Title>
             <Text>Blockchain Analytics Tool </Text>
             <Button className={props.classes.primaryBtn} variant="contained" color="primary" disableElevation>
                 Explore Data

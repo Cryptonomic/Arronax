@@ -160,12 +160,10 @@ body {
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
     background-color: #f9fafc;
-    overflow: hidden;
+    height: 100%;
 }
 
 #root {
-    overflow-y: auto;
-    overflow-x: hidden;
     height: 100vh;
 }
 

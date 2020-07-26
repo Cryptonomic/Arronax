@@ -9,6 +9,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { withRouter } from 'react-router-dom';
 import * as d3 from 'd3';
 import moment from 'moment';
 
@@ -31,19 +32,25 @@ import {
     DismissButton,
     DialogContentWrapper,
 } from '../App/styles';
+import { Config } from '../../types';
 import Banner from '../../components/Home/Banner';
+import Header from '../../components/Header';
 import {chartGenerator} from '../../utils/chartGenerator';
-import { loadHourlyTransactions, fetchTopAccounts, fetchTopBakers } from '../../reducers/app/thunks';
+import { loadHourlyTransactions, fetchTopAccounts, fetchTopBakers, searchByIdThunk} from '../../reducers/app/thunks';
 import {
     getHourlyTransactionsLoading,
     getHourlyTransactions,
     getTopAccounts,
     getTopAccountsLoading,
     getTopBakers,
-    getTopBakersLoading
+    getTopBakersLoading,
+    getSelectedConfig,
+    getConfigs,
+    getEntity
 } from '../../reducers/app/selectors';
 import { getErrorState, getMessageTxt } from '../../reducers/message/selectors';
 import { clearMessageAction } from '../../reducers/message/actions';
+import { removeConfigAction } from '../../reducers/app/actions';
 
 import AskIcon from '../../assets/icons/ask_question_icon.svg';
 import AggregatedDataIcon from '../../assets/icons/aggregated_data_icon.svg';
@@ -53,14 +60,15 @@ import PlaceholderImage from '../../assets/images/placeholder.png';
 import PlaceholderImage1 from '../../assets/images/placeholder1.png';
 import PlaceholderImage2 from '../../assets/images/placeholder2.png';
 
-import { Props, Transactions, Accounts, Bakers } from './types';
+import { Props, States, Transactions, Accounts, Bakers } from './types';
 
-class Home extends React.Component<Props> {
+class Home extends React.Component<Props, States> {
 
     transactionPerHour: any = null;
     topAccountsRef: any = null;
     topBakersRef: any = null;
     topAccountsAxisRef: any = null;
+    actionBtnRef: any = null;
 
     constructor(props: Props) {
         super(props);
@@ -69,6 +77,12 @@ class Home extends React.Component<Props> {
         this.topAccountsRef = React.createRef();
         this.topBakersRef = React.createRef();
         this.topAccountsAxisRef = React.createRef();
+        this.actionBtnRef = React.createRef();
+
+        this.state = {
+            showLogo: false,
+            isOpenConfigMdoal: false,
+        };
     }
 
     async componentDidMount() {
@@ -79,6 +93,9 @@ class Home extends React.Component<Props> {
         this.fetchHourlyTransactions(prevDate);
         this.getTopTransactions();
         this.getTopBakers(prevDate);
+
+        // On scoll Add logo after certain position from Top
+        window.addEventListener('scroll', this.handleScroll.bind(this), true);
     }
 
     async fetchHourlyTransactions(prevDate: Date) {
@@ -196,18 +213,81 @@ class Home extends React.Component<Props> {
         chartGenerator.barGraphFloatingTooltipGenerator(svg, xTooltip, yTooltip);
     }
 
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.handleScroll);
+    }
 
     handleErrorClose = () => {
         const { initMessage } = this.props;
         initMessage();
     };
 
+    handleScroll(event: Event) {
+        const btnPos = this.actionBtnRef.current.getBoundingClientRect().top;
+        if(btnPos < 0 && !this.state.showLogo) {
+            this.setState({ showLogo: true});
+        } else if(btnPos > 0) {
+            this.setState({ showLogo: false});
+        }
+    }
+
+    onChangeNetwork = async (config: Config) => {
+        const { selectedEntity, history } = this.props;
+        const { platform, network } = config;
+        history.replace(`/${platform}/${network}/${selectedEntity}`);
+    };
+
+    openConfigModal = () => this.setState({ isOpenConfigMdoal: true });
+
+    onSearchById = async (val: string | number) => {
+        const { searchById } = this.props;
+        const realVal = !Number(val) ? val : Number(val);
+        const { entity, items } = await searchById(realVal);
+        if (items.length > 0 && entity) {
+            this.updateRoute(true, '', val);
+        }
+    };
+
+    updateRoute = (replace?: boolean, entity?: string, id?: string | number) => {
+        const {
+            selectedConfig: { platform, network },
+            selectedEntity,
+            history,
+        } = this.props;
+        let url = `/${platform}/${network}/${entity || selectedEntity}${id ? '/' + id : ''}`;
+        if (replace) {
+            history.replace(url);
+            return;
+        }
+        history.push(url);
+    };
+
     render() {
-        const { classes, isError, message, isTransactionsLoading, isTopAccountsLoading, isTopBakersLoading } = this.props;
+        const {
+            classes,
+            isError,
+            message,
+            isTransactionsLoading,
+            isTopAccountsLoading,
+            isTopBakersLoading,
+            selectedConfig,
+            configs,
+            removeConfig
+        } = this.props;
         return (
             <React.Fragment>
+                 <Header
+                    selectedConfig={selectedConfig}
+                    configs={configs}
+                    onChangeNetwork={this.onChangeNetwork}
+                    openModal={this.openConfigModal}
+                    onRemoveConfig={removeConfig}
+                    onSearch={this.onSearchById}
+                    renderSelectContainer={false}
+                    showLogo={this.state.showLogo}
+                />
                 <BannerHolder>
-                    <Banner/>
+                    <Banner actionBtnRef = {this.actionBtnRef}/>
                 </BannerHolder>
                 <WhiteBg>
                     <Container maxWidth="lg">
@@ -371,13 +451,18 @@ const mapStateToProps = (state: any) => ({
     isTopBakersLoading: getTopBakersLoading(state),
     isError: getErrorState(state),
     message: getMessageTxt(state),
+    selectedConfig: getSelectedConfig(state),
+    configs: getConfigs(state),
+    selectedEntity: getEntity(state),
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     loadHourlyTransactions: (date: number) => dispatch(loadHourlyTransactions(date)),
     initMessage: () => dispatch(clearMessageAction()),
     fetchTopAccounts: (limit: number) => dispatch(fetchTopAccounts(limit)),
-    fetchTopBakers: (date: number, limit: number) => dispatch(fetchTopBakers(date, limit))
+    fetchTopBakers: (date: number, limit: number) => dispatch(fetchTopBakers(date, limit)),
+    emoveConfig: (index: number) => dispatch(removeConfigAction(index)),
+    searchById: (id: string | number) => dispatch(searchByIdThunk(id)),
 });
 
-export const HomePage: any = compose(withStyles(styles), connect(mapStateToProps, mapDispatchToProps))(Home);
+export const HomePage: any = compose(withRouter, withStyles(styles), connect(mapStateToProps, mapDispatchToProps))(Home);

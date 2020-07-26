@@ -1,4 +1,7 @@
-export interface Props {
+import { Config } from '../../types';
+import { RouteComponentProps } from 'react-router-dom';
+
+export interface OwnProps {
     
     classes: any;
     hourlytransactions: Transactions[];
@@ -9,11 +12,23 @@ export interface Props {
     isTransactionsLoading: boolean;
     isTopAccountsLoading: boolean;
     isTopBakersLoading: boolean;
+    selectedConfig: Config;
+    configs: Config[];
+    selectedEntity: string;
     loadHourlyTransactions: (date: number) => void;
     initMessage: () => void;
     fetchTopAccounts: (limit: number) => void;
     fetchTopBakers: (date: number, limit: number) => void;
+    removeConfig: (index: number) => void;
+    searchById: (id: string | number) => any;
 }
+
+export interface States {
+    showLogo: boolean,
+    isOpenConfigMdoal: boolean
+}
+
+export type Props = OwnProps & RouteComponentProps;
 
 export interface Transactions {
     count_kind: string;
