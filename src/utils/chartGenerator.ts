@@ -8,7 +8,7 @@ export class chartGenerator {
         // Clear SVG Elements of old data
         graphSVGElement.selectAll("*").remove();
 
-        const margin = {top: 20, right: 20, bottom: 50, left: 70};
+        const margin = {top: 20, right: 20, bottom: 50, left: 20};
     
         // Create an Array for each Axis
         let xAxisData: any = queryResult.map(d => (<any>d)[xAxisKey]);
@@ -58,9 +58,6 @@ export class chartGenerator {
                 .attr("font-weight", "500")
                 .attr("text-anchor", "end");
         }
-        // graphSVGElement.append("g")
-        //         .attr('class', 'grid')
-        //         .attr("transform", "translate("+10+",0)");
 
         // X axis Label
         graphSVGElement.append("text")
@@ -99,6 +96,50 @@ export class chartGenerator {
             .attr("height", yScale);
     }
 
+    static axisGenerator(axisSVGElement: any, height: number, queryResult: Array<object>, yAxisKey: string, labelY: string, axisWidth: number=50) {
+        
+        queryResult.shift();
+        queryResult.pop();
+
+        axisSVGElement.selectAll("*").remove();
+
+        const yAxisData: any = queryResult.map(d => (<any>d)[yAxisKey]);
+
+        const yAxisScale: any = d3.scaleLinear<string>()
+            .domain([50, d3.max<any>(yAxisData)])
+            .range(<any>([-5, -height]));
+
+        // Create a Y-Axis Scale
+        const yAxis = d3.axisLeft(yAxisScale)
+        .scale(yAxisScale);
+
+        // Prepare the Y-Axis Element
+        axisSVGElement
+            .attr("height", height)
+            .attr("width", axisWidth)
+            .attr("class", "y-axis");
+        
+        axisSVGElement.append("text")
+            .attr("class", "y label")
+            .attr("text-anchor", "end")
+            .attr("font-family", "Roboto")
+            .attr("font-weight", "500")
+            .attr("font-size", "12px")
+            .attr("x", -height/2)
+            .attr("y", 10)
+            .attr("transform", "rotate(-90)")
+            .text(labelY);
+
+        // Attach the axis to the SVG Element
+        axisSVGElement
+            .append("g")
+            .attr("transform", `translate(${axisWidth}, ${height})`)
+            .style("color", "black")
+            .style("font-size", "14px")
+            .style("font-weight", "500")
+            .style("font-family", "roboto")
+            .call(yAxis);
+    }
     static barGraphFloatingTooltipGenerator(graphSVGElement: any, xLabelFunction: Function, yLabelFunction: Function) {
         
         //Select all bar graph bar elements

@@ -185,3 +185,13 @@ div[class^="Footer"] a {
     top: 10px;
     content: '';
 }
+
+.y-axis {
+    position: absolute;
+    left: 15px;
+    bottom: 50px;
+}
+
+svg.y-axis g path, svg.y-axis g line {
+    display: none;
+}

@@ -93,6 +93,7 @@ export const ListContainer = styled.ul`
 export const MapHolder = styled.div`
     background-color:#fff;
     box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);
+    position: relative;
 `;
 
 export const styles: any = {

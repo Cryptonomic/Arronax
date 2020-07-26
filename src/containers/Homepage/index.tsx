@@ -60,6 +60,7 @@ class Home extends React.Component<Props> {
     transactionPerHour: any = null;
     topAccountsRef: any = null;
     topBakersRef: any = null;
+    topAccountsAxisRef: any = null;
 
     constructor(props: Props) {
         super(props);
@@ -67,6 +68,7 @@ class Home extends React.Component<Props> {
         this.transactionPerHour = React.createRef();
         this.topAccountsRef = React.createRef();
         this.topBakersRef = React.createRef();
+        this.topAccountsAxisRef = React.createRef();
     }
 
     async componentDidMount() {
@@ -169,13 +171,21 @@ class Home extends React.Component<Props> {
 
     generateTopBakersGraph(topBakers: Array<Bakers>) {
         const svg = d3.select(this.topBakersRef.current);
+        const axisScg = d3.select(this.topAccountsAxisRef.current);
         //Add empty bar at start and end for label
         const dummyData: Bakers = { baker: topBakers[0].baker, count_hash: '0'} ;
         topBakers.unshift(dummyData);
         topBakers.push(dummyData);
 
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(220, 500, svg, topBakers,"baker", "count_hash", 'rgba(255, 116, 119, 0.3)',  'Time (hour)',  'Blocks', 7, '#FF7477');
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(220, 500, svg, topBakers,"baker", "count_hash", 'rgba(255, 116, 119, 0.3)',  'Time (hour)',  '', 7, '#FF7477');
+        chartGenerator.axisGenerator(axisScg, 220, topBakers, 'count_hash', 'Blocks');
+        
         const xTooltip = function(d: any, i: number) {
+
+            if(i >= topBakers.length) {
+                i = topBakers.length-1;
+            }
+
             return topBakers[i].baker;
         }
     
@@ -272,7 +282,10 @@ class Home extends React.Component<Props> {
                                     {
                                         isTopBakersLoading 
                                         ? <p>Loading...</p> :
-                                        <svg className={classes.blockDisplay} ref={this.topBakersRef}></svg>
+                                        <React.Fragment>
+                                            <svg ref={this.topAccountsAxisRef}></svg>
+                                            <svg className={classes.blockDisplay} ref={this.topBakersRef}></svg>
+                                        </React.Fragment>
                                     }
                                 </MapHolder>
                             </Grid>
