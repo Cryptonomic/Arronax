@@ -51,10 +51,10 @@ const MenuHeaderItem = muiStyled(MenuItem)({
 
 const MainMenuItem = muiStyled(MenuItem)({
   '&[class*="selected"]': {
-    backgroundColor: 'rgba(101,  200, 206, 0.13)'
+    backgroundColor: 'rgba(101,  200, 206, 0.13)'
   },
   '&:hover': {
-    backgroundColor: 'rgba(101,  200, 206, 0.1)'
+    backgroundColor: 'rgba(101,  200, 206, 0.1)'
   }
 });
 
@@ -138,8 +138,6 @@ const RevertSearchIcon = muiStyled(SearchIcon)({
 interface Props {
   selectedConfig: Config;
   configs: Config[];
-  renderSelectContainer: boolean;
-  showLogo: boolean;
   onChangeNetwork(config: Config): void;
   openModal(): void;
   onRemoveConfig(index: number): void;
@@ -188,83 +186,9 @@ const Header: React.FC<Props> = props => {
     event.stopPropagation();
   }
 
-  function RenderSelectContainer(props: {renderSelectContainer: boolean}) {
-    return (
-      props.renderSelectContainer ? 
-        <SelectContainer>
-          <MenuBtn
-            aria-controls="simple-menu"
-            aria-haspopup="true"
-            onClick={handleClick}
-          >
-            {selectedConfig.displayName}
-            <DownIcon />
-          </MenuBtn>
-          <Menu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            <MenuHeaderItem value="" disabled>
-              {t('components.header.select_prefered_network')}
-            </MenuHeaderItem>
-            {mainConfigs.map((config: any) => {
-              const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&
-                selectedConfig.url === config.url && selectedConfig.apiKey === config.apiKey;
-              return (
-                <MainMenuItem
-                  key={config.displayName}
-                  onClick={() => changeNetwork(config)}
-                >
-                  <Radio
-                    checked={isSelected}
-                    icon={<UncheckedIcon fontSize="small" />}
-                    checkedIcon={<CheckedIcon fontSize="small" />}
-                  />
-                  {config.displayName}
-                </MainMenuItem>
-              );
-            })}
-            {localConfigs.length > 0 && <Divider />}
-            {localConfigs.map((config: any, index: any) => {
-              const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&
-                selectedConfig.url === config.url && selectedConfig.apiKey === config.apiKey;
-              return (
-                <MainMenuItem
-                  key={config.network}
-                  onClick={() => changeNetwork(config)}
-                >
-                  <Radio
-                    checked={isSelected}
-                    icon={<UncheckedIcon fontSize="small" />}
-                    checkedIcon={<CheckedIcon fontSize="small" />}
-                  />
-                  {config.displayName}
-                  {!isSelected && (
-                    <IconBtnWrapper
-                      aria-label="Delete"
-                      disabled={isSelected}
-                      onClick={(event) => removeConfig(event, mainConfigs.length + index)}
-                    >
-                      <ArronaxIcon size="37px" color="#d8d8d8" iconName="icon-delete" />
-                    </IconBtnWrapper>
-                  )}                
-                </MainMenuItem>
-              );
-            })}
-            <AddButton onClick={openConfigModal}>{t('components.configModal.add_network')}</AddButton>
-          </Menu>
-      </SelectContainer> : null
-    )
-  }
-
   return (
     <HeaderContainer>
-      {
-        props.showLogo ? 
-          <HeaderLogo>{t('components.header.arronax_beta')}</HeaderLogo> : null
-      }
+      <HeaderLogo>{t('components.header.arronax_beta')}</HeaderLogo>
       <SearchContainer>	
         <InputContainer
           value={searchKey}
@@ -280,7 +204,71 @@ const Header: React.FC<Props> = props => {
           <RevertSearchIcon />	
         </IconButton>	
       </SearchContainer>
-      <RenderSelectContainer renderSelectContainer={props.renderSelectContainer}/>
+      <SelectContainer>
+        <MenuBtn
+          aria-controls="simple-menu"
+          aria-haspopup="true"
+          onClick={handleClick}
+        >
+          {selectedConfig.displayName}
+          <DownIcon />
+        </MenuBtn>
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuHeaderItem value="" disabled>
+            {t('components.header.select_prefered_network')}
+          </MenuHeaderItem>
+          {mainConfigs.map((config: any) => {
+            const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&
+              selectedConfig.url === config.url && selectedConfig.apiKey === config.apiKey;
+            return (
+              <MainMenuItem
+                key={config.displayName}
+                onClick={() => changeNetwork(config)}
+              >
+                <Radio
+                  checked={isSelected}
+                  icon={<UncheckedIcon fontSize="small" />}
+                  checkedIcon={<CheckedIcon fontSize="small" />}
+                />
+                {config.displayName}
+              </MainMenuItem>
+            );
+          })}
+          {localConfigs.length > 0 && <Divider />}
+          {localConfigs.map((config: any, index: any) => {
+            const isSelected = selectedConfig.network === config.network && selectedConfig.platform === config.platform &&
+              selectedConfig.url === config.url && selectedConfig.apiKey === config.apiKey;
+            return (
+              <MainMenuItem
+                key={config.network}
+                onClick={() => changeNetwork(config)}
+              >
+                <Radio
+                  checked={isSelected}
+                  icon={<UncheckedIcon fontSize="small" />}
+                  checkedIcon={<CheckedIcon fontSize="small" />}
+                />
+                {config.displayName}
+                {!isSelected && (
+                  <IconBtnWrapper
+                    aria-label="Delete"
+                    disabled={isSelected}
+                    onClick={(event) => removeConfig(event, mainConfigs.length + index)}
+                  >
+                    <ArronaxIcon size="37px" color="#d8d8d8" iconName="icon-delete" />
+                  </IconBtnWrapper>
+                )}                
+              </MainMenuItem>
+            );
+          })}
+          <AddButton onClick={openConfigModal}>{t('components.configModal.add_network')}</AddButton>
+        </Menu>
+      </SelectContainer>
       
     </HeaderContainer>
   );

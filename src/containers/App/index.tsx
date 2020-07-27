@@ -315,8 +315,6 @@ class Arronax extends React.Component<Props, States> {
                     openModal={this.openConfigModal}
                     onRemoveConfig={removeConfig}
                     onSearch={this.onSearchById}
-                    renderSelectContainer={true}
-                    showLogo={true}
                 />
                 <Container>
                     {isFullLoaded && (
