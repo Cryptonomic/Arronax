@@ -34,7 +34,7 @@ import {
 } from '../App/styles';
 import { Config } from '../../types';
 import Banner from '../../components/Home/Banner';
-import Header from '../../components/Header';
+import Header from './Header';
 import {chartGenerator} from '../../utils/chartGenerator';
 import { loadHourlyTransactions, fetchTopAccounts, fetchTopBakers, searchByIdThunk} from '../../reducers/app/thunks';
 import {
@@ -276,17 +276,17 @@ class Home extends React.Component<Props, States> {
         } = this.props;
         return (
             <React.Fragment>
-                 <Header
-                    selectedConfig={selectedConfig}
-                    configs={configs}
-                    onChangeNetwork={this.onChangeNetwork}
-                    openModal={this.openConfigModal}
-                    onRemoveConfig={removeConfig}
-                    onSearch={this.onSearchById}
-                    renderSelectContainer={false}
-                    showLogo={this.state.showLogo}
-                />
                 <BannerHolder>
+                    <Header
+                        selectedConfig={selectedConfig}
+                        configs={configs}
+                        onChangeNetwork={this.onChangeNetwork}
+                        openModal={this.openConfigModal}
+                        onRemoveConfig={removeConfig}
+                        onSearch={this.onSearchById}
+                        renderSelectContainer={false}
+                        showLogo={this.state.showLogo}
+                    />
                     <Banner actionBtnRef = {this.actionBtnRef}/>
                 </BannerHolder>
                 <WhiteBg>
