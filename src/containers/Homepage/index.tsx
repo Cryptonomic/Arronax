@@ -283,7 +283,6 @@ class Home extends React.Component<Props, States> {
                         openModal={this.openConfigModal}
                         onRemoveConfig={removeConfig}
                         onSearch={this.onSearchById}
-                        renderSelectContainer={false}
                         showLogo={this.state.showLogo}
                     />
                     <Banner actionBtnRef = {this.actionBtnRef}/>
