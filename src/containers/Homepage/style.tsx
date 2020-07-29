@@ -115,6 +115,14 @@ export const styles: any = {
     blockDisplay: {
         display: 'block',
         margin: '0 auto'
+    },
+
+    marginBottom: {
+        marginBottom:'100px'
+    },
+
+    alignRight: {
+        textAlign: 'right'
     }
 };
 

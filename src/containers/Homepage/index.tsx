@@ -398,7 +398,7 @@ class Home extends React.Component<Props, States> {
                     </Padding>
                 </Container>
                 <WhiteBg>
-                <Container style={{marginBottom:'100px'}} maxWidth="lg">
+                <Container className={classes.marginBottm} maxWidth="lg">
                     <Padding>
                         <Grid container justify="center" alignItems="center" spacing={0}>
                             <Grid item xs={6}>
@@ -406,7 +406,7 @@ class Home extends React.Component<Props, States> {
                                     Start exploring blockchain data
                                 </SectionTitle>
                             </Grid>
-                            <Grid style={{textAlign: 'right'}} item xs={6}>
+                            <Grid className={classes.alignRight} item xs={6}>
                                 <Button className={classes.outlineBtn} variant="contained" color="primary" disableElevation>
                                     Explore Data
                                 </Button>
