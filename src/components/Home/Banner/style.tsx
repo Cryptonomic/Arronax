@@ -70,5 +70,6 @@ export const styles: any = {
     headerBackground: {
         background: 'linear-gradient(177.02deg,#4A9396 -35.63%,#4A4F96 180.07%) !important',
         transition: 'background 3000ms linear',
+        zIndex: 2,
     }
 };
