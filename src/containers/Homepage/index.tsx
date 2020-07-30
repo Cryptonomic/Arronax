@@ -111,7 +111,7 @@ class Home extends React.Component<Props, States> {
         const label: Array<Date> = [],
         timestamps: Array<number> = [],
         values: Array<number> = [],
-        data: Array<object> = [];
+        data: Array<any> = [];
         const now = new Date().getTime();
 
         for(var time = new Date(date).getTime(); time < now; time += 3600000) {
@@ -133,6 +133,8 @@ class Home extends React.Component<Props, States> {
             data.push({date : label[x].getTime(), values : values[x] });
         }
 
+        const dummyData: object = { date: data[0].date, values: 0 };
+        data.unshift(dummyData);
         return {data, label, timestamps};
 
     }
@@ -140,7 +142,7 @@ class Home extends React.Component<Props, States> {
     async generateHourlyTransactionsGraph(data: Array<any>, label: Array<any>, timestamps: Array<any>) {
         const svg = d3.select(this.transactionPerHour.current);
 
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(220, 500, svg, data, 'date', 'values', 'rgba(135, 194, 205, 0.58639)', 'Time (hour)', 'XTZ (ꜩ)', 7);
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, 500, svg, data, 'date', 'values', 'rgba(135, 194, 205, 0.58639)', 'Time (hour)', 'XTZ (ꜩ)', 8);
 
         const xTooltip = function(d: any, i: number) {
             return moment(timestamps[i]).format();
@@ -167,7 +169,7 @@ class Home extends React.Component<Props, States> {
         topAccounts.unshift(dummyData);
         topAccounts.push(dummyData);
 
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(220, 500, svg, topAccounts,"account_id", "balance", 'rgba(135, 194, 205, 0.58639)',  'Bakers',  'XTZ (ꜩ)', 10);
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, 500, svg, topAccounts,"account_id", "balance", 'rgba(135, 194, 205, 0.58639)',  'Bakers',  'XTZ (ꜩ)', 10);
 
         const xTooltip = function(d: any, i: number) {
             return topAccounts[i].account_id
@@ -192,10 +194,13 @@ class Home extends React.Component<Props, States> {
         //Add empty bar at start and end for label
         const dummyData: Bakers = { baker: topBakers[0].baker, count_hash: '0'} ;
         topBakers.unshift(dummyData);
+        topBakers.unshift(dummyData);
+        topBakers.unshift(dummyData);
+        topBakers.unshift(dummyData);
         topBakers.push(dummyData);
 
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(220, 500, svg, topBakers,"baker", "count_hash", 'rgba(255, 116, 119, 0.3)',  'Time (hour)',  '', 7, '#FF7477');
-        chartGenerator.axisGenerator(axisScg, 220, topBakers, 'count_hash', 'Blocks');
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, 500, svg, topBakers,"baker", "count_hash", 'rgba(255, 116, 119, 0.3)',  'Time (hour)',  '', 7, '#FF7477');
+        chartGenerator.axisGenerator(axisScg, 180, topBakers, 'count_hash', 'Blocks');
         
         const xTooltip = function(d: any, i: number) {
 
@@ -223,7 +228,7 @@ class Home extends React.Component<Props, States> {
     };
 
     handleScroll(event: Event) {
-        const btnPos = this.actionBtnRef.current.getBoundingClientRect().top;
+        const btnPos = this.actionBtnRef.current && this.actionBtnRef.current.getBoundingClientRect().top;
         if(btnPos < 0 && !this.state.showLogo) {
             this.setState({ showLogo: true});
         } else if(btnPos > 0) {
@@ -262,6 +267,10 @@ class Home extends React.Component<Props, States> {
         history.push(url);
     };
 
+    redirectToDashboard = () => {
+        this.props.history.push('/tezos/mainnet/');
+    }
+
     render() {
         const {
             classes,
@@ -285,7 +294,7 @@ class Home extends React.Component<Props, States> {
                         onSearch={this.onSearchById}
                         showLogo={this.state.showLogo}
                     />
-                    <Banner actionBtnRef = {this.actionBtnRef}/>
+                    <Banner actionBtnRef = {this.actionBtnRef} redirectToDashboard={this.redirectToDashboard} />
                 </BannerHolder>
                 <WhiteBg>
                     <Container maxWidth="lg">
@@ -407,7 +416,7 @@ class Home extends React.Component<Props, States> {
                                 </SectionTitle>
                             </Grid>
                             <Grid className={classes.alignRight} item xs={6}>
-                                <Button className={classes.outlineBtn} variant="contained" color="primary" disableElevation>
+                                <Button className={classes.outlineBtn} onClick={this.redirectToDashboard} variant="contained" color="primary" disableElevation>
                                     Explore Data
                                 </Button>
                             </Grid>

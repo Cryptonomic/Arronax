@@ -8,7 +8,7 @@ export class chartGenerator {
         // Clear SVG Elements of old data
         graphSVGElement.selectAll("*").remove();
 
-        const margin = {top: 20, right: 20, bottom: 50, left: 20};
+        const margin = {top: 20, right: 0, bottom: 50, left: 0};
     
         // Create an Array for each Axis
         let xAxisData: any = queryResult.map(d => (<any>d)[xAxisKey]);
@@ -38,6 +38,7 @@ export class chartGenerator {
             .attr("height", height + margin.top + margin.bottom)
             .attr("width", width + margin.left + margin.right)
             .attr("font-family", "roboto")
+            .attr("color", "#6A707E")
             .attr("font-size", "12")
             .attr("font-weight", "500")
             .attr("text-anchor", "end")
@@ -62,17 +63,19 @@ export class chartGenerator {
         // X axis Label
         graphSVGElement.append("text")
             .attr("class", "x label")
+            .attr("color", "#6A707E")
             .attr("text-anchor", "end")
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
             .attr("font-size", "12px")
             .attr("x", width/2)
-            .attr("y", height +20)
+            .attr("y", height +30)
             .text(labelX);
 
         // Y axis Label
         graphSVGElement.append("text")
             .attr("class", "y label")
+            .attr("color", "#6A707E")
             .attr("text-anchor", "end")
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
@@ -96,7 +99,7 @@ export class chartGenerator {
             .attr("height", yScale);
     }
 
-    static axisGenerator(axisSVGElement: any, height: number, queryResult: Array<object>, yAxisKey: string, labelY: string, axisWidth: number=50) {
+    static axisGenerator(axisSVGElement: any, height: number, queryResult: Array<object>, yAxisKey: string, labelY: string, axisWidth: number=70) {
         
         queryResult.shift();
         queryResult.pop();
@@ -121,6 +124,7 @@ export class chartGenerator {
         
         axisSVGElement.append("text")
             .attr("class", "y label")
+            .attr("color", "#6A707E")
             .attr("text-anchor", "end")
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
@@ -134,7 +138,7 @@ export class chartGenerator {
         axisSVGElement
             .append("g")
             .attr("transform", `translate(${axisWidth}, ${height})`)
-            .style("color", "black")
+            .style("color", "#6A707E")
             .style("font-size", "14px")
             .style("font-weight", "500")
             .style("font-family", "roboto")

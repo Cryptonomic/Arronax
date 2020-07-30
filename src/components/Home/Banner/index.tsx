@@ -17,7 +17,7 @@ const Banner = (props: any) => {
         <Holder>
             <Title ref={props.actionBtnRef}>ARRONAX</Title>
             <Text>Blockchain Analytics Tool </Text>
-            <Button className={props.classes.primaryBtn} variant="contained" color="primary" disableElevation>
+            <Button onClick={props.redirectToDashboard} className={props.classes.primaryBtn} variant="contained" color="primary" disableElevation>
                 Explore Data
             </Button>
 

@@ -94,6 +94,8 @@ export const MapHolder = styled.div`
     background-color:#fff;
     box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);
     position: relative;
+    max-width: 550px;
+    padding-top: 35px;
 `;
 
 export const styles: any = {
@@ -114,7 +116,7 @@ export const styles: any = {
     },
     blockDisplay: {
         display: 'block',
-        margin: '0 auto'
+        marginLeft: '20px'
     },
 
     marginBottom: {
