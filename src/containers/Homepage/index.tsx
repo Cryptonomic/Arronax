@@ -145,7 +145,7 @@ class Home extends React.Component<Props, States> {
         chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, 500, svg, data, 'date', 'values', 'rgba(135, 194, 205, 0.58639)', 'Time (hour)', 'XTZ (ꜩ)', 8);
 
         const xTooltip = function(d: any, i: number) {
-            return moment(timestamps[i]).format();
+            return moment(timestamps[i]).format("YYYY MMM DD, HH:mm");
         }
 
         const yTooltip = function(d: any, i: number) {
