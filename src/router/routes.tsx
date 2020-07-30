@@ -27,7 +27,7 @@ export default () => {
   return (
     <Switch>
       <Route exact path={routes} component={ArronaxApp} />
-      <Route exact path='/home' component={HomePage} />
+      <Route exact path='/' component={HomePage} />
       <QuerySupport />
       <Route exact path="/">
         <Redirect to={defaultPath} />
