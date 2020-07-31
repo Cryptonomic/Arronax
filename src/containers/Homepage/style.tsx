@@ -116,7 +116,9 @@ export const styles: any = {
     },
     blockDisplay: {
         display: 'block',
-        marginLeft: '20px'
+        marginLeft: '20px',
+        top: '18px',
+        position: 'relative',
     },
 
     marginBottom: {
