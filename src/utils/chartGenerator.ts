@@ -107,7 +107,7 @@ export class chartGenerator {
 
         const yAxisData: any = queryResult.map(d => (<any>d)[yAxisKey]);
 
-        const max = d3.max<any>(yAxisData) > 70 ? 70 : d3.max<any>(yAxisData);
+        const max = d3.max<any>(yAxisData) > 69 ? 69 : d3.max<any>(yAxisData);
         const yAxisScale: any = d3.scaleLinear<string>()
             .domain([50, max])
             .range(<any>([-5, -height]));
