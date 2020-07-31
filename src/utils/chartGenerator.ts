@@ -41,8 +41,7 @@ export class chartGenerator {
             .attr("color", "#6A707E")
             .attr("font-size", "12")
             .attr("font-weight", "500")
-            .attr("text-anchor", "end")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("text-anchor", "end");
             
         if(xScale.bandwidth() <= 1) {
             let rangeData: any = d3.range(xAxisData.length)
@@ -108,8 +107,9 @@ export class chartGenerator {
 
         const yAxisData: any = queryResult.map(d => (<any>d)[yAxisKey]);
 
+        const max = d3.max<any>(yAxisData) > 70 ? 70 : d3.max<any>(yAxisData);
         const yAxisScale: any = d3.scaleLinear<string>()
-            .domain([50, d3.max<any>(yAxisData)])
+            .domain([50, max])
             .range(<any>([-5, -height]));
 
         // Create a Y-Axis Scale

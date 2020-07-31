@@ -187,7 +187,7 @@ div[class^="Footer"] a {
 .y-axis {
     position: absolute;
     left: 15px;
-    bottom: 50px;
+    top: 40px;
 }
 
 svg.y-axis g path, svg.y-axis g line {
