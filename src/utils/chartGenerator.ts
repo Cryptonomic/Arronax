@@ -3,16 +3,16 @@ import * as d3 from "d3";
 export class chartGenerator {
 
     
-    static seperateAxisPrioritizedBarChartGenerator(height: number, width: number, graphSVGElement: any, queryResult: Array<object>, xAxisKey: string, yAxisKey: string, barColor:string = "rgba(135, 194, 205, 0.58639)", labelX: string, labelY: string, spacing: number, stroke: string = "#56C2D9") {
+    static seperateAxisPrioritizedBarChartGenerator(height: number, width: number, graphSVGElement: any, queryResult: any, xAxisKey: string, yAxisKey: string, barColor:string = "rgba(135, 194, 205, 0.58639)", labelX: string, labelY: string, spacing: number, stroke: string = "#56C2D9") {
         
         // Clear SVG Elements of old data
         graphSVGElement.selectAll("*").remove();
 
         const margin = {top: 20, right: 0, bottom: 50, left: 0};
-    
+        
         // Create an Array for each Axis
-        let xAxisData: any = queryResult.map(d => (<any>d)[xAxisKey]);
-        const yAxisData: any = queryResult.map(d => (<any>d)[yAxisKey]);
+        let xAxisData: any = queryResult.map((d: any) => (<any>d)[xAxisKey]);
+        const yAxisData = queryResult.map((d: { [x: string]: string; }) => parseInt(d[yAxisKey]));
     
         // Create a D3 Linear Scale for the Y-Axis
         const yScale = d3.scaleLinear()
@@ -67,7 +67,7 @@ export class chartGenerator {
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
             .attr("font-size", "12px")
-            .attr("x", width/2)
+            .attr("x", (width + margin.left + margin.right)/2)
             .attr("y", height +30)
             .text(labelX);
 
@@ -79,7 +79,7 @@ export class chartGenerator {
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
             .attr("font-size", "12px")
-            .attr("x", -height/2)
+            .attr("x", -70)
             .attr("y", 10)
             .attr("transform", "rotate(-90)")
             .text(labelY);
@@ -98,19 +98,16 @@ export class chartGenerator {
             .attr("height", yScale);
     }
 
-    static axisGenerator(axisSVGElement: any, height: number, queryResult: Array<object>, yAxisKey: string, labelY: string, axisWidth: number=70) {
+    static axisGenerator(axisSVGElement: any, height: number, queryResult: any, yAxisKey: string, labelY: string, axisWidth: number=70) {
         
-        queryResult.shift();
-        queryResult.pop();
-
         axisSVGElement.selectAll("*").remove();
 
-        const yAxisData: any = queryResult.map(d => (<any>d)[yAxisKey]);
+        const yAxisData = queryResult.map((d: { [x: string]: string; }) => parseInt(d[yAxisKey]));
 
-        const max = d3.max<any>(yAxisData) > 69 ? 69 : d3.max<any>(yAxisData);
+        const max = d3.max<any>(yAxisData) + 5;
         const yAxisScale: any = d3.scaleLinear<string>()
-            .domain([50, max])
-            .range(<any>([-5, -height]));
+            .domain([-5, max])
+            .range(<any>([0, -height]));
 
         // Create a Y-Axis Scale
         const yAxis = d3.axisLeft(yAxisScale)
@@ -129,7 +126,7 @@ export class chartGenerator {
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
             .attr("font-size", "12px")
-            .attr("x", -height/2)
+            .attr("x", -80)
             .attr("y", 10)
             .attr("transform", "rotate(-90)")
             .text(labelY);

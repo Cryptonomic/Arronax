@@ -118,9 +118,14 @@ export const styles: any = {
         display: 'block',
         marginLeft: '20px',
         top: '18px',
+        position: 'relative'
+    },
+    topBakersContainer: {
+        display: 'block',
+        marginLeft: '20px',
+        left: '70px',
         position: 'relative',
     },
-
     marginBottom: {
         marginBottom:'100px'
     },

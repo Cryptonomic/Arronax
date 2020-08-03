@@ -193,13 +193,8 @@ class Home extends React.Component<Props, States> {
         const axisScg = d3.select(this.topAccountsAxisRef.current);
         //Add empty bar at start and end for label
         const dummyData: Bakers = { baker: topBakers[0].baker, count_hash: '0'} ;
-        topBakers.unshift(dummyData);
-        topBakers.unshift(dummyData);
-        topBakers.unshift(dummyData);
-        topBakers.unshift(dummyData);
-        topBakers.push(dummyData);
 
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, 500, svg, topBakers,"baker", "count_hash", 'rgba(255, 116, 119, 0.3)',  'Time (hour)',  '', 7, '#FF7477');
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, 450, svg, topBakers,"baker", "count_hash", 'rgba(255, 116, 119, 0.3)',  'Time (hour)',  '', 7, '#FF7477');
         chartGenerator.axisGenerator(axisScg, 180, topBakers, 'count_hash', 'Blocks');
         
         const xTooltip = function(d: any, i: number) {
@@ -371,7 +366,7 @@ class Home extends React.Component<Props, States> {
                                         ? <p>Loading...</p> :
                                         <React.Fragment>
                                             <svg ref={this.topAccountsAxisRef}></svg>
-                                            <svg className={classes.blockDisplay} ref={this.topBakersRef}></svg>
+                                            <svg className={classes.topBakersContainer} ref={this.topBakersRef}></svg>
                                         </React.Fragment>
                                     }
                                 </MapHolder>
