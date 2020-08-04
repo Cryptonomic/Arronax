@@ -83,7 +83,7 @@ export class chartGenerator {
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
             .attr("font-size", "12px")
-            .attr("x", -125)
+            .attr("x", -115)
             .attr("y", 30)
             .attr("text-anchor", "middle")
             .attr("transform", "rotate(-90)")
@@ -131,7 +131,7 @@ export class chartGenerator {
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
             .attr("font-size", "12px")
-            .attr("x", -105)
+            .attr("x", -95)
             .attr("y", 10)
             .attr("transform", "rotate(-90)")
             .text(labelY);
