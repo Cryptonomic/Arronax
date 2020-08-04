@@ -69,6 +69,7 @@ class Home extends React.Component<Props, States> {
     topBakersRef: any = null;
     topAccountsAxisRef: any = null;
     actionBtnRef: any = null;
+    container: any = null;
 
     constructor(props: Props) {
         super(props);
@@ -78,6 +79,7 @@ class Home extends React.Component<Props, States> {
         this.topBakersRef = React.createRef();
         this.topAccountsAxisRef = React.createRef();
         this.actionBtnRef = React.createRef();
+        this.container = React.createRef();
 
         this.state = {
             showLogo: false,
@@ -141,15 +143,16 @@ class Home extends React.Component<Props, States> {
 
     async generateHourlyTransactionsGraph(data: Array<any>, label: Array<any>, timestamps: Array<any>) {
         const svg = d3.select(this.transactionPerHour.current);
+        const width = this.container.current ? this.container.current.offsetWidth : 0;
 
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, 500, svg, data, 'date', 'values', 'rgba(135, 194, 205, 0.58639)', 'Time (hour)', 'XTZ (ꜩ)', 8);
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, width, svg, data, 'date', 'values', 'rgba(135, 194, 205, 0.58639)', 'Time (hour)', 'XTZ (ꜩ)', 8);
 
         const xTooltip = function(d: any, i: number) {
             return moment(timestamps[i]).format("YYYY MMM DD, HH:mm");
         }
 
         const yTooltip = function(d: any, i: number) {
-            return d + ' XTZ';
+            return d.toLocaleString() + ' XTZ';
         }
 
         chartGenerator.barGraphFloatingTooltipGenerator(svg, xTooltip, yTooltip);
@@ -168,15 +171,16 @@ class Home extends React.Component<Props, States> {
         const dummyData = {account_id: topAccounts[0].account_id, balance: 0};
         topAccounts.unshift(dummyData);
         topAccounts.push(dummyData);
+        const width = this.container.current ? this.container.current.offsetWidth : 0;
 
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, 500, svg, topAccounts,"account_id", "balance", 'rgba(135, 194, 205, 0.58639)',  'Bakers',  'XTZ (ꜩ)', 10);
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, width, svg, topAccounts,"account_id", "balance", 'rgba(135, 194, 205, 0.58639)',  'Bakers',  'XTZ (ꜩ)', 10);
 
         const xTooltip = function(d: any, i: number) {
             return topAccounts[i].account_id
         }
     
         const yTooltip = function(d: any, i: number) {
-            return d + " ꜩ"
+            return d.toLocaleString() + " ꜩ"
         }
 
         chartGenerator.barGraphFloatingTooltipGenerator(svg, xTooltip, yTooltip);
@@ -193,8 +197,8 @@ class Home extends React.Component<Props, States> {
         const axisScg = d3.select(this.topAccountsAxisRef.current);
         //Add empty bar at start and end for label
         const dummyData: Bakers = { baker: topBakers[0].baker, count_hash: '0'} ;
-
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, 450, svg, topBakers,"baker", "count_hash", 'rgba(255, 116, 119, 0.3)',  'Time (hour)',  '', 7, '#FF7477');
+        const width = this.container.current ? this.container.current.offsetWidth - 100 : 0; 
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, width, svg, topBakers,"baker", "count_hash", 'rgba(255, 116, 119, 0.3)',  'Time (hour)',  '', 7, '#FF7477');
         chartGenerator.axisGenerator(axisScg, 180, topBakers, 'count_hash', 'Blocks');
         
         const xTooltip = function(d: any, i: number) {
@@ -207,7 +211,7 @@ class Home extends React.Component<Props, States> {
         }
     
         const yTooltip = function(d: any, i: number) {
-            return d + " Blocks Baked"
+            return d.toLocaleString() + " Blocks Baked"
         }
 
         chartGenerator.barGraphFloatingTooltipGenerator(svg, xTooltip, yTooltip);
@@ -339,7 +343,7 @@ class Home extends React.Component<Props, States> {
                                 <img src={PlaceholderImage} alt="img"/>
                             </Grid>
                             <Grid item xs={6}>
-                                <MapHolder>
+                                <MapHolder ref={this.container}>
                                     {
                                         isTransactionsLoading 
                                         ? <p>Loading...</p> : 

@@ -67,7 +67,7 @@ export class chartGenerator {
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
             .attr("font-size", "12px")
-            .attr("x", (width + margin.left + margin.right)/2)
+            .attr("x", (width + margin.left + margin.right+60)/2)
             .attr("y", height +30)
             .text(labelX);
 
@@ -75,12 +75,12 @@ export class chartGenerator {
         graphSVGElement.append("text")
             .attr("class", "y label")
             .attr("color", "#6A707E")
-            .attr("text-anchor", "end")
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
             .attr("font-size", "12px")
-            .attr("x", -70)
-            .attr("y", 10)
+            .attr("x", -85)
+            .attr("y", 30)
+            .attr("text-anchor", "middle")
             .attr("transform", "rotate(-90)")
             .text(labelY);
 
@@ -111,7 +111,7 @@ export class chartGenerator {
 
         // Create a Y-Axis Scale
         const yAxis = d3.axisLeft(yAxisScale)
-        .scale(yAxisScale);
+        .scale(yAxisScale).ticks(6);
 
         // Prepare the Y-Axis Element
         axisSVGElement
@@ -126,7 +126,7 @@ export class chartGenerator {
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
             .attr("font-size", "12px")
-            .attr("x", -80)
+            .attr("x", -85)
             .attr("y", 10)
             .attr("transform", "rotate(-90)")
             .text(labelY);
