@@ -95,6 +95,7 @@ export const MapHolder = styled.div`
     box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);
     position: relative;
     padding-top: 35px;
+    min-height: 300px;
 `;
 
 export const styles: any = {
@@ -115,7 +116,6 @@ export const styles: any = {
     },
     blockDisplay: {
         display: 'block',
-        top: '18px',
         position: 'relative'
     },
     topBakersContainer: {

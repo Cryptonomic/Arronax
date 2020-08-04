@@ -3,12 +3,12 @@ import * as d3 from "d3";
 export class chartGenerator {
 
     
-    static seperateAxisPrioritizedBarChartGenerator(height: number, width: number, graphSVGElement: any, queryResult: any, xAxisKey: string, yAxisKey: string, barColor:string = "rgba(135, 194, 205, 0.58639)", labelX: string, labelY: string, spacing: number, stroke: string = "#56C2D9") {
+    static seperateAxisPrioritizedBarChartGenerator(height: number, width: number, graphSVGElement: any, queryResult: any, xAxisKey: string, yAxisKey: string, barColor:string = "rgba(135, 194, 205, 0.58639)", labelX: string, labelY: string, spacing: number, hasLabel:boolean, stroke: string = "#56C2D9") {
         
         // Clear SVG Elements of old data
         graphSVGElement.selectAll("*").remove();
 
-        const margin = {top: 20, right: 0, bottom: 50, left: 0};
+        const margin = {top: 0, right: 0, bottom: 50, left: 0};
         
         // Create an Array for each Axis
         let xAxisData: any = queryResult.map((d: any) => (<any>d)[xAxisKey]);
@@ -59,6 +59,11 @@ export class chartGenerator {
                 .attr("text-anchor", "end");
         }
 
+        let x = (width + margin.left + margin.right+36)/2
+        if(hasLabel) {
+            x = width/2 - 10;
+        }
+
         // X axis Label
         graphSVGElement.append("text")
             .attr("class", "x label")
@@ -67,7 +72,7 @@ export class chartGenerator {
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
             .attr("font-size", "12px")
-            .attr("x", (width + margin.left + margin.right+60)/2)
+            .attr("x", x)
             .attr("y", height +30)
             .text(labelX);
 
@@ -78,7 +83,7 @@ export class chartGenerator {
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
             .attr("font-size", "12px")
-            .attr("x", -85)
+            .attr("x", -125)
             .attr("y", 30)
             .attr("text-anchor", "middle")
             .attr("transform", "rotate(-90)")
@@ -126,7 +131,7 @@ export class chartGenerator {
             .attr("font-family", "Roboto")
             .attr("font-weight", "500")
             .attr("font-size", "12px")
-            .attr("x", -85)
+            .attr("x", -105)
             .attr("y", 10)
             .attr("transform", "rotate(-90)")
             .text(labelY);

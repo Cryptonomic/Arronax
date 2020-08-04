@@ -363,6 +363,11 @@ export const fetchTopBakers = (date: number, limit: number) => async (dispatch: 
     }
 };
 
+const shareQuery = (network: string, entity: string, query: object) => {
+    const encodedUrl = btoa(JSON.stringify(query));
+    return `/tezos/${network}/${entity}/query/${encodedUrl}`;
+};
+
 const loadEntities = () => async (dispatch: any, state: any) => {
     const selectedConfig: Config = state().app.selectedConfig;
     const { platform, network, url, apiKey } = selectedConfig;

@@ -9,7 +9,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import * as d3 from 'd3';
 import moment from 'moment';
 
@@ -83,7 +83,7 @@ class Home extends React.Component<Props, States> {
 
         this.state = {
             showLogo: false,
-            isOpenConfigMdoal: false,
+            isOpenConfigMdoal: false
         };
     }
 
@@ -105,7 +105,6 @@ class Home extends React.Component<Props, States> {
 
         await loadHourlyTransactions(prevDate.getTime());
         let {data, label, timestamps } = await this.formatHourlyTransactions(this.props.hourlytransactions, prevDate.getTime());
-
         this.generateHourlyTransactionsGraph(data, label, timestamps);
     }
 
@@ -145,7 +144,7 @@ class Home extends React.Component<Props, States> {
         const svg = d3.select(this.transactionPerHour.current);
         const width = this.container.current ? this.container.current.offsetWidth : 0;
 
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, width, svg, data, 'date', 'values', 'rgba(135, 194, 205, 0.58639)', 'Time (hour)', 'XTZ (ꜩ)', 8);
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(235, width, svg, data, 'date', 'values', 'rgba(135, 194, 205, 0.58639)', 'Time (hour)', 'XTZ (ꜩ)', 8, false);
 
         const xTooltip = function(d: any, i: number) {
             return moment(timestamps[i]).format("YYYY MMM DD, HH:mm");
@@ -173,7 +172,7 @@ class Home extends React.Component<Props, States> {
         topAccounts.push(dummyData);
         const width = this.container.current ? this.container.current.offsetWidth : 0;
 
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, width, svg, topAccounts,"account_id", "balance", 'rgba(135, 194, 205, 0.58639)',  'Bakers',  'XTZ (ꜩ)', 10);
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(235, width, svg, topAccounts,"account_id", "balance", 'rgba(135, 194, 205, 0.58639)',  'Bakers',  'XTZ (ꜩ)', 10, false);
 
         const xTooltip = function(d: any, i: number) {
             return topAccounts[i].account_id
@@ -198,8 +197,8 @@ class Home extends React.Component<Props, States> {
         //Add empty bar at start and end for label
         const dummyData: Bakers = { baker: topBakers[0].baker, count_hash: '0'} ;
         const width = this.container.current ? this.container.current.offsetWidth - 100 : 0; 
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(180, width, svg, topBakers,"baker", "count_hash", 'rgba(255, 116, 119, 0.3)',  'Time (hour)',  '', 7, '#FF7477');
-        chartGenerator.axisGenerator(axisScg, 180, topBakers, 'count_hash', 'Blocks');
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(235, width, svg, topBakers,"baker", "count_hash", 'rgba(255, 116, 119, 0.3)',  'Time (hour)',  '', 7, true, '#FF7477');
+        chartGenerator.axisGenerator(axisScg, 235, topBakers, 'count_hash', 'Blocks');
         
         const xTooltip = function(d: any, i: number) {
 
@@ -341,6 +340,7 @@ class Home extends React.Component<Props, States> {
                             </Grid>
                             <Grid item xs={6}>
                                 <img src={PlaceholderImage} alt="img"/>
+                                {/* <Link to={this.hourlyTransactionsQuery}/> */}
                             </Grid>
                             <Grid item xs={6}>
                                 <MapHolder ref={this.container}>
