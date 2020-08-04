@@ -21,12 +21,12 @@ import {
     ImageHolder,
     WhiteBg,
     SectionTitle,
-    Footer,
     ListItem,
     ListContainer,
     styles,
     BannerHolder,
-    MapHolder
+    MapHolder,
+    AnchorTag
 } from './style';
 import {
     DismissButton,
@@ -61,6 +61,8 @@ import PlaceholderImage1 from '../../assets/images/placeholder1.png';
 import PlaceholderImage2 from '../../assets/images/placeholder2.png';
 
 import { Props, States, Transactions, Accounts, Bakers } from './types';
+
+import Footer from '../../components/Footer';
 
 class Home extends React.Component<Props, States> {
 
@@ -331,7 +333,7 @@ class Home extends React.Component<Props, States> {
                 </WhiteBg>
                 <Container maxWidth="lg">
                     <Padding>
-                        <Grid container alignItems="center" spacing={3}>
+                        <Grid container alignItems="stretch" spacing={3}>
                             <Grid item xs={12}>
                                 <SectionTitle>
                                     <img style={{marginRight: '20px'}} src={ThoughtBubbleIcon} alt="img"/>
@@ -340,6 +342,15 @@ class Home extends React.Component<Props, States> {
                             </Grid>
                             <Grid item xs={6}>
                                 <img src={PlaceholderImage} alt="img"/>
+                                <AnchorTag>
+                                    <a href="#">
+                                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M5.55553 0L7.38498 1.82944L3.49609 5.71832L4.28165 6.50388L8.17053 2.615L9.99997 4.44444V0H5.55553Z" fill="#5CBBD4"/>
+                                            <path d="M8.88887 8.88887H1.11111V1.11111H4.99999L3.88888 0H1.11111C0.498332 0 0 0.498332 0 1.11111V8.88887C0 9.50165 0.498332 9.99998 1.11111 9.99998H8.88887C9.50165 9.99998 9.99998 9.50165 9.99998 8.88887V6.1111L8.88887 4.99999V8.88887Z" fill="#5CBBD4"/>
+                                        </svg>
+                                        View Query
+                                    </a> 
+                                </AnchorTag>
                                 {/* <Link to={this.hourlyTransactionsQuery}/> */}
                             </Grid>
                             <Grid item xs={6}>
@@ -356,7 +367,7 @@ class Home extends React.Component<Props, States> {
                 </Container>
                 <Container maxWidth="lg">
                     <Padding>
-                        <Grid container spacing={3}>
+                        <Grid alignItems="stretch" container spacing={3}>
                             <Grid item xs={12}>
                                 <SectionTitle>
                                     <img style={{marginRight: '20px'}} src={ThoughtBubbleIcon} alt="img"/>
@@ -377,13 +388,22 @@ class Home extends React.Component<Props, States> {
                             </Grid>
                             <Grid item xs={6}>
                                 <img src={PlaceholderImage1} alt="img"/>
+                                <AnchorTag className={classes.alignRight}>
+                                    <a href="#">
+                                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M5.55553 0L7.38498 1.82944L3.49609 5.71832L4.28165 6.50388L8.17053 2.615L9.99997 4.44444V0H5.55553Z" fill="#5CBBD4"/>
+                                            <path d="M8.88887 8.88887H1.11111V1.11111H4.99999L3.88888 0H1.11111C0.498332 0 0 0.498332 0 1.11111V8.88887C0 9.50165 0.498332 9.99998 1.11111 9.99998H8.88887C9.50165 9.99998 9.99998 9.50165 9.99998 8.88887V6.1111L8.88887 4.99999V8.88887Z" fill="#5CBBD4"/>
+                                        </svg>
+                                        View Query
+                                    </a> 
+                                </AnchorTag>
                             </Grid>
                         </Grid>
                     </Padding>
                 </Container>
                 <Container maxWidth="lg">
                     <Padding>
-                        <Grid alignItems="center" container spacing={3}>
+                        <Grid alignItems="stretch" container spacing={3}>
                             <Grid item xs={12}>
                                 <SectionTitle>
                                     <img style={{marginRight: '20px'}} src={ThoughtBubbleIcon} alt="img"/>
@@ -392,6 +412,15 @@ class Home extends React.Component<Props, States> {
                             </Grid>
                             <Grid item xs={6}>
                                 <img style={{width:'100%'}} src={PlaceholderImage2} alt="img"/>
+                                <AnchorTag>
+                                    <a href="#">
+                                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M5.55553 0L7.38498 1.82944L3.49609 5.71832L4.28165 6.50388L8.17053 2.615L9.99997 4.44444V0H5.55553Z" fill="#5CBBD4"/>
+                                            <path d="M8.88887 8.88887H1.11111V1.11111H4.99999L3.88888 0H1.11111C0.498332 0 0 0.498332 0 1.11111V8.88887C0 9.50165 0.498332 9.99998 1.11111 9.99998H8.88887C9.50165 9.99998 9.99998 9.50165 9.99998 8.88887V6.1111L8.88887 4.99999V8.88887Z" fill="#5CBBD4"/>
+                                        </svg>
+                                        View Query
+                                    </a> 
+                                </AnchorTag>
                             </Grid>
                             <Grid item xs={6}>
                                 <MapHolder>
@@ -423,7 +452,7 @@ class Home extends React.Component<Props, States> {
                     </Padding>
                 </Container>
                 </WhiteBg>
-                <Footer>
+                {/* <Footer>
                     <Container maxWidth="lg">
                         <ListContainer>
                             <ListItem>An open-source product by Cryptonomic</ListItem>
@@ -432,7 +461,8 @@ class Home extends React.Component<Props, States> {
                             <ListItem>Version March 2020 Release 8.1-84e17bb</ListItem>
                         </ListContainer>
                     </Container>
-                </Footer>
+                </Footer> */}
+                <Footer/>
                 <Dialog open={isError} onClose={this.handleErrorClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">Error</DialogTitle>
                     <DialogContentWrapper>

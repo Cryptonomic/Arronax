@@ -98,6 +98,23 @@ export const MapHolder = styled.div`
     min-height: 300px;
 `;
 
+export const AnchorTag = styled.div `
+    text-align:left;
+    a {
+        font-family: Nunito;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 20px;
+        color: #5CBBD4;
+        margin-left:15px;
+        text-decoration:none;
+    }
+    svg {
+        margin-right:5px;
+    }
+`;
+
 export const styles: any = {
     outlineBtn: {
         padding: '10px 30px',
@@ -129,7 +146,7 @@ export const styles: any = {
     },
 
     alignRight: {
-        textAlign: 'right'
+        textAlign: 'right !important'
     }
 };
 
