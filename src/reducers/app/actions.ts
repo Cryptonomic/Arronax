@@ -25,8 +25,11 @@ import {
     SET_QUERY_FILTERS,
     SET_HOURLY_TRANSACTIONS_LOADING,
     SET_HOURLY_TRANSACTIONS,
+    SET_HOURLY_TRANSACTIONS_QUERY_URL,
     SET_TOP_ACCOUNTS,
+    SET_TOP_ACCOUNTS_QUERY_URL,
     SET_TOP_BAKERS,
+    SET_TOP_BAKERS_QUERY_URL,
     SET_TOP_ACCOUNTS_LOADING,
     SET_TOP_BAKERS_LOADING
 } from './types';
@@ -236,6 +239,13 @@ export function setHourlyTransactions(hourlytransactions: Array<object>) {
     };
 }
 
+export function setHourlyTransactionsQueryUrl(hourlytransactionsUrl: string) {
+    return {
+        type: SET_HOURLY_TRANSACTIONS_QUERY_URL,
+        hourlytransactionsUrl,
+    };
+}
+
 export function setTopAccounts(topAccounts: Array<object>) {
     return {
         type: SET_TOP_ACCOUNTS,
@@ -261,5 +271,19 @@ export function setTopBakersLoadingAction(isTopBakersLoading: boolean) {
     return {
         type: SET_TOP_BAKERS_LOADING,
         isTopBakersLoading,
+    }
+}
+
+export function setTopAccountsQueryUrl(topAccountsUrl: string) {
+    return {
+        type: SET_TOP_ACCOUNTS_QUERY_URL,
+        topAccountsUrl,
+    }
+}
+
+export function setTopBakersQueryUrl(topBakersUrl: string) {
+    return {
+        type: SET_TOP_BAKERS_QUERY_URL,
+        topBakersUrl,
     }
 }

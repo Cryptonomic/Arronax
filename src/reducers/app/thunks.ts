@@ -31,10 +31,13 @@ import {
     setQueryFilters,
     setHourlyTransactionsLoadingAction,
     setHourlyTransactions,
+    setHourlyTransactionsQueryUrl,
     setTopAccounts,
     setTopAccountsLoadingAction,
     setTopBakers,
-    setTopBakersLoadingAction
+    setTopBakersLoadingAction,
+    setTopBakersQueryUrl,
+    setTopAccountsQueryUrl,
 } from './actions';
 import { setModalItems, setModalOpen } from '../modal/actions';
 import { createMessageAction } from '../message/actions';
@@ -291,6 +294,8 @@ export const loadHourlyTransactions = (date: number) => async (dispatch: any, st
         query = ConseilQueryBuilder.setLimit(query, 1000000000);
 
         const result = await ConseilDataClient.executeEntityQuery(serverInfo, 'tezos', network, 'operations', query);
+        const queryUrl = shareQuery("mainnet", 'operations', query);
+        dispatch(setHourlyTransactionsQueryUrl(queryUrl));
         dispatch(setHourlyTransactions(result));
         dispatch(setHourlyTransactionsLoadingAction(false));
     } catch (e) {
@@ -322,6 +327,8 @@ export const fetchTopAccounts = (limit: number) => async (dispatch: any, state: 
             element.balance = Math.floor(element.balance / 1000000.0)
         });
         
+        const queryUrl = shareQuery("mainnet", 'accounts', query);
+        dispatch(setTopAccountsQueryUrl(queryUrl));
         dispatch(setTopAccounts(result));
         dispatch(setTopAccountsLoadingAction(false));
     } catch (e) {
@@ -351,6 +358,8 @@ export const fetchTopBakers = (date: number, limit: number) => async (dispatch: 
         query = ConseilQueryBuilder.setLimit(query, limit);
 
         const result = await ConseilDataClient.executeEntityQuery(serverInfo, 'tezos', network, 'blocks', query);
+        const queryUrl = shareQuery("mainnet", 'blocks', query);
+        dispatch(setTopBakersQueryUrl(queryUrl));
         dispatch(setTopBakers(result));
         dispatch(setTopBakersLoadingAction(false));
     } catch (e) {

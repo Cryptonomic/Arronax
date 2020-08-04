@@ -74,6 +74,7 @@ export class chartGenerator {
             .attr("font-size", "12px")
             .attr("x", x)
             .attr("y", height +30)
+            .style("text-align", "center")
             .text(labelX);
 
         // Y axis Label
@@ -87,6 +88,7 @@ export class chartGenerator {
             .attr("y", 30)
             .attr("text-anchor", "middle")
             .attr("transform", "rotate(-90)")
+            .style("text-align", "center")
             .text(labelY);
 
         // Create selection for bar graph bars

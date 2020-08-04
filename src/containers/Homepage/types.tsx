@@ -15,6 +15,9 @@ export interface OwnProps {
     selectedConfig: Config;
     configs: Config[];
     selectedEntity: string;
+    hourlytransactionsUrl: string,
+    topAccountsUrl: string,
+    topBakersUrl: string,
     loadHourlyTransactions: (date: number) => void;
     initMessage: () => void;
     fetchTopAccounts: (limit: number) => void;
