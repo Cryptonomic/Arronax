@@ -179,8 +179,9 @@ class Home extends React.Component<Props, States> {
 
         chartGenerator.seperateAxisPrioritizedBarChartGenerator(215, width, svg, topAccounts,"account_id", "balance", 'rgba(135, 194, 205, 0.58639)',  'Bakers',  'XTZ (ꜩ)', 10, false);
 
+        let self = this;
         const xTooltip = function(d: any, i: number) {
-            return topAccounts[i].account_id
+            return self.getFormattedToken(topAccounts[i].account_id)
         }
     
         const yTooltip = function(d: any, i: number) {
@@ -204,14 +205,14 @@ class Home extends React.Component<Props, States> {
         const width = this.container.current ? this.container.current.offsetWidth - 100 : 0; 
         chartGenerator.seperateAxisPrioritizedBarChartGenerator(215, width, svg, topBakers,"baker", "count_hash", 'rgba(255, 116, 119, 0.3)',  'Time (hour)',  '', 7, true, '#FF7477');
         chartGenerator.axisGenerator(axisScg, 215, topBakers, 'count_hash', 'Blocks');
-        
+        let self = this;
         const xTooltip = function(d: any, i: number) {
 
             if(i >= topBakers.length) {
                 i = topBakers.length-1;
             }
 
-            return topBakers[i].baker;
+            return self.getFormattedToken(topBakers[i].baker);
         }
     
         const yTooltip = function(d: any, i: number) {
@@ -272,6 +273,12 @@ class Home extends React.Component<Props, States> {
 
     redirectToDashboard = () => {
         this.props.history.push('/tezos/mainnet/');
+    }
+
+    getFormattedToken = (tokenId: string) => {
+        let subStr1 = tokenId.substring(0, 6);
+        let subStr2 = tokenId.substring(tokenId.length-6, tokenId.length);
+        return `${subStr1}...${subStr2}`;
     }
 
     render() {
