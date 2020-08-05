@@ -91,6 +91,7 @@ export const ListContainer = styled.ul`
 `;
 
 export const MapHolder = styled.div`
+    margin-top: 8px;
     background-color:#fff;
     box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);
     position: relative;
@@ -102,14 +103,15 @@ export const AnchorTag = styled.div `
     text-align:left;
     a {
         font-family: Roboto;
-        font-size: 14px;
-        line-height: 20px;
-        color: #5CBBD4;
-        margin-left:15px;
+        font-size: 24px;
+        line-height: 28px;
+        color: #2D9CDB;
+        margin: 0 20px;
         text-decoration:none;
     }
     svg {
         margin-right:5px;
+        vertical-align: super;
     }
 `;
 
@@ -145,6 +147,11 @@ export const styles: any = {
 
     alignRight: {
         textAlign: 'right !important'
+    },
+
+    titleText: {
+        margin:'0 0 0 20px !important',
+        justifyContent:'flex-start !important'
     }
 };
 

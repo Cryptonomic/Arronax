@@ -346,7 +346,7 @@ class Home extends React.Component<Props, States> {
                 </WhiteBg>
                 <Container maxWidth="lg">
                     <Padding>
-                        <Grid container alignItems="center" spacing={3}>
+                        <Grid container alignItems="flex-start" spacing={3}>
                             <Grid item xs={12}>
                                 <SectionTitle>
                                     <img style={{marginRight: '20px'}} src={ThoughtBubbleIcon} alt="img"/>
@@ -380,7 +380,7 @@ class Home extends React.Component<Props, States> {
                 </Container>
                 <Container maxWidth="lg">
                     <Padding>
-                        <Grid alignItems="center" container spacing={3}>
+                        <Grid alignItems="flex-start" container spacing={3}>
                             <Grid item xs={12}>
                                 <SectionTitle>
                                     <img style={{marginRight: '20px'}} src={ThoughtBubbleIcon} alt="img"/>
@@ -416,7 +416,7 @@ class Home extends React.Component<Props, States> {
                 </Container>
                 <Container maxWidth="lg">
                     <Padding>
-                        <Grid alignItems="center" container spacing={3}>
+                        <Grid alignItems="flex-start" container spacing={3}>
                             <Grid item xs={12}>
                                 <SectionTitle>
                                     <img style={{marginRight: '20px'}} src={ThoughtBubbleIcon} alt="img"/>
@@ -424,7 +424,7 @@ class Home extends React.Component<Props, States> {
                                 </SectionTitle>
                             </Grid>
                             <Grid item xs={6}>
-                                <img style={{width:'100%'}} src={PlaceholderImage2} alt="img"/>
+                                <img src={PlaceholderImage2} alt="img"/>
                                 <AnchorTag>
                                     <Link to={topAccountsUrl}>
                                         <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -452,7 +452,7 @@ class Home extends React.Component<Props, States> {
                     <Padding>
                         <Grid container justify="center" alignItems="center" spacing={0}>
                             <Grid item xs={6}>
-                                <SectionTitle style={{margin:0,justifyContent:'flex-start'}}>
+                                <SectionTitle className={classes.titleText}>
                                     Start exploring blockchain data
                                 </SectionTitle>
                             </Grid>
