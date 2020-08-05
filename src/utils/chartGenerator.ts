@@ -171,7 +171,7 @@ export class chartGenerator {
                 .style("line-height", "15px")
                 .style("letter-spacing", "0.4px")
                 .style("color", "#ffffff")
-                .style("padding", "10px 15px")
+                .style("padding", "5px 20px")
                 .html(yLabelFunction(d, i) + "<br>" + xLabelFunction(d, i));
         })
             .on("mouseout", function(d: any){ tooltip.style("display", "none");
