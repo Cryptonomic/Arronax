@@ -101,9 +101,7 @@ export const MapHolder = styled.div`
 export const AnchorTag = styled.div `
     text-align:left;
     a {
-        font-family: Nunito;
-        font-style: normal;
-        font-weight: normal;
+        font-family: Roboto;
         font-size: 14px;
         line-height: 20px;
         color: #5CBBD4;
