@@ -59,9 +59,9 @@ export class chartGenerator {
                 .attr("text-anchor", "end");
         }
 
-        let x = (width + margin.left + margin.right+36)/2
+        let x = (width + margin.left + margin.right+45)/2
         if(hasLabel) {
-            x = width/2 - 10;
+            x = width/2 +24;
         }
 
         // X axis Label
