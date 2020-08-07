@@ -167,7 +167,7 @@ export class chartGenerator {
                 .style("background", "#313C4E")
                 .style("box-shadow", "1.5px 2.5px 4px rgba(119, 119, 119, 0.25)")
                 .style("font-family", "Roboto")
-                .style("font-size", "8px")
+                .style("font-size", "9.5px")
                 .style("line-height", "15px")
                 .style("letter-spacing", "0.4px")
                 .style("color", "#ffffff")

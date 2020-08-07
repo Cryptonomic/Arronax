@@ -111,7 +111,7 @@ export const AnchorTag = styled.div `
     }
     svg {
         margin-right:5px;
-        vertical-align: super;
+        vertical-align: unset;
     }
 `;
 
