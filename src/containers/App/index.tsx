@@ -73,7 +73,7 @@ class Arronax extends React.Component<Props, States> {
             isSettingCollapsed: false,
             selectedTool: ToolType.FILTER,
             isOpenConfigMdoal: false,
-            page: 0,
+            page: 0
         };
 
         this.settingRef = React.createRef();

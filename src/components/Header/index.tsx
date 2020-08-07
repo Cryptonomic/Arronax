@@ -51,10 +51,10 @@ const MenuHeaderItem = muiStyled(MenuItem)({
 
 const MainMenuItem = muiStyled(MenuItem)({
   '&[class*="selected"]': {
-    backgroundColor: 'rgba(101,  200, 206, 0.13)'
+    backgroundColor: 'rgba(101,  200, 206, 0.13)'
   },
   '&:hover': {
-    backgroundColor: 'rgba(101,  200, 206, 0.1)'
+    backgroundColor: 'rgba(101,  200, 206, 0.1)'
   }
 });
 

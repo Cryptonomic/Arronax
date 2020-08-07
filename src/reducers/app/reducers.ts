@@ -23,6 +23,15 @@ import {
     SET_AGGREGATIONS,
     SET_SUBMIT,
     SET_QUERY_FILTERS,
+    SET_HOURLY_TRANSACTIONS_LOADING,
+    SET_HOURLY_TRANSACTIONS,
+    SET_HOURLY_TRANSACTIONS_QUERY_URL,
+    SET_TOP_ACCOUNTS_QUERY_URL,
+    SET_TOP_BAKERS_QUERY_URL,
+    SET_TOP_ACCOUNTS,
+    SET_TOP_ACCOUNTS_LOADING,
+    SET_TOP_BAKERS,
+    SET_TOP_BAKERS_LOADING
 } from './types';
 
 import { EntityDefinition } from 'conseiljs';
@@ -54,6 +63,15 @@ export interface AppState {
     selectedConfig: Config;
     aggregations: object;
     aggFunctions: object;
+    isTransactionsLoading: boolean,
+    hourlytransactions: Array<object>,
+    hourlytransactionsUrl: string,
+    topAccounts: Array<object>,
+    isTopAccountsLoading: boolean,
+    topBakers: Array<object>,
+    isTopBakersLoading: boolean,
+    topBakersUrl: string,
+    topAccountsUrl: string,
 }
 
 let initialState: AppState = {
@@ -126,6 +144,15 @@ let initialState: AppState = {
             { name: 'count', displayName: 'Count' },
         ],
     },
+    isTransactionsLoading: false,
+    hourlytransactions: [],
+    hourlytransactionsUrl: '',
+    topAccounts: [],
+    isTopAccountsLoading: false,
+    topBakers: [],
+    isTopBakersLoading: false,
+    topBakersUrl: '',
+    topAccountsUrl: ''
 };
 
 export const app = (state = initialState, action: any) => {
@@ -276,6 +303,24 @@ export const app = (state = initialState, action: any) => {
             const filters = { ...state.queryFilters, [entity]: queryFilters };
             return { ...state, queryFilters: filters };
         }
+        case SET_HOURLY_TRANSACTIONS_LOADING:
+            return { ...state, isTransactionsLoading: action.isTransactionsLoading };
+        case SET_HOURLY_TRANSACTIONS: 
+            return { ...state, hourlytransactions: action.hourlytransactions };
+        case SET_HOURLY_TRANSACTIONS_QUERY_URL:
+            return { ...state, hourlytransactionsUrl: action.hourlytransactionsUrl };
+        case SET_TOP_ACCOUNTS:
+            return { ...state, topAccounts: action.topAccounts };
+        case SET_TOP_ACCOUNTS_QUERY_URL:
+            return { ...state, topAccountsUrl: action.topAccountsUrl };
+        case SET_TOP_ACCOUNTS_LOADING:
+            return { ...state, isTopAccountsLoading: action.isTopAccountsLoading };
+        case SET_TOP_BAKERS:
+            return { ...state, topBakers: action.topBakers };
+        case SET_TOP_BAKERS_QUERY_URL:
+            return { ...state, topBakersUrl: action.topBakersUrl };
+        case SET_TOP_BAKERS_LOADING:
+            return { ...state, isTopBakersLoading: action.isTopBakersLoading };
     }
     return state;
 };

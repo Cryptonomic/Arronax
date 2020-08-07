@@ -44,3 +44,22 @@ export const getSelectedConfig = createSelector(getAppState, (apps) => apps.sele
 export const getAggregations = createSelector(getAppState, (apps) => apps.aggregations[apps.selectedEntity] || []);
 
 export const getAggFunctions = createSelector(getAppState, (apps) => apps.aggFunctions);
+
+// Home Page selectors
+export const getHourlyTransactionsLoading = createSelector(getAppState, (apps) => apps.isTransactionsLoading);
+
+export const getHourlyTransactions = createSelector(getAppState, (apps) => apps.hourlytransactions);
+
+export const getHourlyTransactionsUrl = createSelector(getAppState, (apps) => apps.hourlytransactionsUrl);
+
+export const getTopAccounts = createSelector(getAppState, (apps) => apps.topAccounts);
+
+export const getTopAccountsUrl = createSelector(getAppState, (apps) => apps.topAccountsUrl);
+
+export const getTopAccountsLoading = createSelector(getAppState, (apps) => apps.isTopAccountsLoading);
+
+export const getTopBakers = createSelector(getAppState, (apps) => apps.topBakers); 
+
+export const getTopBakersUrl = createSelector(getAppState, (apps) => apps.topBakersUrl);
+
+export const getTopBakersLoading = createSelector(getAppState, (apps) => apps.isTopBakersLoading);

@@ -11,6 +11,7 @@ import {
     AttrbuteDataType,
     TezosConseilClient,
     EntityDefinition,
+    ConseilFunction
 } from 'conseiljs';
 
 import {
@@ -28,6 +29,15 @@ import {
     setSubmitAction,
     setAggregationAction,
     setQueryFilters,
+    setHourlyTransactionsLoadingAction,
+    setHourlyTransactions,
+    setHourlyTransactionsQueryUrl,
+    setTopAccounts,
+    setTopAccountsLoadingAction,
+    setTopBakers,
+    setTopBakersLoadingAction,
+    setTopBakersQueryUrl,
+    setTopAccountsQueryUrl,
 } from './actions';
 import { setModalItems, setModalOpen } from '../modal/actions';
 import { createMessageAction } from '../message/actions';
@@ -262,6 +272,109 @@ export const fetchInitEntityAction = (
     await dispatch(setQueryFilters(entity, query));
     await dispatch(setEntityPropertiesAction(entity, filters, sorts, columns, items, aggregations));
     await Promise.all(cardinalityPromises);
+};
+
+export const loadHourlyTransactions = (date: number) => async (dispatch: any, state: any) => {
+    
+    try {
+        dispatch(setHourlyTransactionsLoadingAction(true));
+        //const { platform = '', network = '', entity = '', id = '', isQuery = false, history } = props;
+        const { selectedConfig } = state().app;
+        const { network, url, apiKey } = selectedConfig;
+        const serverInfo = { url, apiKey, network };
+
+        let query = ConseilQueryBuilder.blankQuery();
+        query = ConseilQueryBuilder.addFields(query, 'kind');
+        query = ConseilQueryBuilder.addFields(query, 'timestamp');
+        query = ConseilQueryBuilder.addPredicate(query, 'kind', ConseilOperator.EQ, ['transaction']);
+        query = ConseilQueryBuilder.addPredicate(query, 'status', ConseilOperator.EQ, ['applied']);
+        query = ConseilQueryBuilder.addPredicate(query, 'timestamp', ConseilOperator.BETWEEN, [date, new Date().getTime()]);
+        query = ConseilQueryBuilder.addAggregationFunction(query, 'kind', ConseilFunction.count);
+        query = ConseilQueryBuilder.addOrdering(query, "timestamp", ConseilSortDirection.ASC);
+        query = ConseilQueryBuilder.setLimit(query, 1000000000);
+
+        const result = await ConseilDataClient.executeEntityQuery(serverInfo, 'tezos', network, 'operations', query);
+        const queryUrl = shareQuery("mainnet", 'operations', query);
+        dispatch(setHourlyTransactionsQueryUrl(queryUrl));
+        dispatch(setHourlyTransactions(result));
+        dispatch(setHourlyTransactionsLoadingAction(false));
+    } catch (e) {
+        const message =
+            e.message ||
+            `Unable to load transactions data for Home page.`;
+        if (e.message) {
+            await dispatch(createMessageAction(e.message, true));
+        }
+    }
+};
+
+export const fetchTopAccounts = (limit: number) => async (dispatch: any, state: any) => {
+    
+    try {
+        dispatch(setTopAccountsLoadingAction(true));
+        const { selectedConfig } = state().app;
+        const { network, url, apiKey } = selectedConfig;
+        const serverInfo = { url, apiKey, network };
+
+        let query = ConseilQueryBuilder.blankQuery();
+        query = ConseilQueryBuilder.addFields(query, 'balance');
+        query = ConseilQueryBuilder.addFields(query, 'account_id');
+        query = ConseilQueryBuilder.addOrdering(query, "balance", ConseilSortDirection.DESC);
+        query = ConseilQueryBuilder.setLimit(query, limit);
+
+        const result = await ConseilDataClient.executeEntityQuery(serverInfo, 'tezos', network, 'accounts', query)
+        result.forEach(element  => {
+            element.balance = Math.floor(element.balance / 1000000.0)
+        });
+        
+        const queryUrl = shareQuery("mainnet", 'accounts', query);
+        dispatch(setTopAccountsQueryUrl(queryUrl));
+        dispatch(setTopAccounts(result));
+        dispatch(setTopAccountsLoadingAction(false));
+    } catch (e) {
+        const message =
+            e.message ||
+            `Unable to load transactions data for Home page.`;
+        if (e.message) {
+            await dispatch(createMessageAction(e.message, true));
+        }
+    }
+};
+
+export const fetchTopBakers = (date: number, limit: number) => async (dispatch: any, state: any) => {
+    
+    try {
+        dispatch(setTopBakersLoadingAction(true));
+        const { selectedConfig } = state().app;
+        const { network, url, apiKey } = selectedConfig;
+        const serverInfo = { url, apiKey, network };
+
+        let query = ConseilQueryBuilder.blankQuery();
+        query = ConseilQueryBuilder.addFields(query, 'baker');
+        query = ConseilQueryBuilder.addFields(query, 'hash');
+        query = ConseilQueryBuilder.addPredicate(query, 'timestamp', ConseilOperator.AFTER, [date]);
+        query = ConseilQueryBuilder.addAggregationFunction(query, "hash", ConseilFunction.count);
+        query = ConseilQueryBuilder.addOrdering(query, "count_hash", ConseilSortDirection.DESC);
+        query = ConseilQueryBuilder.setLimit(query, limit);
+
+        const result = await ConseilDataClient.executeEntityQuery(serverInfo, 'tezos', network, 'blocks', query);
+        const queryUrl = shareQuery("mainnet", 'blocks', query);
+        dispatch(setTopBakersQueryUrl(queryUrl));
+        dispatch(setTopBakers(result));
+        dispatch(setTopBakersLoadingAction(false));
+    } catch (e) {
+        const message =
+            e.message ||
+            `Unable to load transactions data for Home page.`;
+        if (e.message) {
+            await dispatch(createMessageAction(e.message, true));
+        }
+    }
+};
+
+const shareQuery = (network: string, entity: string, query: object) => {
+    const encodedUrl = btoa(JSON.stringify(query));
+    return `/tezos/${network}/${entity}/query/${encodedUrl}`;
 };
 
 const loadEntities = () => async (dispatch: any, state: any) => {

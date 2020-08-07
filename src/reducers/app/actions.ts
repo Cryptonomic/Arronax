@@ -23,6 +23,15 @@ import {
     SET_AGGREGATIONS,
     SET_SUBMIT,
     SET_QUERY_FILTERS,
+    SET_HOURLY_TRANSACTIONS_LOADING,
+    SET_HOURLY_TRANSACTIONS,
+    SET_HOURLY_TRANSACTIONS_QUERY_URL,
+    SET_TOP_ACCOUNTS,
+    SET_TOP_ACCOUNTS_QUERY_URL,
+    SET_TOP_BAKERS,
+    SET_TOP_BAKERS_QUERY_URL,
+    SET_TOP_ACCOUNTS_LOADING,
+    SET_TOP_BAKERS_LOADING
 } from './types';
 
 import { AttributeDefinition, EntityDefinition } from 'conseiljs';
@@ -214,3 +223,67 @@ export const setQueryFilters = (entity: string, queryFilters: any): any => ({
     entity,
     queryFilters,
 });
+
+export function setHourlyTransactionsLoadingAction(isTransactionsLoading: boolean) {
+    return {
+        type: SET_HOURLY_TRANSACTIONS_LOADING,
+        isTransactionsLoading,
+    };
+}
+
+
+export function setHourlyTransactions(hourlytransactions: Array<object>) {
+    return {
+        type: SET_HOURLY_TRANSACTIONS,
+        hourlytransactions,
+    };
+}
+
+export function setHourlyTransactionsQueryUrl(hourlytransactionsUrl: string) {
+    return {
+        type: SET_HOURLY_TRANSACTIONS_QUERY_URL,
+        hourlytransactionsUrl,
+    };
+}
+
+export function setTopAccounts(topAccounts: Array<object>) {
+    return {
+        type: SET_TOP_ACCOUNTS,
+        topAccounts,
+    }
+}
+
+export function setTopAccountsLoadingAction(isTopAccountsLoading: boolean) {
+    return {
+        type: SET_TOP_ACCOUNTS_LOADING,
+        isTopAccountsLoading,
+    }
+}
+
+export function setTopBakers(topBakers: Array<object>) {
+    return {
+        type: SET_TOP_BAKERS,
+        topBakers,
+    }
+}
+
+export function setTopBakersLoadingAction(isTopBakersLoading: boolean) {
+    return {
+        type: SET_TOP_BAKERS_LOADING,
+        isTopBakersLoading,
+    }
+}
+
+export function setTopAccountsQueryUrl(topAccountsUrl: string) {
+    return {
+        type: SET_TOP_ACCOUNTS_QUERY_URL,
+        topAccountsUrl,
+    }
+}
+
+export function setTopBakersQueryUrl(topBakersUrl: string) {
+    return {
+        type: SET_TOP_BAKERS_QUERY_URL,
+        topBakersUrl,
+    }
+}
