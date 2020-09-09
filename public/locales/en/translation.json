@@ -56,7 +56,8 @@
                 "tokenAdmin": "Token Admin",
                 "tokenSvpply": "Token Supply",
                 "admin": "Admin",
-                "maps": "Maps"
+                "maps": "Maps",
+                "tokenSupply": "Supply"
             },
             "block": {},
             "operation": {
@@ -120,7 +121,8 @@
             "big_maps": "Map Definitons",
             "big_map_contents": "Map Content",
             "known_addresses": "Known Addresses",
-            "baker_registry": "TCF Baker Registry"
+            "baker_registry": "TCF Baker Registry",
+            "bakers_history": "Baker History"
         }
     },
     "attributes": {
@@ -326,7 +328,8 @@
             "account_id": "Address",
             "id": "Id",
             "name": "Name",
-            "contract_type": "Type"
+            "contract_type": "Type",
+            "scale": "Decimals"
         },
         "originated_account_maps":{
             "big_map_id": "Map Index",
@@ -377,6 +380,21 @@
             "overdelegation_threshold": "Overdelegation threshold",
             "subtract_rewards_from_uninvited_delegation": "Subtract rewards from uninvited delegation",
             "record_manager": "Record manager"
+        },
+        "bakers_history": {
+            "pkh": "Address",
+            "asof": "As of Date",
+            "balance": "Balance",
+            "block_id":"Block Hash",
+            "block_level": "Block Level",
+            "cycle": "Cycle",
+            "deactivated": "Deactivated",
+            "delegated_balance": "Delegated Balance",
+            "frozen_balance": "Frozen Balance",
+            "grace_period": "Grace period",
+            "period": "Period",
+            "rolls": "Rolls",
+            "staking_balance": "Staking Balance"
         }
     },
     "operators": {
