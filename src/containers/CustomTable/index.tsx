@@ -16,6 +16,7 @@ class CustomTable extends React.Component<Props, State> {
     EntityModal: any = null;
     tableEl: React.RefObject<any>;
     rootEl: null | Element;
+    tableAnchor = 0;
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -31,6 +32,7 @@ class CustomTable extends React.Component<Props, State> {
         this.setState({
             tableDetails: this.tableEl.current.getBoundingClientRect(),
         });
+        this.tableAnchor = this.tableEl.current.offsetTop;
     }
 
     componentWillUnmount() {
@@ -39,21 +41,17 @@ class CustomTable extends React.Component<Props, State> {
     }
 
     syncScroll = (e: any) => {
-        if (!this.tableEl.current || e.target !== this.rootEl) {
-            return;
-        }
+        if (!this.tableEl.current) { return; }
+        if (!this.rootEl) { console.log('null root'); return;}
 
-        const tableTop = this.tableEl.current.getBoundingClientRect().top;
-        if (tableTop === 0) {
-            const tableOffset = this.tableEl.current.scrollHeight - this.tableEl.current.clientHeight;
-            const bodyOffset = e.target.scrollHeight - e.target.clientHeight;
-            this.tableEl.current.scrollTop = (tableOffset * e.target.scrollTop) / bodyOffset;
-        } else if (tableTop > 0) {
+        if (window.scrollY > this.tableAnchor && window.scrollY < this.tableEl.current.scrollHeight) { // scrolling inside
+          this.tableEl.current.scrollTop = window.scrollY - this.tableAnchor
+        } else if (window.scrollY < this.tableAnchor) { // scrolling above
             this.tableEl.current.scrollTop = 0;
-        } else if (tableTop < 0) {
-            this.tableEl.current.scrollTop = this.tableEl.current.scrollHeight;
+        } else if (window.scrollY > this.tableEl.current.scrollHeight + this.tableAnchor) { // scrolling below
+            this.tableEl.current.scrollTop = this.tableEl.current.scrollHeight - this.tableAnchor - window.scrollY
         }
-    };
+      }
 
     handleRequestSort = async (orderBy: string) => {
         const { selectedSort, selectedEntity, onSetSort, onSubmitQuery } = this.props;
