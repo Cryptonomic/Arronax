@@ -1,6 +1,6 @@
 {
   "name": "arronax",
-  "version": "9.0.0",
+  "version": "10.0.0",
   "description": "Blockchain analytics and business intelligence tool for the Tezos chain.",
   "author": "Cryptonomic",
   "license": "GPL-3.0",
@@ -47,7 +47,7 @@
     "react-moment": "^0.9.7",
     "react-redux": "^7.1.3",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.1",
+    "react-scripts": "^3.4.3",
     "react-swipeable-views": "^0.13.9",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
