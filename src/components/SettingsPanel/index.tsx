@@ -33,7 +33,6 @@ const CloseIconWrapper = styled(CloseIcon)`
 
 const SwipeableViewsWrapper = styled(SwipeableViews)`
   &&& {
-    overflow-x: visible !important;
     [aria-hidden="true"] > div > div {
       opacity: 0;
     }
