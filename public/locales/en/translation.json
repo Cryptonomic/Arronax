@@ -168,7 +168,9 @@
             "category": "Category",
             "operation_group_hash": "Op Group Hash",
             "block_id": "Block Hash",
-            "cycle": "Cycle"
+            "cycle": "Cycle",
+            "level": "Level",
+            "period": "Period"
         },
         "ballots": {
             "pkh": "Address",
