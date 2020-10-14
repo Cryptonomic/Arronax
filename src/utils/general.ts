@@ -41,13 +41,13 @@ export const formatNumber = (value: number, attribute: AttributeDefinition, trun
         if (!truncate) {
             minimumFractionDigits = 6;
             maximumFractionDigits = 6;
-        } else if (value < 10000) {
+        } else if (Math.abs(value) < 10000) {
             minimumFractionDigits = 6;
             maximumFractionDigits = 6;
-        } else if (value < 100000) {
+        } else if (Math.abs(value) < 100000) {
             minimumFractionDigits = 4;
             maximumFractionDigits = 4;
-        } else if (value < 1000000000) {
+        } else if (Math.abs(value) < 1000000000) {
             minimumFractionDigits = 2;
             maximumFractionDigits = 2;
         }
@@ -85,6 +85,9 @@ export const getOperatorType = (dataType: string) => {
   if (dataType === AttrbuteDataType.BOOLEAN) {
     return 'boolean';
   }
+
+  if (dataType.toLowerCase().includes('int')) { return 'numeric'; } // HACK
+
   return 'dateTime';
 }
 
