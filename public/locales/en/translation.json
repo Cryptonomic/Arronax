@@ -156,17 +156,19 @@
             "is_activated": "Activated Account"
         },
         "balance_updates": {
-            "id": "Id",
+            "account_id": "Address",
             "source": "Source",
             "source_id": "Source id",
             "source_hash": "Source Hash",
             "kind": "Kind",
             "contract": "Contract",
             "change": "Change",
-            "level": "Level",
+            "block_level": "Block Level",
             "delegate": "Delegate",
             "category": "Category",
-            "operation_group_hash": "Op Group Hash"
+            "operation_group_hash": "Op Group Hash",
+            "block_id": "Block Hash",
+            "cycle": "Cycle"
         },
         "ballots": {
             "pkh": "Address",
@@ -288,7 +290,7 @@
             "block_hash": "Block Hash",
             "delegate": "Baker",
             "estimated_time": "Estimated Time",
-            "level": "Block Level",
+            "block_level": "Block Level",
             "priority": "Priority",
             "cycle": "Cycle",
             "governance_period": "Period"
@@ -298,7 +300,7 @@
             "endorsed_block": "Endorsed Block",
             "delegate": "Baker",
             "estimated_time": "Estimated Time",
-            "level": "Block Level",
+            "block_level": "Block Level",
             "slot": "Slot",
             "cycle": "Cycle",
             "governance_period": "Period"
