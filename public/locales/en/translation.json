@@ -60,6 +60,9 @@
                 "tokenSupply": "Supply"
             },
             "block": {},
+            "contract": {
+                "active": "Active"
+            },
             "operation": {
                 "at_level": "at level {{level}}",
                 "in_cycle": "in cycle {{cycle}}",

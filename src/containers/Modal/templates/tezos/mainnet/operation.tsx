@@ -10,7 +10,7 @@ import { ArronaxIcon } from '../../../../../components/ArronaxIcon';
 const Operation = (props: any) => {
     const { t } = useTranslation();
     const { platform, network, entity, items, values, attributes, formatValue, count, setCount } = props;
-    const explicitKeys: string[] = [];
+    const explicitKeys: string[] = ['utc_year', 'utc_month', 'utc_day', 'utc_time', 'period'];
     const explicitMinorKeys: string[] = [];
     const total = items[entity] ? items[entity].length : 0;
     const kind = values.find((a: any) => a.name === 'kind');
