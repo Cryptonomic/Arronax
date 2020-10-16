@@ -11,7 +11,7 @@ const Contract = (props: any) => {
     const contract = useSelector(({ modal }: any) => modal.modules.contract, shallowEqual);
     const { t } = useTranslation();
     const { platform, network, entity, values, attributes, formatValue, formatSpecificValue } = props;
-    const explicitKeys: string[] = ['is_baker']; // do not render Baker field
+    const explicitKeys: string[] = ['is_baker', 'is_activated']; // do not render Baker field
     const title = t('components.entityModal.details', { title: 'Contract' });
 
     let list: any = [
@@ -66,6 +66,21 @@ const Contract = (props: any) => {
         contractList.push({
             title: t('components.entityModal.account.tokenSupply'),
             value: formatSpecificValue(platform, network, entity, contract.metadata.supply, AttrbuteDataType.DECIMAL, true),
+        });
+        contractList.push({
+            title: t('components.entityModal.contract.active'),
+            value: formatSpecificValue(platform, network, entity, !contract.metadata.paused, AttrbuteDataType.BOOLEAN, true),
+        });
+    }
+
+    if (contract?.type?.startsWith('StakerDAO Token')) {
+        contractList.push({
+            title: t('components.entityModal.account.tokenSupply'),
+            value: formatSpecificValue(platform, network, entity, contract.metadata.supply, AttrbuteDataType.DECIMAL, true),
+        });
+        contractList.push({
+            title: t('components.entityModal.contract.active'),
+            value: formatSpecificValue(platform, network, entity, !contract.metadata.paused, AttrbuteDataType.BOOLEAN, true),
         });
     }
 

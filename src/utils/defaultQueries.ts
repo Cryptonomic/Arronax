@@ -71,16 +71,16 @@ export const defaultQueries: any = {
         limit: 1000
     },
     baking_rights: {
-        fields: ['level', 'priority', 'delegate', 'estimated_time'],
+        fields: ['block_level', 'priority', 'delegate', 'estimated_time'],
         predicates: [{ field: 'priority', operation: 'in', set: ['0','1'], inverse: false }, { field: 'estimated_time', operation: 'after', set: [-1966080000], inverse: false}],
-        orderBy: [{ field: 'level', direction: 'desc'}],
+        orderBy: [{ field: 'block_level', direction: 'desc'}],
         aggregation: [],
         limit: 1000
     },
     endorsing_rights: {
-        fields: ['level', 'slot', 'delegate', 'estimated_time'],
+        fields: ['block_level', 'slot', 'delegate', 'estimated_time'],
         predicates: [{ field: 'estimated_time', operation: 'after', set: [-1966080000], inverse: false}],
-        orderBy: [{ field: 'level', direction: 'desc' }],
+        orderBy: [{ field: 'block_level', direction: 'desc' }],
         aggregation: [],
         limit: 1000
     },

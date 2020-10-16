@@ -6,6 +6,7 @@ import {
     TezosConseilClient,
     BabylonDelegationHelper,
     Tzip7ReferenceTokenHelper,
+    StakerDAOTokenHelper,
     TezosContractIntrospector,
 } from 'conseiljs';
 
@@ -47,7 +48,7 @@ export const fetchContract = (name: string, data: any) => async (dispatch: any, 
             const storage = await BabylonDelegationHelper.getSimpleStorage(config.nodeUrl || '', id);
             metadata.manager = storage.administrator;
         }
-    } catch (e) {}
+    } catch (e) { }
 
     try {
         if (Tzip7ReferenceTokenHelper.verifyScript(script)) {
@@ -56,10 +57,24 @@ export const fetchContract = (name: string, data: any) => async (dispatch: any, 
             const storage = await Tzip7ReferenceTokenHelper.getSimpleStorage(config.nodeUrl || '', id);
             metadata.manager = storage.administrator;
             metadata.supply = storage.supply;
-            //storage.mapid
-            //storage.paused
+            metadata.balanceLedger = storage.mapid;
+            metadata.paused = storage.paused;
         }
-    } catch (e) {}
+    } catch (e) { }
+
+    try {
+        if (data.id === 'KT1LN4LPSqTMS7Sd2CJw4bbDGRkMv2t68Fy9') { // USDtz
+            metadata.supply = metadata.supply / 1_000_000;
+        } else if (data.id === 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn') { // tzBTC
+            //
+        } else if (data.id === 'KT1EctCuorV2NfVb1XTQgvzJ88MQtWP8cMMv') { // StakerDao
+            const storage = await StakerDAOTokenHelper.getSimpleStorage(config.nodeUrl || '', id);
+            metadata.supply = storage.supply;
+            metadata.balanceLedger = storage.mapid;
+            metadata.paused = storage.paused;
+            contractType = 'StakerDAO Token';
+        }
+    } catch (e) { }
 
     try {
         const mapData = await TezosConseilClient.getBigMapData({ url: config.url, apiKey: config.apiKey, network: config.network }, id);

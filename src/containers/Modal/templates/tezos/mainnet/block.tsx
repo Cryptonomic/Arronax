@@ -17,7 +17,7 @@ const Block = (props: any) => {
     const { t } = useTranslation();
     const [tab, setTab] = useState('');
     const { platform, network, entity, values, attributes, formatValue } = props;
-    const explicitKeys: string[] = [];
+    const explicitKeys: string[] = ['utc_year', 'utc_month', 'utc_day', 'utc_time'];
     const title = t('components.entityModal.details', { title: 'Block' });
     let tableCols: any = [];
     let tableItems: any = null;
