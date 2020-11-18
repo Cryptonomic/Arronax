@@ -18,6 +18,12 @@ const templates: any = {
     "tezos/carthagenet/contracts": contract,
     "tezos/carthagenet/operations": operation,
     "tezos/carthagenet/default": defaultTemplate,
+    "tezos/delphinet/blocks": block,
+    "tezos/delphinet/accounts": account,
+    "tezos/delphinet/bakers": baker,
+    "tezos/delphinet/contracts": contract,
+    "tezos/delphinet/operations": operation,
+    "tezos/delphinet/default": defaultTemplate
 };
 
 export default templates;
