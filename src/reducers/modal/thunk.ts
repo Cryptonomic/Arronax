@@ -128,7 +128,10 @@ export const loadModal = (platform: string, network: string, id: string) => asyn
 
     try {
         const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
-        const items = await executeEntityQuery({ url, apiKey, network }, platform, network, entity, query);
+        let items: any = await executeEntityQuery({ url, apiKey, network }, platform, network, entity, query);
+        if (!items.length && entity === "operations") {
+            items = await getMempoolOperation(config.nodeUrl, id, )   
+        }
         await dispatch(setModalItems(platform, network, entity, id, items));
         await dispatch(setModalOpen(true));
     } catch (e) {
@@ -139,6 +142,31 @@ export const loadModal = (platform: string, network: string, id: string) => asyn
         throw Error(message);
     }
 };
+
+async function getMempoolOperation(server: string, operationGroupId: any, chainid: string = 'main') {
+    let mempoolContent: any = await performGetRequest(server, `chains/${chainid}/mempool/pending_operations`).catch(() => undefined);
+    mempoolContent = mempoolContent.applied.find((item: any) => item.hash === operationGroupId);
+    mempoolContent.contents[0].status = "Pending";
+    return [mempoolContent.contents[0]];
+}
+
+function performGetRequest(server: string, command: string): Promise<object> {
+    const url = `${server}/${command}`;
+
+    return fetch(url, { method: 'get' })
+        .then(response => {
+            if (!response.ok) {
+                // console.error(`TezosNodeReader.performGetRequest error: ${response.status} for ${command} on ${server}`);
+                // throw new Error(response.status, response.statusText, url, null);
+            }
+            return response;
+        })
+        .then(response => {
+            const json: any = response.json();
+            console.log(`TezosNodeReader.performGetRequest response: ${json} for ${command} on ${server}`);
+            return json;
+        });
+}
 
 export const runActions = (actions: any) => async (dispatch: any, state: any) => {
     const collections = actions.map(async (action: any) => await action());
