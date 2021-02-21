@@ -10,7 +10,7 @@ import { ArronaxIcon } from '../../../../../components/ArronaxIcon';
 const Operation = (props: any) => {
     const { t } = useTranslation();
     const { platform, network, entity, items, values, attributes, formatValue, count, setCount } = props;
-    const explicitKeys: string[] = ['utc_year', 'utc_month', 'utc_day', 'utc_time', 'period'];
+    const explicitKeys: string[] = ['utc_year', 'utc_month', 'utc_day', 'utc_time', 'period', 'block_level', 'block_hash'];
     const explicitMinorKeys: string[] = [];
     const total = items[entity] ? items[entity].length : 0;
     const kind = values.find((a: any) => a.name === 'kind');
@@ -19,7 +19,8 @@ const Operation = (props: any) => {
     const isInternal = internal !== undefined ? internal.value : 'undefined';
     const error = values.find((a: any) => a.name === 'errors');
     const hasError = error !== undefined && error.value.length > 0;
-    let title: any = t('components.entityModal.details', { title: 'Operation' });
+    const isPending = values.find((a: any) => a.name === 'block_level').value === -1;
+    let title: any = t('components.entityModal.details', { title: isPending ? 'Pending Operation' : 'Operation' });
     let list: { title: any; value: any }[] = [];
     let blocks: { title: any; value: any }[] = [];
     let keys: string[] = [];
@@ -97,20 +98,22 @@ const Operation = (props: any) => {
             });
         }
 
-        list.push({
-            title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'status'),
-            value: (
-                <>
-                    {t('components.entityModal.operation.at_level', {
-                        level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level'),
-                    })}{' '}
-                    {t('components.entityModal.operation.in_cycle', {
-                        cycle: formatValue(explicitKeys, platform, network, entity, values, attributes, 'cycle'),
-                    })}
-                    : &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
-                </>
-            ),
-        });
+        if (!isPending) {
+            list.push({
+                title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'status'),
+                value: (
+                    <>
+                        {t('components.entityModal.operation.at_level', {
+                            level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level'),
+                        })}{' '}
+                        {t('components.entityModal.operation.in_cycle', {
+                            cycle: formatValue(explicitKeys, platform, network, entity, values, attributes, 'cycle'),
+                        })}
+                        : &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
+                    </>
+                ),
+            });
+        }
 
         if (hasError) {
             list.push({
@@ -119,10 +122,12 @@ const Operation = (props: any) => {
             });
         }
 
-        list.push({
-            title: t('attributes.operations.timestamp'),
-            value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp'),
-        });
+        if (!isPending) {
+            list.push({
+                title: t('attributes.operations.timestamp'),
+                value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp'),
+            });
+        }
 
         list.push({
             title: t('attributes.operations.operation_group_hash'),
@@ -165,20 +170,22 @@ const Operation = (props: any) => {
             });
         }
 
-        list.push({
-            title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'status'),
-            value: (
-                <>
-                    {t('components.entityModal.operation.at_level', {
-                        level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level'),
-                    })}{' '}
-                    {t('components.entityModal.operation.in_cycle', {
-                        cycle: formatValue(explicitKeys, platform, network, entity, values, attributes, 'cycle'),
-                    })}
-                    : &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
-                </>
-            ),
-        });
+        if (!isPending) {
+            list.push({
+                title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'status'),
+                value: (
+                    <>
+                        {t('components.entityModal.operation.at_level', {
+                            level: formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_level'),
+                        })}{' '}
+                        {t('components.entityModal.operation.in_cycle', {
+                            cycle: formatValue(explicitKeys, platform, network, entity, values, attributes, 'cycle'),
+                        })}
+                        : &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
+                    </>
+                ),
+            });
+        }
 
         if (hasError) {
             list.push({
@@ -187,10 +194,12 @@ const Operation = (props: any) => {
             });
         }
 
-        list.push({
-            title: t('attributes.operations.timestamp'),
-            value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp'),
-        });
+        if (!isPending) {
+            list.push({
+                title: t('attributes.operations.timestamp'),
+                value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp'),
+            });
+        }
 
         list.push({
             title: t('attributes.operations.consumed_gas'),
@@ -233,8 +242,11 @@ const Operation = (props: any) => {
                         {formatValue(explicitKeys, platform, network, entity, values, attributes, 'slots')}
                     </>
                 ),
-            },
-            {
+            }
+        ];
+
+        if (!isPending) {
+            list.push({
                 title: t('attributes.operations.timestamp'),
                 value: (
                     <>
@@ -245,8 +257,8 @@ const Operation = (props: any) => {
                         })}
                     </>
                 ),
-            },
-        ];
+            })
+        };
     }
 
     if (opKind === 'delegation') {
@@ -265,8 +277,11 @@ const Operation = (props: any) => {
                             {formatValue(explicitKeys, platform, network, entity, values, attributes, 'delegate', true)}
                         </>
                     ),
-            },
-            {
+            }
+        ];
+
+        if (!isPending) {
+            list.push({
                 title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'status'),
                 value: (
                     <>
@@ -279,8 +294,8 @@ const Operation = (props: any) => {
                         : &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
                     </>
                 ),
-            },
-        ];
+            });
+        }
 
         if (hasError) {
             list.push({
@@ -289,10 +304,12 @@ const Operation = (props: any) => {
             });
         }
 
-        list.push({
-            title: t('attributes.operations.timestamp'),
-            value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp'),
-        });
+        if (!isPending) {
+            list.push({
+                title: t('attributes.operations.timestamp'),
+                value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp'),
+            });
+        }
 
         list.push({
             title: t('attributes.operations.consumed_gas'),
@@ -316,8 +333,11 @@ const Operation = (props: any) => {
                         {t('components.entityModal.by')} {formatValue(explicitKeys, platform, network, entity, values, attributes, 'source', true)}
                     </>
                 ),
-            },
-            {
+            }
+        ];
+
+        if (!isPending) {
+            list.push({
                 title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'status'),
                 value: (
                     <>
@@ -330,8 +350,8 @@ const Operation = (props: any) => {
                         : &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
                     </>
                 ),
-            },
-        ];
+            });
+        }
 
         if (hasError) {
             list.push({
@@ -340,10 +360,12 @@ const Operation = (props: any) => {
             });
         }
 
-        list.push({
-            title: t('attributes.operations.timestamp'),
-            value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp'),
-        });
+        if (!isPending) {
+            list.push({
+                title: t('attributes.operations.timestamp'),
+                value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp'),
+            });
+        }
 
         list.push({
             title: t('attributes.operations.consumed_gas'),
@@ -366,8 +388,11 @@ const Operation = (props: any) => {
                         {formatValue(explicitKeys, platform, network, entity, values, attributes, 'source', true)}
                     </>
                 ),
-            },
-            {
+            }
+        ];
+
+        if (!isPending) {
+            list.push({
                 title: formatValue(explicitKeys, platform, network, entity, values, attributes, 'status'),
                 value: (
                     <>
@@ -380,8 +405,8 @@ const Operation = (props: any) => {
                         : &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
                     </>
                 ),
-            },
-        ];
+            });
+        }
 
         if (hasError) {
             list.push({
@@ -390,10 +415,12 @@ const Operation = (props: any) => {
             });
         }
 
-        list.push({
-            title: t('attributes.operations.timestamp'),
-            value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp'),
-        });
+        if (!isPending) {
+            list.push({
+                title: t('attributes.operations.timestamp'),
+                value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp'),
+            });
+        }
 
         list.push({
             title: t('attributes.operations.consumed_gas'),
@@ -416,8 +443,11 @@ const Operation = (props: any) => {
                         {t('components.entityModal.on')} {formatValue(explicitKeys, platform, network, entity, values, attributes, 'proposal', true)}
                     </>
                 ),
-            },
-            {
+            }
+        ];
+
+        if (!isPending) {
+            list.push({
                 title: t('components.entityModal.recorded'),
                 value: (
                     <>
@@ -430,12 +460,12 @@ const Operation = (props: any) => {
                         : &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
                     </>
                 ),
-            },
-            {
+            });
+            list.push({
                 title: t('attributes.operations.timestamp'),
                 value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp'),
-            },
-        ];
+            });
+        }
     }
 
     if (opKind === 'activate_account') {
@@ -447,8 +477,11 @@ const Operation = (props: any) => {
             {
                 title: t('attributes.operations.secret'),
                 value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'secret'),
-            },
-            {
+            }
+        ];
+
+        if (!isPending) {
+            list.push({
                 title: t('components.entityModal.recorded'),
                 value: (
                     <>
@@ -460,13 +493,13 @@ const Operation = (props: any) => {
                         })}
                         : &nbsp; {formatValue(explicitKeys, platform, network, entity, values, attributes, 'block_hash', true)}
                     </>
-                ),
-            },
-            {
+                )
+            });
+            list.push({
                 title: t('attributes.operations.timestamp'),
                 value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp'),
-            },
-        ];
+            });
+        }
     }
 
     const restListItems = values
