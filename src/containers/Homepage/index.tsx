@@ -88,7 +88,7 @@ class Home extends React.Component<Props, States> {
 
         this.state = {
             showLogo: false,
-            isOpenConfigMdoal: false
+            isOpenConfigModal: false
         };
     }
 
@@ -246,7 +246,7 @@ class Home extends React.Component<Props, States> {
         history.replace(`/${platform}/${network}/${selectedEntity}`);
     };
 
-    openConfigModal = () => this.setState({ isOpenConfigMdoal: true });
+    openConfigModal = () => this.setState({ isOpenConfigModal: true });
 
     onSearchById = async (val: string | number) => {
         const { searchById } = this.props;

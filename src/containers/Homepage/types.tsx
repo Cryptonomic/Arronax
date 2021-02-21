@@ -28,7 +28,7 @@ export interface OwnProps {
 
 export interface States {
     showLogo: boolean,
-    isOpenConfigMdoal: boolean
+    isOpenConfigModal: boolean
 }
 
 export type Props = OwnProps & RouteComponentProps;
