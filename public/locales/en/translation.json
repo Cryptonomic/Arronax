@@ -30,7 +30,8 @@
             "platform": "Platform",
             "network": "Network",
             "display_name": "Display Name",
-            "url": "Url",
+            "conseilUrl": "Conseil Url",
+            "tezosNode": "Tezos Node",
             "api_key": "Api Key"
         },
         "customPaginator": {
