@@ -36,7 +36,7 @@ export interface OwnProps {
 export interface States {
     isSettingCollapsed: boolean;
     selectedTool: string;
-    isOpenConfigMdoal: boolean;
+    isOpenConfigModal: boolean;
     page: number;
 }
 
