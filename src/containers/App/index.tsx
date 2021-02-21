@@ -72,7 +72,7 @@ class Arronax extends React.Component<Props, States> {
         this.state = {
             isSettingCollapsed: false,
             selectedTool: ToolType.FILTER,
-            isOpenConfigMdoal: false,
+            isOpenConfigModal: false,
             page: 0
         };
 
@@ -241,9 +241,9 @@ class Arronax extends React.Component<Props, States> {
         initMessage();
     };
 
-    closeConfigModal = () => this.setState({ isOpenConfigMdoal: false });
+    closeConfigModal = () => this.setState({ isOpenConfigModal: false });
 
-    openConfigModal = () => this.setState({ isOpenConfigMdoal: true });
+    openConfigModal = () => this.setState({ isOpenConfigModal: true });
 
     onAddConfig = (config: Config, isUse: boolean) => {
         const { addConfig } = this.props;
@@ -297,7 +297,7 @@ class Arronax extends React.Component<Props, States> {
             rowsPerPage,
             modal: { open },
         } = this.props;
-        const { isSettingCollapsed, selectedTool, isOpenConfigMdoal, page } = this.state;
+        const { isSettingCollapsed, selectedTool, isOpenConfigModal, page } = this.state;
         const isRealLoading = isLoading || !isFullLoaded;
 
         const fullTabsList = entities.map((entity) => entity.name);
@@ -383,7 +383,7 @@ class Arronax extends React.Component<Props, States> {
                         <DismissButton onClick={this.handleErrorClose}>{t('general.verbs.dismiss')}</DismissButton>
                     </DialogActions>
                 </Dialog>
-                <ConfigModal t={t} open={isOpenConfigMdoal} onClose={this.closeConfigModal} addConfig={this.onAddConfig} />
+                <ConfigModal t={t} open={isOpenConfigModal} onClose={this.closeConfigModal} addConfig={this.onAddConfig} />
                 {isFullLoaded && open && <DynamicModal onClickPrimaryKey={this.onClickPrimaryKey} onCloseEntityModal={this.onCloseEntityModal} />}
             </MainContainer>
         );
