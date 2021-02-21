@@ -680,7 +680,9 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
             await dispatch(changeTab(entity));
         } else {
             const searchedEntity = entities.find((item: any) => item.name === entity);
+            dispatch(setLoadingAction(false));
             dispatch(createMessageAction(`The ${searchedEntity.displayName.toLowerCase()} was not found.`, true));
+            return { entity: '', items: [], subItems: [] };
         }
         dispatch(setLoadingAction(false));
         await dispatch(setModalItems(platform, network, entity, id, items ));
