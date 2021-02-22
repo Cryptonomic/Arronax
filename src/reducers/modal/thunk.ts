@@ -8,6 +8,7 @@ import {
     Tzip7ReferenceTokenHelper,
     StakerDAOTokenHelper,
     TezosContractIntrospector,
+    TezosNodeReader
 } from 'conseiljs';
 
 import { createMessageAction } from '../message/actions';
@@ -73,6 +74,12 @@ export const fetchContract = (name: string, data: any) => async (dispatch: any, 
             metadata.balanceLedger = storage.mapid;
             metadata.paused = storage.paused;
             contractType = 'StakerDAO Token';
+        } else if (data.id === 'KT1LN4LPSqTMS7Sd2CJw4bbDGRkMv2t68Fy9') { // ETHtz
+            //metadata.supply = metadata.supply / 1_000_000;
+        } else if (data.id === 'KT1VYsVfmobT7rsMVivvZ4J8i3bPiqz12NaH') { // wXTZ
+            metadata.supply = metadata.supply / 1_000_000;
+        } else if (data.id === 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV') { // kUSD
+            //metadata.supply = metadata.supply / 1_000_000;
         }
     } catch (e) { }
 
@@ -133,17 +140,20 @@ export const fetchItemByPrimaryKey = (entity: string, primaryKey: string, value:
 };
 
 export const loadModal = (platform: string, network: string, id: string) => async (dispatch: any, state: any) => {
-    const config = state().app.configs.find((cfg: any) => cfg.platform === platform && cfg.network === network);
-
-    if (!config) {
-        throw Error('Unable to find config');
-    }
-
-    const { url, apiKey } = config;
+    const { selectedConfig, entities } = state().app;
+    const { url, apiKey, nodeUrl } = selectedConfig;
 
     try {
         const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
-        const items = await executeEntityQuery({ url, apiKey, network }, platform, network, entity, query);
+        let items: any = await executeEntityQuery({ url, apiKey, network }, platform, network, entity, query);
+        if (!items.length && entity === 'operations') { items = await getMempoolOperation(nodeUrl, id); }
+
+        if (!items.length) {
+            const searchedEntity = entities.find((item: any) => item.name === entity);
+            dispatch(createMessageAction(`The requested ${searchedEntity.displayName.toLowerCase()} was not found.`, true));
+            return;
+        }
+
         await dispatch(setModalItems(platform, network, entity, id, items));
         await dispatch(setModalOpen(true));
     } catch (e) {
@@ -159,3 +169,37 @@ export const runActions = (actions: any) => async (dispatch: any, state: any) =>
     const collections = actions.map(async (action: any) => await action());
     Promise.all(collections).then(() => dispatch(setModalLoading(false)));
 };
+
+const getMempoolOperation = async (nodeUrl: string, id: string) => {
+    const rawOperations = await TezosNodeReader.getMempoolOperation(nodeUrl, id);
+
+    let operations: any[] = [];
+
+    try {
+        operations = rawOperations.contents.map((o: any) => {
+            console.log('processing', o);
+            return {
+            amount: o.amount,
+            block_hash: 'pending',
+            block_level: -1,
+            fee: o.fee,
+            kind: o.kind,
+            public_key: o.public_key || undefined,
+            storage_limit: o.storage_limit,
+            gas_limit: o.gas_limit,
+            counter: o.counter,
+            level: o.level || undefined,
+            source: o.source || undefined,
+            destination: o.destination || undefined,
+            operation_group_hash: rawOperations.hash,
+            parameters: undefined,
+            internal: false,
+            delegate: o.delegate || undefined
+            // TODO: parameters
+        }});
+    } catch (err) {
+        console.log('could not process node response', rawOperations);
+    }
+
+    return operations;
+}
