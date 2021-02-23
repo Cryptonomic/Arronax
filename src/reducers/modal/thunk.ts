@@ -177,25 +177,37 @@ const getMempoolOperation = async (nodeUrl: string, id: string) => {
 
     try {
         operations = rawOperations.contents.map((o: any) => {
-            console.log('processing', o);
+            let parameters_entrypoints: string | undefined = undefined;
+            let parameters_micheline: string | undefined = undefined;
+
+            if (o.parameters && o.parameters.entrypoint) {
+                parameters_entrypoints = JSON.stringify(o.parameters.entrypoint);
+            }
+
+            if (o.parameters) {
+                parameters_micheline = JSON.stringify(o.parameters.value || o.parameters);
+            }
+
             return {
-            amount: o.amount,
-            block_hash: 'pending',
-            block_level: -1,
-            fee: o.fee,
-            kind: o.kind,
-            public_key: o.public_key || undefined,
-            storage_limit: o.storage_limit,
-            gas_limit: o.gas_limit,
-            counter: o.counter,
-            level: o.level || undefined,
-            source: o.source || undefined,
-            destination: o.destination || undefined,
-            operation_group_hash: rawOperations.hash,
-            parameters: undefined,
-            internal: false,
-            delegate: o.delegate || undefined
-            // TODO: parameters
+                amount: o.amount,
+                block_hash: 'pending',
+                block_level: -1,
+                fee: o.fee,
+                kind: o.kind,
+                public_key: o.public_key || undefined,
+                storage_limit: o.storage_limit,
+                gas_limit: o.gas_limit,
+                counter: o.counter,
+                level: o.level || undefined,
+                source: o.source || undefined,
+                destination: o.destination || undefined,
+                operation_group_hash: rawOperations.hash,
+                parameters: undefined,
+                internal: false,
+                delegate: o.delegate || undefined,
+                parameters_entrypoints,
+                parameters_micheline
+
         }});
     } catch (err) {
         console.log('could not process node response', rawOperations);
