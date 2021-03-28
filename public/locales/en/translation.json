@@ -353,7 +353,11 @@
             "key": "Key",
             "key_hash": "Hashed Key",
             "value": "Value",
-            "operation_group_id": "Op Group Hash"
+            "operation_group_id": "Op Group Hash",
+            "block_level": "Block Level",
+            "cycle": "Cycle",
+            "period": "Period",
+            "timestamp": "Timestamp"
         },
         "known_addresses": {
             "address": "Address",
