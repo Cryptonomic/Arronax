@@ -1,19 +1,16 @@
 import * as d3 from "d3";
 
 export class chartGenerator {
-
-    
     static seperateAxisPrioritizedBarChartGenerator(height: number, width: number, graphSVGElement: any, queryResult: any, xAxisKey: string, yAxisKey: string, barColor:string = "rgba(135, 194, 205, 0.58639)", labelX: string, labelY: string, spacing: number, hasLabel:boolean, stroke: string = "#56C2D9") {
-        
         // Clear SVG Elements of old data
         graphSVGElement.selectAll("*").remove();
 
-        const margin = {top: 0, right: 0, bottom: 50, left: 0};
-        
+        const margin = { top: 0, right: 50, bottom: 50, left: 0 };
+
         // Create an Array for each Axis
         let xAxisData: any = queryResult.map((d: any) => (<any>d)[xAxisKey]);
         const yAxisData = queryResult.map((d: { [x: string]: string; }) => parseInt(d[yAxisKey]));
-    
+
         // Create a D3 Linear Scale for the Y-Axis
         const yScale = d3.scaleLinear()
             .domain([0, d3.max<any>(yAxisData)])
@@ -24,7 +21,7 @@ export class chartGenerator {
         const yAxisScale: any = d3.scaleLinear<string>()
             .domain([0, d3.max<any>(yAxisData)])
             .range(<any>([0, -height]));
-    
+
         // Create a D3 Band Scale for the X-Axis
         // A static SVG will have a fixed size no matter the number of elements
         // Here, the width parameter is treated as the width of each bar in the graph
@@ -32,7 +29,7 @@ export class chartGenerator {
         let xScale = d3.scaleBand()
             .domain(range)
             .range([0, width]);
-    
+
         // Setup SVG element attributes 
         graphSVGElement
             .attr("height", height + margin.top + margin.bottom)
@@ -42,13 +39,13 @@ export class chartGenerator {
             .attr("font-size", "12")
             .attr("font-weight", "500")
             .attr("text-anchor", "end");
-            
-        if(xScale.bandwidth() <= 1) {
+
+        if (xScale.bandwidth() <= 1) {
             let rangeData: any = d3.range(xAxisData.length)
             xScale = d3.scaleBand()
                 .domain(rangeData)
                 .range([0, xAxisData.length * 3]);
-    
+
             // Set up SVG element for graph
             graphSVGElement
                 .attr("height", height)
@@ -96,7 +93,7 @@ export class chartGenerator {
             .data(yAxisData) //Attach bars to Y-Axis data
             .join("g")
                 .attr("transform", (d: any, i: any) => `translate(${xScale(i)}, ${height - yScale(d)})`);
-        
+
         bar.append("rect")
             .style("stroke-width", "1")
             .style("stroke", stroke) 
@@ -106,7 +103,6 @@ export class chartGenerator {
     }
 
     static axisGenerator(axisSVGElement: any, height: number, queryResult: any, yAxisKey: string, labelY: string, axisWidth: number=70) {
-        
         axisSVGElement.selectAll("*").remove();
 
         const yAxisData = queryResult.map((d: { [x: string]: string; }) => parseInt(d[yAxisKey]));
@@ -149,13 +145,12 @@ export class chartGenerator {
             .call(yAxis);
     }
     static barGraphFloatingTooltipGenerator(graphSVGElement: any, xLabelFunction: Function, yLabelFunction: Function) {
-        
         //Select all bar graph bar elements
         const bar = graphSVGElement.selectAll("g")
-        
+
         // Set up tooltip for graph data viewing
         const tooltip = d3.select("body").append("div").attr("class", "graphToolTip");
-    
+
         // Add event listener for tooltip
         bar.on("mousemove", function(d: any, i: number) {
             tooltip
@@ -177,5 +172,4 @@ export class chartGenerator {
             .on("mouseout", function(d: any){ tooltip.style("display", "none");
         });
     }
-    
 }

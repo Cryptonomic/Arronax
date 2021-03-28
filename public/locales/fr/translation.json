@@ -58,7 +58,7 @@
         "header": {
             "arronax_beta": "ARRONAX beta",
             "select_prefered_network": "Select Preferred Network",
-            "input_placehoder": "Block Level or Hash / Address / Operation Group"
+            "input_placehoder": "Block Level or Hash / Address / Operation"
         },
         "toolBar": {
             "filter": "Filter",

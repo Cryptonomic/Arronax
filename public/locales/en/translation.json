@@ -82,7 +82,7 @@
         "header": {
             "arronax_beta": "ARRONAX beta",
             "select_prefered_network": "Select Preferred Network",
-            "input_placehoder": "Block Level or Hash / Address / Operation Group"
+            "input_placehoder": "Block Level or Hash / Address / Operation"
         },
         "toolBar": {
             "filter": "Filter",
@@ -126,7 +126,11 @@
             "big_map_contents": "Map Content",
             "known_addresses": "Known Addresses",
             "baker_registry": "TCF Baker Registry",
-            "bakers_history": "Baker History"
+            "bakers_history": "Baker History",
+            "transactions": "Transactions",
+            "contracts": "Accounts",
+            "logs": "Logs",
+            "receipts": "Receipts"
         }
     },
     "attributes": {
@@ -210,7 +214,24 @@
             "utc_year": "Year (UTC)",
             "utc_month": "Month (UTC)",
             "utc_day": "Day (UTC)",
-            "utc_time": "Time (UTC)"
+            "utc_time": "Time (UTC)",
+            "difficulty": "Difficulty",
+            "extra_data": "Extra Data",
+            "gas_limit": "Gas Limit",
+            "gas_used": "Gas Used",
+            "logs_bloom": "Log Bloom",
+            "miner": "Miner",
+            "mix_hash": "Mix Hash",
+            "nonce": "Nonce",
+            "number": "Level",
+            "parent_hash": "Parent",
+            "receipts_root": "Receipts Root",
+            "sha3_uncles": "Uncles (SHA3)",
+            "size": "Size",
+            "state_root": "State Root",
+            "total_difficulty": "Total Difficulty",
+            "transactions_root": "Transactions Root",
+            "uncles": "Uncles"
         },
         "bakers": {
             "pkh": "Address",
@@ -407,6 +428,53 @@
             "period": "Period",
             "rolls": "Rolls",
             "staking_balance": "Staking Balance"
+        },
+        "contracts": {
+            "address": "address",
+            "block_hash": "Block Hash",
+            "block_number": "Block Level",
+            "bytecode": "Bytecode",
+            "is_erc20": "ERC20",
+            "is_erc721": "ERC721"
+        },
+        "transactions": {
+            "block_hash": "Block Hash",
+            "block_number": "Block Level",
+            "v": "V",
+            "r": "R",
+            "s": "S",
+            "from": "Source",
+            "gas": "Gas",
+            "gas_price": "Gas Price",
+            "hash": "Hash",
+            "input": "Input",
+            "nonce": "Nonce",
+            "to": "Destination",
+            "transaction_index": "Index",
+            "value": "Value"
+        },
+        "logs": {
+            "address": "Address",
+            "block_hash": "Block Hash",
+            "block_number": "Block Level",
+            "data": "Data",
+            "log_index": "Log Index",
+            "removed": "Removed",
+            "topics": "Topics",
+            "transaction_hash": "Transaction Hash",
+            "transaction_index": "Transaction Index"
+        },
+        "receipts": {
+            "block_hash": "Block Hash",
+            "block_number": "Block Level",
+            "contract_address": "Address",
+            "cumulative_gas_used": "Cumulative Gas Used",
+            "gas_used": "Gas Used",
+            "logs_bloom": "Log Bloom",
+            "root": "Root",
+            "status": "Status",
+            "transaction_hash": "Transaction Hash",
+            "transaction_index": "Transaction Index"
         }
     },
     "operators": {

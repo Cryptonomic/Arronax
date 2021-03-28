@@ -1,4 +1,32 @@
-export const defaultQueries: any = {
+const ethereumQueries: any = {
+    blocks: {
+        fields: [],
+        predicates: [{ field: 'timestamp', operation: 'after', set: [-1966080000], inverse: false }],
+        orderBy: [{ field: 'number', direction: 'desc' }],
+        aggregation:[],
+        limit: 1000
+    },
+    operations: {
+        fields: [],
+        predicates: [
+            { field: 'kind', set: ['transaction'], operation: 'eq', inverse: false },
+            { field: 'timestamp', set: [-1966080000], operation: 'after', inverse: false },
+            { field: "status", operation: "eq", set: ['applied'], inverse: false}],
+        orderBy: [{ field: 'timestamp', direction: 'desc' }],
+        limit: 1000
+    },
+    accounts: {
+        fields: [],
+        predicates:[
+            { field: 'balance', operation: 'gt', set:[0], inverse: false },
+            { field: 'block_level', operation: 'gt', set: [805066], inverse: false }],
+        orderBy: [{ field: 'block_level', direction: 'desc' }],
+        aggregation: [],
+        limit: 1000
+    }
+};
+
+const tezosQueries: any = {
     blocks: {
         fields: ['timestamp', 'meta_voting_period', 'meta_cycle', 'level', 'baker', 'hash', 'priority'],
         predicates: [{ field: 'timestamp', operation: 'after', set: [-1966080000], inverse: false }],
@@ -91,7 +119,12 @@ export const defaultQueries: any = {
         aggregation: [],
         limit: 1000
 
-    },
+    }
+};
+
+export const defaultQueries: any = {
+    tezos: tezosQueries,
+    ethereum: ethereumQueries
 };
 
 export const CARDINALITY_NUMBER = 25;
