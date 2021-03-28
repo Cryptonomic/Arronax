@@ -6,7 +6,6 @@ import {
     TezosConseilClient,
     BabylonDelegationHelper,
     Tzip7ReferenceTokenHelper,
-    StakerDAOTokenHelper,
     TezosContractIntrospector,
     TezosNodeReader
 } from 'conseiljs';
@@ -68,18 +67,21 @@ export const fetchContract = (name: string, data: any) => async (dispatch: any, 
             metadata.supply = metadata.supply / 1_000_000;
         } else if (data.id === 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn') { // tzBTC
             //
-        } else if (data.id === 'KT1EctCuorV2NfVb1XTQgvzJ88MQtWP8cMMv') { // StakerDao
-            const storage = await StakerDAOTokenHelper.getSimpleStorage(config.nodeUrl || '', id);
-            metadata.supply = storage.supply;
-            metadata.balanceLedger = storage.mapid;
-            metadata.paused = storage.paused;
-            contractType = 'StakerDAO Token';
-        } else if (data.id === 'KT1LN4LPSqTMS7Sd2CJw4bbDGRkMv2t68Fy9') { // ETHtz
+        } else if (data.id === 'KT19at7rQUvyjxnZ2fBv7D9zc8rkyG7gAoU8') { // ETHtz
             //metadata.supply = metadata.supply / 1_000_000;
         } else if (data.id === 'KT1VYsVfmobT7rsMVivvZ4J8i3bPiqz12NaH') { // wXTZ
             metadata.supply = metadata.supply / 1_000_000;
         } else if (data.id === 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV') { // kUSD
             //metadata.supply = metadata.supply / 1_000_000;
+        } else if (data.id === 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton') { // hic et nunc NFT
+        } else if (data.id === 'KT1AFA2mwNUMNd4SsujE1YYp29vd8BZejyKW') { // hic et nunc DAO
+        } else if (data.id === 'KT1MEouXPpCx9eFJYnxfAWpFA7NxhW3rDgUN') { // BLND
+        } else if (data.id === 'KT1AEfeckNbdEYwaMKkytBwPJPycz7jdSGea') { // STKR
+        } else if (data.id === 'KT1PDrBE59Zmxnb8vXRgRAG1XmvTMTs5EDHU') { // Dexter ETHtz/XTZ Pool
+        } else if (data.id === 'KT1Tr2eG3eVmPRbymrbU2UppUmKjFPXomGG9') { // Dexter USDtz/XTZ Pool
+        } else if (data.id === 'KT1BGQR7t4izzKZ7eRodKWTodAsM23P38v7N') { // Dexter tzBTC/XTZ Pool
+        } else if (data.id === 'KT1D56HQfMmwdopmFLTwNHFJSs6Dsg2didFo') { // Dexter wXTZ/XTZ Pool
+        } else if (data.id === 'KT1AbYeDbjjcAnV1QK7EZUUdqku77CdkTuv6') { // Dexter kUSD/XTZ Pool
         }
     } catch (e) { }
 
@@ -144,9 +146,9 @@ export const loadModal = (platform: string, network: string, id: string) => asyn
     const { url, apiKey, nodeUrl } = selectedConfig;
 
     try {
-        const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
+        const { entity, query } = TezosConseilClient.getEntityQueryForId(id); // TODO: eth
         let items: any = await executeEntityQuery({ url, apiKey, network }, platform, network, entity, query);
-        if (!items.length && entity === 'operations') { items = await getMempoolOperation(nodeUrl, id); }
+        if (!items.length && platform === 'tezos' && entity === 'operations') { items = await getMempoolOperation(nodeUrl, id); }
 
         if (!items.length) {
             const searchedEntity = entities.find((item: any) => item.name === entity);
