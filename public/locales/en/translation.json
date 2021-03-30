@@ -430,7 +430,7 @@
             "staking_balance": "Staking Balance"
         },
         "contracts": {
-            "address": "address",
+            "address": "Address",
             "block_hash": "Block Hash",
             "block_number": "Block Level",
             "bytecode": "Bytecode",
@@ -443,15 +443,15 @@
             "v": "V",
             "r": "R",
             "s": "S",
-            "from": "Source",
+            "source": "Source",
             "gas": "Gas",
             "gas_price": "Gas Price",
             "hash": "Hash",
             "input": "Input",
             "nonce": "Nonce",
-            "to": "Destination",
+            "destination": "Destination",
             "transaction_index": "Index",
-            "value": "Value"
+            "amount": "Amount"
         },
         "logs": {
             "address": "Address",

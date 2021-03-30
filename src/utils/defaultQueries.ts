@@ -1,26 +1,38 @@
 const ethereumQueries: any = {
     blocks: {
-        fields: [],
-        predicates: [{ field: 'timestamp', operation: 'after', set: [-1966080000], inverse: false }],
-        orderBy: [{ field: 'number', direction: 'desc' }],
+        fields: [
+            "timestamp","level","hash","miner","gas_used","total_difficulty","receipts_root", 'transactions_root'
+        ],
+        predicates: [
+            // { field: 'timestamp', operation: 'after', set: [-1966080000], inverse: false }
+        ],
+        orderBy: [
+            { field: 'level', direction: 'desc' }
+        ],
         aggregation:[],
         limit: 1000
     },
-    operations: {
-        fields: [],
+    transactions: {
+        fields: ["block_hash","block_number","hash","source","destination","amount","gas","input","nonce"],
         predicates: [
-            { field: 'kind', set: ['transaction'], operation: 'eq', inverse: false },
-            { field: 'timestamp', set: [-1966080000], operation: 'after', inverse: false },
-            { field: "status", operation: "eq", set: ['applied'], inverse: false}],
-        orderBy: [{ field: 'timestamp', direction: 'desc' }],
+            // { field: 'kind', set: ['transaction'], operation: 'eq', inverse: false },
+            // { field: 'timestamp', set: [-1966080000], operation: 'after', inverse: false },
+            // { field: "status", operation: "eq", set: ['applied'], inverse: false}
+        ],
+        orderBy: [
+            { field: 'block_number', direction: 'desc' }
+        ],
         limit: 1000
     },
-    accounts: {
+    contracts: {
         fields: [],
         predicates:[
-            { field: 'balance', operation: 'gt', set:[0], inverse: false },
-            { field: 'block_level', operation: 'gt', set: [805066], inverse: false }],
-        orderBy: [{ field: 'block_level', direction: 'desc' }],
+            // { field: 'balance', operation: 'gt', set:[0], inverse: false },
+            // { field: 'block_level', operation: 'gt', set: [805066], inverse: false }
+        ],
+        orderBy: [
+            // { field: 'block_level', direction: 'desc' }
+        ],
         aggregation: [],
         limit: 1000
     }

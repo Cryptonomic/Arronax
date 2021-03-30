@@ -20,7 +20,6 @@ export const convertValue = (value: any) => {
 };
 
 export const truncateHash = (value: any) => {
-  if (Number(value)) { return value; }
   if (!value || value.length < 6) { return ''; }
 
   const firstHalf = value.substring(0, 6);
