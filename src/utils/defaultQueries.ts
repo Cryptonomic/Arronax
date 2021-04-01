@@ -31,7 +31,30 @@ const ethereumQueries: any = {
             // { field: 'block_level', operation: 'gt', set: [805066], inverse: false }
         ],
         orderBy: [
-            // { field: 'block_level', direction: 'desc' }
+            { field: "block_number", direction: "desc"}
+        ],
+        aggregation: [],
+        limit: 1000
+    },
+    /*logs: {
+        fields: ["block_number","block_hash","address","transaction_hash","data","topics"],
+        predicates:[
+            { field: 'removed', operation: 'eq', set:["false"], inverse: false }
+        ],
+        orderBy: [
+            { field: 'block_level', direction: 'desc' }
+        ],
+        aggregation: [],
+        limit: 1000
+    }*/
+    receipts: {
+        fields: [ "block_number","block_hash","transaction_hash","contract_address","gas_used","logs_bloom","root"],
+        predicates:[
+            // { field: 'balance', operation: 'gt', set:[0], inverse: false },
+            // { field: 'block_level', operation: 'gt', set: [805066], inverse: false }
+        ],
+        orderBy: [
+            { field: "block_number", direction: "desc"}
         ],
         aggregation: [],
         limit: 1000
@@ -97,7 +120,7 @@ const tezosQueries: any = {
         limit: 1000
     },
     governance: {
-        fields:["voting_period","proposal_hash","voting_period_kind","yay_count","yay_rolls","pass_count","pass_rolls","nay_count","nay_rolls","level"],
+        fields:["proposal_hash","voting_period_kind","yay_count","yay_rolls","pass_count","pass_rolls","nay_count","nay_rolls","level"],
         predicates: [],
         orderBy: [{field:"max_level", direction: "desc"}],
         aggregation: [
