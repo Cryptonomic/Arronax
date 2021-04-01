@@ -19,7 +19,7 @@ export const DynamicModal = (props: any) => {
     const [count, setCount] = useState(0);
     const item = list.find((item: any) => item.id === id);
     const { platform, network, entity, items } = item;
-    const [getComponent, getActions] = item && getTemplate(platform, network, entity, items[count], id, attributes)({ count, setCount, onClickPrimaryKey });
+    const [getComponent, getActions] = item && getTemplate(platform, network, entity, items[count], id, attributes)({ count, setCount, onClickPrimaryKey, items });
 
     const onClose = () => {
         dispatch(cleanModal());

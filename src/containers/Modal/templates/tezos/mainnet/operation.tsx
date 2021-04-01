@@ -12,7 +12,7 @@ const Operation = (props: any) => {
     const { platform, network, entity, items, values, attributes, formatValue, count, setCount } = props;
     const explicitKeys: string[] = ['utc_year', 'utc_month', 'utc_day', 'utc_time', 'period', 'block_level', 'block_hash'];
     const explicitMinorKeys: string[] = [];
-    const total = items[entity] ? items[entity].length : 0;
+    const total = Array.isArray(items) ? items.length : 0;
     const kind = values.find((a: any) => a.name === 'kind');
     const opKind = kind !== undefined ? kind.value : 'undefined';
     const internal = values.find((a: any) => a.name === 'internal');
@@ -201,15 +201,28 @@ const Operation = (props: any) => {
             });
         }
 
-        list.push({
-            title: t('attributes.operations.consumed_gas'),
-            value: (
-                <>
-                    {formatValue(explicitKeys, platform, network, entity, values, attributes, 'consumed_gas')} {t('components.entityModal.of')}{' '}
-                    {formatValue(explicitKeys, platform, network, entity, values, attributes, 'gas_limit')}
-                </>
-            ),
-        });
+        if (!isInternal) {
+            list.push({
+                title: t('attributes.operations.consumed_gas'),
+                value: (
+                    <>
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'consumed_gas')} {t('components.entityModal.of')}{' '}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'gas_limit')}
+                    </>
+                ),
+            });
+        }
+
+        if (isInternal) {
+            list.push({
+                title: t('attributes.operations.consumed_gas'),
+                value: (
+                    <>
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'consumed_gas')}
+                    </>
+                ),
+            });
+        }
 
         list.push({
             title: t('attributes.operations.operation_group_hash'),

@@ -13,15 +13,14 @@ const templateType = (entity: string, values: any) => {
     return entity;
 };
 
-export const getTemplate = (platform: string, network: string, entity: string, items: any, id: string, attributes: any) => (others: any) => {
-    const values = getNoEmptyFields(attributes[platform][network][entity], items);
+export const getTemplate = (platform: string, network: string, entity: string, item: any, id: string, attributes: any) => (others: any) => {
+    const values = getNoEmptyFields(attributes[platform][network][entity], item);
 
     const props = {
         platform,
         network,
         entity,
         id,
-        items,
         values,
         attributes,
         ...others,
