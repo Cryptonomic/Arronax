@@ -2,11 +2,11 @@ import templates from './templates';
 import { formatter } from './formatter';
 import { getNoEmptyFields } from '../../utils/attributes';
 
-const templateType = (entity: string, values: any) => {
-    if (entity === 'accounts' && values.find((v: any) => v.name === 'is_baker')?.value) {
+const templateType = (platform: string, entity: string, values: any) => {
+    if (platform == 'tezos' && entity === 'accounts' && values.find((v: any) => v.name === 'is_baker')?.value) {
         return 'bakers';
     }
-    if (entity === 'accounts' && values.find((v: any) => v.name === 'account_id')?.value.startsWith('KT1')) {
+    if (platform == 'tezos' && entity === 'accounts' && values.find((v: any) => v.name === 'account_id')?.value.startsWith('KT1')) {
         return 'contracts';
     }
 
@@ -26,5 +26,5 @@ export const getTemplate = (platform: string, network: string, entity: string, i
         ...others,
     };
 
-    return formatter(props)(templates[`${platform}/${network}/${templateType(entity, values)}` || `${platform}/${network}/default`]);
+    return formatter(props)(templates[`${platform}/${network}/${templateType(platform, entity, values)}` || `${platform}/${network}/default`]);
 };

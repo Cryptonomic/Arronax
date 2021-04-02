@@ -215,6 +215,7 @@
             "utc_month": "Month (UTC)",
             "utc_day": "Day (UTC)",
             "utc_time": "Time (UTC)",
+            "block_operations": "Operations List",
             "difficulty": "Difficulty",
             "extra_data": "Extra Data",
             "gas_limit": "Gas Limit",
