@@ -34,11 +34,14 @@ export const Button = styled.div`
 
 export const CloseIcon = styled(ArronaxIcon)<{ top?: string; left?: string; right?: string }>`
     cursor: pointer;
-    position: absolute;
+    position: sticky;
     top: ${(props) => props.top};
     right: ${(props) => props.right};
     left: ${(props) => props.left};
     z-index: 1;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: -20px;
 `;
 
 export const ModalTitle = styled.div`
