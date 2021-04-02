@@ -32,8 +32,11 @@ export const Button = styled.div`
     align-items: center;
 `;
 
-export const CloseIcon = styled(ArronaxIcon)<{ top?: string; left?: string; right?: string }>`
+export const CloseIcon = styled(ArronaxIcon)`
     cursor: pointer;
+`;
+
+export const CloseDiv = styled.div`
     position: sticky;
     top: ${(props) => props.top};
     right: ${(props) => props.right};

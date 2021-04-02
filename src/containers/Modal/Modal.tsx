@@ -4,7 +4,7 @@ import Modal from '@material-ui/core/Modal';
 
 import { runActions } from '../../reducers/modal/thunk';
 import { setModalLoading, cleanModal } from '../../reducers/modal/actions';
-import { ScrollContainer, ModalContainer, CloseIcon } from './style';
+import { ScrollContainer, ModalContainer, CloseDiv, CloseIcon } from './style';
 import { getTemplate } from './controller';
 import Loader from '../../components/Loader';
 
@@ -39,7 +39,9 @@ export const DynamicModal = (props: any) => {
         <Modal open={open} disableEnforceFocus>
             <ScrollContainer>
                 <ModalContainer>
-                    <CloseIcon onClick={onClose} size="19px" top="30px" right="30px" color="#9b9b9b" iconName="icon-close" />
+                    <CloseDiv top="30px" right="30px">
+                        <CloseIcon onClick={onClose} size="19px" iconName="icon-close" color="#9b9b9b" />
+                    </CloseDiv>
                     {isModalLoading && <Loader />}
                     {!isModalLoading && getComponent()}
                 </ModalContainer>
