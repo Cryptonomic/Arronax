@@ -36,15 +36,15 @@ export const CloseIcon = styled(ArronaxIcon)`
     cursor: pointer;
 `;
 
-export const CloseDiv = styled.div<{ top?: string, left?: string, right?: string }>`
+export const CloseDiv = styled.div<{ top?: string }>`
     position: sticky;
     top: ${(props) => props.top};
-    right: ${(props) => props.right};
-    left: ${(props) => props.left};
     z-index: 1;
     display: flex;
     justify-content: flex-end;
     margin-bottom: -20px;
+    width: 30px;
+    margin-left: auto;
 `;
 
 export const ModalTitle = styled.div`
