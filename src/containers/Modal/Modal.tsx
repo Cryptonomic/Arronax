@@ -39,7 +39,7 @@ export const DynamicModal = (props: any) => {
         <Modal open={open} disableEnforceFocus>
             <ScrollContainer>
                 <ModalContainer>
-                    <CloseDiv top="30px" right="30px">
+                    <CloseDiv top="30px">
                         <CloseIcon onClick={onClose} size="19px" iconName="icon-close" color="#9b9b9b" />
                     </CloseDiv>
                     {isModalLoading && <Loader />}
