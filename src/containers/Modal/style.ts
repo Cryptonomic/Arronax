@@ -36,7 +36,7 @@ export const CloseIcon = styled(ArronaxIcon)`
     cursor: pointer;
 `;
 
-export const CloseDiv = styled.div`
+export const CloseDiv = styled.div<{ top?: string, left?: string, right?: string }>`
     position: sticky;
     top: ${(props) => props.top};
     right: ${(props) => props.right};
