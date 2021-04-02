@@ -1,7 +1,7 @@
 {
   "name": "arronax",
   "version": "12.0.0",
-  "description": "Blockchain analytics and business intelligence tool for Ethereum, Bitcoin and Tezos chains.",
+  "description": "Blockchain analytics and business intelligence tool for Tezos, Ethereum and Bitcoin chains.",
   "author": "Cryptonomic",
   "license": "GPL-3.0",
   "homepage": "https://arronax-beta.cryptonomic.tech",
