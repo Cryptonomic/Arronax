@@ -1,10 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector, shallowEqual } from 'react-redux';
 
+import { fetchAccountTokenBalances } from '../../../../../reducers/modal/thunk';
 import Title from '../../../parts/Title';
 import List from '../../../parts/List';
 
 const Account = (props: any) => {
+    const accountTokens = useSelector(({ modal }: any) => modal.modules.blockOperations, shallowEqual);
     const { t } = useTranslation();
     const { platform, network, entity, values, attributes, formatValue } = props;
     const explicitKeys: string[] = [];
@@ -39,12 +42,13 @@ const Account = (props: any) => {
         <>
             <Title title={title} />
             <List list={list} />
+            <>{JSON.stringify(accountTokens)}</>
         </>
     );
 };
 
 const accountCtrl = (props: any) => {
-    const actions: any = [];
+    const actions: any = [() => fetchAccountTokenBalances('blockOperations', props.id)];; 
     const getActions = () => actions;
     const getComponent = () => <Account {...props} />;
 
