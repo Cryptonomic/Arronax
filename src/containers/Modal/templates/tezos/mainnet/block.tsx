@@ -18,6 +18,7 @@ const Block = (props: any) => {
     const [tab, setTab] = useState('');
     const { platform, network, entity, values, attributes, formatValue } = props;
     const explicitKeys: string[] = ['utc_year', 'utc_month', 'utc_day', 'utc_time'];
+    const explicitMinorKeys: string[] = ['meta_voting_period_position', 'meta_cycle_position', 'current_expected_quorum'];
     const title = t('components.entityModal.details', { title: 'Block' });
     let tableCols: any = [];
     let tableItems: any = null;
@@ -29,7 +30,13 @@ const Block = (props: any) => {
         list = [
             {
                 title: t('attributes.blocks.hash'),
-                value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'hash', true),
+                value: (
+                    <>
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'hash', true)}
+                        {t('components.entityModal.at')}{' '}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'timestamp', true)}
+                    </>
+                )
             },
             {
                 title: t('attributes.blocks.level'),
@@ -50,7 +57,18 @@ const Block = (props: any) => {
                         {formatValue(explicitKeys, platform, network, entity, values, attributes, 'baker')} {t('components.entityModal.of')}{' '}
                         {t('attributes.blocks.priority').toLowerCase()} {formatValue(explicitKeys, platform, network, entity, values, attributes, 'priority')}
                     </>
-                ),
+                )
+            },
+            {
+                title: t('attributes.blocks.consumed_gas'),
+                value: (
+                    <>
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'consumed_gas')}
+                        &nbsp;{t('components.entityModal.in')}&nbsp;
+                        {formatValueWithLink({ value: blockOperations.length, onClick: () => onClickItem('block_operations') })}
+                        &nbsp;{t('containers.arronax.operations').toLowerCase()}
+                    </>
+                    )
             },
             {
                 title: t('attributes.blocks.protocol'),
@@ -58,28 +76,41 @@ const Block = (props: any) => {
                     <>
                         {formatValue(explicitKeys, platform, network, entity, values, attributes, 'proto')}:{' '}
                         {formatValue(explicitKeys, platform, network, entity, values, attributes, 'protocol', true)}
+                        {t(`attributes.blocks.chain_id`).toLowerCase()}:{' '}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'chain_id')}
+                        
                     </>
                 ),
             },
             {
                 title: t('general.nouns.period'),
-                value: formatValue(explicitKeys, platform, network, entity, values, attributes, 'period_kind'),
-            },
-        ].concat(
-            values
-                .filter((v: any) => !explicitKeys.includes(v.name))
-                .map((item: any) => ({
-                    title: t(`attributes.${item.entity}.${item.name}`),
-                    value: formatValue(explicitKeys, platform, network, entity, values, attributes, item.name, true),
-                }))
-        );
-
-        blocks = [
-            {
-                title: t('attributes.blocks.block_operations'),
-                value: formatValueWithLink({ value: blockOperations.length, onClick: () => onClickItem('block_operations') }),
+                value: (
+                    <>
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'period_kind')}
+                        {' '}{t('components.entityModal.of')}{' '}{t('attributes.operations.proposal').toLowerCase()}{' '}
+                        {formatValue(explicitKeys, platform, network, entity, values, attributes, 'active_proposal', true)}
+                    </>
+                )
             },
         ];
+
+        const restListItems = values
+            .filter((v: any) => !explicitKeys.includes(v.name))
+            .filter((v: any) => !explicitMinorKeys.includes(v.name))
+            .map((item: any) => ({
+                title: t(`attributes.${item.entity}.${item.name}`),
+                value: formatValue(explicitKeys, platform, network, entity, values, attributes, item.name, true),
+            }));
+
+        const restBlockItems = explicitMinorKeys
+            .filter((name: string) => values.find((i: any) => i.name === name) !== undefined)
+            .map((name: string) => ({
+                title: t(`attributes.blocks.${name}`),
+                value: formatValue(explicitKeys, platform, network, entity, values, attributes, name, true),
+            }));
+
+        list = [...list, ...restListItems];
+        blocks = [...blocks, ...restBlockItems];
     }
 
     // render block operations tab
@@ -98,7 +129,9 @@ const Block = (props: any) => {
                 const newItem = { ...item };
                 const opsValues = getNoEmptyFields(attributes[platform][network]['operations'], item);
                 cols.map((col: { name: string }) => {
-                    if (col.name === 'kind') return (newItem[col.name] = newItem[col.name].slice(0, 1).toLocaleUpperCase().concat(newItem[col.name].slice(1)));
+                    if (col.name === 'kind') {
+                        return (newItem[col.name] = newItem[col.name].slice(0, 1).toLocaleUpperCase().concat(newItem[col.name].slice(1)));
+                    }
                     return (newItem[col.name] = formatValue(explicitKeys, platform, network, 'operations', opsValues, attributes, col.name, true));
                 });
                 return newItem;

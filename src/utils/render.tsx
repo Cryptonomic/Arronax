@@ -125,6 +125,12 @@ export const formatValueForDisplay = (
                 errors[i] = 'Invalid primitive';
             } else if (errors[i].includes('empty_implicit_delegated_contract')) {
                 errors[i] = 'Empty implicit account';
+            } else if (errors[i].includes('invalid_contract')) {
+                errors[i] = 'Invalid contract';
+            } else if (errors[i].includes('invalid_constant')) {
+                errors[i] = 'Invalid constant';
+            } else if (errors[i].includes('cannot_serialize_storage')) {
+                errors[i] = 'Storage serialization error';
             }
         }
 

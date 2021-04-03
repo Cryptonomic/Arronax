@@ -177,7 +177,7 @@ class Home extends React.Component<Props, States> {
         topAccounts.push(dummyData);
         const width = this.container.current ? this.container.current.offsetWidth : 0;
 
-        chartGenerator.seperateAxisPrioritizedBarChartGenerator(215, width, svg, topAccounts,"account_id", "balance", 'rgba(135, 194, 205, 0.58639)',  'Bakers',  'XTZ (ꜩ)', 10, false);
+        chartGenerator.seperateAxisPrioritizedBarChartGenerator(215, width, svg, topAccounts, "account_id", "balance", 'rgba(135, 194, 205, 0.58639)',  'Bakers',  'XTZ (ꜩ)', 10, false);
 
         let self = this;
         const xTooltip = function(d: any, i: number) {
@@ -200,8 +200,7 @@ class Home extends React.Component<Props, States> {
     generateTopBakersGraph(topBakers: Array<Bakers>) {
         const svg = d3.select(this.topBakersRef.current);
         const axisScg = d3.select(this.topAccountsAxisRef.current);
-        //Add empty bar at start and end for label
-        const dummyData: Bakers = { baker: topBakers[0].baker, count_hash: '0'} ;
+
         const width = this.container.current ? this.container.current.offsetWidth - 100 : 0; 
         chartGenerator.seperateAxisPrioritizedBarChartGenerator(215, width, svg, topBakers,"baker", "count_hash", 'rgba(255, 116, 119, 0.3)',  'Time (hour)',  '', 7, true, '#FF7477');
         chartGenerator.axisGenerator(axisScg, 215, topBakers, 'count_hash', 'Blocks');

@@ -1,4 +1,67 @@
-export const defaultQueries: any = {
+const ethereumQueries: any = {
+    blocks: {
+        fields: [
+            "timestamp","level","hash","miner","gas_used","total_difficulty","receipts_root", 'transactions_root'
+        ],
+        predicates: [
+            // { field: 'timestamp', operation: 'after', set: [-1966080000], inverse: false }
+        ],
+        orderBy: [
+            { field: 'level', direction: 'desc' }
+        ],
+        aggregation:[],
+        limit: 1000
+    },
+    transactions: {
+        fields: ["block_hash","block_number","hash","source","destination","amount","gas","input","nonce"],
+        predicates: [
+            // { field: 'kind', set: ['transaction'], operation: 'eq', inverse: false },
+            // { field: 'timestamp', set: [-1966080000], operation: 'after', inverse: false },
+            // { field: "status", operation: "eq", set: ['applied'], inverse: false}
+        ],
+        orderBy: [
+            { field: 'block_number', direction: 'desc' }
+        ],
+        limit: 1000
+    },
+    contracts: {
+        fields: [],
+        predicates:[
+            // { field: 'balance', operation: 'gt', set:[0], inverse: false },
+            // { field: 'block_level', operation: 'gt', set: [805066], inverse: false }
+        ],
+        orderBy: [
+            { field: "block_number", direction: "desc"}
+        ],
+        aggregation: [],
+        limit: 1000
+    },
+    /*logs: {
+        fields: ["block_number","block_hash","address","transaction_hash","data","topics"],
+        predicates:[
+            { field: 'removed', operation: 'eq', set:["false"], inverse: false }
+        ],
+        orderBy: [
+            { field: 'block_level', direction: 'desc' }
+        ],
+        aggregation: [],
+        limit: 1000
+    }*/
+    receipts: {
+        fields: [ "block_number","block_hash","transaction_hash","contract_address","gas_used","logs_bloom","root"],
+        predicates:[
+            // { field: 'balance', operation: 'gt', set:[0], inverse: false },
+            // { field: 'block_level', operation: 'gt', set: [805066], inverse: false }
+        ],
+        orderBy: [
+            { field: "block_number", direction: "desc"}
+        ],
+        aggregation: [],
+        limit: 1000
+    }
+};
+
+const tezosQueries: any = {
     blocks: {
         fields: ['timestamp', 'meta_voting_period', 'meta_cycle', 'level', 'baker', 'hash', 'priority'],
         predicates: [{ field: 'timestamp', operation: 'after', set: [-1966080000], inverse: false }],
@@ -57,7 +120,7 @@ export const defaultQueries: any = {
         limit: 1000
     },
     governance: {
-        fields:["voting_period","proposal_hash","voting_period_kind","yay_count","yay_rolls","pass_count","pass_rolls","nay_count","nay_rolls","level"],
+        fields:["proposal_hash","voting_period_kind","yay_count","yay_rolls","pass_count","pass_rolls","nay_count","nay_rolls","level"],
         predicates: [],
         orderBy: [{field:"max_level", direction: "desc"}],
         aggregation: [
@@ -91,7 +154,12 @@ export const defaultQueries: any = {
         aggregation: [],
         limit: 1000
 
-    },
+    }
+};
+
+export const defaultQueries: any = {
+    tezos: tezosQueries,
+    ethereum: ethereumQueries
 };
 
 export const CARDINALITY_NUMBER = 25;

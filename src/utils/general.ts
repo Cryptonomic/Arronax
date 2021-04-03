@@ -20,7 +20,6 @@ export const convertValue = (value: any) => {
 };
 
 export const truncateHash = (value: any) => {
-  if (Number(value)) { return value; }
   if (!value || value.length < 6) { return ''; }
 
   const firstHalf = value.substring(0, 6);
@@ -54,8 +53,8 @@ export const formatNumber = (value: number, attribute: AttributeDefinition, trun
 
         t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits, maximumFractionDigits })).format(d);
     } else if (attribute.dataType === AttrbuteDataType.DECIMAL) {
-        if (Number.isInteger(value)) { // HACK: until accounts.block_level reports as 'Int'
-            t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', useGrouping: false, minimumFractionDigits: 0, maximumFractionDigits: 1 })).format(value);
+        if (Number.isInteger(value)) {
+            t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 1 })).format(value);
         } else {
             t = (new Intl.NumberFormat(window.navigator.languages[0], { style: 'decimal', minimumFractionDigits: 6, maximumFractionDigits: 6 })).format(value);
         }
