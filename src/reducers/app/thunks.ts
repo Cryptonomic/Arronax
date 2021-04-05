@@ -596,6 +596,12 @@ export const exportCsvData = () => async (dispatch: any, state: any) => {
     query = ConseilQueryBuilder.setLimit(query, 50000);
 
     const result: any = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
+
+    if (!result || result.length === 0) {
+        dispatch(createMessageAction('Export failed, no results were returned.', true));
+        return;
+    }
+
     let blob = new Blob([result]);
     const winOpenBlob: any = window.navigator.msSaveOrOpenBlob || null;
     if (winOpenBlob) {
