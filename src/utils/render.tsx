@@ -210,7 +210,7 @@ export const formatValueForDisplay = (
     }
 };
 
-export const formatValueWithLink = (props: { value: number; onClick: () => void }) => {
+export const formatValueWithLink = (props: { value: number | string; onClick: () => void }) => {
     const { value, onClick } = props;
     return <LinkSpan onClick={onClick}>{value}</LinkSpan>;
 };
