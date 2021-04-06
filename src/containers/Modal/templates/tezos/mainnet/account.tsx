@@ -56,8 +56,7 @@ const Account = (props: any) => {
 
     return (
         <>
-        {!tab && (
-        <>
+        {!tab && (<>
             <Title title={title} />
             <List list={list} />
         </>)}
