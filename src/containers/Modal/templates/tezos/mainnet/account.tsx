@@ -5,6 +5,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 import { fetchAccountTokenBalances } from '../../../../../reducers/modal/thunk';
 import Title from '../../../parts/Title';
 import List from '../../../parts/List';
+import TokensTable from '../../../parts/TokensTable';
 
 const Account = (props: any) => {
     const accountTokens = useSelector(({ modal }: any) => modal.modules.blockOperations, shallowEqual);
@@ -42,13 +43,13 @@ const Account = (props: any) => {
         <>
             <Title title={title} />
             <List list={list} />
-            <>{JSON.stringify(accountTokens)}</>
+            <TokensTable items={accountTokens}/>
         </>
     );
 };
 
 const accountCtrl = (props: any) => {
-    const actions: any = [() => fetchAccountTokenBalances('blockOperations', props.id)];; 
+    const actions: any = [() => fetchAccountTokenBalances('blockOperations', props.id)];;
     const getActions = () => actions;
     const getComponent = () => <Account {...props} />;
 
