@@ -147,7 +147,8 @@
             "balance": "Balance",
             "block_level": "Block Level",
             "is_baker": "Baker",
-            "is_activated": "Activated"
+            "is_activated": "Activated",
+            "token_balances": "Token Balances"
         },
         "accounts_history": {
             "account_id": "Address",
