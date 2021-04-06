@@ -1,4 +1,5 @@
 import base64url from 'base64url';
+import { hocon } from 'hocon-web';
 
 import {
     ConseilMetadataClient,
@@ -411,6 +412,19 @@ const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
     const entities = state().app.entities;
     const attrs = { ...state().app.attributes };
 
+    let injectedMetadata: any = {};
+    try {
+        const metadata = await fetch(`https://raw.githubusercontent.com/Cryptonomic/Conseil/master/conseil-api/src/main/resources/metadata/${platform}.${network}.conf`).then(response => response.text());
+        
+        await hocon().then((instance) => {
+            const cfg = new instance.Config(metadata);
+            injectedMetadata = JSON.parse(cfg.toJSON());
+            cfg.delete();
+        });
+    } catch (err) {
+        // meh
+    }
+
     try {
         const localDate = getTimeStampFromLocal();
         const currentDate = Date.now();
@@ -420,6 +434,18 @@ const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
 
             if (!attrObjsList.length) {
                 return;
+            }
+
+            try {
+                attrObjsList.forEach((entity: any) => {
+                    entity.attributes.forEach((attribute: any) => {
+                        if (injectedMetadata['entities'][entity.entity]['attributes'][attribute.name]['value-map']) {
+                            attribute.valueMap = {... injectedMetadata['entities'][entity.entity]['attributes'][attribute.name]['value-map']};
+                        }
+                    });
+                });
+            } catch (err) {
+                // meh
             }
 
             const attrMap = [...attrObjsList].reduce((curr: any, next: any) => {
@@ -498,6 +524,7 @@ export const fetchAttributes = async (platform: string, entity: string, network:
     const attributes = await getAttributes(serverInfo, platform, network, entity).catch((err) => {
         throw err;
     });
+
     return { entity, attributes };
 };
 
@@ -657,6 +684,7 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
     const { selectedConfig, entities } = state().app;
     const { platform, network, url, apiKey } = selectedConfig;
     const serverInfo = { url, apiKey, network };
+
     try {
         const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
         const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
