@@ -30,9 +30,7 @@ export default function TokensTable({ items }: { items: Record<string, string>[]
         <TableBody>
           {items.map((row) => (
             <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.token}
-              </TableCell>
+              <TableCell component="th" scope="row">{row.token}</TableCell>
               <TableCell align="right">{row.location}</TableCell>
               <TableCell align="right">{row.balance}</TableCell>
             </TableRow>
