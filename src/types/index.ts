@@ -25,6 +25,7 @@ export interface Config {
     entities?: string[];
     hiddenEntities?: string[];
     isLocal?: boolean;
+    metadataOverrideUrl?: string;
 }
 
 export interface Sort {

@@ -413,16 +413,18 @@ const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
     const attrs = { ...state().app.attributes };
 
     let injectedMetadata: any = {};
-    try {
-        const metadata = await fetch(`https://raw.githubusercontent.com/Cryptonomic/Conseil/master/conseil-api/src/main/resources/metadata/${platform}.${network}.conf`).then(response => response.text());
-        
-        await hocon().then((instance) => {
-            const cfg = new instance.Config(metadata);
-            injectedMetadata = JSON.parse(cfg.toJSON());
-            cfg.delete();
-        });
-    } catch (err) {
-        // meh
+    if (state().app.selectedConfig.metadataOverrideUrl) {
+        try {
+            const metadata = await fetch(state().app.selectedConfig.metadataOverrideUrl).then(response => response.text());
+
+            await hocon().then((instance) => {
+                const cfg = new instance.Config(metadata);
+                injectedMetadata = JSON.parse(cfg.toJSON());
+                cfg.delete();
+            });
+        } catch (err) {
+            // meh
+        }
     }
 
     try {
