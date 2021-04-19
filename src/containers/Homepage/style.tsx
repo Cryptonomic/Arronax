@@ -111,7 +111,7 @@ export const AnchorTag = styled.div `
         margin: 0px 20px;
         text-decoration:none;
     }
-    svg {
+    img {
         width: 18px;
         height: 16px;
         margin: 0px 7px ;
