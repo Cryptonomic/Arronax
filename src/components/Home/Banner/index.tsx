@@ -21,7 +21,7 @@ const Banner = (props: any) => {
             <Text>Blockchain Analytics Tool </Text>
             <LogoCon>
                 <Text> Brought to you by </Text>
-                <img src={CryptonomicLogo} alt="img"/>
+                <img src={CryptonomicLogo} alt="Brought to you by Cryptonomic"/>
             </LogoCon>
             <Button onClick={props.redirectToDashboard} className={props.classes.primaryBtn} variant="contained" color="primary" disableElevation>
             Create Data Queries
