@@ -402,7 +402,7 @@ class Home extends React.Component<Props, States> {
                                 </AnchorTag>
                             </Grid>
                             <Grid item xs={6}>
-                                <img style={{marginBottom: '-18px'}} src={PlaceholderImage1} alt="img"/>
+                                <img className={classes.imgMarginBottom} src={PlaceholderImage1} alt="img"/>
                                 <AnchorTag className={classes.alignRight}>
                                     <Link to={{ pathname: "https://harpoon.arronax.io/"}} target="_blank" >
                                         View Baker Stats on Harpoon

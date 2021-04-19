@@ -156,6 +156,9 @@ export const styles: any = {
     titleText: {
         margin:'0 0 0 20px !important',
         justifyContent:'flex-start !important'
+    },
+    imgMarginBottom: {
+        marginBottom: '-18px',
     }
 };
 
