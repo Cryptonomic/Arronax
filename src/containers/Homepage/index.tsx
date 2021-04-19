@@ -354,17 +354,6 @@ class Home extends React.Component<Props, States> {
                             </Grid>
                             <Grid item xs={6}>
                                 <img src={PlaceholderImage} alt="img"/>
-                                <AnchorTag>
-                                    <Link to="hourlytransactionsUrl">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M18.7771 0.212143L19.7871 1.22286L9.08001 11.93L8.07001 10.92L18.7771 0.212143Z" fill="#2D9CDB"/>
-                                            <path d="M20 7.14286H18.5715V1.42857H12.8572V0H20V7.14286Z" fill="#2D9CDB"/>
-                                            <path d="M16.4286 20H2.14286C0.928571 20 0 19.0714 0 17.8571V3.57143C0 2.35715 0.928571 1.42857 2.14286 1.42857H10V2.85715H2.14286C1.71429 2.85715 1.42857 3.14286 1.42857 3.57143V17.8571C1.42857 18.2857 1.71429 18.5714 2.14286 18.5714H16.4286C16.8571 18.5714 17.1429 18.2857 17.1429 17.8571V10H18.5714V17.8571C18.5714 19.0714 17.6429 20 16.4286 20Z" fill="#2D9CDB"/>
-                                        </svg>
-                                        View Query
-                                    </Link> 
-                                </AnchorTag>
-                                {/* <Link to={this.hourlyTransactionsQuery}/> */}
                             </Grid>
                             <Grid item xs={6}>
                                 <MapHolder ref={this.container}>
@@ -374,6 +363,16 @@ class Home extends React.Component<Props, States> {
                                         <svg className={classes.blockDisplay} ref={this.transactionPerHour}></svg>
                                     }
                                 </MapHolder>
+                                <AnchorTag>
+                                     <Link to={{ pathname: "https://periscope.arronax.io/operations?q=trancations"}} target="_blank" >
+                                        View Graph on Periscope
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M18.7771 0.212143L19.7871 1.22286L9.08001 11.93L8.07001 10.92L18.7771 0.212143Z" fill="#2D9CDB"/>
+                                            <path d="M20 7.14286H18.5715V1.42857H12.8572V0H20V7.14286Z" fill="#2D9CDB"/>
+                                            <path d="M16.4286 20H2.14286C0.928571 20 0 19.0714 0 17.8571V3.57143C0 2.35715 0.928571 1.42857 2.14286 1.42857H10V2.85715H2.14286C1.71429 2.85715 1.42857 3.14286 1.42857 3.57143V17.8571C1.42857 18.2857 1.71429 18.5714 2.14286 18.5714H16.4286C16.8571 18.5714 17.1429 18.2857 17.1429 17.8571V10H18.5714V17.8571C18.5714 19.0714 17.6429 20 16.4286 20Z" fill="#2D9CDB"/>
+                                        </svg>
+                                    </Link> 
+                                </AnchorTag>
                             </Grid>
                         </Grid>
                     </Padding>
@@ -398,17 +397,27 @@ class Home extends React.Component<Props, States> {
                                         </React.Fragment>
                                     }
                                 </MapHolder>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <img src={PlaceholderImage1} alt="img"/>
-                                <AnchorTag className={classes.alignRight}>
-                                    <Link to={topBakersUrl}>
+                                <AnchorTag>
+                                <Link to={{ pathname: "https://periscope.arronax.io/blocks?q=priorityBlocks"}} target="_blank" >
+                                        View Graph on Periscope
                                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M18.7771 0.212143L19.7871 1.22286L9.08001 11.93L8.07001 10.92L18.7771 0.212143Z" fill="#2D9CDB"/>
                                             <path d="M20 7.14286H18.5715V1.42857H12.8572V0H20V7.14286Z" fill="#2D9CDB"/>
                                             <path d="M16.4286 20H2.14286C0.928571 20 0 19.0714 0 17.8571V3.57143C0 2.35715 0.928571 1.42857 2.14286 1.42857H10V2.85715H2.14286C1.71429 2.85715 1.42857 3.14286 1.42857 3.57143V17.8571C1.42857 18.2857 1.71429 18.5714 2.14286 18.5714H16.4286C16.8571 18.5714 17.1429 18.2857 17.1429 17.8571V10H18.5714V17.8571C18.5714 19.0714 17.6429 20 16.4286 20Z" fill="#2D9CDB"/>
                                         </svg>
-                                        View Query
+                                    </Link> 
+                                </AnchorTag>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <img src={PlaceholderImage1} alt="img"/>
+                                <AnchorTag style={{marginTop: '-7px'}} className={classes.alignRight}>
+                                    <Link to={{ pathname: "https://harpoon.arronax.io/"}} target="_blank" >
+                                        View Baker Stats on Harpoon
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M18.7771 0.212143L19.7871 1.22286L9.08001 11.93L8.07001 10.92L18.7771 0.212143Z" fill="#2D9CDB"/>
+                                            <path d="M20 7.14286H18.5715V1.42857H12.8572V0H20V7.14286Z" fill="#2D9CDB"/>
+                                            <path d="M16.4286 20H2.14286C0.928571 20 0 19.0714 0 17.8571V3.57143C0 2.35715 0.928571 1.42857 2.14286 1.42857H10V2.85715H2.14286C1.71429 2.85715 1.42857 3.14286 1.42857 3.57143V17.8571C1.42857 18.2857 1.71429 18.5714 2.14286 18.5714H16.4286C16.8571 18.5714 17.1429 18.2857 17.1429 17.8571V10H18.5714V17.8571C18.5714 19.0714 17.6429 20 16.4286 20Z" fill="#2D9CDB"/>
+                                        </svg>
                                     </Link> 
                                 </AnchorTag>
                             </Grid>
@@ -426,16 +435,6 @@ class Home extends React.Component<Props, States> {
                             </Grid>
                             <Grid item xs={6}>
                                 <img src={PlaceholderImage2} alt="img"/>
-                                <AnchorTag>
-                                    <Link to={topAccountsUrl}>
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M18.7771 0.212143L19.7871 1.22286L9.08001 11.93L8.07001 10.92L18.7771 0.212143Z" fill="#2D9CDB"/>
-                                            <path d="M20 7.14286H18.5715V1.42857H12.8572V0H20V7.14286Z" fill="#2D9CDB"/>
-                                            <path d="M16.4286 20H2.14286C0.928571 20 0 19.0714 0 17.8571V3.57143C0 2.35715 0.928571 1.42857 2.14286 1.42857H10V2.85715H2.14286C1.71429 2.85715 1.42857 3.14286 1.42857 3.57143V17.8571C1.42857 18.2857 1.71429 18.5714 2.14286 18.5714H16.4286C16.8571 18.5714 17.1429 18.2857 17.1429 17.8571V10H18.5714V17.8571C18.5714 19.0714 17.6429 20 16.4286 20Z" fill="#2D9CDB"/>
-                                        </svg>
-                                        View Query
-                                    </Link> 
-                                </AnchorTag>
                             </Grid>
                             <Grid item xs={6}>
                                 <MapHolder>
@@ -445,6 +444,16 @@ class Home extends React.Component<Props, States> {
                                         <svg className={classes.blockDisplay} ref={this.topAccountsRef}></svg>
                                     }
                                 </MapHolder>
+                                <AnchorTag>
+                                    <Link to={{ pathname: "https://periscope.arronax.io/accounts"}} target="_blank" >
+                                        View Graph on Periscope
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M18.7771 0.212143L19.7871 1.22286L9.08001 11.93L8.07001 10.92L18.7771 0.212143Z" fill="#2D9CDB"/>
+                                            <path d="M20 7.14286H18.5715V1.42857H12.8572V0H20V7.14286Z" fill="#2D9CDB"/>
+                                            <path d="M16.4286 20H2.14286C0.928571 20 0 19.0714 0 17.8571V3.57143C0 2.35715 0.928571 1.42857 2.14286 1.42857H10V2.85715H2.14286C1.71429 2.85715 1.42857 3.14286 1.42857 3.57143V17.8571C1.42857 18.2857 1.71429 18.5714 2.14286 18.5714H16.4286C16.8571 18.5714 17.1429 18.2857 17.1429 17.8571V10H18.5714V17.8571C18.5714 19.0714 17.6429 20 16.4286 20Z" fill="#2D9CDB"/>
+                                        </svg>
+                                    </Link> 
+                                </AnchorTag>
                             </Grid>
                         </Grid>
                     </Padding>
@@ -460,7 +469,7 @@ class Home extends React.Component<Props, States> {
                             </Grid>
                             <Grid className={classes.alignRight} item xs={6}>
                                 <Button className={classes.outlineBtn} onClick={this.redirectToDashboard} variant="contained" color="primary" disableElevation>
-                                    Explore Data
+                                    Enter Arronax
                                 </Button>
                             </Grid>
                         </Grid>
