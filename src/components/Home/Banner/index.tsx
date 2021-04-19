@@ -2,7 +2,6 @@ import React from 'react';
 import { 
     Title,
     Text,
-    Title2,
     BottomDiv,
     Holder,
     styles,
@@ -29,7 +28,6 @@ const Banner = (props: any) => {
             </Button>
 
             <BottomDiv>
-                <Title2>Discover Arronax</Title2>
                 <img src={DownArrow} alt="img"/>
             </BottomDiv>
         </Holder>

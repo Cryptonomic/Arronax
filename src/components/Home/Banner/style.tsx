@@ -28,7 +28,7 @@ export const Text = styled.p `
     line-height: 50px;
     letter-spacing: 5.76333px;
     color: #FFFFFF;
-    margin: 0 0 50px;
+    margin: 0 0 10px;
 `;
 
 export const BottomDiv = styled.div `
@@ -39,23 +39,11 @@ export const BottomDiv = styled.div `
     margin: 0 auto;
 `;
 
-export const Title2 = styled.h4 `
-    font-family: Roboto;
-    font-weight:300;
-    margin: 0 0 25px;
-    font-size: 25px;
-    line-height: 29px;
-    letter-spacing: 3.04333px;
-    color: #FFFFFF;
-`;
-
 export const LogoCon = styled.div`
     display: flex;
     align-self: center;
-    width: 70%;
     height: 48px;
-    margin: 10px auto 50px;
-    padding: 0 35px 50px; 
+    margin: 20px auto 50px;
 
     p {
         font-size: 16px;
@@ -68,6 +56,7 @@ export const LogoCon = styled.div`
 
 export const styles: any = {
     primaryBtn: {
+        marginTop: '50px',
         padding: '10px 30px',
         fontSize: '20px',
         fontWeight: 'bold',
