@@ -1,4 +1,5 @@
 export const SET_ITEMS = 'SET_ITEMS';
+export const SET_ITEMS_CSV = 'SET_ITEMS_CSV';
 export const SET_COLUMNS = 'SET_COLUMNS';
 export const SET_FILTER = 'SET_FILTER';
 export const SET_TAB = 'SET_TAB';

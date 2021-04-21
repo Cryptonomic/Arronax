@@ -1,5 +1,6 @@
 import {
     SET_ITEMS,
+    SET_ITEMS_CSV,
     SET_FILTER,
     SET_TAB,
     SET_LOADING,
@@ -285,5 +286,12 @@ export function setTopBakersQueryUrl(topBakersUrl: string) {
     return {
         type: SET_TOP_BAKERS_QUERY_URL,
         topBakersUrl,
+    }
+}
+
+export function setItemsCsv(itemsCsv: string) {
+    return {
+        type: SET_ITEMS_CSV,
+        itemsCsv,
     }
 }

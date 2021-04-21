@@ -39,6 +39,7 @@ import {
     setTopBakersLoadingAction,
     setTopBakersQueryUrl,
     setTopAccountsQueryUrl,
+    setItemsCsv,
 } from './actions';
 import { setModalItems, setModalOpen } from '../modal/actions';
 import { createMessageAction } from '../message/actions';
@@ -270,6 +271,13 @@ export const fetchInitEntityAction = (
         dispatch(createMessageAction(`Unable to retrieve data for ${name} request.`, true));
         return [];
     });
+
+    // Fetch items CSV
+    let queryCsv = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
+    queryCsv = ConseilQueryBuilder.setLimit(queryCsv, 50000);
+    const itemsCsv: any = await executeEntityQuery(serverInfo, platform, network, entity, queryCsv);
+    dispatch(setItemsCsv(itemsCsv));
+
     await dispatch(setQueryFilters(entity, query));
     await dispatch(setEntityPropertiesAction(entity, filters, sorts, columns, items, aggregations));
     await Promise.all(cardinalityPromises);
@@ -615,23 +623,14 @@ export const shareReport = () => async (dispatch: any, state: any) => {
 };
 
 export const exportCsvData = () => async (dispatch: any, state: any) => {
-    const { selectedEntity, columns, sort, selectedFilters, selectedConfig, aggregations } = state().app;
-    const { platform, network, url, apiKey } = selectedConfig;
-    const serverInfo = { url, apiKey, network };
+    const { itemsCsv } = state().app;
 
-    const attributeNames = getAttributeNames(columns[selectedEntity]);
-    let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
-    query = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
-    query = ConseilQueryBuilder.setLimit(query, 50000);
-
-    const result: any = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
-
-    if (!result || result.length === 0) {
+    if (!itemsCsv || itemsCsv.length === 0) {
         dispatch(createMessageAction('Export failed, no results were returned.', true));
         return;
     }
 
-    let blob = new Blob([result]);
+    let blob = new Blob([itemsCsv]);
     const winOpenBlob: any = window.navigator.msSaveOrOpenBlob || null;
     if (winOpenBlob) {
         window.navigator.msSaveBlob(blob, 'arronax-results.csv');
@@ -654,10 +653,15 @@ export const submitQuery = () => async (dispatch: any, state: any) => {
 
     let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
     query = setLimit(query, 1000);
+    let queryCsv = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
+    queryCsv = ConseilQueryBuilder.setLimit(queryCsv, 50000);
+
     try {
         const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
         await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length));
         await dispatch(setQueryFilters(selectedEntity, query));
+        const itemsCsv: any = await executeEntityQuery(serverInfo, platform, network, selectedEntity, queryCsv);
+        dispatch(setItemsCsv(itemsCsv));
         dispatch(setLoadingAction(false));
     } catch (e) {
         const message = `Unable to submit query`;
@@ -696,14 +700,22 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
     try {
         const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
         const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+
         if (items.length > 0) {
             await dispatch(changeTab(entity));
+
+            // Fetch items CSV
+            let queryCsv = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
+            queryCsv = ConseilQueryBuilder.setLimit(queryCsv, 50000);
+            const itemsCsv: any = await executeEntityQuery(serverInfo, platform, network, entity, queryCsv);
+            dispatch(setItemsCsv(itemsCsv));
         } else {
             const searchedEntity = entities.find((item: any) => item.name === entity);
             dispatch(setLoadingAction(false));
             dispatch(createMessageAction(`The ${searchedEntity.displayName.toLowerCase()} was not found.`, true));
             return { entity: '', items: [], subItems: [] };
         }
+
         dispatch(setLoadingAction(false));
         await dispatch(setModalItems(platform, network, entity, id, items ));
         await dispatch(setModalOpen(true));

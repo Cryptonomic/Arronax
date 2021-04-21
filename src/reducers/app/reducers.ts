@@ -1,5 +1,6 @@
 import {
     SET_ITEMS,
+    SET_ITEMS_CSV,
     SET_FILTER,
     SET_TAB,
     SET_LOADING,
@@ -48,6 +49,7 @@ export interface AppState {
     columns: object;
     attributes: object;
     items: object;
+    itemsCsv: string;
     operators: object;
     selectedFilters: any;
     queryFilters: any;
@@ -80,6 +82,7 @@ let initialState: AppState = {
     entities: [],
     attributes,
     items: {},
+    itemsCsv: '',
     selectedFilters: {},
     queryFilters: {},
     operators: {
@@ -163,6 +166,8 @@ export const app = (state = initialState, action: any) => {
             const items = { ...state.items, [action.entity]: action.items };
             return { ...state, items };
         }
+        case SET_ITEMS_CSV:
+            return { ...state, itemsCsv: action.itemsCsv };
         case SET_COLUMNS: {
             const columns = { ...state.columns, [action.entity]: action.columns };
             const sort = { ...state.sort, [action.entity]: action.sorts };
@@ -305,7 +310,7 @@ export const app = (state = initialState, action: any) => {
         }
         case SET_HOURLY_TRANSACTIONS_LOADING:
             return { ...state, isTransactionsLoading: action.isTransactionsLoading };
-        case SET_HOURLY_TRANSACTIONS: 
+        case SET_HOURLY_TRANSACTIONS:
             return { ...state, hourlytransactions: action.hourlytransactions };
         case SET_HOURLY_TRANSACTIONS_QUERY_URL:
             return { ...state, hourlytransactionsUrl: action.hourlytransactionsUrl };
