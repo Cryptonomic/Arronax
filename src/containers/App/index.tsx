@@ -143,7 +143,7 @@ class Arronax extends React.Component<Props, States> {
 
         if (isSearchQuery) {
             const searchParams = new URLSearchParams(location.search);
-            const [searchNetwork, searchEntity] = searchParams.get('e')?.split('/');
+            const [searchNetwork, searchEntity]: any = searchParams.get('e')?.split('/');
             const searchConfig = configs.find((c: Config) => c.displayName === searchNetwork);
 
             if (!searchConfig) {

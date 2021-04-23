@@ -83,7 +83,7 @@ export default DropTarget(
   {
     hover(
       props: Props,
-      monitor: DropTargetMonitor,
+      monitor: DropTargetMonitor<any>,
       component: CardInstance,
     ) {
       if (!component) {

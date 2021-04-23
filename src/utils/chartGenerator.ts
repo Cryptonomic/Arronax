@@ -15,7 +15,7 @@ export class chartGenerator {
         const yScale = d3.scaleLinear()
             .domain([0, d3.max<any>(yAxisData)])
             .range([0, height]);
-    
+
         // Create a D3 Linear Scale for the Y-Axis Label
         // We negate the height here so that the bars are drawn correctly
         const yAxisScale: any = d3.scaleLinear<string>()
@@ -30,7 +30,7 @@ export class chartGenerator {
             .domain(range)
             .range([0, width]);
 
-        // Setup SVG element attributes 
+        // Setup SVG element attributes
         graphSVGElement
             .attr("height", height + margin.top + margin.bottom)
             .attr("width", width + margin.left + margin.right)
@@ -96,7 +96,7 @@ export class chartGenerator {
 
         bar.append("rect")
             .style("stroke-width", "1")
-            .style("stroke", stroke) 
+            .style("stroke", stroke)
             .attr("fill", barColor)
             .attr("width", xScale.bandwidth() - spacing) // Sets a padding of five pixel between bars
             .attr("height", yScale);
@@ -121,7 +121,7 @@ export class chartGenerator {
             .attr("height", height)
             .attr("width", axisWidth)
             .attr("class", "y-axis");
-        
+
         axisSVGElement.append("text")
             .attr("class", "y label")
             .attr("color", "#6A707E")
@@ -154,8 +154,8 @@ export class chartGenerator {
         // Add event listener for tooltip
         bar.on("mousemove", function(d: any, i: number) {
             tooltip
-                .style("left", d3.event.pageX + 20 + "px")
-                .style("top", d3.event.pageY - 70 + "px")
+                .style("left", d.pageX + 20 + "px")
+                .style("top", d.pageY - 70 + "px")
                 .style("display", "inline-block")
                 .style("position", "absolute")
                 .style("text-align", "center")
@@ -167,7 +167,7 @@ export class chartGenerator {
                 .style("letter-spacing", "0.4px")
                 .style("color", "#ffffff")
                 .style("padding", "5px 20px")
-                .html(yLabelFunction(d, i) + "<br>" + xLabelFunction(d, i));
+                .html(yLabelFunction(i, i) + "<br>" + xLabelFunction(i, i));
         })
             .on("mouseout", function(d: any){ tooltip.style("display", "none");
         });
