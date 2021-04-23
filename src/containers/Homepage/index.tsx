@@ -13,7 +13,7 @@ import { withRouter, Link } from 'react-router-dom';
 import * as d3 from 'd3';
 import moment from 'moment';
 
-import { 
+import {
     Padding,
     Title,
     ContentHolder,
@@ -21,8 +21,6 @@ import {
     ImageHolder,
     WhiteBg,
     SectionTitle,
-    ListItem,
-    ListContainer,
     styles,
     BannerHolder,
     MapHolder,
@@ -78,7 +76,7 @@ class Home extends React.Component<Props, States> {
 
     constructor(props: Props) {
         super(props);
-        
+
         this.transactionPerHour = React.createRef();
         this.topAccountsRef = React.createRef();
         this.topBakersRef = React.createRef();
@@ -93,7 +91,7 @@ class Home extends React.Component<Props, States> {
     }
 
     async componentDidMount() {
-        const prevDate = new Date(); 
+        const prevDate = new Date();
         // subtract one day from current time
         prevDate.setDate(prevDate.getDate() - 1);
 
@@ -133,7 +131,7 @@ class Home extends React.Component<Props, States> {
                     break;
                 }
             }
-        }  
+        }
 
         for(var x = 0; x < values.length; x++) {
             data.push({date : label[x].getTime(), values : values[x] });
@@ -183,7 +181,7 @@ class Home extends React.Component<Props, States> {
         const xTooltip = function(d: any, i: number) {
             return self.getFormattedToken(topAccounts[i].account_id)
         }
-    
+
         const yTooltip = function(d: any, i: number) {
             return d.toLocaleString() + " ꜩ"
         }
@@ -201,7 +199,7 @@ class Home extends React.Component<Props, States> {
         const svg = d3.select(this.topBakersRef.current);
         const axisScg = d3.select(this.topAccountsAxisRef.current);
 
-        const width = this.container.current ? this.container.current.offsetWidth - 100 : 0; 
+        const width = this.container.current ? this.container.current.offsetWidth - 100 : 0;
         chartGenerator.seperateAxisPrioritizedBarChartGenerator(215, width, svg, topBakers,"baker", "count_hash", 'rgba(255, 116, 119, 0.3)',  'Time (hour)',  '', 7, true, '#FF7477');
         chartGenerator.axisGenerator(axisScg, 215, topBakers, 'count_hash', 'Blocks');
         let self = this;
@@ -213,7 +211,7 @@ class Home extends React.Component<Props, States> {
 
             return self.getFormattedToken(topBakers[i].baker);
         }
-    
+
         const yTooltip = function(d: any, i: number) {
             return d.toLocaleString() + " Blocks Baked"
         }
@@ -288,10 +286,8 @@ class Home extends React.Component<Props, States> {
             isTransactionsLoading,
             isTopAccountsLoading,
             isTopBakersLoading,
-            selectedConfig,
             configs,
             removeConfig,
-            hourlytransactionsUrl,
             topAccountsUrl,
             topBakersUrl,
         } = this.props;
@@ -362,15 +358,15 @@ class Home extends React.Component<Props, States> {
                                             <path d="M16.4286 20H2.14286C0.928571 20 0 19.0714 0 17.8571V3.57143C0 2.35715 0.928571 1.42857 2.14286 1.42857H10V2.85715H2.14286C1.71429 2.85715 1.42857 3.14286 1.42857 3.57143V17.8571C1.42857 18.2857 1.71429 18.5714 2.14286 18.5714H16.4286C16.8571 18.5714 17.1429 18.2857 17.1429 17.8571V10H18.5714V17.8571C18.5714 19.0714 17.6429 20 16.4286 20Z" fill="#2D9CDB"/>
                                         </svg>
                                         View Query
-                                    </Link> 
+                                    </Link>
                                 </AnchorTag>
                                 {/* <Link to={this.hourlyTransactionsQuery}/> */}
                             </Grid>
                             <Grid item xs={6}>
                                 <MapHolder ref={this.container}>
                                     {
-                                        isTransactionsLoading 
-                                        ? <p>Loading...</p> : 
+                                        isTransactionsLoading
+                                        ? <p>Loading...</p> :
                                         <svg className={classes.blockDisplay} ref={this.transactionPerHour}></svg>
                                     }
                                 </MapHolder>
@@ -390,7 +386,7 @@ class Home extends React.Component<Props, States> {
                             <Grid item xs={6}>
                                 <MapHolder>
                                     {
-                                        isTopBakersLoading 
+                                        isTopBakersLoading
                                         ? <p>Loading...</p> :
                                         <React.Fragment>
                                             <svg ref={this.topAccountsAxisRef}></svg>
@@ -409,7 +405,7 @@ class Home extends React.Component<Props, States> {
                                             <path d="M16.4286 20H2.14286C0.928571 20 0 19.0714 0 17.8571V3.57143C0 2.35715 0.928571 1.42857 2.14286 1.42857H10V2.85715H2.14286C1.71429 2.85715 1.42857 3.14286 1.42857 3.57143V17.8571C1.42857 18.2857 1.71429 18.5714 2.14286 18.5714H16.4286C16.8571 18.5714 17.1429 18.2857 17.1429 17.8571V10H18.5714V17.8571C18.5714 19.0714 17.6429 20 16.4286 20Z" fill="#2D9CDB"/>
                                         </svg>
                                         View Query
-                                    </Link> 
+                                    </Link>
                                 </AnchorTag>
                             </Grid>
                         </Grid>
@@ -434,13 +430,13 @@ class Home extends React.Component<Props, States> {
                                             <path d="M16.4286 20H2.14286C0.928571 20 0 19.0714 0 17.8571V3.57143C0 2.35715 0.928571 1.42857 2.14286 1.42857H10V2.85715H2.14286C1.71429 2.85715 1.42857 3.14286 1.42857 3.57143V17.8571C1.42857 18.2857 1.71429 18.5714 2.14286 18.5714H16.4286C16.8571 18.5714 17.1429 18.2857 17.1429 17.8571V10H18.5714V17.8571C18.5714 19.0714 17.6429 20 16.4286 20Z" fill="#2D9CDB"/>
                                         </svg>
                                         View Query
-                                    </Link> 
+                                    </Link>
                                 </AnchorTag>
                             </Grid>
                             <Grid item xs={6}>
                                 <MapHolder>
                                     {
-                                        isTopAccountsLoading 
+                                        isTopAccountsLoading
                                         ? <p>Loading...</p> :
                                         <svg className={classes.blockDisplay} ref={this.topAccountsRef}></svg>
                                     }

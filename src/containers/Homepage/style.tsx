@@ -71,25 +71,6 @@ export const Footer = styled.div`
     padding:30px 40px;
 `;
 
-
-export const ListItem = styled.li`
-    font-family: Roboto;
-    font-size: 14px;
-    line-height: 16px;
-    letter-spacing: 2px;
-    color:#fff;
-    list-style:none;
-    margin-bottom:10px;
-    &:last-child {
-        margin-bottom:0;
-    }
-`;
-
-export const ListContainer = styled.ul`
-    margin: 0;
-    padding:0;
-`;
-
 export const MapHolder = styled.div`
     margin-top: 8px;
     background-color:#fff;

@@ -3,10 +3,10 @@ import { formatter } from './formatter';
 import { getNoEmptyFields } from '../../utils/attributes';
 
 const templateType = (platform: string, entity: string, values: any) => {
-    if (platform == 'tezos' && entity === 'accounts' && values.find((v: any) => v.name === 'is_baker')?.value) {
+    if (platform === 'tezos' && entity === 'accounts' && values.find((v: any) => v.name === 'is_baker')?.value) {
         return 'bakers';
     }
-    if (platform == 'tezos' && entity === 'accounts' && values.find((v: any) => v.name === 'account_id')?.value.startsWith('KT1')) {
+    if (platform === 'tezos' && entity === 'accounts' && values.find((v: any) => v.name === 'account_id')?.value.startsWith('KT1')) {
         return 'contracts';
     }
 

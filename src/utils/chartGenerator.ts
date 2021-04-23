@@ -8,7 +8,7 @@ export class chartGenerator {
         const margin = { top: 0, right: 50, bottom: 50, left: 0 };
 
         // Create an Array for each Axis
-        let xAxisData: any = queryResult.map((d: any) => (<any>d)[xAxisKey]);
+        let xAxisData: any = queryResult.map((d: any) => (d as any)[xAxisKey]);
         const yAxisData = queryResult.map((d: { [x: string]: string; }) => parseInt(d[yAxisKey]));
 
         // Create a D3 Linear Scale for the Y-Axis
@@ -18,9 +18,9 @@ export class chartGenerator {
 
         // Create a D3 Linear Scale for the Y-Axis Label
         // We negate the height here so that the bars are drawn correctly
-        const yAxisScale: any = d3.scaleLinear<string>()
-            .domain([0, d3.max<any>(yAxisData)])
-            .range(<any>([0, -height]));
+        // const yAxisScale: any = d3.scaleLinear<string>()
+        //     .domain([0, d3.max<any>(yAxisData)])
+        //     .range(([0, -height] as any));
 
         // Create a D3 Band Scale for the X-Axis
         // A static SVG will have a fixed size no matter the number of elements
@@ -110,7 +110,7 @@ export class chartGenerator {
         const max = d3.max<any>(yAxisData) + 5;
         const yAxisScale: any = d3.scaleLinear<string>()
             .domain([-5, max])
-            .range(<any>([0, -height]));
+            .range(([0, -height] as any));
 
         // Create a Y-Axis Scale
         const yAxis = d3.axisLeft(yAxisScale)
