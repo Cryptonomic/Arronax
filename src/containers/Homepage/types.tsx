@@ -2,7 +2,6 @@ import { Config } from '../../types';
 import { RouteComponentProps } from 'react-router-dom';
 
 export interface OwnProps {
-    
     classes: any;
     hourlytransactions: Transactions[];
     isError: boolean;
