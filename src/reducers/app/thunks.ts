@@ -415,13 +415,15 @@ const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
     let injectedMetadata: any = {};
     if (state().app.selectedConfig.metadataOverrideUrl) {
         try {
-            const metadata = await fetch(state().app.selectedConfig.metadataOverrideUrl).then(response => response.text());
+            const metadata = await fetch(state().app.selectedConfig.metadataOverrideUrl)
+                .then(response => response.text())
+                .catch(e => "" );
 
             await hocon().then((instance) => {
                 const cfg = new instance.Config(metadata);
                 injectedMetadata = JSON.parse(cfg.toJSON());
                 cfg.delete();
-            });
+            }).catch(e => {});
         } catch (err) {
             // meh
         }
@@ -503,9 +505,11 @@ export const initLoad = (props: InitLoad) => async (dispatch: any, state: any) =
         let selectedEntity = state().app.entities.find((e: EntityDefinition) => e.name === entity)?.name;
 
         // Not valid entity change to first
-        if (!selectedEntity) {
+        if (!selectedEntity && config.entities && config.entities.length > 0) {
             selectedEntity = config.entities[0];
             history.replace(`/${config.platform}/${config.network}/${selectedEntity}`);
+        } else if (!selectedEntity && (!config.entities || config.entities.length === 0)) {
+            throw new Error(`Missing configuration property: "entities" for ${config.platform}/${config.network}`);
         }
 
         await dispatch(setEntityAction(selectedEntity));

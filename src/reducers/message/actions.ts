@@ -7,6 +7,13 @@ export function clearMessageAction() {
 }
 
 export function createMessageAction(message: string, isError: boolean) {
+    if (isError) {
+        try { throw new Error(message); }
+        catch (err) {
+            console.log(err.message);
+            console.log(err.stack);
+        }
+    }
   return {
     type: ADD_MESSAGE,
     message,

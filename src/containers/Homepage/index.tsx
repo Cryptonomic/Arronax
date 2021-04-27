@@ -467,17 +467,7 @@ class Home extends React.Component<Props, States> {
                     </Padding>
                 </Container>
                 </WhiteBg>
-                {/* <Footer>
-                    <Container maxWidth="lg">
-                        <ListContainer>
-                            <ListItem>An open-source product by Cryptonomic</ListItem>
-                            <ListItem>Powered by Conseil</ListItem>
-                            <ListItem>Built with ConseilJS</ListItem>
-                            <ListItem>Version March 2020 Release 8.1-84e17bb</ListItem>
-                        </ListContainer>
-                    </Container>
-                </Footer> */}
-                <Footer/>
+                <Footer />
                 <Dialog open={isError} onClose={this.handleErrorClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">Error</DialogTitle>
                     <DialogContentWrapper>
