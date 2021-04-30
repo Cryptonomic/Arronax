@@ -128,9 +128,12 @@
             "baker_registry": "TCF Baker Registry",
             "bakers_history": "Baker History",
             "transactions": "Transactions",
-            "contracts": "Accounts",
+            "contracts": "Contracts",
             "logs": "Logs",
-            "receipts": "Receipts"
+            "receipts": "Receipts",
+            "tokens": "Tokens",
+            "tokens_history": "Token History",
+            "token_transfers": "Token Transfers"
         }
     },
     "attributes": {
@@ -148,7 +151,17 @@
             "block_level": "Block Level",
             "is_baker": "Baker",
             "is_activated": "Activated",
-            "token_balances": "Token Balances"
+            "address": "Address",
+            "block_hash": "Block Hash",
+            "block_number": "Block Number",
+            "bytecode": "Bytecode",
+            "bytecode_hash": "Bytecode Hash",
+            "decimals": "Decimals",
+            "name": "Name",
+            "symbol": "Symbol",
+            "timestamp": "Timestamp",
+            "token_standard": "Token Standard",
+            "total_supply": "Total Supply"
         },
         "accounts_history": {
             "account_id": "Address",
@@ -162,7 +175,10 @@
             "cycle": "Cycle",
             "is_baker": "Registered Baker",
             "is_active_baker": "Active Baker",
-            "is_activated": "Activated Account"
+            "is_activated": "Activated Account",
+            "address": "Address",
+            "block_hash": "Block Hash",
+            "block_number": "Block Number"
         },
         "balance_updates": {
             "account_id": "Address",
@@ -436,8 +452,9 @@
             "block_hash": "Block Hash",
             "block_number": "Block Level",
             "bytecode": "Bytecode",
-            "is_erc20": "ERC20",
-            "is_erc721": "ERC721"
+            "bytecode_hash": "Code Hash",
+            "timestamp": "Timestamp",
+            "token_standard": "Token Standard"
         },
         "transactions": {
             "block_hash": "Block Hash",
@@ -453,7 +470,8 @@
             "nonce": "Nonce",
             "destination": "Destination",
             "transaction_index": "Index",
-            "amount": "Amount"
+            "amount": "Amount",
+            "timestamp": "Timestamp"
         },
         "logs": {
             "address": "Address",
@@ -464,7 +482,8 @@
             "removed": "Removed",
             "topics": "Topics",
             "transaction_hash": "Transaction Hash",
-            "transaction_index": "Transaction Index"
+            "transaction_index": "Transaction Index",
+            "timestamp": "Timestamp"
         },
         "receipts": {
             "block_hash": "Block Hash",
@@ -476,7 +495,38 @@
             "root": "Root",
             "status": "Status",
             "transaction_hash": "Transaction Hash",
-            "transaction_index": "Transaction Index"
+            "transaction_index": "Transaction Index",
+            "timestamp": "Timestamp"
+        },
+        "token_transfers": {
+            "block_hash": "Block Hash",
+            "block_number": "Block Level",
+            "from_address": "Source",
+            "log_index": "Log Index",
+            "timestamp": "Timestamp",
+            "to_address": "Destination",
+            "token_address": "Token Address",
+            "transaction_hash": "Transaction Hash",
+            "value": "Amount"
+        },
+        "tokens_history": {
+            "account_address": "Address",
+            "asof": "As of Date",
+            "block_hash": "Block Hash",
+            "block_number": "Block Level",
+            "token_address": "Token Address",
+            "transaction_hash": "Transaction Hash",
+            "value": "Amount"
+        },
+        "tokens": {
+            "address": "Address",
+            "block_hash": "Block Hash",
+            "block_number": "Block Level",
+            "decimals": "Decimals",
+            "name": "Name",
+            "symbol": "Symbol",
+            "timestamp": "Timestamp",
+            "total_supply": "Total Supply"
         }
     },
     "operators": {
