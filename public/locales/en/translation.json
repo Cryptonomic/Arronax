@@ -133,7 +133,9 @@
             "receipts": "Receipts",
             "tokens": "Tokens",
             "tokens_history": "Token History",
-            "token_transfers": "Token Transfers"
+            "token_transfers": "Token Transfers",
+            "outputs": "Outputs",
+            "inputs": "Inputs"
         }
     },
     "attributes": {
@@ -161,7 +163,8 @@
             "symbol": "Symbol",
             "timestamp": "Timestamp",
             "token_standard": "Token Standard",
-            "total_supply": "Total Supply"
+            "total_supply": "Total Supply",
+            "token_balances": "Token Balances"
         },
         "accounts_history": {
             "account_id": "Address",
@@ -249,7 +252,19 @@
             "state_root": "State Root",
             "total_difficulty": "Total Difficulty",
             "transactions_root": "Transactions Root",
-            "uncles": "Uncles"
+            "uncles": "Uncles",
+            "bits": "Bits",
+            "chain_work": "Chain Work",
+            "height": "Level",
+            "median_time": "Median Time",
+            "merkle_root": "Merkle Root",
+            "next_block_hash": "Next Block Hash",
+            "previous_block_hash": "Previous Block Hash",
+            "stripped_size": "Stripped Size",
+            "time": "Timestamp",
+            "version": "Version",
+            "version_hex": "Version Hex",
+            "weight": "Weight"
         },
         "bakers": {
             "pkh": "Address",
@@ -527,6 +542,12 @@
             "symbol": "Symbol",
             "timestamp": "Timestamp",
             "total_supply": "Total Supply"
+        },
+        "outputs": {
+
+        },
+        "inputs": {
+
         }
     },
     "operators": {
