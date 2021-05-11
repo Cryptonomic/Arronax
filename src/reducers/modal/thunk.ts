@@ -40,9 +40,11 @@ export const fetchAccountTokenBalances = (name: string, address: string) => asyn
         tokenLedgerPath: '$.args[0].int',
         dexterPoolAddress: 'KT1PDrBE59Zmxnb8vXRgRAG1XmvTMTs5EDHU',
         dexterLedgerMap: 542,
-        quipuPoolAddress: 'KT1DX1kpCEfEg5nG3pXSSwvtkjTr6ZNYuxP4',
+        quipuPoolAddress: 'KT1Evsp2yA19Whm24khvFPcwimK6UaAJu8Zo',
         quipuPoolBalancePath: '$.args[1].args[0].args[4].int',
-        quipuLedgerMap: 1007
+        quipuTokenPoolPath: '$.args[1].args[0].args[2].args[1].int',
+        quipuCoinPoolPath: '$.args[1].args[0].args[1].args[2].int',
+        quipuLedgerMap: 1517
     };
 
     const usdtzDetails = {
@@ -54,9 +56,11 @@ export const fetchAccountTokenBalances = (name: string, address: string) => asyn
         tokenLedgerPath: '$.args[0].int',
         dexterPoolAddress: 'KT1Tr2eG3eVmPRbymrbU2UppUmKjFPXomGG9',
         dexterLedgerMap: 543,
-        quipuPoolAddress: 'KT1MWxucqexguPjhqEyk4XndE1M5tHnhNhH7',
+        quipuPoolAddress: 'KT1WxgZ1ZSfMgmsSDDcUn8Xn577HwnQ7e1Lb',
         quipuPoolBalancePath: '$.args[1].args[0].args[4].int',
-        quipuLedgerMap: 999
+        quipuTokenPoolPath: '$.args[1].args[0].args[2].args[1].int',
+        quipuCoinPoolPath: '$.args[1].args[0].args[1].args[2].int',
+        quipuLedgerMap: 1509
     };
 
     const tzbtcKey = Buffer.from(TezosMessageUtils.writePackedData(`Pair "ledger" 0x${TezosMessageUtils.writeAddress(address)}`, '', TezosParameterFormat.Michelson), 'hex');
@@ -69,9 +73,11 @@ export const fetchAccountTokenBalances = (name: string, address: string) => asyn
         tokenLedgerPath: '$.args[0].int',
         dexterPoolAddress: 'KT1BGQR7t4izzKZ7eRodKWTodAsM23P38v7N',
         dexterLedgerMap: 541,
-        quipuPoolAddress: 'KT1N1wwNPqT5jGhM91GQ2ae5uY8UzFaXHMJS',
+        quipuPoolAddress: 'KT1WBLrLE2vG8SedBqiSJFm4VVAZZBytJYHc',
         quipuPoolBalancePath: '$.args[1].args[0].args[4].int',
-        quipuLedgerMap: 977
+        quipuTokenPoolPath: '$.args[1].args[0].args[2].args[1].int',
+        quipuCoinPoolPath: '$.args[1].args[0].args[1].args[2].int',
+        quipuLedgerMap: 1493
     };
 
     const wxtzDetails = {
@@ -83,9 +89,11 @@ export const fetchAccountTokenBalances = (name: string, address: string) => asyn
         tokenLedgerPath: '$.int',
         dexterPoolAddress: 'KT1D56HQfMmwdopmFLTwNHFJSs6Dsg2didFo',
         dexterLedgerMap: 544,
-        quipuPoolAddress: 'KT1NABnnQ4pUTJHUwFLiVM2uuEu1RXihAVmB',
+        quipuPoolAddress: 'KT1W3VGRUjvS869r4ror8kdaxqJAZUbPyjMT',
         quipuPoolBalancePath: '$.args[1].args[0].args[4].int',
-        quipuLedgerMap: 987
+        quipuTokenPoolPath: '$.args[1].args[0].args[2].args[1].int',
+        quipuCoinPoolPath: '$.args[1].args[0].args[1].args[2].int',
+        quipuLedgerMap: 1477
     };
 
     const kusdDetails = {
@@ -97,9 +105,11 @@ export const fetchAccountTokenBalances = (name: string, address: string) => asyn
         tokenLedgerPath: '$.args[1].int',
         dexterPoolAddress: 'KT1AbYeDbjjcAnV1QK7EZUUdqku77CdkTuv6',
         dexterLedgerMap: 540,
-        quipuPoolAddress: 'KT1CiSKXR68qYSxnbzjwvfeMCRburaSDonT2',
+        quipuPoolAddress: 'KT1K4EwTpbvYN9agJdjpyJm4ZZdhpUNKB3F6',
         quipuPoolBalancePath: '$.args[1].args[0].args[4].int',
-        quipuLedgerMap: 969
+        quipuTokenPoolPath: '$.args[1].args[0].args[2].args[1].int',
+        quipuCoinPoolPath: '$.args[1].args[0].args[1].args[2].int',
+        quipuLedgerMap: 1485
     };
 
     const stkrDetails = {
@@ -109,9 +119,11 @@ export const fetchAccountTokenBalances = (name: string, address: string) => asyn
         tokenLedgerKey: address,
         tokenLedgerKeyType: 'address',
         tokenLedgerPath: '$.int',
-        quipuPoolAddress: 'KT1R5Fp415CJxSxxXToUj6QvxP1LHaYXaxV6',
+        quipuPoolAddress: 'KT1BMEEPX7MWzwwadW3NCSZe9XGmFJ7rs7Dr',
         quipuPoolBalancePath: '$.args[1].args[0].args[4].int',
-        quipuLedgerMap: 1062
+        quipuTokenPoolPath: '$.args[1].args[0].args[2].args[1].int',
+        quipuCoinPoolPath: '$.args[1].args[0].args[1].args[2].int',
+        quipuLedgerMap: 1501
     };
 
     const blndDetails = {
@@ -120,10 +132,7 @@ export const fetchAccountTokenBalances = (name: string, address: string) => asyn
         tokenLedgerMap: 368,
         tokenLedgerKey: address,
         tokenLedgerKeyType: 'address',
-        tokenLedgerPath: '$.int',
-        // quipuPoolAddress: 'KT1R5Fp415CJxSxxXToUj6QvxP1LHaYXaxV6',
-        // quipuPoolBalancePath: '$.args[1].args[0].args[4].int',
-        // quipuLedgerMap: 1062
+        tokenLedgerPath: '$.int'
     };
 
     const hdaoDetails = {
@@ -133,21 +142,53 @@ export const fetchAccountTokenBalances = (name: string, address: string) => asyn
         tokenLedgerKey: `Pair 0x${TezosMessageUtils.writeAddress(address)} 0`,
         tokenLedgerKeyType: '',
         tokenLedgerPath: '$.int',
-        quipuPoolAddress: 'KT1V41fGzkdTJki4d11T1Rp9yPkCmDhB7jph',
-        quipuPoolBalancePath: '$.args[1].args[0].args[3].int',
-        quipuLedgerMap: 1035
+        quipuPoolAddress: 'KT1QxLqukyfohPV5kPkw97Rs6cw1DDDvYgbB',
+        quipuPoolBalancePath: '$.args[1].args[1].args[0].args[0].int',
+        quipuTokenPoolPath: `$.args[1].args[0].args[3].int`,
+        quipuCoinPoolPath: '$.args[1].args[0].args[1].args[2].int',
+        quipuLedgerMap: 1878
     };
 
     const usdsDetails = {
-        tokenSymbol: 'hDAO',
+        tokenSymbol: 'USDS',
         tokenDecimals: 6,
         tokenLedgerMap: 397,
         tokenLedgerKey: `Pair 0x${TezosMessageUtils.writeAddress(address)} 0`,
         tokenLedgerKeyType: '',
         tokenLedgerPath: '$.int',
-        quipuPoolAddress: 'KT1T4wNjJtNqZ9XCKSZqR5BXsuGczTxhV9Vu',
-        quipuPoolBalancePath: '$.args[1].args[0].args[3].int',
-        quipuLedgerMap: 1217
+        quipuPoolAddress: 'KT1KFszq8UFCcWxnXuhZPUyHT9FK3gjmSKm6',
+        quipuPoolBalancePath: '$.args[1].args[1].args[0].args[0].int',
+        quipuTokenPoolPath: `$.args[1].args[0].args[3].int`,
+        quipuCoinPoolPath: '$.args[1].args[0].args[1].args[2].int',
+        quipuLedgerMap: 1894
+    };
+
+    const wrapDetails = {
+        tokenSymbol: 'WRAP',
+        tokenDecimals: 8,
+        tokenLedgerMap: 1777, // KT1LRboPna9yQY9BrjtQYDS1DVxhKESK4VVd
+        tokenLedgerKey: address,
+        tokenLedgerKeyType: 'address',
+        tokenLedgerPath: '$.int',
+        quipuPoolAddress: 'KT1FG63hhFtMEEEtmBSX2vuFmP87t9E7Ab4t',
+        quipuPoolBalancePath: '$.args[1].args[1].args[0].args[0].int',
+        quipuTokenPoolPath: `$.args[1].args[0].args[3].int`,
+        quipuCoinPoolPath: '$.args[1].args[0].args[1].args[2].int',
+        quipuLedgerMap: 2013
+    };
+
+    const crunchDetails = {
+        tokenSymbol: 'CRUNCH',
+        tokenDecimals: 8,
+        tokenLedgerMap: 2809, // KT1BHCumksALJQJ8q8to2EPigPW6qpyTr7Ng
+        tokenLedgerKey: address,
+        tokenLedgerKeyType: 'address',
+        tokenLedgerPath: '$.int',
+        quipuPoolAddress: 'KT1RRgK6eXvCWCiEGWhRZCSVGzhDzwXEEjS4',
+        quipuPoolBalancePath: '$.args[1].args[1].args[0].args[0].int',
+        quipuTokenPoolPath: `$.args[1].args[0].args[3].int`,
+        quipuCoinPoolPath: '$.args[1].args[0].args[1].args[2].int',
+        quipuLedgerMap: 3266
     };
 
     try {
@@ -160,13 +201,25 @@ export const fetchAccountTokenBalances = (name: string, address: string) => asyn
         const hdao = await aggregateTokenBalance(nodeUrl, hdaoDetails, address);
         const tzbtc = await aggregateTokenBalance(nodeUrl, tzbtcDetails, address);
         const usds = await aggregateTokenBalance(nodeUrl, usdsDetails, address);
+        const wrap = await aggregateTokenBalance(nodeUrl, wrapDetails, address);
+        const crunch = await aggregateTokenBalance(nodeUrl, crunchDetails, address);
 
-        await dispatch(setModule(name, [...usdtz, ...ethtz, ...wxtz, ...kusd, ...stkr, ...blnd, ...hdao, ...tzbtc, ...usds]));
+        await dispatch(setModule(name, [...usdtz, ...ethtz, ...wxtz, ...kusd, ...stkr, ...blnd, ...hdao, ...tzbtc, ...usds, ...wrap, ...crunch]));
     } catch (e) {
         const message = 'Unable to fetch operations';
         dispatch(createMessageAction(message, true));
     }
 }
+
+/**
+ * 
+ * @param name Result set attribute name
+ * @param address Account to query
+ * @returns 
+ */
+ export const fetchAccountNFTBalances = (name: string, address: string) => async (dispatch: any, state: any) => {
+    //
+ }
 
 export const fetchOperationsBlock = (name: string, id: any) => async (dispatch: any, state: any) => {
     const { network, platform, url, apiKey } = state().app.selectedConfig;
@@ -388,7 +441,12 @@ const aggregateTokenBalance = async (tezosNode: string, tokenDetails: any, accou
             tokenBalance = new BigNumber(JSONPath({ path: tokenDetails.tokenLedgerPath, json: accountData })[0]);
 
             if (tokenBalance.toNumber() > 0) {
-                balances.push({ token: tokenDetails.tokenSymbol, location: tokenDetails.tokenSymbol, balance: tokenBalance.dividedBy(scale).toFixed(tokenDetails.tokenDecimals) });
+                balances.push({
+                    token: tokenDetails.tokenSymbol,
+                    location: tokenDetails.tokenSymbol,
+                    balance: tokenBalance.dividedBy(scale).toFixed(tokenDetails.tokenDecimals),
+                    coinBalance: 0
+                });
             }
         }
     } catch (err) {
@@ -396,36 +454,55 @@ const aggregateTokenBalance = async (tezosNode: string, tokenDetails: any, accou
     }
 
     let dexterTokenBalance = new BigNumber(0);
+    let dexterCoinBalance = new BigNumber(0);
     try {
         const packedKey = TezosMessageUtils.encodeBigMapKey(Buffer.from(TezosMessageUtils.writePackedData(account, 'address'), 'hex'));
         const mapResult = await TezosNodeReader.getValueForBigMapKey(tezosNode, tokenDetails.dexterLedgerMap, packedKey);
         const dexterPoolBalance = new BigNumber(JSONPath({ path: '$.args[0].int', json: mapResult })[0]);
+
         const dexterStorage = await TezosNodeReader.getContractStorage(tezosNode, tokenDetails.dexterPoolAddress);
-        const dexterPoolSize = new BigNumber(JSONPath({ path: '$.args[4].int', json: dexterStorage })[0]);
-        dexterTokenBalance = dexterPoolBalance
-            .dividedBy(dexterPoolSize)
-            .multipliedBy(new BigNumber(JSONPath({ path: '$.args[3].int', json: dexterStorage })[0]));
+        const dexterPoolSize = new BigNumber(JSONPath({ path: '$.args[1].args[2].int', json: dexterStorage })[0]);
+        const dexterTokenPool = new BigNumber(JSONPath({ path: '$.args[3].int', json: dexterStorage })[0]);
+        const dexterCoinPool = new BigNumber(JSONPath({ path: '$.args[4].int', json: dexterStorage })[0]);
+
+        dexterTokenBalance = dexterPoolBalance.dividedBy(dexterPoolSize).multipliedBy(dexterTokenPool);
+        dexterCoinBalance = dexterPoolBalance.dividedBy(dexterPoolSize).multipliedBy(dexterCoinPool);
 
         if (dexterTokenBalance.toNumber() > 0) {
-            balances.push({ token: tokenDetails.tokenSymbol, location: 'Dexter', balance: dexterTokenBalance.dividedBy(scale).toFixed(tokenDetails.tokenDecimals) });
+            balances.push({
+                token: tokenDetails.tokenSymbol,
+                location: 'Dexter',
+                balance: dexterTokenBalance.dividedBy(scale).toFixed(tokenDetails.tokenDecimals),
+                coinBalance: dexterCoinBalance.dividedBy(1_000_000).toFixed(6)
+            });
         }
     } catch (err) {
         //
     }
 
     let quipuTokenBalance = new BigNumber(0);
+    let quipuCoinBalance = new BigNumber(0);
     try {
+        console.log(`processing ${tokenDetails.tokenSymbol}`)
         const packedKey = TezosMessageUtils.encodeBigMapKey(Buffer.from(TezosMessageUtils.writePackedData(account, 'address'), 'hex'));
         const mapResult = await TezosNodeReader.getValueForBigMapKey(tezosNode, tokenDetails.quipuLedgerMap, packedKey);
         const quipuPoolBalance = new BigNumber(JSONPath({ path: '$.args[0].args[1].int', json: mapResult })[0])
+
         const quipuStorage = await TezosNodeReader.getContractStorage(tezosNode, tokenDetails.quipuPoolAddress)
         const quipuPoolSize = new BigNumber(JSONPath({ path: tokenDetails.quipuPoolBalancePath, json: quipuStorage })[0]);
-        quipuTokenBalance = quipuPoolBalance
-            .dividedBy(quipuPoolSize)
-            .multipliedBy(new BigNumber(JSONPath({ path: '$.args[1].args[0].args[2].args[1].int', json: quipuStorage })[0]));
+        const quipuTokenPool = new BigNumber(JSONPath({ path: tokenDetails.quipuTokenPoolPath, json: quipuStorage })[0]);
+        const quipuCoinPool = new BigNumber(JSONPath({ path: tokenDetails.quipuCoinPoolPath, json: quipuStorage })[0]);
+        console.log(tokenDetails.tokenSymbol, quipuPoolSize.toString(), quipuTokenPool.toString(), quipuCoinPool.toString())
+        quipuTokenBalance = quipuPoolBalance.dividedBy(quipuPoolSize).multipliedBy(quipuTokenPool);
+        quipuCoinBalance = quipuPoolBalance.dividedBy(quipuPoolSize).multipliedBy(quipuCoinPool);
 
         if (quipuTokenBalance.toNumber() > 0) {
-            balances.push({ token: tokenDetails.tokenSymbol, location: 'QuipuSwap', balance: quipuTokenBalance.dividedBy(scale).toFixed(tokenDetails.tokenDecimals) });
+            balances.push({
+                token: tokenDetails.tokenSymbol,
+                location: 'QuipuSwap',
+                balance: quipuTokenBalance.dividedBy(scale).toFixed(tokenDetails.tokenDecimals),
+                coinBalance: quipuCoinBalance.dividedBy(1_000_000).toFixed(6)
+            });
         }
     } catch (err) {
         //

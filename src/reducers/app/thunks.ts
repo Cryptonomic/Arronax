@@ -522,6 +522,9 @@ export const initLoad = (props: InitLoad) => async (dispatch: any, state: any) =
     } catch (e) {
         if (e.message) {
             await dispatch(createMessageAction(e.message, true));
+        } else {
+            console.log(e);
+            console.log(e.stack)
         }
     }
 };
