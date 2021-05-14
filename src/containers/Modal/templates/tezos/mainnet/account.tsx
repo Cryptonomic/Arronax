@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, shallowEqual } from 'react-redux';
 
-import { fetchAccountTokenBalances } from '../../../../../reducers/modal/thunk';
+import { fetchAccountTokenBalances, checkTezosDomainsRegistry } from '../../../../../reducers/modal/thunk';
 import { formatValueWithLink } from '../../../../../utils/render';
 import Title from '../../../parts/Title';
 import List from '../../../parts/List';
@@ -11,6 +11,7 @@ import { ModalTitle, TitleWrapper, Button } from '../../../style';
 
 const Account = (props: any) => {
     const accountTokens = useSelector(({ modal }: any) => modal.modules.accountTokens, shallowEqual);
+    const accountDomain = useSelector(({ modal }: any) => modal.modules.accountDomain, shallowEqual);
     const { t } = useTranslation();
     const [tab, setTab] = useState('');
     const { platform, network, entity, values, attributes, formatValue } = props;
@@ -36,6 +37,13 @@ const Account = (props: any) => {
                 value: (<>
                     {formatValueWithLink({ value: ([... new Set(accountTokens.map((r: any) => r['token']))]).join(', '), onClick: () => onClickItem('token_balances') })}
                 </>)
+            });
+        }
+
+        if (accountDomain && accountDomain.length > 0) {
+            list.push({
+                title: 'Tezos Domains Name',
+                value: (<>{accountDomain}</>)
             });
         }
 
@@ -73,7 +81,7 @@ const Account = (props: any) => {
 }
 
 const accountCtrl = (props: any) => {
-    const actions: any = [() => fetchAccountTokenBalances('accountTokens', props.id)];
+    const actions: any = [() => fetchAccountTokenBalances('accountTokens', props.id), () => checkTezosDomainsRegistry('accountDomain', props.id)];
     const getActions = () => actions;
     const getComponent = () => <Account {...props} />;
 
