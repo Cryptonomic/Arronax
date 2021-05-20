@@ -157,9 +157,42 @@ const tezosQueries: any = {
     }
 };
 
+const bitcoinQueries: any = {
+    blocks: {
+        fields: [
+            "time", "height", "hash", "difficulty", "nonce"
+        ],
+        predicates:[ ],
+        orderBy: [
+            { field: "height", direction: "desc"}
+        ],
+        aggregation: [],
+        limit: 1000
+    },
+    transactions: {
+        fields: [],
+        predicates: [],
+        orderBy: [ { field: "block_height", direction: "desc" } ],
+        limit: 100
+    },
+    outputs: {
+        fields: [],
+        predicates: [],
+        orderBy: [ { field: "block_height", direction: "desc" } ],
+        limit: 100
+    },
+    inputs: {
+        fields: [],
+        predicates: [],
+        orderBy: [ { field: "block_height", direction: "desc" } ],
+        limit: 100
+    }
+}
+
 export const defaultQueries: any = {
     tezos: tezosQueries,
-    ethereum: ethereumQueries
+    ethereum: ethereumQueries,
+    bitcoin: bitcoinQueries
 };
 
 export const CARDINALITY_NUMBER = 25;
