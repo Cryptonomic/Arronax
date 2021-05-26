@@ -212,6 +212,31 @@ export const fetchAccountTokenBalances = (name: string, address: string) => asyn
 }
 
 /**
+ * Queries the TezosDomains registry at KT1GBZmSxmnKJXGMdMLbugPfLyUPmuLSMwKS, map index 1265.
+ * 
+ * @param name Result set attribute name
+ * @param address Account to query
+ * @param mapId 
+ * @returns 
+ */
+export const checkTezosDomainsRegistry = (name: string, address: string, mapId = 1265) => async (dispatch: any, state: any) => {
+    const { nodeUrl } = state().app.selectedConfig;
+
+    try {
+        const packedKey = TezosMessageUtils.encodeBigMapKey(Buffer.from(TezosMessageUtils.writePackedData(address, 'address'), 'hex'));
+        const mapResult = await TezosNodeReader.getValueForBigMapKey(nodeUrl, mapId, packedKey);
+        const domainBytes = JSONPath({ path: '$.args[0].args[1].args[0].bytes', json: mapResult })[0];
+        const domainName = Buffer.from(domainBytes, 'hex').toString();
+
+        await dispatch(setModule(name, domainName));
+    } catch {
+        
+    }
+
+    
+}
+
+/**
  * 
  * @param name Result set attribute name
  * @param address Account to query
@@ -483,7 +508,6 @@ const aggregateTokenBalance = async (tezosNode: string, tokenDetails: any, accou
     let quipuTokenBalance = new BigNumber(0);
     let quipuCoinBalance = new BigNumber(0);
     try {
-        console.log(`processing ${tokenDetails.tokenSymbol}`)
         const packedKey = TezosMessageUtils.encodeBigMapKey(Buffer.from(TezosMessageUtils.writePackedData(account, 'address'), 'hex'));
         const mapResult = await TezosNodeReader.getValueForBigMapKey(tezosNode, tokenDetails.quipuLedgerMap, packedKey);
         const quipuPoolBalance = new BigNumber(JSONPath({ path: '$.args[0].args[1].int', json: mapResult })[0])
@@ -492,7 +516,7 @@ const aggregateTokenBalance = async (tezosNode: string, tokenDetails: any, accou
         const quipuPoolSize = new BigNumber(JSONPath({ path: tokenDetails.quipuPoolBalancePath, json: quipuStorage })[0]);
         const quipuTokenPool = new BigNumber(JSONPath({ path: tokenDetails.quipuTokenPoolPath, json: quipuStorage })[0]);
         const quipuCoinPool = new BigNumber(JSONPath({ path: tokenDetails.quipuCoinPoolPath, json: quipuStorage })[0]);
-        console.log(tokenDetails.tokenSymbol, quipuPoolSize.toString(), quipuTokenPool.toString(), quipuCoinPool.toString())
+
         quipuTokenBalance = quipuPoolBalance.dividedBy(quipuPoolSize).multipliedBy(quipuTokenPool);
         quipuCoinBalance = quipuPoolBalance.dividedBy(quipuPoolSize).multipliedBy(quipuCoinPool);
 
