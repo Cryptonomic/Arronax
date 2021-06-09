@@ -8,6 +8,8 @@ import defaultTemplate from './tezos/mainnet/default';
 const templates: any = {
     "ethereum/mainnet/default": defaultTemplate,
 
+    "bitcoin/mainnet/default": defaultTemplate,
+
     "tezos/mainnet/blocks": block,
     "tezos/mainnet/accounts": account,
     "tezos/mainnet/bakers": baker,
