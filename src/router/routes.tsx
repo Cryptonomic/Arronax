@@ -1,4 +1,3 @@
-import React from 'react';
 import { Route, Switch, Redirect, useLocation } from 'react-router-dom';
 
 import { ArronaxApp } from '../containers/App';
@@ -17,7 +16,7 @@ const QuerySupport = () => {
   return <Redirect to={defaultPath} />;
 };
 
-export default () => {
+const routes = () => {
   const routes = [
     '/:platform/:network/:entity/:id',
     '/:platform/:network/:entity/query/:id',
@@ -36,3 +35,5 @@ export default () => {
     </Switch>
   );
 };
+
+export default routes;

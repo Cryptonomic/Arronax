@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withTranslation } from 'react-i18next';
@@ -87,7 +87,7 @@ class InputItem extends React.Component<Props, State> {
         }
     };
 
-    onHighCardValueChange = async (event: React.FocusEvent<HTMLInputElement>, { newValue }: Autosuggest.ChangeEvent) => {
+    onHighCardValueChange = async (event: any, { newValue }: any) => {
         const {
             attribute: { name, valueMap, cacheConfig },
         } = this.props;
@@ -184,7 +184,7 @@ class InputItem extends React.Component<Props, State> {
         }
     };
 
-    onBlurAutosuggest = (e: React.FocusEvent<HTMLInputElement>) => {
+    onBlurAutosuggest = (e: any) => {
         const {
             onChange,
             attribute: { valueMap },
@@ -267,7 +267,7 @@ class InputItem extends React.Component<Props, State> {
                             suggestionsList: classes.suggestionsList,
                             suggestion: classes.suggestion,
                         }}
-                        renderSuggestionsContainer={options => (
+                        renderSuggestionsContainer={(options: any) => (
                             <Paper {...options.containerProps} square>
                                 {options.children}
                             </Paper>

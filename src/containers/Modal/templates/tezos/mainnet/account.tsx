@@ -35,7 +35,7 @@ const Account = (props: any) => {
             list.push({
                 title: t('attributes.accounts.token_balances'),
                 value: (<>
-                    {formatValueWithLink({ value: ([... new Set(accountTokens.map((r: any) => r['token']))]).join(', '), onClick: () => onClickItem('token_balances') })}
+                    {formatValueWithLink({ value: ([...new Set(accountTokens.map((r: any) => r['token']))]).join(', '), onClick: () => onClickItem('token_balances') })}
                 </>)
             });
         }

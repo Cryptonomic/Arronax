@@ -8,11 +8,10 @@ import { useClipboardWrapper, useCopyIconWrapper, useTooltipWrapper } from './Cl
 
 import { ClipboardViewProps } from './Clipboard-types';
 
-const ClipboardWrapper = useClipboardWrapper(Clipboard);
-const CopyIconWrapper = useCopyIconWrapper(ContentCopy)
-const TooltipWrapper = useTooltipWrapper(Tooltip);
-
 const ClipboardView = ({ value, open, onSuccess, onClose }: ClipboardViewProps) => {
+  const ClipboardWrapper = useClipboardWrapper(Clipboard);
+  const CopyIconWrapper = useCopyIconWrapper(ContentCopy);
+  const TooltipWrapper = useTooltipWrapper(Tooltip);
 
   return (
     <ClickAwayListener onClickAway={onClose}>
