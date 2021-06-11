@@ -13,14 +13,14 @@ const ethereumQueries: any = {
         limit: 1000
     },
     transactions: {
-        fields: ["block_hash","block_number","hash","source","destination","amount","gas","input","nonce"],
+        fields: ["block_hash","block_level","hash","source","destination","amount","gas","input","nonce"],
         predicates: [
             // { field: 'kind', set: ['transaction'], operation: 'eq', inverse: false },
             // { field: 'timestamp', set: [-1966080000], operation: 'after', inverse: false },
             // { field: "status", operation: "eq", set: ['applied'], inverse: false}
         ],
         orderBy: [
-            { field: 'block_number', direction: 'desc' }
+            { field: 'block_level', direction: 'desc' }
         ],
         limit: 1000
     },
@@ -31,35 +31,82 @@ const ethereumQueries: any = {
             // { field: 'block_level', operation: 'gt', set: [805066], inverse: false }
         ],
         orderBy: [
-            { field: "block_number", direction: "desc"}
+            { field: "block_level", direction: "desc"}
         ],
         aggregation: [],
         limit: 1000
     },
-    /*logs: {
-        fields: ["block_number","block_hash","address","transaction_hash","data","topics"],
+    logs: {
+        fields: ["block_level","block_hash","address","transaction_hash","data","topics"],
         predicates:[
-            { field: 'removed', operation: 'eq', set:["false"], inverse: false }
+            // { field: 'removed', operation: 'eq', set:["false"], inverse: false }
         ],
         orderBy: [
             { field: 'block_level', direction: 'desc' }
         ],
         aggregation: [],
         limit: 1000
-    }*/
+    },
     receipts: {
-        fields: [ "block_number","block_hash","transaction_hash","contract_address","gas_used","logs_bloom","root"],
+        fields: [ "block_level","block_hash","transaction_hash","contract_address","gas_used","logs_bloom","root"],
         predicates:[
             // { field: 'balance', operation: 'gt', set:[0], inverse: false },
             // { field: 'block_level', operation: 'gt', set: [805066], inverse: false }
         ],
         orderBy: [
-            { field: "block_number", direction: "desc"}
+            { field: "block_level", direction: "desc"}
         ],
         aggregation: [],
         limit: 1000
     }
 };
+
+const bitcoinQueries: any = {
+    blocks: {
+        fields: ["time", "level", "hash", "previous_block_hash", "next_block_hash"],
+        predicates: [
+            // { field: 'timestamp', operation: 'after', set: [-1966080000], inverse: false }
+        ],
+        orderBy: [
+            { field: 'level', direction: 'desc' }
+        ],
+        aggregation:[],
+        limit: 1000
+    }, 
+    transactions: {
+        fields: ["block_time", "txid", "block_hash", "block_level", "hash"],
+        predicates: [
+            // { field: 'timestamp', operation: 'after', set: [-1966080000], inverse: false }
+        ],
+        orderBy: [
+            { field: 'block_level', direction: 'desc' }
+        ],
+        aggregation:[],
+        limit: 1000
+    }, 
+    outputs: {
+        fields: ["block_time", "txid", "block_hash", "block_level", "value"],
+        predicates: [
+            // { field: 'timestamp', operation: 'after', set: [-1966080000], inverse: false }
+        ],
+        orderBy: [
+            { field: 'block_level', direction: 'desc' }
+        ],
+        aggregation:[],
+        limit: 1000
+    }, 
+    inputs: {
+        fields: ["block_time", "txid", "block_hash", "block_level", "output_txid", "coinbase"],
+        predicates: [
+            // { field: 'timestamp', operation: 'after', set: [-1966080000], inverse: false }
+        ],
+        orderBy: [
+            { field: 'block_level', direction: 'desc' }
+        ],
+        aggregation:[],
+        limit: 1000
+    }, 
+}
 
 const tezosQueries: any = {
     blocks: {
@@ -159,7 +206,8 @@ const tezosQueries: any = {
 
 export const defaultQueries: any = {
     tezos: tezosQueries,
-    ethereum: ethereumQueries
+    ethereum: ethereumQueries,
+    bitcoin: bitcoinQueries
 };
 
 export const CARDINALITY_NUMBER = 25;

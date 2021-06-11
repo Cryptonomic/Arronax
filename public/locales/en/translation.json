@@ -30,7 +30,7 @@
             "platform": "Platform",
             "network": "Network",
             "display_name": "Display Name",
-            "conseilUrl": "Conseil Url",
+            "url": "Conseil Url",
             "tezosNode": "Tezos Node",
             "api_key": "Api Key"
         },
@@ -155,7 +155,6 @@
             "is_activated": "Activated",
             "address": "Address",
             "block_hash": "Block Hash",
-            "block_number": "Block Number",
             "bytecode": "Bytecode",
             "bytecode_hash": "Bytecode Hash",
             "decimals": "Decimals",
@@ -164,7 +163,8 @@
             "timestamp": "Timestamp",
             "token_standard": "Token Standard",
             "total_supply": "Total Supply",
-            "token_balances": "Token Balances"
+            "token_balances": "Token Balances",
+            "value": "Balance"
         },
         "accounts_history": {
             "account_id": "Address",
@@ -180,8 +180,7 @@
             "is_active_baker": "Active Baker",
             "is_activated": "Activated Account",
             "address": "Address",
-            "block_hash": "Block Hash",
-            "block_number": "Block Number"
+            "block_hash": "Block Hash"
         },
         "balance_updates": {
             "account_id": "Address",
@@ -264,7 +263,8 @@
             "time": "Timestamp",
             "version": "Version",
             "version_hex": "Version Hex",
-            "weight": "Weight"
+            "weight": "Weight",
+            "n_tx": "Number of Transactions"
         },
         "bakers": {
             "pkh": "Address",
@@ -465,7 +465,7 @@
         "contracts": {
             "address": "Address",
             "block_hash": "Block Hash",
-            "block_number": "Block Level",
+            "block_level": "Block Level",
             "bytecode": "Bytecode",
             "bytecode_hash": "Code Hash",
             "timestamp": "Timestamp",
@@ -473,7 +473,7 @@
         },
         "transactions": {
             "block_hash": "Block Hash",
-            "block_number": "Block Level",
+            "block_level": "Block Level",
             "v": "V",
             "r": "R",
             "s": "S",
@@ -486,12 +486,20 @@
             "destination": "Destination",
             "transaction_index": "Index",
             "amount": "Amount",
-            "timestamp": "Timestamp"
+            "timestamp": "Timestamp",
+            "block_time": "Timestamp",
+            "hex": "Hex",
+            "lock_time": "Lock Time",
+            "size": "Size",
+            "txid": "Transaction Id",
+            "version": "Version",
+            "vsize": "Virtual Size",
+            "weight": "Transaction Weight"
         },
         "logs": {
             "address": "Address",
             "block_hash": "Block Hash",
-            "block_number": "Block Level",
+            "block_level": "Block Level",
             "data": "Data",
             "log_index": "Log Index",
             "removed": "Removed",
@@ -502,7 +510,7 @@
         },
         "receipts": {
             "block_hash": "Block Hash",
-            "block_number": "Block Level",
+            "block_level": "Block Level",
             "contract_address": "Address",
             "cumulative_gas_used": "Cumulative Gas Used",
             "gas_used": "Gas Used",
@@ -515,7 +523,7 @@
         },
         "token_transfers": {
             "block_hash": "Block Hash",
-            "block_number": "Block Level",
+            "block_level": "Block Level",
             "from_address": "Source",
             "log_index": "Log Index",
             "timestamp": "Timestamp",
@@ -528,7 +536,7 @@
             "account_address": "Address",
             "asof": "As of Date",
             "block_hash": "Block Hash",
-            "block_number": "Block Level",
+            "block_level": "Block Level",
             "token_address": "Token Address",
             "transaction_hash": "Transaction Hash",
             "value": "Amount"
@@ -536,7 +544,7 @@
         "tokens": {
             "address": "Address",
             "block_hash": "Block Hash",
-            "block_number": "Block Level",
+            "block_level": "Block Level",
             "decimals": "Decimals",
             "name": "Name",
             "symbol": "Symbol",
@@ -544,10 +552,30 @@
             "total_supply": "Total Supply"
         },
         "outputs": {
-
+            "block_hash": "Block Hash",
+            "block_level": "Block Level",
+            "block_time": "Timestamp",
+            "n": "Number",
+            "script_pub_key_addresses": "PubKey Script Addresses",
+            "script_pub_key_asm": "PubKey Script Asm",
+            "script_pub_key_hex": "PubKey Script Hex",
+            "script_pub_key_req_sigs": "PubKey Script Required Sigs",
+            "script_pub_key_type": "PubKey Script Type",
+            "txid": "Transaction Id",
+            "value": "Value"
         },
         "inputs": {
-
+            "block_hash": "Block Hash",
+            "block_level": "Block Level",
+            "block_time": "Timestamp",
+            "coinbase": "Coinbase",
+            "output_txid": "Output Txid",
+            "script_sig_asm": "Signature Script Asm",
+            "script_sig_hex": "Signature Script Hex",
+            "sequence": "Sequence",
+            "tx_in_witness": "Tx in Witness",
+            "txid": "Transaction Id",
+            "v_out": "V Out"
         }
     },
     "operators": {
