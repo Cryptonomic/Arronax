@@ -100,17 +100,21 @@ export const MapHolder = styled.div`
 `;
 
 export const AnchorTag = styled.div `
-    text-align:left;
+    text-align: left;
+    margin: 10px 0;
     a {
         font-family: Roboto;
-        font-size: 24px;
-        line-height: 28px;
+        font-size: 20px;
+        line-height: 23px;
+        letter-spacing: 0.01em;
         color: #2D9CDB;
-        margin: 0 20px;
+        margin: 0px 20px;
         text-decoration:none;
     }
-    svg {
-        margin-right:5px;
+    img {
+        width: 18px;
+        height: 16px;
+        margin: 0px 7px ;
         vertical-align: unset;
     }
 `;
@@ -152,6 +156,9 @@ export const styles: any = {
     titleText: {
         margin:'0 0 0 20px !important',
         justifyContent:'flex-start !important'
+    },
+    imgMarginBottom: {
+        marginBottom: '-18px',
     }
 };
 

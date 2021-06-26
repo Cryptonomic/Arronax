@@ -21,14 +21,14 @@ export const Title = styled.h1 `
 `;
 
 export const Text = styled.p `
-    font-family: Futura;
+    font-family: Roboto;
     font-style: normal;
     font-weight: 500;
     font-size: 38px;
     line-height: 50px;
     letter-spacing: 5.76333px;
     color: #FFFFFF;
-    margin: 0 0 50px;
+    margin: 0 0 10px;
 `;
 
 export const BottomDiv = styled.div `
@@ -39,26 +39,33 @@ export const BottomDiv = styled.div `
     margin: 0 auto;
 `;
 
-export const Title2 = styled.h4 `
-    font-family: Roboto;
-    font-weight:300;
-    margin: 0 0 25px;
-    font-size: 25px;
-    line-height: 29px;
-    letter-spacing: 3.04333px;
-    color: #FFFFFF;
+export const LogoCon = styled.div`
+    display: flex;
+    align-self: center;
+    height: 48px;
+    margin: 20px auto 50px;
+
+    p {
+        font-size: 16px;
+    }
+    img {
+        width: 112px;
+        height: 48px; 
+    }
 `;
 
 export const styles: any = {
     primaryBtn: {
+        marginTop: '50px',
         padding: '10px 30px',
-        fontSize: '16px',
+        fontSize: '20px',
         fontWeight: 'bold',
-        fontFamily: 'Futura',
+        fontFamily: 'Roboto',
         height: 'auto',
-        lineHeight: '21px',
+        lineHeight: '23.44px',
         borderRadius: '5px',
         letterSpacing: '2.42667px',
+        textTransform: 'none',
         boxShadow:  ' none !important',
         outline: 'none !important',
         border: '1px solid #FF7477;',
