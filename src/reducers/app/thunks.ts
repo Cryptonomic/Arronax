@@ -260,7 +260,7 @@ export const fetchInitEntityAction = (
     } else {
         query = addFields(query, ...getAttributeNames(sortedAttributes));
         columns = [...sortedAttributes];
-        query = setLimit(query, 1000);
+        query = setLimit(query, 5000);
         sorts = [{ orderBy: levelColumn.name, order: ConseilSortDirection.DESC }];
         query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
     }
@@ -413,19 +413,20 @@ const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
     const attrs = { ...state().app.attributes };
 
     let injectedMetadata: any = {};
+    console.log(`metadata override at ${state().app.selectedConfig.metadataOverrideUrl}`)
     if (state().app.selectedConfig.metadataOverrideUrl) {
         try {
             const metadata = await fetch(state().app.selectedConfig.metadataOverrideUrl)
                 .then(response => response.text())
                 .catch(e => "" );
-
+            console.log(`loaded metadata override of length ${metadata.length}`)
             await hocon().then((instance) => {
                 const cfg = new instance.Config(metadata);
                 injectedMetadata = JSON.parse(cfg.toJSON());
                 cfg.delete();
-            }).catch(e => {});
+            }).catch(e => { console.log(`hocon parse error ${JSON.stringify(e)}`)});
         } catch (err) {
-            // meh
+            console.log(`hocon error ${JSON.stringify(err)}`)
         }
     }
 
@@ -599,7 +600,7 @@ export const shareReport = () => async (dispatch: any, state: any) => {
     const { selectedEntity, columns, sort, selectedFilters, selectedConfig, aggregations } = state().app;
     const attributeNames = getAttributeNames(columns[selectedEntity]);
     let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
-    query = setLimit(query, 1000);
+    query = setLimit(query, 5000);
     const serializedQuery = JSON.stringify(query);
     const hostUrl = window.location.origin;
     const encodedUrl = base64url(serializedQuery);
@@ -629,7 +630,7 @@ export const exportCsvData = () => async (dispatch: any, state: any) => {
     const attributeNames = getAttributeNames(columns[selectedEntity]);
     let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
     query = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
-    query = ConseilQueryBuilder.setLimit(query, 50000);
+    query = ConseilQueryBuilder.setLimit(query, 80000);
 
     const result: any = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
 
@@ -660,7 +661,7 @@ export const submitQuery = () => async (dispatch: any, state: any) => {
     const attributeNames = getAttributeNames(columns[selectedEntity]);
 
     let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
-    query = setLimit(query, 1000);
+    query = setLimit(query, 5000);
     try {
         const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
         await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length));

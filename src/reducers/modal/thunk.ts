@@ -232,8 +232,6 @@ export const checkTezosDomainsRegistry = (name: string, address: string, mapId =
     } catch {
         
     }
-
-    
 }
 
 /**
@@ -361,7 +359,7 @@ export const fetchItemByPrimaryKey = (entity: string, primaryKey: string, value:
     query = addPredicate(query, primaryKey, ConseilOperator.EQ, [value], false);
     const s = String(value);
     if (s.startsWith('o')) { // NOTE this is to handle tezos operations that are queries by operation group id which start with an 'o' and can contain multiple operations
-        query = setLimit(query, 1000);
+        query = setLimit(query, 5000);
     } else {
         query = setLimit(query, 1);
     }

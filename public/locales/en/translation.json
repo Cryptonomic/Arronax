@@ -35,7 +35,7 @@
             "api_key": "Api Key"
         },
         "customPaginator": {
-            "limit_query": "Queries on Arronax are limited to 1000 results. <1>Export to CSV</1> to get a larger result set."
+            "limit_query": "Queries on Arronax are limited to 5000 results. <1>Export to CSV</1> to get a larger result set."
         },
         "entityModal": {
             "details": "{{title}} Details",
@@ -486,7 +486,18 @@
             "destination": "Destination",
             "transaction_index": "Index",
             "amount": "Amount",
-            "timestamp": "Timestamp"
+            "timestamp": "Timestamp",
+            "block_height": "Block Level",
+            "block_time": "Timestamp",
+            "blockhash": "Block Hash",
+            "hex": "Hex",
+            "lock_time": "Lock Time",
+            "size": "Size",
+            "time": "Time",
+            "txid": "Transaction Id",
+            "version": "Version",
+            "vsize": "V-bytes",
+            "weight": "Weight"
         },
         "logs": {
             "address": "Address",
@@ -544,10 +555,30 @@
             "total_supply": "Total Supply"
         },
         "outputs": {
-
+            "block_height": "Block Level",
+            "block_time": "Timestamp",
+            "blockhash": "Block Hash",
+            "n": "",
+            "script_pub_key_addresses": "",
+            "script_pub_key_asm": "",
+            "script_pub_key_hex": "",
+            "script_pub_key_req_sigs": "",
+            "script_pub_key_type": "",
+            "txid": "Transaction Id",
+            "value": "Value"
         },
         "inputs": {
-
+            "block_height": "Block Level",
+            "block_time": "Timestamp",
+            "blockhash": "Block Hash",
+            "coinbase": "",
+            "output_txid": "Output Transaction",
+            "script_sig_asm": "",
+            "script_sig_hex": "",
+            "sequence": "",
+            "tx_in_witness": "",
+            "txid": "Transaction Id",
+            "v_out": ""
         }
     },
     "operators": {
