@@ -15,19 +15,12 @@ const templates: any = {
     "tezos/mainnet/operations": operation,
     "tezos/mainnet/default": defaultTemplate,
 
-    "tezos/florencenet/blocks": block,
-    "tezos/florencenet/accounts": account,
-    "tezos/florencenet/bakers": baker,
-    "tezos/florencenet/contracts": contract,
-    "tezos/florencenet/operations": operation,
-    "tezos/florencenet/default": defaultTemplate,
-
-    "tezos/edonet/blocks": block,
-    "tezos/edonet/accounts": account,
-    "tezos/edonet/bakers": baker,
-    "tezos/edonet/contracts": contract,
-    "tezos/edonet/operations": operation,
-    "tezos/edonet/default": defaultTemplate,
+    "tezos/granadanet/blocks": block,
+    "tezos/granadanet/accounts": account,
+    "tezos/granadanet/bakers": baker,
+    "tezos/granadanet/contracts": contract,
+    "tezos/granadanet/operations": operation,
+    "tezos/granadanet/default": defaultTemplate
 };
 
 export default templates;
