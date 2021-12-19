@@ -14,15 +14,16 @@ import {
 
 import { TableViewProps } from './Table-types'
 
-const Overflow = useOverflow();
-const TableContainer = useTableContainerStyles();
-const TableHeaderCell = useTableHeaderCellStyles();
-const TableBodyRow = useTableBodyRowStyles();
-const TableBodyCell = useTableBodyCellStyles();
-const TableBodyCellChild = useTableBodyCellChild();
-
 const TableView = (props: TableViewProps) => {
+  const Overflow = useOverflow();
+  const TableContainer = useTableContainerStyles();
+  const TableHeaderCell = useTableHeaderCellStyles();
+  const TableBodyRow = useTableBodyRowStyles();
+  const TableBodyCell = useTableBodyCellStyles();
+  const TableBodyCellChild = useTableBodyCellChild();
+
   const { cols, items } = props;
+
   return (
     <Overflow>
       <TableContainer stickyHeader>

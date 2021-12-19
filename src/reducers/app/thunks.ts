@@ -445,7 +445,7 @@ const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
                 attrObjsList.forEach((entity: any) => {
                     entity.attributes.forEach((attribute: any) => {
                         if (injectedMetadata['entities'][entity.entity]['attributes'][attribute.name]['value-map']) {
-                            attribute.valueMap = {... injectedMetadata['entities'][entity.entity]['attributes'][attribute.name]['value-map']};
+                            attribute.valueMap = {...injectedMetadata['entities'][entity.entity]['attributes'][attribute.name]['value-map']};
                         }
                     });
                 });

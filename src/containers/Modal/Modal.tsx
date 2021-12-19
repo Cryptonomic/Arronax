@@ -33,6 +33,7 @@ export const DynamicModal = (props: any) => {
             return;
         }
         dispatch(runActions(actions.map((a: any) => () => dispatch(a()))));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     return (
