@@ -15,12 +15,12 @@ const templates: any = {
     "tezos/mainnet/operations": operation,
     "tezos/mainnet/default": defaultTemplate,
 
-    "tezos/granadanet/blocks": block,
-    "tezos/granadanet/accounts": account,
-    "tezos/granadanet/bakers": baker,
-    "tezos/granadanet/contracts": contract,
-    "tezos/granadanet/operations": operation,
-    "tezos/granadanet/default": defaultTemplate
+    "tezos/hangzhounet/blocks": block,
+    "tezos/hangzhounet/accounts": account,
+    "tezos/hangzhounet/bakers": baker,
+    "tezos/hangzhounet/contracts": contract,
+    "tezos/hangzhounet/operations": operation,
+    "tezos/hangzhounet/default": defaultTemplate
 };
 
 export default templates;

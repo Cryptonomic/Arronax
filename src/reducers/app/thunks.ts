@@ -51,7 +51,6 @@ import { defaultPath } from '../../router/routes';
 
 import { Config, Sort, Filter, Aggregation, InitLoad } from '../../types';
 
-const { executeEntityQuery } = ConseilDataClient;
 const { blankQuery, addOrdering, addFields, setLimit, addPredicate, addAggregationFunction } = ConseilQueryBuilder;
 
 const CACHE_TIME = 432000000; // 5*24*3600*1000
@@ -265,7 +264,7 @@ export const fetchInitEntityAction = (
         query = addOrdering(query, sorts[0].orderBy, sorts[0].order);
     }
 
-    const items = await executeEntityQuery(serverInfo, platform, network, entity, query).catch(() => {
+    const items = await ConseilDataClient.executeEntityQuery(serverInfo, platform, network, entity, query).catch(() => {
         const name = entities.find((e: EntityDefinition) => e.name === entity)?.displayName.toLowerCase();
         dispatch(createMessageAction(`Unable to retrieve data for ${name} request.`, true));
         return [];
@@ -419,14 +418,14 @@ const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
             const metadata = await fetch(state().app.selectedConfig.metadataOverrideUrl)
                 .then(response => response.text())
                 .catch(e => "" );
-            console.log(`loaded metadata override of length ${metadata.length}`)
+            console.debug(`loaded metadata override of length ${metadata.length}`)
             await hocon().then((instance) => {
                 const cfg = new instance.Config(metadata);
                 injectedMetadata = JSON.parse(cfg.toJSON());
                 cfg.delete();
-            }).catch(e => { console.log(`hocon parse error ${JSON.stringify(e)}`)});
+            }).catch(e => { console.warn(`hocon parse error ${JSON.stringify(e)}`)});
         } catch (err) {
-            console.log(`hocon error ${JSON.stringify(err)}`)
+            console.warn(`hocon error ${JSON.stringify(err)}`)
         }
     }
 
@@ -444,13 +443,24 @@ const loadAttributes = (query: string) => async (dispatch: any, state: any) => {
             try {
                 attrObjsList.forEach((entity: any) => {
                     entity.attributes.forEach((attribute: any) => {
+                        if (!injectedMetadata['entities'][entity.entity]) {
+                            console.log(`no overrides for ${entity.entity}`);
+                            return;
+                        }
+
+                        if (!injectedMetadata['entities'][entity.entity]['attributes'][attribute.name]) {
+                            console.log(`no overrides for ${entity.entity}/${attribute.name}`);
+                            return;
+                        }
+
                         if (injectedMetadata['entities'][entity.entity]['attributes'][attribute.name]['value-map']) {
+                            console.log(`updated value map for ${entity.entity}/${attribute.name}`)
                             attribute.valueMap = {...injectedMetadata['entities'][entity.entity]['attributes'][attribute.name]['value-map']};
                         }
                     });
                 });
             } catch (err) {
-                // meh
+                console.warn(`metadata override error`, err);
             }
 
             const attrMap = [...attrObjsList].reduce((curr: any, next: any) => {
@@ -632,7 +642,7 @@ export const exportCsvData = () => async (dispatch: any, state: any) => {
     query = ConseilQueryBuilder.setOutputType(query, ConseilOutput.csv);
     query = ConseilQueryBuilder.setLimit(query, 80000);
 
-    const result: any = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
+    const result: any = await ConseilDataClient.executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
 
     if (!result || result.length === 0) {
         dispatch(createMessageAction('Export failed, no results were returned.', true));
@@ -663,7 +673,7 @@ export const submitQuery = () => async (dispatch: any, state: any) => {
     let query = getMainQuery(attributeNames, selectedFilters[selectedEntity], sort[selectedEntity], aggregations[selectedEntity]);
     query = setLimit(query, 5000);
     try {
-        const items = await executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
+        const items = await ConseilDataClient.executeEntityQuery(serverInfo, platform, network, selectedEntity, query);
         await dispatch(setSubmitAction(selectedEntity, items, selectedFilters[selectedEntity].length));
         await dispatch(setQueryFilters(selectedEntity, query));
         dispatch(setLoadingAction(false));
@@ -703,7 +713,7 @@ export const searchByIdThunk = (id: string | number) => async (dispatch: any, st
 
     try {
         const { entity, query } = TezosConseilClient.getEntityQueryForId(id);
-        const items = await executeEntityQuery(serverInfo, platform, network, entity, query);
+        const items = await ConseilDataClient.executeEntityQuery(serverInfo, platform, network, entity, query);
         if (items.length > 0) {
             await dispatch(changeTab(entity));
         } else {

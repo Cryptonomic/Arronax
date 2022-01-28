@@ -54,7 +54,7 @@ class FilterSelect extends React.Component<FilterSelectProps, FilterSelectState>
           backgroundcolor={backgroundColor}
           borderradius={borderRadius}
           isactive={value}
-          iscapital={placeholder !== t('components.filterPanel.select_operator')? 1 : 0}
+          iscapital={placeholder !== t('components.filterPanel.select_operator') ? 1 : 0}
           onClick={this.handleClick}
         >
           {menuTitle}
