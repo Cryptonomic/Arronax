@@ -37,7 +37,7 @@
     "i18next-browser-languagedetector": "6.1.0",
     "i18next-xhr-backend": "3.2.2",
     "jsonpath-plus": "5.0.7",
-    "moment": "2.29.1",
+    "moment": "2.29.4",
     "moment-timezone": "0.5.33",
     "react": "17.0.2",
     "react-autosuggest": "10.1.0",
