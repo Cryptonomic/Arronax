@@ -122,11 +122,14 @@
             "governance": "Governance",
             "registered_tokens": "Registered Tokens",
             "originated_account_maps": "Map Owners",
-            "big_maps": "Map Definitons",
+            "big_maps": "Map Definitions",
             "big_map_contents": "Map Content",
+            "big_map_contents_history": "Map History",
             "known_addresses": "Known Addresses",
             "baker_registry": "TCF Baker Registry",
             "bakers_history": "Baker History",
+            "metadata": "Metadata",
+            "nfts": "NFTs",
             "transactions": "Transactions",
             "contracts": "Contracts",
             "logs": "Logs",
@@ -344,7 +347,9 @@
             "utc_year": "Year (UTC)",
             "utc_month": "Month (UTC)",
             "utc_day": "Day (UTC)",
-            "utc_time": "Time (UTC)"
+            "utc_time": "Time (UTC)",
+            "operation_order": "Operation Index"
+
         },
         "baking_rights": {
             "block_hash": "Block Hash",
@@ -579,6 +584,33 @@
             "tx_in_witness": "",
             "txid": "Transaction Id",
             "v_out": ""
+        },
+        "big_map_contents_history": {
+            "big_map_id": "Map Index",
+            "key": "Key",
+            "key_hash": "Hashed Key",
+            "value": "Value",
+            "operation_group_id": "Op Group Hash",
+            "block_level": "Block Level",
+            "cycle": "Cycle",
+            "period": "Period",
+            "timestamp": "Timestamp"
+        },
+        "metadata": {
+            "address": "Address",
+            "description": "Description",
+            "last_updated": "Last Updated",
+            "name": "Name",
+            "raw_metadata": "Raw Data"
+        },
+        "nfts": {
+            "asset_location": "Asset URL",
+            "asset_type": "Asset Type",
+            "block_level": "Block Level",
+            "contract_address": "Contract",
+            "op_group_hash": "Op Group Hash",
+            "raw_metadata": "Raw Data",
+            "timestamp": "Timestamp"
         }
     },
     "operators": {
@@ -604,6 +636,7 @@
         "avg": "Average",
         "min": "Min",
         "max": "Max",
-        "count": "Count"
+        "count": "Count",
+        "countDistinct": "Distinct"
     }
 }

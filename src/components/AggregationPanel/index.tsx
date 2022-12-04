@@ -103,7 +103,7 @@ class AggregationPanel extends React.Component<Props, States> {
       function: func.name
     };
     localAggs[index] = aggregation;
-    this.setState({localAggs});
+    this.setState({ localAggs });
   };
 
   onResetAggregations = () => {

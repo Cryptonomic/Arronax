@@ -375,7 +375,7 @@ export const loadModal = (platform: string, network: string, id: string) => asyn
 
     try {
         const { entity, query } = TezosConseilClient.getEntityQueryForId(id); // TODO: eth
-        let items: any = await executeEntityQuery({ url, apiKey, network }, platform, network, entity, query);
+        let items: any[] = await executeEntityQuery({ url, apiKey, network }, platform, network, entity, query);
         if (!items.length && platform === 'tezos' && entity === 'operations') { items = await getMempoolOperation(nodeUrl, id); }
 
         if (!items.length) {
