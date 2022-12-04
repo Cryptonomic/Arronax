@@ -124,6 +124,7 @@
             "originated_account_maps": "Map Owners",
             "big_maps": "Map Definitons",
             "big_map_contents": "Map Content",
+            "big_map_contents_history": "Map Content History",
             "known_addresses": "Known Addresses",
             "baker_registry": "TCF Baker Registry",
             "bakers_history": "Baker History",
@@ -344,7 +345,8 @@
             "utc_year": "Year (UTC)",
             "utc_month": "Month (UTC)",
             "utc_day": "Day (UTC)",
-            "utc_time": "Time (UTC)"
+            "utc_time": "Time (UTC)",
+            "operation_order": "Operation Order"
         },
         "baking_rights": {
             "block_hash": "Block Hash",
