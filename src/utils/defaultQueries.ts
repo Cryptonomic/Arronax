@@ -1,7 +1,7 @@
 const ethereumQueries: any = {
     blocks: {
         fields: [
-            "timestamp","level","hash","miner","gas_used","total_difficulty","receipts_root", 'transactions_root'
+            'timestamp', 'level', 'hash', 'miner', 'gas_used', 'total_difficulty', 'receipts_root', 'transactions_root'
         ],
         predicates: [
             // { field: 'timestamp', operation: 'after', set: [-1966080000], inverse: false }
@@ -9,15 +9,15 @@ const ethereumQueries: any = {
         orderBy: [
             { field: 'level', direction: 'desc' }
         ],
-        aggregation:[],
+        aggregation: [],
         limit: 5000
     },
     transactions: {
-        fields: ["block_hash","block_number","hash","source","destination","amount","gas","input","nonce"],
+        fields: ['block_hash', 'block_number', 'hash', 'source', 'destination', 'amount', 'gas', 'input', 'nonce'],
         predicates: [
             // { field: 'kind', set: ['transaction'], operation: 'eq', inverse: false },
             // { field: 'timestamp', set: [-1966080000], operation: 'after', inverse: false },
-            // { field: "status", operation: "eq", set: ['applied'], inverse: false}
+            // { field: 'status', operation: 'eq', set: ['applied'], inverse: false}
         ],
         orderBy: [
             { field: 'block_number', direction: 'desc' }
@@ -26,20 +26,20 @@ const ethereumQueries: any = {
     },
     contracts: {
         fields: [],
-        predicates:[
+        predicates: [
             // { field: 'balance', operation: 'gt', set:[0], inverse: false },
             // { field: 'block_level', operation: 'gt', set: [805066], inverse: false }
         ],
         orderBy: [
-            { field: "block_number", direction: "desc"}
+            { field: 'block_number', direction: 'desc' }
         ],
         aggregation: [],
         limit: 5000
     },
     /*logs: {
-        fields: ["block_number","block_hash","address","transaction_hash","data","topics"],
+        fields: ['block_number','block_hash','address','transaction_hash','data','topics'],
         predicates:[
-            { field: 'removed', operation: 'eq', set:["false"], inverse: false }
+            { field: 'removed', operation: 'eq', set:['false'], inverse: false }
         ],
         orderBy: [
             { field: 'block_level', direction: 'desc' }
@@ -48,13 +48,13 @@ const ethereumQueries: any = {
         limit: 5000
     }*/
     receipts: {
-        fields: [ "block_number","block_hash","transaction_hash","contract_address","gas_used","logs_bloom","root"],
-        predicates:[
+        fields: ['block_number', 'block_hash', 'transaction_hash', 'contract_address', 'gas_used', 'logs_bloom', 'root'],
+        predicates: [
             // { field: 'balance', operation: 'gt', set:[0], inverse: false },
             // { field: 'block_level', operation: 'gt', set: [805066], inverse: false }
         ],
         orderBy: [
-            { field: "block_number", direction: "desc"}
+            { field: 'block_number', direction: 'desc' }
         ],
         aggregation: [],
         limit: 5000
@@ -66,22 +66,22 @@ const tezosQueries: any = {
         fields: ['timestamp', 'meta_voting_period', 'meta_cycle', 'level', 'baker', 'hash', 'priority'],
         predicates: [{ field: 'timestamp', operation: 'after', set: [-1966080000], inverse: false }],
         orderBy: [{ field: 'level', direction: 'desc' }],
-        aggregation:[],
+        aggregation: [],
         limit: 5000
     },
     operations: {
-        fields: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'kind', 'fee', 'status', 'operation_group_hash'],
+        fields: ['timestamp', 'block_level', 'source', 'destination', 'amount', 'fee', 'operation_group_hash'],
         predicates: [
             { field: 'kind', set: ['transaction'], operation: 'eq', inverse: false },
             { field: 'timestamp', set: [-1966080000], operation: 'after', inverse: false },
-            { field: "status", operation: "eq", set: ['applied'], inverse: false}],
+            { field: 'status', operation: 'eq', set: ['applied'], inverse: false }],
         orderBy: [{ field: 'timestamp', direction: 'desc' }],
         limit: 5000
     },
     accounts: {
         fields: ['block_level', 'account_id', 'balance', 'delegate_value', 'storage', 'counter'],
-        predicates:[
-            { field: 'balance', operation: 'gt', set:[0], inverse: false },
+        predicates: [
+            { field: 'balance', operation: 'gt', set: [0], inverse: false },
             { field: 'block_level', operation: 'gt', set: [805066], inverse: false }],
         orderBy: [{ field: 'block_level', direction: 'desc' }],
         aggregation: [],
@@ -100,71 +100,70 @@ const tezosQueries: any = {
         limit: 5000
     },
     balance_updates: {
-      "fields": [],
-      "predicates": [],
-      "orderBy": [
-        {
-          "field": "block_level",
-          "direction": "desc"
-        }
-      ],
-      "aggregation": [],
-      limit: 5000
+        fields: ['block_level', 'account_id', 'source', 'change', 'kind', 'operation_group_hash'],
+        predicates: [{ field: 'block_level', operation: 'gt', set: [-10], inverse: false }],
+        orderBy: [
+            {
+                field: 'block_level',
+                direction: 'desc'
+            }
+        ],
+        aggregation: [],
+        limit: 5000
     },
     bakers: {
-        fields: ["pkh", "balance", "rolls", "delegated_balance", "frozen_balance", "staking_balance", "block_level"],
-        predicates: [{ field: "deactivated", operation: "eq", set: ["false"] },
-            { field: "rolls", operation: "gt", set: [0] }],
-        orderBy: [{ field: "block_level", direction: "desc" }],
+        fields: ['pkh', 'balance', 'rolls', 'delegated_balance', 'frozen_balance', 'staking_balance', 'block_level'],
+        predicates: [{ field: 'deactivated', operation: 'eq', set: ['false'] },
+        { field: 'rolls', operation: 'gt', set: [0] }],
+        orderBy: [{ field: 'block_level', direction: 'desc' }],
         aggregation: [],
         limit: 5000
     },
     governance: {
-        fields:["proposal_hash","voting_period_kind","yay_count","yay_rolls","pass_count","pass_rolls","nay_count","nay_rolls","level"],
+        fields: ['proposal_hash', 'voting_period_kind', 'yay_count', 'yay_rolls', 'pass_count', 'pass_rolls', 'nay_count', 'nay_rolls', 'level'],
         predicates: [],
-        orderBy: [{field:"max_level", direction: "desc"}],
+        orderBy: [{ field: 'max_level', direction: 'desc' }],
         aggregation: [
-            {field:"level", function:"max"},
-            {field:"yay_count", function:"max"},
-            {field:"yay_rolls", function:"max"},
-            {field:"pass_count", function:"max"},
-            {field:"pass_rolls", function:"max"},
-            {field:"nay_count", function:"max"},
-            {field:"nay_rolls", function:"max"}],
+            { field: 'level', function: 'max' },
+            { field: 'yay_count', function: 'max' },
+            { field: 'yay_rolls', function: 'max' },
+            { field: 'pass_count', function: 'max' },
+            { field: 'pass_rolls', function: 'max' },
+            { field: 'nay_count', function: 'max' },
+            { field: 'nay_rolls', function: 'max' }],
         limit: 5000
     },
     baking_rights: {
         fields: ['block_level', 'priority', 'delegate', 'estimated_time'],
-        predicates: [{ field: 'priority', operation: 'in', set: ['0','1'], inverse: false }, { field: 'estimated_time', operation: 'after', set: [-1966080000], inverse: false}],
-        orderBy: [{ field: 'block_level', direction: 'desc'}],
+        predicates: [{ field: 'priority', operation: 'in', set: ['0', '1'], inverse: false }, { field: 'estimated_time', operation: 'after', set: [-1966080000], inverse: false }],
+        orderBy: [{ field: 'block_level', direction: 'desc' }],
         aggregation: [],
         limit: 5000
     },
     endorsing_rights: {
         fields: ['block_level', 'slot', 'delegate', 'estimated_time'],
-        predicates: [{ field: 'estimated_time', operation: 'after', set: [-1966080000], inverse: false}],
+        predicates: [{ field: 'estimated_time', operation: 'after', set: [-1966080000], inverse: false }],
         orderBy: [{ field: 'block_level', direction: 'desc' }],
         aggregation: [],
         limit: 5000
     },
     accounts_history: {
         fields: ['asof', 'block_level', 'account_id', 'balance', 'delegate_value', 'storage', 'counter'],
-        predicates: [{field: 'asof', operation: 'after', set:[-1966080000], inverse:false}],
-        orderBy: [{field: 'block_level', direction: 'desc'}],
+        predicates: [{ field: 'asof', operation: 'after', set: [-1966080000], inverse: false }],
+        orderBy: [{ field: 'block_level', direction: 'desc' }],
         aggregation: [],
         limit: 5000
-
     }
 };
 
 const bitcoinQueries: any = {
     blocks: {
         fields: [
-            "time", "height", "hash", "difficulty", "nonce"
+            'time', 'height', 'hash', 'difficulty', 'nonce'
         ],
-        predicates:[ ],
+        predicates: [],
         orderBy: [
-            { field: "height", direction: "desc"}
+            { field: 'height', direction: 'desc' }
         ],
         aggregation: [],
         limit: 5000
@@ -172,19 +171,19 @@ const bitcoinQueries: any = {
     transactions: {
         fields: [],
         predicates: [],
-        orderBy: [ { field: "block_height", direction: "desc" } ],
+        orderBy: [{ field: 'block_height', direction: 'desc' }],
         limit: 100
     },
     outputs: {
         fields: [],
         predicates: [],
-        orderBy: [ { field: "block_height", direction: "desc" } ],
+        orderBy: [{ field: 'block_height', direction: 'desc' }],
         limit: 100
     },
     inputs: {
         fields: [],
         predicates: [],
-        orderBy: [ { field: "block_height", direction: "desc" } ],
+        orderBy: [{ field: 'block_height', direction: 'desc' }],
         limit: 100
     }
 }
