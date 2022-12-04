@@ -137,7 +137,10 @@ let initialState: AppState = {
             { name: 'max', displayName: 'Max' },
             { name: 'count', displayName: 'Count' },
         ],
-        string: [{ name: 'count', displayName: 'Count' }],
+        string: [
+            { name: 'count', displayName: 'Count' },
+            { name: 'countDistinct', displayName: 'Distinct' }
+        ],
         dateTime: [
             { name: 'min', displayName: 'Min' },
             { name: 'max', displayName: 'Max' },

@@ -636,6 +636,7 @@
         "avg": "Average",
         "min": "Min",
         "max": "Max",
-        "count": "Count"
+        "count": "Count",
+        "countDistinct": "Distinct"
     }
 }
