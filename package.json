@@ -65,9 +65,9 @@
     "npm": ">=6.14.x"
   },
   "scripts": {
-    "start": "REACT_APP_VERSION=$(git describe --abbrev=0) REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts start",
-    "serve": "REACT_APP_VERSION=$(git describe --abbrev=0) REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) BROWSER=none react-scripts start",
-    "build": "REACT_APP_VERSION=$(git describe --abbrev=0) REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts build",
+    "start": "REACT_APP_VERSION=$(git describe --tags --abbrev=0) REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts start",
+    "serve": "REACT_APP_VERSION=$(git describe --tags --abbrev=0) REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) BROWSER=none react-scripts start",
+    "build": "REACT_APP_VERSION=$(git describe --tags --abbrev=0) REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

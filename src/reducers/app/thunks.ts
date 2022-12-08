@@ -235,6 +235,8 @@ export const fetchInitEntityAction = (
             };
         });
 
+        const headLevel = (await TezosConseilClient.getBlock(serverInfo, network, 'head')).level;
+
         predicates.forEach((predicate: any) => {
             const selectedAttribute: any = attributes.find((attr) => attr.name === predicate.field);
             if (selectedAttribute.dataType === AttrbuteDataType.DATETIME) {
@@ -242,6 +244,10 @@ export const fetchInitEntityAction = (
                     if (Number(predicate.set[i]) < 0) {
                         predicate.set[i] = new Date().getTime() + predicate.set[i];
                     }
+                }
+            } else if (selectedAttribute.dataType === AttrbuteDataType.INT || selectedAttribute.name === 'block_level') {
+                if (predicate.set.length === 1 && Number(predicate.set[0]) < 0) {
+                    predicate.set[0] = headLevel + Number(predicate.set[0]);
                 }
             }
         });
@@ -351,7 +357,7 @@ export const fetchTopBakers = (date: number, limit: number) => async (dispatch: 
         dispatch(setTopBakersQueryUrl(queryUrl));
         dispatch(setTopBakers(result));
         dispatch(setTopBakersLoadingAction(false));
-    } catch (e) {
+    } catch (e: any) {
         const message = e.message || `Unable to load baker data for Home page.`;
         await dispatch(createMessageAction(message, true));
     }
@@ -520,7 +526,7 @@ export const initLoad = (props: InitLoad) => async (dispatch: any, state: any) =
         !isQuery && id && (await dispatch(loadModal(config.platform, config.network, id)));
 
         await dispatch(completeFullLoadAction(true));
-    } catch (e) {
+    } catch (e: any) {
         if (e.message) {
             await dispatch(createMessageAction(e.message, true));
         } else {
